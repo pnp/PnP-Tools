@@ -1,5 +1,5 @@
 # Patterns and Practices - Tools #
-This is open repository for community driven Office 365 Patterns and Practices program (PnP). 
+This is an open repository for community driven Office 365 Patterns and Practices program (PnP). 
 
 ![](http://i.imgur.com/dIdsPQI.jpg)
 
