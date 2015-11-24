@@ -31,42 +31,7 @@ Version  | Date | Comments
 
 ----------
 
-# Doc scenario 1 #
-Description
-Image
+# For detailed description of scenarios and steps, please refer to following documentation in the repository.#
 
-
-## Sub level 1.1 ##
-Description:
-Code snippet:
-```PowerShell
- #
- # Enable the remote site collection creation for on-prem in web application level
- # If this is not done, unknon object exception is raised by the CSOM code
- #
- $WebApplicationUrl = http://dev.contoso.com
- $snapin = Get-PSSnapin | Where-Object {$_.Name -eq 'Microsoft.SharePoint.Powershell'}
- if ($snapin -eq $null) 
- {
-     Write-Host "Loading SharePoint Powershell Snapin"
-     Add-PSSnapin "Microsoft.SharePoint.Powershell"
- }    
-  
- $webapp=Get-SPWebApplication $WebApplicationUrl  
-
-```
-
-## Sub level 1.2 ##
-
-# Doc scenario 2 #
-
-## Sub level 2.1 ##
-
-## Sub level 2.2 ##
-
-### Note: ###
-
-## Sub level 2.3 ##
-
-# Doc scenario 3#
-
+## Hybrid Configuration Wizard ##
+Located under the *Documents* folder. Contains similar information as the mentioned blog post.
