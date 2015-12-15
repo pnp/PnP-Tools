@@ -75,6 +75,18 @@ function Install-SharePointSyncConfiguration
     {
         throw "The current user must be a member of the Synchronization Service Admins group before this command can be run.  You may need to logoff/logon before the group membership takes effect."
     }
+
+    $MimPowerShellModuleAssembly = Get-Item -Path (Join-Path (Get-SynchronizationServicePath) UIShell\Microsoft.DirectoryServices.MetadirectoryServices.Config.dll)
+    if ($MimPowerShellModuleAssembly.VersionInfo.ProductMajorPart -eq 4 -and
+        $MimPowerShellModuleAssembly.VersionInfo.ProductMinorPart -eq 3 -and 
+        $MimPowerShellModuleAssembly.VersionInfo.ProductBuildPart -ge 2064)
+    {
+        Write-Verbose "Sufficient MIM PowerShell version detected (>= 4.3.2064): $($MimPowerShellModuleAssembly.VersionInfo.ProductVersion)"
+    }
+    else
+    {
+        throw "SharePoint Sync requires MIM PowerShell version 4.3.2064 or greater (this version is currently installed: $($MimPowerShellModuleAssembly.VersionInfo.ProductVersion). Please install the latest MIM hotfix."
+    }
     #endregion
 
     ### Load the Synchronization PowerShell snap-in
