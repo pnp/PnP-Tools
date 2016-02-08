@@ -30,7 +30,7 @@ Version  | Date | Comments
 In order to enable site collection using the CSOM CreateSite method you need to run the below two scripts on your SharePoint 2013/2016 farm
 
 ## Step 1: Flag a site as "tenant admin" site
-The `CreateSite` CSOM operation will server side use the multi-tenant CreateSite API's which has as consequence that these API's will need a tenant admin site to function. Luckily you do not to setup the multi-tenant features in your environment, but rather simply **mark** a site as tenant admin site by setting it's `AdministrationSiteType` property to `SPAdministrationSiteType.TenantAdministration`.
+The `CreateSite` CSOM operation will server side use the multi-tenant CreateSite API's which has as consequence that these API's will need a tenant admin site to function. Luckily you do not to setup the multi-tenant features in your environment, but rather simply **mark** a site as tenant admin site by setting it's `AdministrationSiteType` property to `SPAdministrationSiteType.TenantAdministration`. This site can be **any** site collection, but it's recommended to create a separate site collection with a meaningful name (e.g. TenantAdmin) as this will avoid accidental deletion.
 
 You can do this by running the `definetenantadminsite.ps1` script like shown below:
 
