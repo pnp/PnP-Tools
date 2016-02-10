@@ -70,4 +70,6 @@ WARNING: Waiting for service 'World Wide Web Publishing Service (W3SVC)' to stop
 WARNING: Waiting for service 'Windows Process Activation Service (WAS)' to stop...
 IISReset complete on this server, remember other servers in farm as well.
 ```
+To finalize this step you'll need to perform an IISReset on all the other servers in the farm.
+
 

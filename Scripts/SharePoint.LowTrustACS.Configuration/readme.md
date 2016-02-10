@@ -99,5 +99,7 @@ Connect-SPFarmToAAD –AADDomain 'MyO365Domain.onmicrosoft.com' –SharePointOnl
 Connect-SPFarmToAAD –AADDomain 'MyO365Domain.onmicrosoft.com' –SharePointOnlineUrl https://MyO365Domain.sharepoint.com –SharePointWeb http://northwind.com –AllowOverHttp –RemoveExistingACS –RemoveExistingSTS –RemoveExistingSPOProxy –RemoveExistingAADCredentials
 ```
 
+The final steps are the doing an IISReset all the farm servers + perform a SharePoint Timer Server restart on all the servers of the farm except the one where you did run the `Connect-SPFarmToAAD` cmdlet as that was already done.
+
 
 
