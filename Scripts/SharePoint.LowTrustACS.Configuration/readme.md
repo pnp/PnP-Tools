@@ -91,8 +91,6 @@ This script will perform the following tasks:
 Once the above is done you've setup a session that's ready for the final step, performing the actual low trust configuration. You can do this by issuing the `Connect-SPFarmToAAD` cmdlet like shown in below samples:
 
 ```PowerShell
-Connect-SPFarmToAAD –AADDomain 'MyO365Domain.onmicrosoft.com' –SharePointOnlineUrl https://MyO365Domain.sharepoint.com
-
 Connect-SPFarmToAAD –AADDomain 'MyO365Domain.onmicrosoft.com' –SharePointOnlineUrl https://MyO365Domain.sharepoint.com –SharePointWeb https://fabrikam.com
 
 Connect-SPFarmToAAD –AADDomain 'MyO365Domain.onmicrosoft.com' –SharePointOnlineUrl https://MyO365Domain.sharepoint.com –SharePointWeb http://northwind.com -AllowOverHttp
@@ -102,5 +100,24 @@ Connect-SPFarmToAAD –AADDomain 'MyO365Domain.onmicrosoft.com' –SharePointOnl
 
 The final steps are the doing an IISReset all the farm servers + perform a SharePoint Timer Server restart on all the servers of the farm except the one where you did run the `Connect-SPFarmToAAD` cmdlet as that was already done.
 
+If you want to also enable low trust on other web applications you do not need to repeat the above procedure but rather use below PowerShell script:
 
+```PowerShell
+$SPAppPrincipal = Get-MsolServicePrincipal -AppPrincipalId 00000003-0000-0ff1-ce00-000000000000
+$id = "00000003-0000-0ff1-ce00-000000000000/"
+
+Get-SPWebApplication | ForEach-Object {
+    $hostName = $_.Url.substring($_.Url.indexof("//") + 2)
+    $hostName = $hostName.Remove($hostName.Length - 1, 1)
+
+    $NewSPN = $id + $hostName
+
+    Write-Host "Adding SPN for" $NewSPN
+
+    if ($SPAppPrincipal.ServicePrincipalNames -notcontains $NewSPN) {
+       $SPAppPrincipal.ServicePrincipalNames.Add($NewSPN)
+       Set-MsolServicePrincipal -AppPrincipalId $SPAppPrincipal.AppPrincipalId -ServicePrincipalNames $SPAppPrincipal.ServicePrincipalNames
+    }
+}
+```
 
