@@ -8,7 +8,8 @@ This document and scripts explain how to setup low trust authentication between 
 -  SharePoint 2016 on-premises
 
 ### Prerequisites ###
-An Office 365 tenant which you'll use for the low trust association.
+- [An Office 365 tenant which you'll use for the low trust association](https://msdn.microsoft.com/en-us/library/office/fp179924.aspx)
+- [Setup app management in your on-premises farm](https://msdn.microsoft.com/en-us/library/office/fp179923.aspx)
 
 ### Solution ###
 Solution | Author(s)
