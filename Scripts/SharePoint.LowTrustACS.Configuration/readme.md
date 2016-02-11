@@ -71,7 +71,7 @@ Before you can load and execute the needed module in step 3 you'll need to first
 - [The 64-bit edition of Microsoft Online Services Sign-In Assistant](https://www.microsoft.com/en-us/download/details.aspx?id=41950)
 - [Microsoft Online Services Module for Windows Powershell (64-bit)](http://go.microsoft.com/fwlink/p/?linkid=236297)
 
-Once that's done you'll need to copy the [Connect-SPFarmToAAD function script](https://msdn.microsoft.com/en-us/library/office/dn155905.aspx) and save it to the filesystem with the name `Connect-SPFarmToAAD.psm1`.
+Once that's done you'll need to copy the `Connect-SPFarmToAAD.psm1` PowerShell module from the scripts folder to a folder or file share on the file system. 
 
 ## Step 3: Apply the new signing certificate and setup the low trust association
 Start this step by running the `LowTrustConfigurationSession.ps1` script and provide as input:
