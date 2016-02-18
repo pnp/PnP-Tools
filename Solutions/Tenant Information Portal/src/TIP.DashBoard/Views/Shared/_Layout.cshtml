@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>{{ 'APPLICATION_TITLE' | translate }}</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body ng-cloak>
+    <div id="wrapper">
+        <!-- Navigation -->
+        <nav class="navbar navbar-blue navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href=@Url.Action("Index", "Home")>{{ 'APPLICATION_TITLE' | translate }}</a>
+            </div>
+            <!-- /.navbar-header -->
+            <ul class="nav navbar-top-links navbar-right">
+                @Html.Partial("_LoginPartial")
+            </ul>
+            <!-- /.navbar-top-links -->
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li>
+                            <a href=@Url.Action("Index", "Home")><i class="fa fa-home fa-fw"></i>{{ 'HOME_TEXT' | translate }} </a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-sitemap fa-fw"></i> {{ 'SERVICEPRINCIPALS_TEXT' | translate }} <span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href=@Url.Action("Principals", "Reports")>{{ 'REPORTS_ALL_PRINCIPAL_TEXT' | translate }} </a>
+                                    </li>
+                                    <li>
+                                        <a href=@Url.Action("ExpiredPrincipals", "Reports")>{{ 'REPORTS_EXPIRED_TEXT' | translate }} </a>
+                                    </li>
+                                    <li>
+                                        <a href=@Url.Action("ExpiredPrincipals30", "Reports")>{{'REPORTS_EXPIRED30_TEXT' | translate }} </a>
+                                    </li>
+                                    <li>
+                                        <a href=@Url.Action("ExpiredPrincipals60", "Reports")>{{ 'REPORTS_EXPIRED60_TEXT' | translate }} </a>
+                                    </li>
+                                    <li>
+                                        <a href=@Url.Action("ExpiredPrincipals90", "Reports")>{{ 'REPORTS_EXPIRED90_TEXT' | translate }} </a>
+                                    </li>
+                                </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href=@Url.Action("About", "Home")><i class="fa fa fa-fw fa-info"></i>{{ 'ABOUT_TEXT' | translate }} </a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+        <div id="page-wrapper">
+            @RenderBody()
+        </div> <!-- /#page-wrapper -->
+        <!-- Footer -->
+        @*<footer class="main-footer">
+            <!-- To the right -->
+            <div class="pull-right hidden-xs">V1.0 </div>
+            <!-- Default to the left -->
+            {{ 'COPYRIGHT_TEXT' | translate }} &copy; {{ 'COPYRIGHT_COMPANY_TEXT' | translate }}
+        </footer>*@
+     </div> <!---./wrapper-->
+
+  
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/metisMenu")
+    @Scripts.Render("~/bundles/javascript")
+    @Scripts.Render("~/bundles/toastr")
+    @Scripts.Render("~/bundles/angular")
+    @Scripts.Render("~/bundles/appCommon")
+    @Scripts.Render("~/bundles/app")
+    @Scripts.Render("~/bundles/appDashboard")
+    @Scripts.Render("~/bundles/appPrincipals")
+    @Scripts.Render("~/bundles/appCore")
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

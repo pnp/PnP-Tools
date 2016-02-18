@@ -1,0 +1,60 @@
+﻿<section id="dashboard-view" data-ng-controller="DashBoardController as vm" ng-app="app">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                {{ 'HOME_TEXT' | translate }} <small>{{ 'OVERVIEW_TEXT' | translate }}</small>
+            </h1>
+            <div class="alert alert-danger alert-dismissable" ng-show="vm.expiredPrincipals.length">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <i class="fa fa-exclamation-triangle"></i> <strong>{{ 'ALERT_EXPIRED_PRINCIPALS_TEXT' | translate }}</strong> 
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <i class="fa fa-pie-chart"></i>
+                    <h3 class="box-title">{{'SERVICEPRINCIPALS_TEXT' | translate }}</h3>
+                </div>
+                <div class="box-body">
+                    <div class="medium-8 columns">
+                        <canvas id="doughnut" class="chart chart-doughnut" chart-data="[vm.expiredPrincipals.length, vm.expiredPrincipals30.length, vm.expiredPrincipals60.length, vm.expiredPrincipals90.length]" chart-labels="vm.chartServicePrincipalsLabels" chart-colours="vm.chartServicePrincipalsColours" chart-legend="true"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <i class="fa fa-database"></i>
+                    <h3 class="box-title">{{'TENANT_SUMMARY_TEXT' | translate }}</h3>
+                </div>
+                <div class="box-body">
+                    <strong>{{ 'TENANT_DOMAIN_TEXT' | translate }}</strong>
+                    <p class="text-muted">{{vm.tenantInformation.displayName}}</p>
+                    <hr />
+                    <strong>{{ 'TENANT_ID_TEXT' | translate }}</strong>
+                    <p class="text-muted">{{vm.tenantInformation.tenantId}}</p>
+                    <hr />
+                    <strong>{{ 'TENANT_DIRSYNCENABLE_TEXT' | translate }}</strong>
+                    <p class="text-muted">{{vm.tenantInformation.directorySyncEnabled}}</p>
+                    <hr />
+                    <strong>{{ 'TENANT_LASTDIRSYNCTIME_TEXT' | translate }}</strong>
+                    <p class="text-muted">{{vm.tenantInformation.lastDirSyncTime}}</p>
+                    <hr />
+                </div>
+            </div>
+        </div> 
+    </div>
+</section>
+@section scripts {
+
+    <!-- Charts -->
+    @Scripts.Render("~/Scripts/plugins/prism/prism.js")
+    @Scripts.Render("~/Scripts/plugins/fastclick/fastclick.js")
+    @Scripts.Render("~/Scripts/plugins/foundation/foundation.min.js")
+    @Scripts.Render("~/Scripts/plugins/chart/Chart.min.js")
+}
+
+

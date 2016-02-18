@@ -1,0 +1,26 @@
+﻿@if (Request.IsAuthenticated)
+{
+    <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <i class="fa fa-user"></i> @User.Identity.Name 
+            <i class="fa fa-caret-down"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-user">
+            <li>
+                <a href=@Url.Action("Index", "UserProfile")>{{ 'PROFILE_TEXT' | translate }} </a>
+            </li>
+            <li class="divider"></li>
+            <li>
+                <a href=@Url.Action("SignOut", "Account")>{{ 'SIGN_OUT_TEXT' | translate }} </a>
+            </li>
+        </ul>
+    </li>
+}
+else
+{
+     <ul class="nav navbar-top-links navbar-right">
+         <li>
+             <a href=@Url.Action("SignIn", "Account")>{{ 'SIGN_IN_TEXT' | translate }} </a>
+         </li>
+    </ul>
+}

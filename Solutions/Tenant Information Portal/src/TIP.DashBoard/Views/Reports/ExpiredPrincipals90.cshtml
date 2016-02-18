@@ -1,0 +1,109 @@
+﻿
+@{
+    ViewBag.Title = "ExpiredPrincipals90";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section id="dashboard-view" data-ng-controller="ReportsExpired90Controller as vm" ng-app="app">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                {{ 'EXPIRED_PRINCIPALS_90_TEXT' | translate }}
+            </h1>
+            <div class="alert alert-success alert-dismissable"  ng-show="!vm.getPrincipalCount()">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>{{ 'NO_PRINCIPALS_EXPIRED_TEXT' | translate }}</strong>
+            </div>
+            <div class="alert alert-warning alert-dismissable" ng-show="vm.getPrincipalCount()">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <i class="fa fa-exclamation-triangle"></i> <strong>{{ 'PRINCIPALS_EXPIRING_WARNING_TEXT' | translate }}</strong>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i class="glyphicon glyphicon-filter"></i>
+                </div>
+                <input type="text" id="search" class="form-control" placeholder="{{ 'SEARCH_FILTER_TEXT' | translate }}" ng-model="vm.query" />
+            </div>
+        </div>
+        <div class="col-xs-4">
+            <div class="input-group">
+                <input type="number" min="1" max="100" class="form-control" ng-model="vm.pageSize" />
+            </div>
+        </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <i class="fa fa fa-database"></i>
+                    <h3 class="box-title">{{ 'APPLICATION_PRINCIPALS_TEXT' | translate }}</h3>
+                    <h3 class="panel-title pull-right">
+                        <a href="">
+                            <i class="fa fa-file-excel-o fa-align-right"
+                               title="{{ 'EXPORT_CSV_TEXT' | translate }}"
+                               ng-json-export-excel data="vm.allPrincipals"
+                               ng-disabled="vm.allPrincipals"
+                               ng-model="vm.allPrincipals"
+                               report-fields="vm.reportFields"
+                               filename="vm.csvExportFileName">
+                            </i>
+                        </a>
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <div class="panel-title">
+                            <div class="box-body">
+                                <div class="text-center">
+                                    <span us-spinner="{radius:30, width:8, length: 16}" spinner-key="spinner"></span>
+                                </div>
+                                <table id="table-principals" class="table table-bordered table-condensed f11">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ 'PRINCIPAL_DISPLAY_NAME_TEXT' | translate }} </th>
+                                            <th>{{ 'PRINCIPAL_APPID_TEXT' | translate }} </th>
+                                            <th>{{ 'PRINCIPAL_NAMES_TEXT' | translate }} </th>
+                                            <th>{{ 'PRINCIPAL_EXPIRED_DATE_TEXT' | translate }} </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr dir-paginate="principal in vm.allPrincipals | filter:vm.query | itemsPerPage: vm.pageSize" current-page="vm.currentPage">
+                                            <td>{{ principal.displayName }}</td>
+                                            <td>{{ principal.appId }}</td>
+                                            <td>
+                                                <table id="table-principalName">
+                                                    <thead>
+                                                        <tr ng-repeat="name in principal.principalNames">
+                                                            <td>
+                                                                {{name}}
+                                                            </td>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </td>
+                                            <td>{{ principal.endDate }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <dir-pagination-controls boundary-links="true" template-url="/Scripts/app/directives/directives.dirPagination.tpl.html"></dir-pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+
+}
+
+

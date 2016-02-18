@@ -1,0 +1,1 @@
+{"raw":"v1.4.9","major":1,"minor":4,"patch":9,"prerelease":[],"build":[],"version":"1.4.9","codeName":"implicit-superannuation","full":"1.4.9","branch":"v1.4.x","cdn":{"raw":"v1.4.8","major":1,"minor":4,"patch":8,"prerelease":[],"build":[],"version":"1.4.8","docsUrl":"http://code.angularjs.org/1.4.8/docs"}}

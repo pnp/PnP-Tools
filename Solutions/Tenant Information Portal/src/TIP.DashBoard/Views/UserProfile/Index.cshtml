@@ -1,0 +1,47 @@
+﻿@using Microsoft.Azure.ActiveDirectory.GraphClient
+@model User
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">@Model.DisplayName</h1>
+     </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">{{ 'ABOUT_TEXT' | translate }}</h3>
+            </div>
+            <div class="box-body">
+                <dl>
+                    <dt>{{ 'DISPLAY_FIRST_NAME_TEXT' | translate }}</dt>
+                    <dd>@Model.GivenName</dd>
+                  
+                </dl>
+               <br />
+               <dl>
+                    <dt>{{ 'DISPLAY_SURNAME_TEXT' | translate }}</dt>
+                    <dd>@Model.Surname</dd>
+               </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">{{ 'CONTACT_DETAILS_TEXT' | translate }}</h3>
+            </div>
+            <div class="box-body">
+                <dl>
+                    <dt>{{ 'EMAIL_TEXT' | translate }}</dt>
+                    <dd>@Model.Mail</dd>
+               </dl>
+                <br />
+                <dl>
+                    <dt>{{ 'MOBILE_TEXT' | translate }}</dt>
+                    <dd>@Model.Mobile</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
