@@ -1,7 +1,7 @@
-# Tenant infromation Portal 
+# Tenant Information Portal 
 
 ### Summary 
-This solution is used to display information regarding your Azure Active Directory Tenant.
+This solution is used to display information regarding your Azure Active Directory Tenant specifically related to Service Princiapls that are only surfaced via PowerShell.
 
 ### Features ###
 - Dashboard that provids a visual indicator on Service Principals that are expired or that may be expiring in 30, 60, and 90 Days.
@@ -14,6 +14,11 @@ This solution is used to display information regarding your Azure Active Directo
 
 ### Prerequisites 
 - An Azure subscription (a free trial is sufficient) If you don't already have an Azure subscription, you may get a free subscription by signing up at [https://azure.microsoft.com](https://azure.microsoft.com).  All of the Azure AD features used in this applicatons are available free of charge.
+
+### Solution ###
+Solution | Author(s)
+---------|----------
+Tenant Information Portal | Frank Marasco (Microsoft)
 
 ### Version history 
 Version  | Date | Comments
@@ -57,6 +62,7 @@ To deploy the TIP solution to Azure Web Sites, you will create 1 web sites with 
 	- ida:ClientId and supply your ClientId
 	- ida:ClientSecret and supply your ClientSecret
 	- ida:Tenant and supply your tenant AAD tenant. e.g. contoso.onmicrosoft.com
+5. Right click within Visual Studio and publish to the Azure Web Site.
 
 
 ### Additonal Information	
