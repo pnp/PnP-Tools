@@ -71,8 +71,8 @@ To deploy the TIP solution to Azure Web Sites, you will create 1 web site with a
 
 
 ### Additonal Information	
-- Setup Low Trust for SharePoint on-premises https://github.com/OfficeDev/PnP-Tools/tree/master/Scripts/SharePoint.LowTrustACS.Configuration
-- Replace an expiring client secret in a SharePoint Add-in https://msdn.microsoft.com/en-us/library/office/dn726681.aspx
+- [Setup Low Trust for SharePoint on-premises] (https://github.com/OfficeDev/PnP-Tools/tree/master/Scripts/SharePoint.LowTrustACS.Configuration)
+- [Replace an expiring client secret in a SharePoint Add-in] (https://msdn.microsoft.com/en-us/library/office/dn726681.aspx)
 
 
 
