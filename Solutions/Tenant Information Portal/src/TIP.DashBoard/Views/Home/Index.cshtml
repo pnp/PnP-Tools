@@ -41,7 +41,7 @@
                     <p class="text-muted">{{vm.tenantInformation.directorySyncEnabled}}</p>
                     <hr />
                     <strong>{{ 'TENANT_LASTDIRSYNCTIME_TEXT' | translate }}</strong>
-                    <p class="text-muted">{{vm.tenantInformation.lastDirSyncTime}}</p>
+                    <p class="text-muted">{{vm.tenantInformation.lastDirSyncTime |  date:"MM/dd/yyyy h:mma" }}</p>
                     <hr />
                 </div>
             </div>

@@ -23,7 +23,6 @@
 
 using Microsoft.Azure.ActiveDirectory.GraphClient;
 using Microsoft.Online.Applications.Core;
-using Microsoft.Online.Applications.Core.Clients;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,11 +32,12 @@ namespace TIP.Common.Services.Tenant.Internal
     internal class TenantManager : ActiveDirectoryAbstractService, ITenantInformationManager
     {
         #region Constructor
-        internal TenantManager(AdalClient client)
+        internal TenantManager(IClient client)
         {
             this.Client = client;
         }
         #endregion
+
         public ITenantInformation GetTenantInformation()
         {
             var _client = this.GetActiveDirectoryClient();

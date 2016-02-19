@@ -32,6 +32,7 @@ namespace TIP.Common.Exceptions
     public class ErrorResponse
     {
         [DataMember(Name = "error")]
+        [JsonProperty(PropertyName = "error")]
         public Error Error {get; set; }
 
         [JsonExtensionData]

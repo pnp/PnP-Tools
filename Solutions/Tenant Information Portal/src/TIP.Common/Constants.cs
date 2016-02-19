@@ -37,5 +37,11 @@ namespace TIP.Common
             public const string POST_LOGOUTREDIRECTURI_KEY = "ida:PostLogoutRedirectUri";
             public const string TENANT_KEY = "ida:Tenant";
         }
+
+        public static class ErrorCodes
+        {
+            public const string GENERAL = "TIP50000";
+        }
+
     }
 }

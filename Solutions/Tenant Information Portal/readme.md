@@ -1,13 +1,15 @@
 # Tenant Information Portal 
 
 ### Summary 
-This solution is used to display information regarding your Azure Active Directory Tenant specifically related to Service Princiapls that are only surfaced via PowerShell. By default, when you register an add-in with appregnew/appinv, these service princapals are not displayed
-in the Azure Portal and the default expiration is 1 year. This solution will also assist you with identifing apps (add-ins) that are expired or that will be expiring soon.
+This solution is used to display information regarding your Azure Active Directory Tenant specifically related to Service Principals that are only surfaced via PowerShell. By default, when you register an add-in with appregnew/appinv, these service principals are not displayed
+in the Azure Portal and the default expiration is 1 year. This solution will also assist you with identifying apps (add-ins) that are expired or that will be expiring soon.
+
+![](http://i.imgur.com/I6aPpKQ.png)
 
 ### Features ###
 - Dashboard that provides a visual indicator on Service Principals that are expired or that may be expiring in 30, 60, and 90 Days.
 - Displays/Exports all service principals that are registered within your Azure Active Directory Tenant.
-- Displays Tenant Last Directory Synchornization time
+- Displays Tenant Last Directory Synchronization time
 
 ### Applies to 
 -  Office 365 Multi-tenant (MT)
@@ -15,12 +17,12 @@ in the Azure Portal and the default expiration is 1 year. This solution will als
 -  SharePoint 2013/2016 on-premises with an low trust established 
 
 ### Prerequisites 
-- An Azure subscription (a free trial is sufficient) If you don't already have an Azure subscription, you may get a free subscription by signing up at [https://azure.microsoft.com](https://azure.microsoft.com).  All of the Azure AD features used in this applicatons are available free of charge.
+- An Azure subscription (a free trial is sufficient). If you don't already have an Azure subscription, you may get a free subscription by signing up at [https://azure.microsoft.com](https://azure.microsoft.com).  All of the Azure AD features used in this application are available free of charge.
 
 ### Solution ###
 Solution | Author(s)
 ---------|----------
-Tenant Information Portal | Frank Marasco (Microsoft)
+Tenant Information Portal (TIP) | Frank Marasco (Microsoft)
 
 ### Version history 
 Version  | Date | Comments
@@ -31,7 +33,9 @@ Version  | Date | Comments
 ### Disclaimer 
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
 ----------
-### Set Up
+
+
+## Set Up
 
 ### Step 1:  Register the application with your Azure Active Directory tenant
 
@@ -58,7 +62,7 @@ Version  | Date | Comments
 5. Find the app key `ida:ClientSecret` and replace the value with the key for Tenant Information Portal from the Azure portal.
 
 ### Azure Deployment
-To deploy the TIP solution to Azure Web Sites, you will create 1 web site with a SQL Server instance, publish each project to the web site.
+To deploy the TIP solution to Azure Web Sites, you will create 1 web site with a SQL Server instance, publish the project to the web site.
 
 1. Navigate to the [Azure management portal](https://manage.windowsazure.com).
 2. Click on Web Sites in the left hand nav.

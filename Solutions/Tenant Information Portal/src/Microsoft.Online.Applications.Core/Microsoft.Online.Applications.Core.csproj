@@ -93,7 +93,6 @@
     <Compile Include="Authentication\IAuthenticationResult.cs" />
     <Compile Include="Clients\BaseClient.cs" />
     <Compile Include="Clients\AdalClient.cs" />
-    <Compile Include="Clients\IGraphClient.cs" />
     <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Enums\AccountType.cs" />

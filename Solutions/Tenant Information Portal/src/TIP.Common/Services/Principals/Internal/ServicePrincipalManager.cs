@@ -25,7 +25,6 @@ using Microsoft.Azure.ActiveDirectory.GraphClient.Extensions;
 using Microsoft.Data.OData;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.Online.Applications.Core;
-using Microsoft.Online.Applications.Core.Clients;
 using System;
 using System.Collections.Generic;
 using System.Data.Services.Client;
@@ -38,7 +37,7 @@ namespace TIP.Common.Services.Principals.Internal
     internal class ServicePrincipalManager : ActiveDirectoryAbstractService, IServicePrincipalManager
     {
         #region Constructor
-        internal ServicePrincipalManager(AdalClient client)
+        internal ServicePrincipalManager(IClient client)
         {
             this.Client = client;
         }
@@ -91,15 +90,13 @@ namespace TIP.Common.Services.Principals.Internal
         public IList<IAzureServicePrincipal> GetExpiredPrincipals()
         {
             List<IAzureServicePrincipal> _spPrincipals = new List<IAzureServicePrincipal>();
-
             var _client = this.GetActiveDirectoryClient();
 
             ///Get principals
-            /// 
             IPagedCollection<IServicePrincipal> _principals = null;
             try
             {
-                _principals = _client.ServicePrincipals.ExecuteAsync().Result;
+                _principals = _client.ServicePrincipals.Take(999).ExecuteAsync().Result;
                 if (_principals != null)
                 {
                     do

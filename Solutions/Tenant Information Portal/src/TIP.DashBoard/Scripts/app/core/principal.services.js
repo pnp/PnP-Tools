@@ -35,7 +35,7 @@
             }
 
             function getAllPrincipalsFailed(error) {
-                logger.error('Failed getting all principals.' + error)
+                logger.error(error.data.error.message, error.data, "All Principals Failed");
             }
         }
 
@@ -44,15 +44,15 @@
             return $http.get('/api/servicePrincipal/getExpired/' + days)
                 .then(getAllExpiredPrincipalsInDaysComplete)
                 .catch(getAllExpiredPrincipalsInDaysFailed);
-        }
 
-        function getAllExpiredPrincipalsInDaysComplete(response) {
-            logger.success(controllerId, response, 'Expired Principals');
-            return response.data;
-        }
+            function getAllExpiredPrincipalsInDaysComplete(response) {
+                logger.success(controllerId, response, 'Expired Principals');
+                return response.data;
+            }
 
-        function getAllExpiredPrincipalsInDaysFailed(error) {
-            logger.error('Failed getting expired princiapls.' + error)
+            function getAllExpiredPrincipalsInDaysFailed(error) {
+                logger.error(error.data.error.message, error.data, "All ExpiredPrincipalsInDays Failed");
+            }
         }
 
         function getAllExpiredPrincipals() {     
@@ -67,7 +67,8 @@
             }
 
             function getAllExpiredPrincipalsFailed(error) {
-                logger.error('Failed getting all expired principals. ' + error.data.Error.message)
+                //message,data, title
+                logger.error(error.data.error.message, error.data, "All ExpiredPrincipals Failed");
             }
         }
 

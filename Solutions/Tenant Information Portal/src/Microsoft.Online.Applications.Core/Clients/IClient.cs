@@ -25,7 +25,6 @@ using Microsoft.Online.Applications.Core.Authentication;
 
 namespace Microsoft.Online.Applications.Core
 {
-
     public interface IClient
     {
         /// <summary>

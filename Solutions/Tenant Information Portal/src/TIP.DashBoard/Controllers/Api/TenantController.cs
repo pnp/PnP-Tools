@@ -20,8 +20,6 @@
 //SOFTWARE.
 // ------------------------------------------------------------------------------
 
-
-
 using Microsoft.Online.Applications.Core;
 using Microsoft.Online.Applications.Core.Clients;
 using Microsoft.Online.Applications.Core.Configuration;
@@ -67,6 +65,16 @@ namespace TIP.Dashboard.Controllers.Api
                 var _errorResponse = new ErrorResponse();
                 _errorResponse.Error = _ex.Error;
                 return Content(HttpStatusCode.InternalServerError, _errorResponse);
+            }
+            catch (Exception ex)
+            {
+                var _response = new ErrorResponse();
+                _response.Error = new Error
+                {
+                    Code = Common.Constants.ErrorCodes.GENERAL,
+                    Message = ex.Message
+                };
+                return Content(HttpStatusCode.InternalServerError, _response);
             }
         }
     }

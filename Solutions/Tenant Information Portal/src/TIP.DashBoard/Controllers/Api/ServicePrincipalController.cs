@@ -23,8 +23,10 @@
 using Microsoft.Online.Applications.Core;
 using Microsoft.Online.Applications.Core.Clients;
 using Microsoft.Online.Applications.Core.Configuration;
+using System;
 using System.Net;
 using System.Web.Http;
+using TIP.Common;
 using TIP.Common.Configuration;
 using TIP.Common.Exceptions;
 using TIP.Common.Services.Principals;
@@ -40,36 +42,6 @@ namespace TIP.Dashboard.Controllers.Api
         #region Instance Members
         AppConfig _appConfig = ConfigurationFactory.Instance.GetApplicationConfiguration();
         #endregion
-    
-        /// <summary>
-        /// Gets a Service Principal by Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [Route("api/servicePrincipal/{id}")]
-        public IHttpActionResult GetPrincipalById(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-            {
-                return BadRequest("id was supplied");
-            }
-
-            AdalClient _client = new AdalClient(_appConfig, CredentialType.Client, null);
-
-            try
-            {
-                ServicePrincipalFactory _f = new ServicePrincipalFactory();
-                var _manager = _f.CreateInstance(_client);
-                var _servicePrincipals = _manager.GetPrincipalById(id);
-                return Ok(_servicePrincipals);
-            }
-            catch (TIPException _ex)
-            {
-                var _errorResponse = new ErrorResponse();
-                _errorResponse.Error = _ex.Error;
-                return Content(HttpStatusCode.InternalServerError, _errorResponse);
-            }
-        }
 
         /// <summary>
         /// Gets all Service Principals
@@ -92,6 +64,16 @@ namespace TIP.Dashboard.Controllers.Api
                 var _errorResponse = new ErrorResponse();
                 _errorResponse.Error = _ex.Error;
                 return Content(HttpStatusCode.InternalServerError, _errorResponse);
+            }
+            catch (Exception ex)
+            {
+                var _response = new ErrorResponse();
+                _response.Error = new Error
+                {
+                    Code = Common.Constants.ErrorCodes.GENERAL,
+                    Message = ex.Message
+                };
+                return Content(HttpStatusCode.InternalServerError, _response);
             }
 
         }
@@ -119,6 +101,16 @@ namespace TIP.Dashboard.Controllers.Api
                 _response.Error = ex.Error;
                 return Content(HttpStatusCode.InternalServerError, _response);
             }
+            catch(Exception ex)
+            {
+                var _response = new ErrorResponse();
+                _response.Error = new Error
+                {
+                    Code = Common.Constants.ErrorCodes.GENERAL,
+                    Message = ex.Message
+                };
+                return Content(HttpStatusCode.InternalServerError, _response);
+            }
         }
 
         /// <summary>
@@ -129,11 +121,31 @@ namespace TIP.Dashboard.Controllers.Api
         [Route("api/servicePrincipal/getExpired/{InDays:int}")]
         public IHttpActionResult GetExpiredPrincipalsInDays(int InDays)
         {
-            AdalClient _client = new AdalClient(_appConfig, CredentialType.Client, null);
-            ServicePrincipalFactory _f = new ServicePrincipalFactory();
-            var _manager = _f.CreateInstance(_client);
-            var _servicePrincipals = _manager.GetExpiredPrincipalsInDays(InDays);
-            return Ok(_servicePrincipals);
+            try
+            {
+                AdalClient _client = new AdalClient(_appConfig, CredentialType.Client, null);
+                ServicePrincipalFactory _f = new ServicePrincipalFactory();
+                var _manager = _f.CreateInstance(_client);
+                var _servicePrincipals = _manager.GetExpiredPrincipalsInDays(InDays);
+                return Ok(_servicePrincipals);
+            }
+            catch (TIPException ex)
+            {
+                var _response = new ErrorResponse();
+                _response.Error = ex.Error;
+                return Content(HttpStatusCode.InternalServerError, _response);
+            }
+            catch (Exception ex)
+            {
+                var _response = new ErrorResponse();
+                _response.Error = new Error
+                {
+                    Code = Common.Constants.ErrorCodes.GENERAL,
+                    Message = ex.Message
+                };
+                return Content(HttpStatusCode.InternalServerError, _response);
+            }
+ 
         }
     }
 }

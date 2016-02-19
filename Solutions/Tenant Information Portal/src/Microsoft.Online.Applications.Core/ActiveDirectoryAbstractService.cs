@@ -22,7 +22,6 @@
 
 using System;
 using Microsoft.Azure.ActiveDirectory.GraphClient;
-using Microsoft.Online.Applications.Core.Clients;
 
 namespace Microsoft.Online.Applications.Core
 {
@@ -33,9 +32,9 @@ namespace Microsoft.Online.Applications.Core
     {
         #region Properties
         /// <summary>
-        /// Gets or sets the <seealso cref="AdalClient"/> that are used for establishing connection information to Azure Active Directory
+        /// Gets or sets the <seealso cref="IClient"/> that are used for establishing connection information to Azure Active Directory
         /// </summary>
-        protected AdalClient Client { get; set; }
+        protected IClient Client { get; set; }
         #endregion
 
         /// <summary>

@@ -22,8 +22,8 @@
 
 
 using System;
-using Microsoft.Online.Applications.Core.Clients;
 using TIP.Common.Services.Tenant.Internal;
+using Microsoft.Online.Applications.Core;
 
 namespace TIP.Common.Services.Tenant
 {
@@ -38,7 +38,7 @@ namespace TIP.Common.Services.Tenant
         {
             return _instance.Value;
         }
-        public ITenantInformationManager CreateInstance(AdalClient client)
+        public ITenantInformationManager CreateInstance(IClient client)
         {
             var _manager = new TenantManager(client);
             return _manager;

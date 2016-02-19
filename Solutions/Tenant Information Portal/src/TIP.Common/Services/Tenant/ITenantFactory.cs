@@ -21,12 +21,13 @@
 // ------------------------------------------------------------------------------
 
 
+using Microsoft.Online.Applications.Core;
 using Microsoft.Online.Applications.Core.Clients;
 
 namespace TIP.Common.Services.Tenant
 {
     public interface ITenantFactory
     {
-        ITenantInformationManager CreateInstance(AdalClient client);
+        ITenantInformationManager CreateInstance(IClient client);
     }
 }

@@ -20,11 +20,10 @@
 //SOFTWARE.
 // ------------------------------------------------------------------------------
 
-
-
 using System;
 using Microsoft.Online.Applications.Core.Clients;
 using TIP.Common.Services.Principals.Internal;
+using Microsoft.Online.Applications.Core;
 
 namespace TIP.Common.Services.Principals
 {
@@ -40,7 +39,7 @@ namespace TIP.Common.Services.Principals
             return _instance.Value;
         }
 
-        public IServicePrincipalManager CreateInstance(AdalClient client)
+        public IServicePrincipalManager CreateInstance(IClient client)
         {
             var _manager = new ServicePrincipalManager(client);
             return _manager;

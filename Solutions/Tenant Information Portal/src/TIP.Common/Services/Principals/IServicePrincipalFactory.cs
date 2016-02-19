@@ -20,15 +20,12 @@
 //SOFTWARE.
 // ------------------------------------------------------------------------------
 
-
-
-using Microsoft.Online.Applications.Core.Clients;
-
+using Microsoft.Online.Applications.Core;
 
 namespace TIP.Common.Services.Principals
 {
     public interface IServicePrincipalFactory
     {
-        IServicePrincipalManager CreateInstance(AdalClient client);
+        IServicePrincipalManager CreateInstance(IClient client);
     }
 }
