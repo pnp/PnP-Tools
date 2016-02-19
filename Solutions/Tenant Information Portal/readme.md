@@ -1,11 +1,13 @@
 # Tenant Information Portal 
 
 ### Summary 
-This solution is used to display information regarding your Azure Active Directory Tenant specifically related to Service Princiapls that are only surfaced via PowerShell.
+This solution is used to display information regarding your Azure Active Directory Tenant specifically related to Service Princiapls that are only surfaced via PowerShell. By default, when you register an add-in with appregnew/appinv, these service princapals are not displayed
+in the Azure Portal and the default expiration is 1 year. This solution will also assist you with identifing apps (add-ins) that are expired or that will be expiring soon.
 
 ### Features ###
-- Dashboard that provids a visual indicator on Service Principals that are expired or that may be expiring in 30, 60, and 90 Days.
+- Dashboard that provides a visual indicator on Service Principals that are expired or that may be expiring in 30, 60, and 90 Days.
 - Displays/Exports all service principals that are registered within your Azure Active Directory Tenant.
+- Displays Tenant Last Directory Synchornization time
 
 ### Applies to 
 -  Office 365 Multi-tenant (MT)
@@ -25,6 +27,9 @@ Version  | Date | Comments
 ---------| -----| --------
 1.0  | September 28, 2015 | Initial version
 
+
+### Disclaimer 
+**THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
 ----------
 ### Set Up
 
@@ -53,12 +58,12 @@ Version  | Date | Comments
 5. Find the app key `ida:ClientSecret` and replace the value with the key for Tenant Information Portal from the Azure portal.
 
 ### Azure Deployment
-To deploy the TIP solution to Azure Web Sites, you will create 1 web sites with a SQL Server instance, publish each project to a web site
+To deploy the TIP solution to Azure Web Sites, you will create 1 web site with a SQL Server instance, publish each project to the web site.
 
 1. Navigate to the [Azure management portal](https://manage.windowsazure.com).
 2. Click on Web Sites in the left hand nav.
 3. Click New in the bottom left hand corner, select Compute --> Web Site --> Custom Create, select the hosting plan and region, and give your web site a name, e.g. tenantinfoportal.azurewebsites.net.  Select a database to use, or create a new one.  Click Create Web Site.
-4. Click Configure and create 4 app settings
+4. Click Configure and create 3 app settings
 	- ida:ClientId and supply your ClientId
 	- ida:ClientSecret and supply your ClientSecret
 	- ida:Tenant and supply your tenant AAD tenant. e.g. contoso.onmicrosoft.com
@@ -67,9 +72,9 @@ To deploy the TIP solution to Azure Web Sites, you will create 1 web sites with 
 
 ### Additonal Information	
 - Setup Low Trust for SharePoint on-premises https://github.com/OfficeDev/PnP-Tools/tree/master/Scripts/SharePoint.LowTrustACS.Configuration
+- Replace an expiring client secret in a SharePoint Add-in https://msdn.microsoft.com/en-us/library/office/dn726681.aspx
 
-### Disclaimer 
-**THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
+
 
 
 
