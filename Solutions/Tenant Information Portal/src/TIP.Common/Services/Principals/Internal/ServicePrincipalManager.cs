@@ -96,35 +96,31 @@ namespace TIP.Common.Services.Principals.Internal
             IPagedCollection<IServicePrincipal> _principals = null;
             try
             {
+
                 _principals = _client.ServicePrincipals.Take(999).ExecuteAsync().Result;
                 if (_principals != null)
                 {
                     do
                     {
-                        List<IServicePrincipal> princList = _principals.CurrentPage.Where(
-                            x => x.KeyCredentials.Count > 0).ToList();
-                        foreach (IServicePrincipal princ in princList)
+                        List<IServicePrincipal> _allSpns = _principals.CurrentPage.Where(pwdcred => pwdcred.PasswordCredentials.Count > 0).ToList();
+                        var _expiredPrincipals = _allSpns.Where(kc => kc.PasswordCredentials.FirstOrDefault().EndDate < DateTime.Now).ToList();
+
+                        foreach (IServicePrincipal _spn in _expiredPrincipals)
                         {
                             var _spPrincipal = new Internal.ServicePrincipal();
-                            _spPrincipal.PrincipalNames = princ.ServicePrincipalNames;
-                            _spPrincipal.AppId = princ.AppId;
-                            _spPrincipal.DisplayName = princ.DisplayName;
-
-                            var _creds = princ.KeyCredentials.Where(kc => kc.EndDate < DateTime.Now).ToList();
-                            if (_creds.Count != 0)
-                            {
-                                var _keyCredential = _creds.FirstOrDefault();
-                                _spPrincipal.EndDate = _keyCredential.EndDate;
-                                _spPrincipal.ReplyUrls = princ.ReplyUrls;
-                                _spPrincipals.Add(_spPrincipal);
-                            }
-
+                            _spPrincipal.PrincipalNames = _spn.ServicePrincipalNames;
+                            _spPrincipal.AppId = _spn.AppId;
+                            _spPrincipal.DisplayName = _spn.DisplayName;
+                            _spPrincipal.ReplyUrls = _spn.ReplyUrls;
+                            
+                            var _creds = _spn.PasswordCredentials.FirstOrDefault();
+                            _spPrincipal.EndDate = _creds.EndDate;
+                            _spPrincipals.Add(_spPrincipal);
                         }
                         _principals = _principals.GetNextPageAsync().Result;
                     } while (_principals != null);
                 }
             }
-
             catch(AggregateException ae)
             {
                 //TOO LOGGING
@@ -132,6 +128,7 @@ namespace TIP.Common.Services.Principals.Internal
 
                 this.ExceptionHandler(ae);             
             }
+
             return _spPrincipals;
 
         }
@@ -149,23 +146,19 @@ namespace TIP.Common.Services.Principals.Internal
                 {
                     do
                     {
-                        List<IServicePrincipal> princList = _principals.CurrentPage.Where(
-                         x => x.KeyCredentials.Count > 0).ToList();
-                        foreach (IServicePrincipal princ in princList)
+                        List<IServicePrincipal> _allSpns = _principals.CurrentPage.Where(pwdcred => pwdcred.PasswordCredentials.Count > 0).ToList();
+                        var _expiredPrincipals = _allSpns.Where(kc => kc.PasswordCredentials.FirstOrDefault().EndDate >= DateTime.Now && kc.PasswordCredentials.FirstOrDefault().EndDate <= DateTime.Now.AddDays(numberOfDays)).ToList();
+                        foreach (IServicePrincipal _spn in _expiredPrincipals)
                         {
                             var _spPrincipal = new Internal.ServicePrincipal();
-                            _spPrincipal.PrincipalNames = princ.ServicePrincipalNames;
-                            _spPrincipal.AppId = princ.AppId;
-                            _spPrincipal.DisplayName = princ.DisplayName;
+                            _spPrincipal.PrincipalNames = _spn.ServicePrincipalNames;
+                            _spPrincipal.AppId = _spn.AppId;
+                            _spPrincipal.DisplayName = _spn.DisplayName;
+                            _spPrincipal.ReplyUrls = _spn.ReplyUrls;
 
-                            var _creds = princ.KeyCredentials.Where(kc => kc.EndDate >= DateTime.Now && kc.EndDate <= DateTime.Now.AddDays(numberOfDays)).ToList();
-                            if (_creds.Count != 0)
-                            {
-                                var _keyCredential = _creds.FirstOrDefault();
-                                _spPrincipal.EndDate = _keyCredential.EndDate;
-                                _spPrincipal.ReplyUrls = princ.ReplyUrls;
-                                _spPrincipals.Add(_spPrincipal);
-                            }
+                            var _creds = _spn.PasswordCredentials.FirstOrDefault();
+                            _spPrincipal.EndDate = _creds.EndDate;
+                            _spPrincipals.Add(_spPrincipal);
                         }
                         _principals = _principals.GetNextPageAsync().Result;
                     } while (_principals != null);
