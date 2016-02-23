@@ -65,12 +65,12 @@ namespace TIP.Common.Services.Principals.Internal
                             _spPrincipal.AppId = princ.AppId;
                             _spPrincipal.DisplayName = princ.DisplayName;
                             _spPrincipal.ReplyUrls = princ.ReplyUrls;
-
-                            var _creds = princ.KeyCredentials;
+          
+                            var _creds = princ.PasswordCredentials;
                             if (_creds.Count != 0)
                             {
-                                var _keyCredential = _creds.FirstOrDefault();
-                                _spPrincipal.EndDate = _keyCredential.EndDate;
+                                var _pwdCredentials = princ.PasswordCredentials.FirstOrDefault();
+                                _spPrincipal.EndDate = _pwdCredentials.EndDate;
                             }
                             _spPrincipals.Add(_spPrincipal);
                         }
