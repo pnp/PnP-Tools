@@ -32,7 +32,7 @@ Version  | Date | Comments
 1.0  | September 28, 2015 | Initial version
 1.0.1 | February 23, 2015 | Date Format 
 
-See [Change Log](docs/changelog.md) for detailed Information
+See [Change Log](docs/changelog.md) for detailed information.
 
 
 
