@@ -2,9 +2,11 @@
 
 ### Summary 
 This solution is used to display information regarding your Azure Active Directory Tenant specifically related to Service Principals that are only surfaced via PowerShell. By default, when you register an add-in with appregnew/appinv, these service principals are not displayed
-in the Azure Portal and the default expiration is 1 year. This solution will also assist you with identifying apps (add-ins) that are expired or that will be expiring soon.
+in the Azure Portal and the default expiration is 1 year. This solution will also assist you with identifying apps (add-ins) that are expired or that may be expiring soon. 
 
-![](http://i.imgur.com/I6aPpKQ.png)
+This application was built with AngularJS/MVC that is invoke a web API that is secured using Azure AD to query the Graph API.
+The application uses the Active Directory Authentication Library (ADAL) to obtain a JWT access token through the OAuth 2.0 protocol. The access token is sent to the ASP.NET 5 Web API, which authenticates the user using the OWIN OAuth Bearer Authentication middleware.
+
 
 ### Features ###
 - Dashboard that provides a visual indicator on Service Principals that are expired or that may be expiring in 30, 60, and 90 Days.
@@ -32,7 +34,23 @@ Version  | Date | Comments
 
 ### Disclaimer 
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
+
 ----------
+
+## Running the CODE
+
+### Landing Page
+
+![](http://i.imgur.com/bam7xUl.png)
+
+### All Principals Report
+
+![](http://i.imgur.com/2TR4lXL.png)
+
+### Expired Principals
+
+![](http://i.imgur.com/CjHXtA1.png)
+
 
 
 ## Set Up
@@ -77,9 +95,4 @@ To deploy the TIP solution to Azure Web Sites, you will create 1 web site with a
 ### Additonal Information	
 - [Setup Low Trust for SharePoint on-premises] (https://github.com/OfficeDev/PnP-Tools/tree/master/Scripts/SharePoint.LowTrustACS.Configuration)
 - [Replace an expiring client secret in a SharePoint Add-in] (https://msdn.microsoft.com/en-us/library/office/dn726681.aspx)
-
-
-
-
-
-
+- [Authentication Scenarios for Azure AD] (https://azure.microsoft.com/en-us/documentation/articles/active-directory-authentication-scenarios/)
