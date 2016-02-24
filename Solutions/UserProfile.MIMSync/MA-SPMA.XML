@@ -1070,7 +1070,7 @@
                     </discovery-hierarchy>
                     <password-management-enabled>
                     </password-management-enabled>
-                    <assembly-version>4.3.836.0</assembly-version>
+                    <assembly-version>4.3.1935.0</assembly-version>
                     <supports-parameters-ex>0</supports-parameters-ex>
                 </extension-config>
                 <parameter-definitions refreshSchema="0" refreshPartition="0" refreshConnectivityParameters="0" refreshGlobalParameters="0" refreshOtherParameters="0" refreshSchemaParameters="0" refreshCapabilitiesParameters="0">
