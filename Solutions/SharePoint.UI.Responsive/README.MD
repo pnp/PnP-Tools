@@ -113,7 +113,7 @@ Team Site, for the three supported rendering models.
 
 >**HERE THERE WILL BE THREE SCREENSHOTS FOR DESKTOP, TABLET, AND MOBILE**
 
-The Responsive UI is applied to the following pages of the root site of a Site Collection, as well as of any sub Site:
+The Responsive UI is applied to the following pages of the root site of a Site Collection, as well as of any sub Site (as long as you disable the "Mobile Browser View" feature):
 * Home Page
 * Web Part Pages
 * Wiki Pages
