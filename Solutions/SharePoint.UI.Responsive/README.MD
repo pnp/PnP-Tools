@@ -18,7 +18,7 @@ is more than welcome. Thus, feel free to review the code and submit any
 In order to setup the solution and to enable the Responsive UI on a target
 Site Collection, you simply need to:
 * [Download the files included in this solution](#download)
-* [Setup any software requirements](#requirements)
+* [Setup software requirements](#requirements)
 * [Execute the *Enable-SPResponsiveUI* cmdlet](#execute)
 
 If you decide to disable this Responsive UI, please refer to the section [Disable the Responsive UI](#disable)
@@ -32,7 +32,7 @@ Within the ZIP file, under the /Solutions/SharePoint.UI.Responsive folder, you w
 find all the required files.
 
 <a name="requirements"></a>
-## Setup any software requirements
+## Setup software requirements
 This solution requires the OfficeDevPnP.PowerShell commands, which you can install
 simply by following <a href="https://github.com/OfficeDev/PnP-PowerShell#installation">the instructions</a> provided 
 <a href="https://github.com/OfficeDev/PnP-PowerShell">here in the dedicate GitHub repository</a>.
