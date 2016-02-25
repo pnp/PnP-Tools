@@ -16,7 +16,7 @@ PnPResponsiveApp.responsivizeSettings = function () {
 	$(".ms-siteSettings-root .ms-linksection-level1").each(function () {
 		var self = $(this);
 		var settingsDiv = $('<div>');
-		$(settingsDiv).addClass("sppp-settingsdiv");
+		$(settingsDiv).addClass("pnp-settingsdiv");
 		$(self).find(".ms-linksection-iconCell img").appendTo(settingsDiv);
 		$(self).find(".ms-linksection-textCell").children().appendTo(settingsDiv);
 		$(settingsDiv).appendTo(settingsRoot);
@@ -49,7 +49,7 @@ PnPResponsiveApp.setUpToggling = function () {
 
 PnPResponsiveApp.init = function () {
     if (!window.jQuery) {
-        // jQuery is needed for SPPPResponsive to run, and is not fully loaded yet, try later
+        // jQuery is needed for PnP Responsive UI to run, and is not fully loaded yet, try later
         setTimeout(PnPResponsiveApp.init, 100);
     } else {
         $(function() { // only execute when DOM is fully loaded

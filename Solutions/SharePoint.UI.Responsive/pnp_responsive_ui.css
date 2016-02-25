@@ -330,7 +330,7 @@
 
 
 /* SETTINGS */
-.sppp-settingsdiv {
+.pnp-settingsdiv {
 	width: 250px;
 	display: inline-block;
 	vertical-align: top;
@@ -338,9 +338,9 @@
 	margin-right: 10px;
 	margin-bottom: 20px;
 }
-.sppp-settingsdiv:nth-child(last):after {
+.pnp-settingsdiv:nth-child(last):after {
 	clear: both;
 }
-.sppp-settingsdiv img {
+.pnp-settingsdiv img {
 	display: none;
 }
