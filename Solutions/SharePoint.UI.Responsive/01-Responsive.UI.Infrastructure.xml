@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema">
+  <pnp:Preferences Generator="OfficeDevPnP.Core, Version=2.1.1602.1, Culture=neutral, PublicKeyToken=3751622786b357c2" />
+  <pnp:Templates ID="CONTAINER-PNP-RESPONSIVE-UI-INFRASTRUCTURE">
+    <pnp:ProvisioningTemplate ID="PNP-RESPONSIVE-UI-INFRASTRUCTURE" Version="1">
+      <pnp:Files>
+        <pnp:File Src="SPO-PartnerPack.js" Folder="Style Library/SP.Responsive.UI" Overwrite="true" />
+        <pnp:File Src="sppp_responsive.css" Folder="Style Library/SP.Responsive.UI" Overwrite="true" />
+      </pnp:Files>
+    </pnp:ProvisioningTemplate>
+  </pnp:Templates>
+</pnp:Provisioning>
