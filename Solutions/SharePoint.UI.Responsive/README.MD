@@ -123,7 +123,7 @@ The Responsive UI is applied to the following pages of the root site of a Site C
 * Wiki Pages
 * Document Libraries
 * Lists
-* View All Site Contents
+* Site Contents
 * Site Settings
 
 >**Note**: We tried to do our best to properly behave with any out of the box Web Part, and we tested most of the common page definitions/layouts. However, 
