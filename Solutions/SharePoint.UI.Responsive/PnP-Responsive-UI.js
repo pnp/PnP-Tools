@@ -53,6 +53,15 @@ PnPResponsiveApp.init = function () {
         setTimeout(PnPResponsiveApp.init, 100);
     } else {
         $(function() { // only execute when DOM is fully loaded
+
+            // embedding and loading of all necessary CSS files and JS libraries
+            var currentScriptUrl = $('#PnPResponsiveUI').attr('src');
+            if (currentScriptUrl != undefined) {
+                var currentScriptBaseUrl = currentScriptUrl.substring(0, currentScriptUrl.lastIndexOf("/") + 1);
+
+                loadCSS(currentScriptBaseUrl + 'pnp_responsive_ui.css');
+            }
+
             PnPResponsiveApp.setUpToggling();
 			PnPResponsiveApp.responsivizeSettings();
 			
@@ -91,13 +100,7 @@ function loadScript(url, callback) {
 }
 
 
-// embedding and loading of all necessary CSS files and JS libraries, and initialization of responsiveness when ready
-var currentScriptUrl = $('#PnPResponsiveUI').attr('src');
-if (currentScriptUrl != undefined) {
-    var currentScriptBaseUrl = currentScriptUrl.substring(0, currentScriptUrl.lastIndexOf("/") + 1);
-
-    loadCSS(currentScriptBaseUrl + 'pnp_responsive_ui.css');
-    loadScript("//code.jquery.com/jquery-1.12.0.min.js", function() {
-        PnPResponsiveApp.init();
-    });
-}
+// embedding of jQuery, and initialization of responsiveness when ready
+loadScript("//code.jquery.com/jquery-1.12.0.min.js", function() {
+    PnPResponsiveApp.init();
+});
