@@ -35,7 +35,8 @@ Write-Host -ForegroundColor Yellow "Target Site URL: $TargetSiteUrl"
 try
 {
     Connect-SPOnline $TargetSiteUrl -Credentials $Credentials
-    Remove-SPOCustomAction -Identity "PnPResponsiveUI" -Scope Site -Force
+    $customAction = Get-SPOCustomAction -Scope Site | where { $_.Name -eq "PnPResponsiveUI" }
+    Remove-SPOCustomAction -Identity $customAction.Id -Scope Site -Force
 
     Write-Host -ForegroundColor Green "Responsive UI removal succeded"
 }
