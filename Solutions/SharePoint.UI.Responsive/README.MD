@@ -36,7 +36,7 @@ find all the required files.
 This solution requires the OfficeDevPnP.PowerShell commands, which you can install
 from the following link:
 
-* <a href="http://aka.ms/officedevpnpcmdlets15">OfficeDevPnP.PowerShell package</a>
+* <a href="http://aka.ms/officedevpnpcmdlets15">OfficeDevPnP.PowerShell v15 package</a>
 
 If you want, you can also read the following 
 <a href="https://github.com/OfficeDev/PnP-PowerShell#installation">instructions</a>
