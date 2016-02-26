@@ -111,7 +111,11 @@ The  Responsive UI supports three rendering models:
 In the following screenshots you can see a sample rendering of the Home Page of a 
 Team Site, for the three supported rendering models.
 
->**HERE THERE WILL BE THREE SCREENSHOTS FOR DESKTOP, TABLET, AND MOBILE**
+![SharePoint 2016 - Desktop Mode](http://i.imgur.com/D1rOLxv.png)
+
+![SharePoint 2016 - Tablet Mode](http://i.imgur.com/zNFKwHN.png)
+
+![SharePoint 2016 - SmartPhone Mode](http://i.imgur.com/PJPGvuP.png)
 
 The Responsive UI is applied to the following pages of the root site of a Site Collection, as well as of any sub Site (as long as you disable the "Mobile Browser View" feature):
 * Home Page
@@ -121,3 +125,19 @@ The Responsive UI is applied to the following pages of the root site of a Site C
 * Lists
 * View All Site Contents
 * Site Settings
+
+## Implementation details
+When you enable the Responsive UI, under the  cover the solution embeds - using a Site Collection level User Custom Action - a custom JavaScript file 
+(<a href="./PnP-Responsive-UI.js">PnP-Responsive-UI.js</a>), which takes care of
+loading jQuery, and embedding a custom CSS file (<a href="./pnp_responsive_ui.css">pnp_responsive_ui.css</a>) that overrides most of the native CSS styles of SharePoint 2013/2016, 
+in order to make it responsive. Moreover, the embedded JS file also handles some inner logic, for example to replace TABLE/TR/TD with DIV elements in the Site Settings page, or to
+replace the out of the box Global navigation bar and Current navigation bar with the common and well-known Bootstrap expansible menu. Overall the solution plays fairly with the content
+of the pages, mainly overriding native CSS styles and using JavaScript and DOM (Document Object Model) rebuilding only when it is really needed.
+
+If you define an infrastructural Site Collection, while enabling the Responsive UI, the PowerShell command will upload the custom JS and CSS files into the "Style Library" of that
+infrastructural Site Collection, within a sub-folder that will be created on the fly with name "SP.Responsive.UI".
+
+It is interesting to notice that the deployment phase of the solution leverages the PnP Remote Provisioning Engine. If you are interested in digging into the PnP Remote Provisioning Engine
+you can read the document <a href="https://github.com/OfficeDev/PnP-Guidance/blob/master/articles/Introducing-the-PnP-Provisioning-Engine.md">"Introducing the PnP Provisioning Engine"</a> 
+on GitHub, or you can watch the video
+<a href="https://channel9.msdn.com/blogs/OfficeDevPnP/Getting-Started-with-PnP-Provisioning-Engine">"Getting Started with PnP Provisioning Engine"</a> on Channel 9.
