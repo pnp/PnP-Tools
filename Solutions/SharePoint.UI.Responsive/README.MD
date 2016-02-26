@@ -34,8 +34,13 @@ find all the required files.
 <a name="requirements"></a>
 ## Setup software requirements
 This solution requires the OfficeDevPnP.PowerShell commands, which you can install
-simply by following <a href="https://github.com/OfficeDev/PnP-PowerShell#installation">the instructions</a> provided 
-<a href="https://github.com/OfficeDev/PnP-PowerShell">here in the dedicate GitHub repository</a>.
+from the following link:
+
+* <a href="http://aka.ms/officedevpnpcmdlets15">OfficeDevPnP.PowerShell v15 package</a>
+
+If you want, you can also read the following 
+<a href="https://github.com/OfficeDev/PnP-PowerShell#installation">instructions</a>
+for further details about installing OfficeDevPnP.PowerShell.
 
 >**Note**: Because this solution targets SharePoint 2013/2016 on-premises, you should refer to
 the v15 of the OfficeDevPnP.PowerShell commands. Nevertheless, even the v16 version, which
