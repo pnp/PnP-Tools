@@ -20,9 +20,9 @@ param
     [String]
     $InfrastructureSiteUrl,
 
-	[Parameter(Mandatory = $false, HelpMessage="Optional administration credentials")]
-	[PSCredential]
-	$Credentials
+    [Parameter(Mandatory = $false, HelpMessage="Optional administration credentials")]
+    [PSCredential]
+    $Credentials
 )
 
 # If the Infrastructure Site URL is not provided, we will fallback to the Target Site URL

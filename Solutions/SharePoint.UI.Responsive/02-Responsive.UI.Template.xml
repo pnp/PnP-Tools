@@ -17,7 +17,7 @@
 
       <pnp:Features>
         <pnp:WebFeatures>
-          <pnp:Feature Deactivate="true" ID="f41cc668-37e5-4743-b4a8-74d1db3fd8a4" Description="Mobile Browser View"/>
+          <pnp:Feature Deactivate="true" ID="d95c97f3-e528-4da2-ae9f-32b3535fbb59" Description="Mobile Browser View"/>
         </pnp:WebFeatures>
       </pnp:Features>
 
