@@ -16,12 +16,12 @@ PnPResponsiveApp.responsivizeSettings = function () {
 	$(".ms-siteSettings-root .ms-linksection-level1").each(function () {
 		var self = $(this);
 		var settingsDiv = $('<div>');
-		$(settingsDiv).addClass("pnp-settingsdiv");
-		$(self).find(".ms-linksection-iconCell img").appendTo(settingsDiv);
-		$(self).find(".ms-linksection-textCell").children().appendTo(settingsDiv);
-		$(settingsDiv).appendTo(settingsRoot);
+		settingsDiv.addClass("pnp-settingsdiv");
+		self.find(".ms-linksection-iconCell img").appendTo(settingsDiv);
+		self.find(".ms-linksection-textCell").children().appendTo(settingsDiv);
+		settingsDiv.appendTo(settingsRoot);
 	});
-	$(settingsRoot).find("table").remove();
+	settingsRoot.find("table").remove();
 }
 
 
