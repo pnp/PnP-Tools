@@ -24,13 +24,12 @@
         return service;
 
         function getAllPrincipals() {
-            logger.info('Getting all principals');
+            $log.info('Getting all principals');
             return $http.get('/api/servicePrincipals')
                .then(getAllPrincipalsComplete)
                .catch(getAllPrincipalsFailed);
 
             function getAllPrincipalsComplete(response) {
-                logger.success(controllerId, response, 'Principals');
                 return response.data;
             }
 
@@ -40,35 +39,33 @@
         }
 
         function getExpiredPrincipalsInDays(days) {
-            logger.info('Getting expired principals in ' + days );
+            $log.info('Getting expired principals in ' + days );
             return $http.get('/api/servicePrincipal/getExpired/' + days)
                 .then(getAllExpiredPrincipalsInDaysComplete)
                 .catch(getAllExpiredPrincipalsInDaysFailed);
 
             function getAllExpiredPrincipalsInDaysComplete(response) {
-                logger.success(controllerId, response, 'Expired Principals');
                 return response.data;
             }
 
             function getAllExpiredPrincipalsInDaysFailed(error) {
-                logger.error(error.data.error.message, error.data, "All ExpiredPrincipalsInDays Failed");
+                $log.error(error.data.error.message, error.data, "All ExpiredPrincipalsInDays Failed");
             }
         }
 
         function getAllExpiredPrincipals() {     
-            logger.info('Getting all expired principals');
+            $log.info('Getting all expired principals');
             return $http.get('/api/servicePrincipal/getAllExpired')
                 .then(getAllExpiredPrincipalsComplete)
                 .catch(getAllExpiredPrincipalsFailed);
 
             function getAllExpiredPrincipalsComplete(response) {
-                logger.success(controllerId, response, 'Expired Principals');
                 return response.data;
             }
 
             function getAllExpiredPrincipalsFailed(error) {
                 //message,data, title
-                logger.error(error.data.error.message, error.data, "All ExpiredPrincipals Failed");
+                $log.error(error.data.error.message, error.data, "All ExpiredPrincipals Failed");
             }
         }
 

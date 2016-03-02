@@ -54,8 +54,6 @@ body {
 }
 
 .main-footer {
-      position:absolute;
-      bottom: 0;
       background: #fff;
       width: 100%;
       padding: 15px;

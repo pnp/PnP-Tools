@@ -22,18 +22,17 @@
 		return service;
 
 		function getTenantInformation() {
-			logger.info('Getting Tenant Information');
+		    $log.info('Getting Tenant Information');
 			return $http.get('/api/tenant')
                .then(getTenantInfoComplete)
                .catch(getTenantInfoFailed);
 
 		    function getTenantInfoComplete(response) {
-                logger.success(controllerId, response, 'TenantInfo');
-		        return response.data;
+                return response.data;
 			}
 
 		    function getTenantInfoFailed(error) {
-		        logger.error(error.data.error.message, error.data, "Get TenantInfo Failed");
+		        $log.error(error.data.error.message, error.data, "Get TenantInfo Failed");
 			}
 		}
 

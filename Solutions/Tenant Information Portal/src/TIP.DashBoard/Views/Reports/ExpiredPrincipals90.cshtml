@@ -12,7 +12,7 @@
             </h1>
             <div class="alert alert-success alert-dismissable"  ng-show="!vm.getPrincipalCount()">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <strong>{{ 'NO_PRINCIPALS_EXPIRED_TEXT' | translate }}</strong>
+                <strong>{{ 'NOTIFICATON_NO_EXPIRED_PRINCIPALS_TEXT' | translate }}</strong>
             </div>
             <div class="alert alert-warning alert-dismissable" ng-show="vm.getPrincipalCount()">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -41,7 +41,7 @@
             <div class="box box-info">
                 <div class="box-header with-border">
                     <i class="fa fa fa-database"></i>
-                    <h3 class="box-title">{{ 'APPLICATION_PRINCIPALS_TEXT' | translate }}</h3>
+                    <h3 class="box-title">{{ 'SERVICE_PRINCIPALS_TEXT' | translate }}</h3>
                     <h3 class="panel-title pull-right">
                         <a href="">
                             <i class="fa fa-file-excel-o fa-align-right"

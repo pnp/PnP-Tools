@@ -1,7 +1,13 @@
 # Change Log
 
-## Version 1.0.1
+## Version 1.1 
+* Dashboard controller refractoring and priming the promises
+* Added Dashboard chart labels translation
+* Refactoring of JavaScript logging
+* Add Azure Applications expiring
+* TODO - Add  to About me expiring
 
+## Version 1.0.1
 * Formatted JSON Dates in the UX
 
 ## Version 1.0.0

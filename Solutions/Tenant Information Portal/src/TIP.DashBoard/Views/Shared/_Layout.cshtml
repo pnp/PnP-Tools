@@ -32,6 +32,18 @@
                             <a href=@Url.Action("Index", "Home")><i class="fa fa-home fa-fw"></i>{{ 'HOME_TEXT' | translate }} </a>
                         </li>
                         <li>
+                            <a href="#"><i class="fa fa-sitemap fa-fw"></i> {{ 'APPLICATIONS_TEXT' | translate }} <span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href=@Url.Action("Applications", "Reports")>{{ 'REPORTS_ALL_APPLICATIONS_TEXT' | translate }} </a>
+                                </li>
+                                <li>
+                                    <a href=@Url.Action("ExpiredApplications", "Reports")>{{ 'EXPIRED_APPLICATIONS_TEXT' | translate }} </a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> {{ 'SERVICEPRINCIPALS_TEXT' | translate }} <span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                     <li>
@@ -55,6 +67,7 @@
                         <li>
                             <a href=@Url.Action("About", "Home")><i class="fa fa fa-fw fa-info"></i>{{ 'ABOUT_TEXT' | translate }} </a>
                         </li>
+            
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
@@ -65,12 +78,12 @@
             @RenderBody()
         </div> <!-- /#page-wrapper -->
         <!-- Footer -->
-        @*<footer class="main-footer">
+        <footer class="main-footer">
             <!-- To the right -->
-            <div class="pull-right hidden-xs">V1.0 </div>
+            <div class=" hidden-xs">V1.0 </div>
             <!-- Default to the left -->
             {{ 'COPYRIGHT_TEXT' | translate }} &copy; {{ 'COPYRIGHT_COMPANY_TEXT' | translate }}
-        </footer>*@
+        </footer>
      </div> <!---./wrapper-->
 
   

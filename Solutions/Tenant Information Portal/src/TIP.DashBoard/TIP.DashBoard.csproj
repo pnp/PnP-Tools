@@ -205,6 +205,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Api\ApplicationsController.cs" />
     <Compile Include="Controllers\Api\ServicePrincipalController.cs" />
     <Compile Include="Controllers\Api\TenantController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -288,6 +289,8 @@
     <Content Include="Scripts\angular-ui\ui-bootstrap.min.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\app\applications\application.controller.js" />
+    <Content Include="Scripts\app\applications\application.module.js" />
     <Content Include="Scripts\app\common\chart\angular-chart.css" />
     <Content Include="Scripts\app\common\chart\angular-chart.js" />
     <Content Include="Scripts\app\common\chart\angular-chart.min.css" />
@@ -300,6 +303,7 @@
     <Content Include="Scripts\app\common\excelExport\json-export-excel.js" />
     <Content Include="Scripts\app\common\spinners\angular-spinner.js" />
     <Content Include="Scripts\app\common\spinners\spin.min.js" />
+    <Content Include="Scripts\app\core\application.services.js" />
     <Content Include="Scripts\app\core\constants.js" />
     <Content Include="Scripts\app\core\core.module.js" />
     <Content Include="Scripts\app\dashboard\dashboard.controller.js" />
@@ -310,6 +314,7 @@
     <Content Include="Scripts\app\core\principal.services.js" />
     <Content Include="Scripts\app\app.module.js" />
     <Content Include="Scripts\app\principals\principal.controller.js" />
+    <Content Include="Scripts\app\reports\reports.apps.expired.controller.js" />
     <Content Include="Scripts\app\reports\reports.allprincipals.controller.js" />
     <Content Include="Scripts\app\reports\reports.expired90.controller.js" />
     <Content Include="Scripts\app\reports\reports.expired60.controller.js" />
@@ -334,6 +339,7 @@
     <Content Include="Scripts\app\core\tenant.service.js" />
     <None Include="Properties\PublishProfiles\adapps-tenantinfoportal - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\adapps-tenantinfoportal - Web Deploy.pubxml" />
+    <Content Include="Scripts\app\reports\reports.apps.all.controller.js" />
     <None Include="Scripts\jquery-2.2.0.intellisense.js" />
     <Content Include="Scripts\foundation.min.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
@@ -1147,6 +1153,8 @@
     <Content Include="Views\Reports\Principals.cshtml" />
     <Content Include="Views\Home\Error.cshtml" />
     <Content Include="Scripts\version.json" />
+    <Content Include="Views\Reports\Applications.cshtml" />
+    <Content Include="Views\Reports\ExpiredApplications.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

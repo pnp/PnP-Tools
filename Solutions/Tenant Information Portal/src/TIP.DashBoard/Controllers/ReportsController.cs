@@ -20,8 +20,6 @@
 //SOFTWARE.
 // ------------------------------------------------------------------------------
 
-
-
 using System.Web.Mvc;
 
 namespace TIP.Dashboard.Controllers
@@ -96,6 +94,34 @@ namespace TIP.Dashboard.Controllers
 
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="angularController"></param>
+        /// <returns></returns>
+        public ActionResult Applications(string id, string angularController)
+        {
+            ViewBag.AngularControllerName = angularController;
+            ViewBag.ActionName = id;
+            return View();
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="angularController"></param>
+        /// <returns></returns>
+        public ActionResult ExpiredApplications(string id, string angularController)
+        {
+            ViewBag.AngularControllerName = angularController;
+            ViewBag.ActionName = id;
+            return View();
+
+        }
 
     }
 }

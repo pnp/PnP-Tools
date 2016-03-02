@@ -85,6 +85,12 @@
     <Compile Include="Exceptions\ErrorResponse.cs" />
     <Compile Include="Exceptions\TIPException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Applications\ApplicationFactory.cs" />
+    <Compile Include="Services\Applications\IApplicationInformation.cs" />
+    <Compile Include="Services\Applications\IApplicationManager.cs" />
+    <Compile Include="Services\Applications\Internal\ApplicationInformation.cs" />
+    <Compile Include="Services\Applications\Internal\ApplicationManager.cs" />
+    <Compile Include="Services\Applications\IApplicationFactory.cs" />
     <Compile Include="Services\Principals\IAzureServicePrincipal.cs" />
     <Compile Include="Services\Principals\Internal\ServicePrincipal.cs" />
     <Compile Include="Services\Principals\Internal\ServicePrincipalManager.cs" />
