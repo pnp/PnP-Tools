@@ -59,6 +59,7 @@ PnPResponsiveApp.init = function () {
             if (currentScriptUrl != undefined) {
                 var currentScriptBaseUrl = currentScriptUrl.substring(0, currentScriptUrl.lastIndexOf("/") + 1);
 
+                addViewport();
                 loadCSS(currentScriptBaseUrl + 'pnp_responsive_ui.css');
             }
 
@@ -97,6 +98,13 @@ function loadScript(url, callback) {
     script.onreadystatechange = callback;
     script.onload = callback;
     head.appendChild(script);
+}
+function addViewport() {
+    var head = document.getElementsByTagName('head')[0];
+    var viewport = document.createElement('meta');
+    viewport.name= "viewport";
+    viewport.content= "width=device-width, initial-scale=1"; 
+    head.appendChild(viewport);
 }
 
 
