@@ -5,7 +5,7 @@ The solution leverages some JavaScript embedding and CSS overriding,
 in order to make responsive the out of the box UI of a classic Team Site (STS#0).
 
 If you simply want to have an overview of this solution, you can read the
-<a href="#overview">following section</a>.
+<a href="#overview">following section</a>. 
 
 ![](http://i.imgur.com/I2VYM3a.png)
  
