@@ -21,6 +21,8 @@ Site Collection, you simply need to:
 * [Setup software requirements](#requirements)
 * [Execute the *Enable-SPResponsiveUI* cmdlet](#execute)
 
+>**Note**: If you are using SharePoint 2013 environment, setup scripts are assuming that you are running at least 2015 April CU.
+ 
 If you decide to disable this Responsive UI, please refer to the section [Disable the Responsive UI](#disable)
 
 <a name="download"></a>
@@ -44,7 +46,8 @@ for further details about installing OfficeDevPnP.PowerShell.
 
 >**Note**: Because this solution targets SharePoint 2013/2016 on-premises, you should refer to
 the v15 of the OfficeDevPnP.PowerShell commands. Nevertheless, even the v16 version, which
-targets SharePoint Online, is viable to setup this solution.
+targets SharePoint Online, is viable to setup this solution. If you are running SharePoint 2013 environment, PowerShell CmdLets used by the automation scripts have dependency on April 2015 CU to be installed on server side. Technically this is not required for the Responsive UI elements, but for the automation.
+
 
 <a name="execute"></a>
 ## Execute the *Enable-SPResponsiveUI* cmdlet
