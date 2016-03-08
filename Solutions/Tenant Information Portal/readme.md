@@ -30,10 +30,10 @@ Tenant Information Portal (TIP) | Frank Marasco (Microsoft)
 Version  | Date | Comments
 ---------| -----| --------
 1.0  | September 28, 2015 | Initial version
-1.0.1 | February 23, 2015 | Date Format 
+1.0.1 | February 23, 2016 | Date Format 
+1.1 | March 7, 2016 | Azure AD Applications Functionality
 
 See [Change Log](docs/changelog.md) for detailed information.
-
 
 
 ### Disclaimer 
@@ -45,7 +45,12 @@ See [Change Log](docs/changelog.md) for detailed information.
 
 ### Landing Page
 
-![](http://i.imgur.com/bam7xUl.png)
+![](http://i.imgur.com/gpbNNg8.png)
+
+### Expired Applications Report
+
+![](http://i.imgur.com/tEldYW7.png)
+
 
 ### All Principals Report
 
