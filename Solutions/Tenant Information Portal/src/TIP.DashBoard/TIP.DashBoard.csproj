@@ -340,8 +340,6 @@
     <Content Include="Scripts\angular-aria.min.js.map" />
     <Content Include="Scripts\angular-animate.min.js.map" />
     <Content Include="Scripts\app\core\tenant.service.js" />
-    <None Include="Properties\PublishProfiles\adapps-tenantinfoportal - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\adapps-tenantinfoportal - Web Deploy.pubxml" />
     <Content Include="Scripts\app\reports\reports.apps.all.controller.js" />
     <Content Include="Scripts\app\reports\reports.apps.expired30.js" />
     <None Include="Scripts\jquery-2.2.0.intellisense.js" />

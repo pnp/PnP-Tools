@@ -26,7 +26,6 @@ using Microsoft.Online.Applications.Core.Configuration;
 using System;
 using System.Net;
 using System.Web.Http;
-using TIP.Common;
 using TIP.Common.Configuration;
 using TIP.Common.Exceptions;
 using TIP.Common.Services.Principals;

@@ -4,8 +4,8 @@
 * Dashboard controller refractoring and priming the promises
 * Added Dashboard chart labels translation
 * Refactoring of JavaScript logging
-* Add Azure Applications expiring
-* TODO - Add  to About me expiring
+* Added Azure Applications expiring
+TODO Add About Me Expiring
 
 ## Version 1.0.1
 * Formatted JSON Dates in the UX
