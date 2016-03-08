@@ -16,7 +16,7 @@ The application uses the Active Directory Authentication Library (ADAL) to obtai
 ### Applies to 
 -  Office 365 Multi-tenant (MT)
 -  Office 365 Dedicated (D)
--  SharePoint 2013/2016 on-premises with an low trust established 
+-  SharePoint 2013/2016 on-premises with low trust established 
 
 ### Prerequisites 
 - An Azure subscription (a free trial is sufficient). If you don't already have an Azure subscription, you may get a free subscription by signing up at [https://azure.microsoft.com](https://azure.microsoft.com).  All of the Azure AD features used in this application are available free of charge.

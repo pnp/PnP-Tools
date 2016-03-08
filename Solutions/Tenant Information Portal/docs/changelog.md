@@ -5,7 +5,6 @@
 * Added Dashboard chart labels translation
 * Refactoring of JavaScript logging
 * Added Azure Applications expiring
-TODO Add About Me Expiring
 
 ## Version 1.0.1
 * Formatted JSON Dates in the UX
