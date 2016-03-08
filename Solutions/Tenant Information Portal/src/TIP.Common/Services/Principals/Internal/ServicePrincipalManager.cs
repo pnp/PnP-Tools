@@ -72,6 +72,13 @@ namespace TIP.Common.Services.Principals.Internal
                                 var _pwdCredentials = princ.PasswordCredentials.FirstOrDefault();
                                 _spPrincipal.EndDate = _pwdCredentials.EndDate;
                             }
+
+                            var _keyCreds = princ.KeyCredentials;
+                            if(_keyCreds.Count != 0)
+                            {
+                                var _keyCredentials = princ.KeyCredentials.FirstOrDefault();
+                                _spPrincipal.EndDate = _keyCredentials.EndDate;
+                            }
                             _spPrincipals.Add(_spPrincipal);
                         }
 
@@ -102,8 +109,8 @@ namespace TIP.Common.Services.Principals.Internal
                 {
                     do
                     {
-                        List<IServicePrincipal> _allSpns = _principals.CurrentPage.Where(pwdcred => pwdcred.PasswordCredentials.Count > 0).ToList();
-                        var _expiredPrincipals = _allSpns.Where(kc => kc.PasswordCredentials.FirstOrDefault().EndDate < DateTime.Now).ToList();
+                        List<IServicePrincipal> _allSpns = _principals.CurrentPage.Where(pwdcred => pwdcred.KeyCredentials.Count > 0).ToList();
+                        var _expiredPrincipals = _allSpns.Where(kc => kc.KeyCredentials.FirstOrDefault().EndDate < DateTime.Now).ToList();
 
                         foreach (IServicePrincipal _spn in _expiredPrincipals)
                         {
@@ -113,7 +120,7 @@ namespace TIP.Common.Services.Principals.Internal
                             _spPrincipal.DisplayName = _spn.DisplayName;
                             _spPrincipal.ReplyUrls = _spn.ReplyUrls;
                             
-                            var _creds = _spn.PasswordCredentials.FirstOrDefault();
+                            var _creds = _spn.KeyCredentials.FirstOrDefault();
                             _spPrincipal.EndDate = _creds.EndDate;
                             _spPrincipals.Add(_spPrincipal);
                         }
