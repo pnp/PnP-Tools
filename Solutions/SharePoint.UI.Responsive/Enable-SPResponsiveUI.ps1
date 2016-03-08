@@ -51,7 +51,7 @@ try
     Connect-SPOnline $TargetSiteUrl -Credentials $Credentials
     Apply-SPOProvisioningTemplate -Path .\02-Responsive.UI.Template.xml -Handlers CustomActions,Features -Parameters @{"InfrastructureSiteUrl"=$InfrastructureSiteUrl}
 
-    Write-Host -ForegroundColor Green "Responsive UI application succeded"
+    Write-Host -ForegroundColor Green "Responsive UI application succeeded"
 }
 catch
 {
