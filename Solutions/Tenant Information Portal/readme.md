@@ -1,8 +1,7 @@
 # Tenant Information Portal 
 
 ### Summary 
-This solution is used to display information regarding your Azure Active Directory Tenant specifically related to Service Principals that are only surfaced via PowerShell. By default, when you register an add-in with appregnew/appinv, these service principals are not displayed
-in the Azure Portal and the default expiration is 1 year. This solution will also assist you with identifying apps (add-ins) that are expired or that may be expiring soon. 
+This solution is used to display information regarding your Azure Active Directory Tenant specifically related to Service Principals that are only surfaced via PowerShell and Azure Applications in a single consolidated view. When you register an add-in with appregnew/appinv, these service principals are not displayed in the Azure Portal and the default expiration is 1 year. This solution will also assist you with identifying when the service principals and applications that are expired or may be expiring soon. 
 
 This application was built using AngularJS/MVC that is invoking a web API that is secured using Azure AD to query the Graph API.
 The application uses the Active Directory Authentication Library (ADAL) to obtain a JWT access token through the OAuth 2.0 protocol. The access token is sent to the ASP.NET 5 Web API, which authenticates the user using the OWIN OAuth Bearer Authentication middleware.
