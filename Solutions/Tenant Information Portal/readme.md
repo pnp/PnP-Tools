@@ -7,6 +7,10 @@ This application was built using AngularJS/MVC that is invoking a web API that i
 The application uses the Active Directory Authentication Library (ADAL) to obtain a JWT access token through the OAuth 2.0 protocol. The access token is sent to the ASP.NET 5 Web API, which authenticates the user using the OWIN OAuth Bearer Authentication middleware.
 
 
+![](http://i.imgur.com/I2VYM3a.png)
+ 
+This is open source repository, so feedback, issues and pull requests are absolutely welcome.
+
 ### Features ###
 - Dashboard that provides a visual indicator on Service Principals that are expired or that may be expiring in 30, 60, and 90 Days.
 - Displays/Exports all service principals that are registered within your Azure Active Directory Tenant.
