@@ -11,7 +11,7 @@
     function ReportsAppsExpired90Controller($q, ApplicationDataService, usSpinnerService, logger, $log, $timeout) {
         var vm = this;
         vm.applications = [];
-        vm.pageSize = 50;
+        vm.pageSize = 10;
         vm.query = "";
         vm.currentPage = 1;
         vm.loading = false;

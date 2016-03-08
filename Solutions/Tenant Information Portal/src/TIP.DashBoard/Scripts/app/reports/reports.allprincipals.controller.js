@@ -11,7 +11,7 @@
     function ReportsAllPrincipalsController($q, PrincipalDataService, usSpinnerService, logger, $log, $timeout) {
         var vm = this;
         vm.allPrincipals = [];
-        vm.pageSize = 50;
+        vm.pageSize = 10;
         vm.query = "";
         vm.currentPage = 1;
         vm.loading = false;
