@@ -1,9 +1,17 @@
-﻿<section id="dashboard-view" data-ng-controller="ReportsAllPrincipalsController as vm" ng-app="app">
+﻿<section id="dashboard-view" data-ng-controller="ReportsAppsExpired90Controller as vm" ng-app="app">
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">
-                {{ 'ALL_PRINCIPALS_TEXT' | translate }}
+                {{ 'EXPIRED_APPLICATIONS_90_TEXT' | translate }}
             </h1>
+            <div class="alert alert-success alert-dismissable" ng-show="!vm.getExpiredApplicationCount()">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>{{ 'NOTIFICATION_NO_EXPIRED_APPLICATIONS_TEXT' | translate }}</strong>
+            </div>
+            <div class="alert alert-warning alert-dismissable" ng-show="vm.getExpiredApplicationCount()">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <i class="fa fa-exclamation-triangle"></i> <strong>{{ 'NOTIFICATION_APPS_WARNING_EXPIRING_TEXT' | translate }}</strong>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -24,17 +32,17 @@
     <div class="spacer"></div>
     <div class="row">
         <div class="col-lg-12">
-            <div class="box box-info">
+            <div class="box box-warning">
                 <div class="box-header with-border">
                     <i class="fa fa fa-database"></i>
-                    <h3 class="box-title">{{ 'SERVICE_PRINCIPALS_TEXT' | translate }}</h3>
+                    <h3 class="box-title">{{ 'APPLICATIONS_TEXT' | translate }}</h3>
                     <h3 class="panel-title pull-right">
                         <a href="">
                             <i class="fa fa-file-excel-o fa-align-right"
                                title="{{ 'EXPORT_CSV_TEXT' | translate }}"
-                               ng-json-export-excel data="vm.allPrincipals"
-                               ng-disabled="vm.allPrincipals"
-                               ng-model="vm.allPrincipals"
+                               ng-json-export-excel data="vm.applications"
+                               ng-disabled="vm.applications"
+                               ng-model="vm.applications"
                                report-fields="vm.reportFields"
                                filename="vm.csvExportFileName">
                             </i>
@@ -58,13 +66,13 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr dir-paginate="principal in vm.allPrincipals | filter:vm.query | itemsPerPage: vm.pageSize" current-page="vm.currentPage">
-                                            <td>{{ principal.displayName }}</td>
-                                            <td>{{ principal.appId }}</td>
+                                        <tr dir-paginate="app in vm.applications | filter:vm.query | itemsPerPage: vm.pageSize" current-page="vm.currentPage">
+                                            <td>{{ app.displayName }}</td>
+                                            <td>{{ app.appId }}</td>
                                             <td>
                                                 <table id="table-principalName">
                                                     <thead>
-                                                        <tr ng-repeat="name in principal.principalNames">
+                                                        <tr ng-repeat="name in app.principalNames">
                                                             <td>
                                                                 {{name}}
                                                             </td>
@@ -72,14 +80,14 @@
                                                     </thead>
                                                 </table>
                                             </td>
-                                            <td>{{ principal.endDate |  date:"MM/dd/yyyy h:mma" }}</td>
+                                            <td>{{ app.endDate |  date:"MM/dd/yyyy h:mma" }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         <div class="text-center">
-                            <dir-pagination-controls boundary-links="true"  template-url="/Scripts/app/directives/directives.dirPagination.tpl.html"></dir-pagination-controls>
+                            <dir-pagination-controls boundary-links="true" template-url="/Scripts/app/directives/directives.dirPagination.tpl.html"></dir-pagination-controls>
                         </div>
                     </div>
                 </div>
@@ -88,4 +96,6 @@
     </div>
 </section>
 
+@section scripts {
 
+}

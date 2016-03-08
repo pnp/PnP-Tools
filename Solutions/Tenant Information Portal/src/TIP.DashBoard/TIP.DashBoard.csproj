@@ -206,6 +206,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\ApplicationsController.cs" />
+    <Compile Include="Controllers\Api\MeController.cs" />
     <Compile Include="Controllers\Api\ServicePrincipalController.cs" />
     <Compile Include="Controllers\Api\TenantController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -316,10 +317,12 @@
     <Content Include="Scripts\app\principals\principal.controller.js" />
     <Content Include="Scripts\app\reports\reports.apps.expired.controller.js" />
     <Content Include="Scripts\app\reports\reports.allprincipals.controller.js" />
+    <Content Include="Scripts\app\reports\reports.apps.expired90.js" />
     <Content Include="Scripts\app\reports\reports.expired90.controller.js" />
     <Content Include="Scripts\app\reports\reports.expired60.controller.js" />
     <Content Include="Scripts\app\reports\reports.expired30.controller.js" />
     <Content Include="Scripts\app\core\config.js" />
+    <Content Include="Scripts\app\reports\reports.apps.expired60.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\plugins\chart\Chart.js" />
@@ -340,6 +343,7 @@
     <None Include="Properties\PublishProfiles\adapps-tenantinfoportal - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\adapps-tenantinfoportal - Web Deploy.pubxml" />
     <Content Include="Scripts\app\reports\reports.apps.all.controller.js" />
+    <Content Include="Scripts\app\reports\reports.apps.expired30.js" />
     <None Include="Scripts\jquery-2.2.0.intellisense.js" />
     <Content Include="Scripts\foundation.min.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
@@ -1155,9 +1159,13 @@
     <Content Include="Scripts\version.json" />
     <Content Include="Views\Reports\Applications.cshtml" />
     <Content Include="Views\Reports\ExpiredApplications.cshtml" />
+    <Content Include="Views\Reports\ExpiredApplications30.cshtml" />
+    <Content Include="Views\Reports\ExpiredApplications60.cshtml" />
+    <Content Include="Views\Reports\ExpiredApplications90.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Scripts\plugins\jquery\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

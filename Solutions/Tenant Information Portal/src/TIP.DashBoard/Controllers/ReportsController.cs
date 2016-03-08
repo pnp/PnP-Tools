@@ -27,25 +27,12 @@ namespace TIP.Dashboard.Controllers
     [Authorize]
     public class ReportsController : Controller
     {
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="angularController"></param>
-        /// <returns></returns>
         public ActionResult ExpiredPrincipals(string id, string angularController)
         {
             ViewBag.AngularControllerName = angularController;
             ViewBag.ActionName = id;
             return View();
         }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="angularController"></param>
-        /// <returns></returns>
 
         public ActionResult ExpiredPrincipals30(string id, string angularController)
         {
@@ -54,12 +41,6 @@ namespace TIP.Dashboard.Controllers
             return View();
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="angularController"></param>
-        /// <returns></returns>
         public ActionResult ExpiredPrincipals60(string id, string angularController)
         {
             ViewBag.AngularControllerName = angularController;
@@ -67,12 +48,6 @@ namespace TIP.Dashboard.Controllers
             return View();
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="angularController"></param>
-        /// <returns></returns>
         public ActionResult ExpiredPrincipals90(string id, string angularController)
         {
             ViewBag.AngularControllerName = angularController;
@@ -80,12 +55,6 @@ namespace TIP.Dashboard.Controllers
             return View();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="angularController"></param>
-        /// <returns></returns>
         public ActionResult Principals(string id, string angularController)
         {
             ViewBag.AngularControllerName = angularController;
@@ -94,13 +63,6 @@ namespace TIP.Dashboard.Controllers
 
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="angularController"></param>
-        /// <returns></returns>
         public ActionResult Applications(string id, string angularController)
         {
             ViewBag.AngularControllerName = angularController;
@@ -109,18 +71,33 @@ namespace TIP.Dashboard.Controllers
 
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="angularController"></param>
-        /// <returns></returns>
         public ActionResult ExpiredApplications(string id, string angularController)
         {
             ViewBag.AngularControllerName = angularController;
             ViewBag.ActionName = id;
             return View();
 
+        }
+
+        public ActionResult ExpiredApplications30(string id, string angularController)
+        {
+            ViewBag.AngularControllerName = angularController;
+            ViewBag.ActionName = id;
+            return View();
+        }
+
+        public ActionResult ExpiredApplications60(string id, string angularController)
+        {
+            ViewBag.AngularControllerName = angularController;
+            ViewBag.ActionName = id;
+            return View();
+        }
+
+        public ActionResult ExpiredApplications90(string id, string angularController)
+        {
+            ViewBag.AngularControllerName = angularController;
+            ViewBag.ActionName = id;
+            return View();
         }
 
     }

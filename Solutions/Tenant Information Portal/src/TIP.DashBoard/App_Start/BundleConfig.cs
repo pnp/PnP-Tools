@@ -98,7 +98,10 @@ namespace TIP.Dashboard
                    "~/Scripts/app/reports/reports.expired60.controller.js",
                    "~/Scripts/app/reports/reports.expired90.controller.js",
                    "~/Scripts/app/reports/reports.apps.all.controller.js",
-                   "~/Scripts/app/reports/reports.apps.expired.controller.js"));
+                   "~/Scripts/app/reports/reports.apps.expired.controller.js",
+                   "~/Scripts/app/reports/reports.apps.expired30.js",
+                    "~/Scripts/app/reports/reports.apps.expired60.js",
+                     "~/Scripts/app/reports/reports.apps.expired90.js"));
 
             //Angular app.core
             bundles.Add(new ScriptBundle("~/bundles/appCore").Include(

@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace TIP.Common.Services.Applications.Internal
 {
@@ -13,7 +11,7 @@ namespace TIP.Common.Services.Applications.Internal
         private string _appID;
         private string _displayName;
         private DateTime? _endDate;
-        private IList<string> _principalNames = new List<string>();
+        private IList<string> _identifierUris = new List<string>();
         private IList<string> _replyUrls = new List<string>();
         #endregion
 
@@ -48,6 +46,26 @@ namespace TIP.Common.Services.Applications.Internal
                 return this._endDate;
             }
             set { this._endDate = value; }
+        }
+
+        [JsonProperty(PropertyName = "replyUrls")]
+        public IList<string> ReplyUrls
+        {
+            get
+            {
+                return this._replyUrls;
+            }
+            internal set { this._replyUrls = value; }
+        }
+
+        [JsonProperty(PropertyName = "identifierUris")]
+        public IList<string> IdentifierUris
+        {
+            get
+            {
+                return this._identifierUris;
+            }
+            internal set { this._identifierUris = value; }
         }
     }
 }

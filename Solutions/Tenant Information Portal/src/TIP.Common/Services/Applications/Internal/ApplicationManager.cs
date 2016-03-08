@@ -55,9 +55,15 @@ namespace TIP.Common.Services.Applications.Internal
                 {
                     foreach(var _azureApp in _azureApplications.CurrentPage.ToList())
                     {
-                        var _appInfo = new ApplicationInformation();
-                        _appInfo.AppId = _azureApp.AppId;
-                        _appInfo.DiplayName = _azureApp.DisplayName;
+                        var _appInfo = new ApplicationInformation
+                        {
+                            
+                            AppId = _azureApp.AppId,
+                            DiplayName = _azureApp.DisplayName,
+                            ReplyUrls = _azureApp.ReplyUrls,
+                            IdentifierUris = _azureApp.IdentifierUris
+                        };
+                  
                        
                         if(_azureApp.PasswordCredentials.Count != 0) {
                             _appInfo.EndDate = _azureApp.PasswordCredentials.FirstOrDefault().EndDate;
@@ -96,9 +102,15 @@ namespace TIP.Common.Services.Applications.Internal
 
                     foreach (var _expiredApp in _expiredApps)
                     {
-                        var _appInfo = new ApplicationInformation();
-                        _appInfo.AppId = _expiredApp.AppId;
-                        _appInfo.DiplayName = _expiredApp.DisplayName;
+
+                        var _appInfo = new ApplicationInformation
+                        {
+
+                            AppId = _expiredApp.AppId,
+                            DiplayName = _expiredApp.DisplayName,
+                            ReplyUrls = _expiredApp.ReplyUrls,
+                            IdentifierUris = _expiredApp.IdentifierUris
+                        };
 
                         if (_expiredApp.PasswordCredentials.Count != 0)
                         {
@@ -138,7 +150,9 @@ namespace TIP.Common.Services.Applications.Internal
                         _appInfo = new ApplicationInformation
                         {
                             AppId = _azureApplication.AppId,
-                            DiplayName = _azureApplication.DisplayName
+                            DiplayName = _azureApplication.DisplayName,
+                            ReplyUrls = _azureApplication.ReplyUrls,
+                            IdentifierUris = _azureApplication.IdentifierUris
                         };
 
                         if (_azureApplication.PasswordCredentials.Count != 0)
@@ -181,9 +195,13 @@ namespace TIP.Common.Services.Applications.Internal
                     var _expiredApps = _apps.Where(x => x.PasswordCredentials.FirstOrDefault().EndDate >= DateTime.Now  &&  x.PasswordCredentials.FirstOrDefault().EndDate <= DateTime.Now.AddDays(numberOfDays)).ToList();
                     foreach (var _expiredApp in _expiredApps)
                     {
-                        var _appInfo = new ApplicationInformation();
-                        _appInfo.AppId = _expiredApp.AppId;
-                        _appInfo.DiplayName = _expiredApp.DisplayName;
+                        var _appInfo = new ApplicationInformation
+                        {
+                            AppId = _expiredApp.AppId,
+                            DiplayName = _expiredApp.DisplayName,
+                            ReplyUrls = _expiredApp.ReplyUrls,
+                            IdentifierUris = _expiredApp.IdentifierUris
+                        };
 
                         if (_expiredApp.PasswordCredentials.Count != 0)
                         {

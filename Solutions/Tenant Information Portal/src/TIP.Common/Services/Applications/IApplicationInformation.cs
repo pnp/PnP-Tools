@@ -23,5 +23,8 @@ namespace TIP.Common.Services.Applications
         /// </summary>
         DateTime? EndDate { get; }
 
+        IList<string> ReplyUrls { get; }
+
+        IList<string> IdentifierUris { get; }
     }
 }

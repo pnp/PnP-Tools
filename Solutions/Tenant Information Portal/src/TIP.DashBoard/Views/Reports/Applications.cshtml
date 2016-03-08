@@ -32,9 +32,9 @@
                         <a href="">
                             <i class="fa fa-file-excel-o fa-align-right"
                                title="{{ 'EXPORT_CSV_TEXT' | translate }}"
-                               ng-json-export-excel data="vm.allPrincipals"
-                               ng-disabled="vm.allPrincipals"
-                               ng-model="vm.allPrincipals"
+                               ng-json-export-excel data="vm.applications"
+                               ng-disabled="vm.applications"
+                               ng-model="vm.applications"
                                report-fields="vm.reportFields"
                                filename="vm.csvExportFileName">
                             </i>
@@ -51,16 +51,28 @@
                                 <table id="table-principals" class="table table-bordered table-condensed f11">
                                     <thead>
                                         <tr>
-                                            <th>{{ 'PRINCIPAL_DISPLAY_NAME_TEXT' | translate }} </th>
-                                            <th>{{ 'PRINCIPAL_APPID_TEXT' | translate }} </th>
-                                            <th>{{ 'PRINCIPAL_EXPIRED_DATE_TEXT' | translate }} </th>
+                                            <th>{{ 'AAD_DISPLAY_NAME' | translate }} </th>
+                                            <th>{{ 'AAD_APPID_TEXT' | translate }} </th>
+                                            <th>{{ 'AAD_REPLY_URLS' | translate }} </th>
+                                            <th>{{ 'AAD_END_DATE' | translate }} </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr dir-paginate="principal in vm.allPrincipals | filter:vm.query | itemsPerPage: vm.pageSize" current-page="vm.currentPage">
-                                            <td>{{ principal.displayName }}</td>
-                                            <td>{{ principal.appId }}</td>
-                                            <td>{{ principal.endDate |  date:"MM/dd/yyyy h:mma" }}</td>
+                                        <tr dir-paginate="app in vm.applications | filter:vm.query | itemsPerPage: vm.pageSize" current-page="vm.currentPage">
+                                            <td>{{ app.displayName }}</td>
+                                            <td>{{ app.appId }}</td>
+                                            <td>
+                                                <table id="table-principalName">
+                                                    <thead>
+                                                        <tr ng-repeat="name in app.replyUrls">
+                                                            <td>
+                                                                {{name}}
+                                                            </td>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </td>
+                                            <td>{{ app.endDate |  date:"MM/dd/yyyy h:mma" }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

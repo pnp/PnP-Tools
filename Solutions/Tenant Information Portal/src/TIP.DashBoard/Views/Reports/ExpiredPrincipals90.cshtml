@@ -1,10 +1,4 @@
-﻿
-@{
-    ViewBag.Title = "ExpiredPrincipals90";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-<section id="dashboard-view" data-ng-controller="ReportsExpired90Controller as vm" ng-app="app">
+﻿<section id="dashboard-view" data-ng-controller="ReportsExpired90Controller as vm" ng-app="app">
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">
@@ -12,7 +6,7 @@
             </h1>
             <div class="alert alert-success alert-dismissable"  ng-show="!vm.getPrincipalCount()">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <strong>{{ 'NOTIFICATON_NO_EXPIRED_PRINCIPALS_TEXT' | translate }}</strong>
+                <strong>{{ 'NOTIFICATION_NO_EXPIRED_PRINCIPALS_TEXT' | translate }}</strong>
             </div>
             <div class="alert alert-warning alert-dismissable" ng-show="vm.getPrincipalCount()">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -65,10 +59,10 @@
                                 <table id="table-principals" class="table table-bordered table-condensed f11">
                                     <thead>
                                         <tr>
-                                            <th>{{ 'PRINCIPAL_DISPLAY_NAME_TEXT' | translate }} </th>
-                                            <th>{{ 'PRINCIPAL_APPID_TEXT' | translate }} </th>
-                                            <th>{{ 'PRINCIPAL_NAMES_TEXT' | translate }} </th>
-                                            <th>{{ 'PRINCIPAL_EXPIRED_DATE_TEXT' | translate }} </th>
+                                            <th>{{ 'AAD_DISPLAY_NAME' | translate }} </th>
+                                            <th>{{ 'AAD_APPID_TEXT' | translate }} </th>
+                                            <th>{{ 'AAD_PRINCIPAL_NAMES' | translate }} </th>
+                                            <th>{{ 'AAD_END_DATE' | translate }} </th>
                                         </tr>
                                     </thead>
                                     <tbody>

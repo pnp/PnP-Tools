@@ -10,13 +10,13 @@
 
     function ReportsAllApplicationsController($q, ApplicationDataService, usSpinnerService, logger, $log, $timeout) {
         var vm = this;
-        vm.allPrincipals = [];
+        vm.applications = [];
         vm.pageSize = 50;
         vm.query = "";
         vm.currentPage = 1;
         vm.loading = false;
         vm.csvExportFileName = "AllApplications";
-        vm.reportFields = {appId: 'Application ID', displayName: 'Display Name', principalNames: 'Principal Names', replyUrls: 'Reply Url', endDate: 'End Date'};
+        vm.reportFields = { appId: 'Application ID', displayName: 'Display Name', replyUrls: 'Reply Url', identifierUris: 'IdentifierUris', endDate: 'End Date' };
 
         vm.getAllApplications = getAllApplications;
        
@@ -38,10 +38,10 @@
             $log.info('Info ' + controllerId, 'Entering getAllApplications');
             return ApplicationDataService.getAllApplications()
            .then(function (data) {
-               vm.allPrincipals = data;
+               vm.applications = data;
                vm.loading = false;
                usSpinnerService.stop('spinner');
-               return vm.allPrincipals;
+               return vm.applications;
            });
         }
     };

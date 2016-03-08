@@ -40,6 +40,15 @@
                                 <li>
                                     <a href=@Url.Action("ExpiredApplications", "Reports")>{{ 'EXPIRED_APPLICATIONS_TEXT' | translate }} </a>
                                 </li>
+                                <li>
+                                    <a href=@Url.Action("ExpiredApplications30", "Reports")>{{ 'EXPIRED_IN_30_TEXT' | translate }} </a>
+                                </li>
+                                <li>
+                                    <a href=@Url.Action("ExpiredApplications60", "Reports")>{{ 'EXPIRED_IN_60_TEXT' | translate }} </a>
+                                </li>
+                                <li>
+                                    <a href=@Url.Action("ExpiredApplications90", "Reports")>{{ 'EXPIRED_IN_90_TEXT' | translate }} </a>
+                                </li>
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
@@ -53,13 +62,13 @@
                                         <a href=@Url.Action("ExpiredPrincipals", "Reports")>{{ 'REPORTS_EXPIRED_TEXT' | translate }} </a>
                                     </li>
                                     <li>
-                                        <a href=@Url.Action("ExpiredPrincipals30", "Reports")>{{'REPORTS_EXPIRED30_TEXT' | translate }} </a>
+                                        <a href=@Url.Action("ExpiredPrincipals30", "Reports")>{{'EXPIRED_IN_30_TEXT' | translate }} </a>
                                     </li>
                                     <li>
-                                        <a href=@Url.Action("ExpiredPrincipals60", "Reports")>{{ 'REPORTS_EXPIRED60_TEXT' | translate }} </a>
+                                        <a href=@Url.Action("ExpiredPrincipals60", "Reports")>{{ 'EXPIRED_IN_60_TEXT' | translate }} </a>
                                     </li>
                                     <li>
-                                        <a href=@Url.Action("ExpiredPrincipals90", "Reports")>{{ 'REPORTS_EXPIRED90_TEXT' | translate }} </a>
+                                        <a href=@Url.Action("ExpiredPrincipals90", "Reports")>{{ 'EXPIRED_IN_90_TEXT' | translate }} </a>
                                     </li>
                                 </ul>
                             <!-- /.nav-second-level -->
@@ -78,12 +87,12 @@
             @RenderBody()
         </div> <!-- /#page-wrapper -->
         <!-- Footer -->
-        <footer class="main-footer">
+        @*<footer class="main-footer">
             <!-- To the right -->
-            <div class=" hidden-xs">V1.0 </div>
+            <div class="pull-right hidden-xs">V1.1 </div>
             <!-- Default to the left -->
             {{ 'COPYRIGHT_TEXT' | translate }} &copy; {{ 'COPYRIGHT_COMPANY_TEXT' | translate }}
-        </footer>
+        </footer>*@
      </div> <!---./wrapper-->
 
   
