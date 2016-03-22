@@ -37,59 +37,62 @@
     .no-mobile {
         display: none;
     }
+	
+	/* Mobile and Table Burger styles */
+	.burger {
+		position: relative;
+		left: 0px;
+		top: 0px;
+		padding: 0px 7px;
+		display: inline-block;
+	}
+	.burger span,
+	.burger span:before,
+	.burger span:after {
+		display: block;
+		width: 100%;
+		height: 2px;
+		background: black;
+		-ms-transition: all 0.5s;
+		-webkit-transition: all 0.5s;
+		transition: all 0.5s;
+		-webkit-backface-visibility: hidden;
+		backface-visibility: hidden;
+	}
+	.burger span {
+		position: relative;
+		margin: 0 0 0 0;
+	}
+	.burger span:before,
+	.burger span:after {
+		position: absolute;
+		content: "";
+	}
+	.burger span:before {
+		top: -8px;
+	}
+	.burger span:after {
+		top: 8px;
+	}
+	.burger.selected span:before {
+		-ms-transform: translate(0px, 8px) rotate(90deg);
+		-webkit-transform: translate(0px, 8px) rotate(90deg);
+		transform: translate(0px, 8px) rotate(90deg);
+	}
+	.burger.selected span:after {
+		-ms-transform: translate(0px, -8px) rotate(90deg);
+		-webkit-transform: translate(0px, -8px) rotate(90deg);
+		transform: translate(0px, -8px) rotate(90deg);
+	}
+	.burger.selected span {
+		-ms-transform: rotate(-45deg);
+		-webkit-transform: rotate(-45deg);
+		transform: rotate(-45deg);
+	}
+
 }
 
-/* Mobile and Table Burger styles */
-.burger {
-	position: relative;
-	left: 0px;
-	top: 0px;
-	padding: 0px 7px;
-	display: inline-block;
-}
-.burger span,
-.burger span:before,
-.burger span:after {
-	display: block;
-	width: 100%;
-	height: 2px;
-	background: black;
-	-ms-transition: all 0.5s;
-	-webkit-transition: all 0.5s;
-	transition: all 0.5s;
-	-webkit-backface-visibility: hidden;
-	backface-visibility: hidden;
-}
-.burger span {
-	position: relative;
-	margin: 0 0 0 0;
-}
-.burger span:before,
-.burger span:after {
-	position: absolute;
-	content: "";
-}
-.burger span:before {
-	top: -8px;
-}
-.burger span:after {
-	top: 8px;
-}
-.burger.selected span:before {
-	-ms-transform: translate(0px, 8px) rotate(90deg);
-	-webkit-transform: translate(0px, 8px) rotate(90deg);
-	transform: translate(0px, 8px) rotate(90deg);
-}
-.burger.selected span:after {
-	-ms-transform: translate(0px, -8px) rotate(90deg);
-	-webkit-transform: translate(0px, -8px) rotate(90deg);
-	transform: translate(0px, -8px) rotate(90deg);
-}
-.burger.selected span {
-	-ms-transform: rotate(-45deg);
-	-webkit-transform: rotate(-45deg);
-	transform: rotate(-45deg);
-}
+
 
 /* Tablets */
 @media only screen and (min-width: 481px) and (max-width : 768px) {
@@ -403,29 +406,16 @@
     }
 	
 	/* Newsfeed fixes for mobile less than 450px */
-    .ms-microfeed-replyArea {
-        min-width: 150px !important;
-        margin-left: 20px !important;
-    }
-    .ms-microfeed-postedTime {
-        display: block;
-    }
-    .ms-addImageButton {
-        display: none;
-    }
-    .ms-secondaryCommandLink {
-        word-break: break-all;
-    }
-    .ms-webpart-chrome-vertical {
-        display: block;
-    }
-    .ms-webpart-cell-vertical {
-        display: block;
-    }
     .ms-microfeed-fullMicrofeedDiv, .ms-microfeed-microblogpart, .ms-microfeed-attachmentPreviewDiv, .ms-microfeed-feedPart, .ms-microfeed-rootText {
         min-width: 200px;
     }
-
+   .ms-microfeed-replyArea {
+        min-width: 150px !important;
+        margin-left: 20px !important;
+    }
+	.ms-secondaryCommandLink {
+        word-break: break-all;
+    }
 }
 
 /* SETTINGS */
