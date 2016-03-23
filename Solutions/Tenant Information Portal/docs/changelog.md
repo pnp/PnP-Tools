@@ -2,7 +2,8 @@
 
 ## Version 1.2
 * Remove unneccessary images
-* Office UI Fabric 
+* Office UI Fabric  https://github.com/ngOfficeUIFabric
+* JavaScript restructuring
 
 
 ## Version 1.1 

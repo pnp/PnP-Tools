@@ -35,6 +35,7 @@ Version  | Date | Comments
 1.0  | September 28, 2015 | Initial version
 1.0.1 | February 23, 2016 | Date Format 
 1.1 | March 7, 2016 | Azure AD Applications Functionality
+1.2 | March 23, 2016 | UX Fabric 
 
 See [Change Log](docs/changelog.md) for detailed information.
 
@@ -47,21 +48,19 @@ See [Change Log](docs/changelog.md) for detailed information.
 ## Running the CODE
 
 ### Landing Page
-
-![](http://i.imgur.com/gpbNNg8.png)
+![](http://i.imgur.com/y1gvCfx.png)
 
 ### Expired Applications Report
 
-![](http://i.imgur.com/tEldYW7.png)
+![](http://i.imgur.com/Si5u2Kz.png)
 
 
 ### All Principals Report
 
-![](http://i.imgur.com/2TR4lXL.png)
+![](http://i.imgur.com/TcYzpMZ.png)
 
 ### Expired Principals
-
-![](http://i.imgur.com/CjHXtA1.png)
+![](http://i.imgur.com/Bglwvyg.png)
 
 
 
@@ -102,7 +101,6 @@ To deploy the TIP solution to Azure Web Sites, you will create 1 web site with a
 	- ida:ClientSecret and supply your ClientSecret
 	- ida:Tenant and supply your tenant AAD tenant. e.g. contoso.onmicrosoft.com
 5. Uncomment the following in web.config
-
 ```
 <system.webServer>
    <staticContent> <!--Uncomment when deploying to Azure-->
@@ -113,6 +111,7 @@ To deploy the TIP solution to Azure Web Sites, you will create 1 web site with a
 ```
 
 6. Right click within Visual Studio and publish to the Azure Web Site.
+
 
 
 ### Additonal Information	
