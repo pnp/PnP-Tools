@@ -1,6 +1,19 @@
 ﻿[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
+
+.NavLine
+{
+    display:inline-block;
+    vertical-align:middle;
+    height:40px;
+    width:1px;
+    background:#fff;
+    background-color:rgba(255,255,255,.4);
+    position:absolute;
+    top:5px;
+}
+
 html,
 body {
     background-color: #f8f8f8;
@@ -208,9 +221,7 @@ body {
         z-index: 1;
         position: absolute;
         width: 250px;
-        margin-top: 51px;
     }
-
     .navbar-top-links .dropdown-messages,
     .navbar-top-links .dropdown-tasks,
     .navbar-top-links .dropdown-alerts {

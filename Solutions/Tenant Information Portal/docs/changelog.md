@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 1.2
+* Remove unneccessary images
+* Office UI Fabric 
+
+
 ## Version 1.1 
 * Dashboard controller refractoring and priming the promises
 * Added Dashboard chart labels translation

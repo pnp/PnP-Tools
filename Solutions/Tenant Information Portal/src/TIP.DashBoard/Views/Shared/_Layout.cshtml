@@ -2,59 +2,69 @@
 <html ng-app="app">
 <head>
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>{{ 'APPLICATION_TITLE' | translate }}</title>
+
+    <!-- Application site-->
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
-<body ng-cloak>
+<body ng-cloak class="hold-transition">
     <div id="wrapper">
-        <!-- Navigation -->
-        <nav class="navbar navbar-blue navbar-static-top" role="navigation" style="margin-bottom: 0">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href=@Url.Action("Index", "Home")>{{ 'APPLICATION_TITLE' | translate }}</a>
-            </div>
-            <!-- /.navbar-header -->
-            <ul class="nav navbar-top-links navbar-right">
-                @Html.Partial("_LoginPartial")
-            </ul>
-            <!-- /.navbar-top-links -->
-            <div class="navbar-default sidebar" role="navigation">
-                <div class="sidebar-nav navbar-collapse">
-                    <ul class="nav" id="side-menu">
-                        <li>
-                            <a href=@Url.Action("Index", "Home")><i class="fa fa-home fa-fw"></i>{{ 'HOME_TEXT' | translate }} </a>
-                        </li>
-                        <li>
-                            <a href="#"><i class="fa fa-sitemap fa-fw"></i> {{ 'APPLICATIONS_TEXT' | translate }} <span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li>
-                                    <a href=@Url.Action("Applications", "Reports")>{{ 'REPORTS_ALL_APPLICATIONS_TEXT' | translate }} </a>
-                                </li>
-                                <li>
-                                    <a href=@Url.Action("ExpiredApplications", "Reports")>{{ 'EXPIRED_APPLICATIONS_TEXT' | translate }} </a>
-                                </li>
-                                <li>
-                                    <a href=@Url.Action("ExpiredApplications30", "Reports")>{{ 'EXPIRED_IN_30_TEXT' | translate }} </a>
-                                </li>
-                                <li>
-                                    <a href=@Url.Action("ExpiredApplications60", "Reports")>{{ 'EXPIRED_IN_60_TEXT' | translate }} </a>
-                                </li>
-                                <li>
-                                    <a href=@Url.Action("ExpiredApplications90", "Reports")>{{ 'EXPIRED_IN_90_TEXT' | translate }} </a>
-                                </li>
-                            </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
-                        <li>
-                            <a href="#"><i class="fa fa-sitemap fa-fw"></i> {{ 'SERVICEPRINCIPALS_TEXT' | translate }} <span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
+        <header class="main-header">
+            <!-- Navigation -->
+            <nav class="navbar navbar-static-top ms-bgColor-themePrimary" role="navigation">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="https://portal.office.com/home">{{ 'O365_TEXT' | translate }}</a>
+                    <div class="NavLine"></div>
+                    <a class="navbar-brand" href=@Url.Action("Index", "Home")>{{ 'APPLICATION_TITLE' | translate }}</a>
+                </div>
+                <!-- /.navbar-header -->
+                <ul class="nav navbar-top-links navbar-right">
+                    @Html.Partial("_LoginPartial")
+                </ul>
+            </nav>
+        </header>
+  
+        <aside class="main-sidebar">
+            <section class="sidebar">
+                <div class="navbar-default sidebar" role="navigation">
+                    <div class="sidebar-nav navbar-collapse">
+                        <ul class="nav" id="side-menu">
+                            <li>
+                                <a href=@Url.Action("Index", "Home")><i class="ms-Icon ms-Icon--home"></i>{{ 'HOME_TEXT' | translate }} </a>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-sitemap fa-fw"></i> {{ 'APPLICATIONS_TEXT' | translate }} <span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href=@Url.Action("Applications", "Reports")>{{ 'REPORTS_ALL_APPLICATIONS_TEXT' | translate }} </a>
+                                    </li>
+                                    <li>
+                                        <a href=@Url.Action("ExpiredApplications", "Reports")>{{ 'EXPIRED_APPLICATIONS_TEXT' | translate }} </a>
+                                    </li>
+                                    <li>
+                                        <a href=@Url.Action("ExpiredApplications30", "Reports")>{{ 'EXPIRED_IN_30_TEXT' | translate }} </a>
+                                    </li>
+                                    <li>
+                                        <a href=@Url.Action("ExpiredApplications60", "Reports")>{{ 'EXPIRED_IN_60_TEXT' | translate }} </a>
+                                    </li>
+                                    <li>
+                                        <a href=@Url.Action("ExpiredApplications90", "Reports")>{{ 'EXPIRED_IN_90_TEXT' | translate }} </a>
+                                    </li>
+                                </ul>
+                                <!-- /.nav-second-level -->
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-sitemap fa-fw"></i> {{ 'SERVICEPRINCIPALS_TEXT' | translate }} <span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
                                     <li>
                                         <a href=@Url.Action("Principals", "Reports")>{{ 'REPORTS_ALL_PRINCIPAL_TEXT' | translate }} </a>
                                     </li>
@@ -71,29 +81,23 @@
                                         <a href=@Url.Action("ExpiredPrincipals90", "Reports")>{{ 'EXPIRED_IN_90_TEXT' | translate }} </a>
                                     </li>
                                 </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
-                        <li>
-                            <a href=@Url.Action("About", "Home")><i class="fa fa fa-fw fa-info"></i>{{ 'ABOUT_TEXT' | translate }} </a>
-                        </li>
-            
-                    </ul>
+                                <!-- /.nav-second-level -->
+                            </li>
+                            <li>
+                                <a href=@Url.Action("About", "Home")><i class="fa fa fa-fw fa-info"></i>{{ 'ABOUT_TEXT' | translate }} </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <!-- /.sidebar-collapse -->
                 </div>
-                <!-- /.sidebar-collapse -->
-            </div>
-            <!-- /.navbar-static-side -->
-        </nav>
+            </section>
+        </aside>
+         
         <div id="page-wrapper">
             @RenderBody()
-        </div> <!-- /#page-wrapper -->
-        <!-- Footer -->
-        @*<footer class="main-footer">
-            <!-- To the right -->
-            <div class="pull-right hidden-xs">V1.1 </div>
-            <!-- Default to the left -->
-            {{ 'COPYRIGHT_TEXT' | translate }} &copy; {{ 'COPYRIGHT_COMPANY_TEXT' | translate }}
-        </footer>*@
-     </div> <!---./wrapper-->
+        </div> 
+    </div> <!---./wrapper-->
 
   
     @Scripts.Render("~/bundles/jquery")
@@ -105,7 +109,7 @@
     @Scripts.Render("~/bundles/appCommon")
     @Scripts.Render("~/bundles/app")
     @Scripts.Render("~/bundles/appDashboard")
-    @Scripts.Render("~/bundles/appPrincipals")
+    @Scripts.Render("~/bundles/reports")
     @Scripts.Render("~/bundles/appCore")
 
     @RenderSection("scripts", required: false)

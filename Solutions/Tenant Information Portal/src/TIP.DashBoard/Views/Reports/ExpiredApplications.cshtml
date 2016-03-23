@@ -1,7 +1,7 @@
 ﻿<section id="dashboard-view" data-ng-controller="ReportsAppsExpiredController as vm" ng-app="app">
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">
+            <h1 class="ms-font-su">
                 {{ 'EXPIRED_APPLICATIONS_TEXT' | translate }}
             </h1>
             <div class="alert alert-success alert-dismissable" ng-show="!vm.getExpiredApplicationCount()">
@@ -10,88 +10,78 @@
             </div>
             <div class="alert alert-danger alert-dismissable" ng-show="vm.getExpiredApplicationCount()">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <i class="fa fa-exclamation-triangle"></i> <strong>{{ 'NOTIFICATION_EXPIRED_APPLICATIONS_TEXT' | translate }}</strong>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-4">
-            <div class="input-group">
-                <div class="input-group-addon">
-                    <i class="glyphicon glyphicon-filter"></i>
-                </div>
-                <input type="text" id="search" class="form-control" placeholder="{{ 'SEARCH_FILTER_TEXT' | translate }}" ng-model="vm.query" />
-            </div>
-        </div>
-        <div class="col-xs-4">
-            <div class="input-group">
-                <input type="number" min="1" max="100" class="form-control" ng-model="vm.pageSize" />
+                <i class="ms-Icon ms-Icon--alert"></i> <strong>{{ 'NOTIFICATION_EXPIRED_APPLICATIONS_TEXT' | translate }}</strong>
             </div>
         </div>
     </div>
     <div class="spacer"></div>
     <div class="row">
         <div class="col-lg-12">
-            <div class="box box-danger">
-                <div class="box-header with-border">
-                    <i class="fa fa fa-database"></i>
-                    <h3 class="box-title">{{ 'APPLICATIONS_TEXT' | translate }}</h3>
-                    <h3 class="panel-title pull-right">
-                        <a href="">
-                            <i class="fa fa-file-excel-o fa-align-right"
-                               title="{{ 'EXPORT_CSV_TEXT' | translate }}"
-                               ng-json-export-excel data="vm.applications"
-                               ng-disabled="vm.applications"
-                               ng-model="vm.applications"
-                               report-fields="vm.reportFields"
-                               filename="vm.csvExportFileName">
-                            </i>
-                        </a>
-                    </h3>
-                </div>
-                <div class="panel-body">
-                    <div class="table-responsive">
-                        <div class="panel-title">
-                            <div class="box-body">
-                                <div class="text-center">
-                                    <span us-spinner="{radius:30, width:8, length: 16}" spinner-key="spinner"></span>
+            <div class="box">
+                <div class="box-header">
+                    <uif-command-bar uif-search-term="vm.query" placeholder="{{ 'SEARCH_FILTER_TEXT' | translate }}">
+                        <uif-command-bar-search></uif-command-bar-search>
+                        <div class="ms-CommandBar-sideCommands">
+                            <div class="ms-CommandBarItem">
+                                <div class="ms-CommandBarItem-linkWrapper">
+                                    <a class="ms-CommandBarItem-link" style="text-decoration: none"
+                                       ng-json-export-excel data="vm.applications"
+                                       ng-disabled="vm.applications"
+                                       ng-model="vm.applications"
+                                       report-fields="vm.reportFields"
+                                       filename="vm.csvExportFileName">
+                                        <span class="ms-CommandBarItem-icon ms-Icon ms-Icon--download"></span>
+                                        <span class="ms-CommandBarItem-commandText ms-font-m ms-font-weight-regular">{{ 'EXPORT_TEXT' | translate }}</span>
+                                    </a>
                                 </div>
-                                <table id="table-principals" class="table table-bordered table-condensed f11">
-                                    <thead>
-                                        <tr>
-                                            <th>{{ 'AAD_DISPLAY_NAME' | translate }} </th>
-                                            <th>{{ 'AAD_APPID_TEXT' | translate }} </th>
-                                            <th>{{ 'AAD_REPLY_URLS' | translate }} </th>
-                                            <th>{{ 'AAD_END_DATE' | translate }} </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr dir-paginate="app in vm.applications | filter:vm.query | itemsPerPage: vm.pageSize" current-page="vm.currentPage">
-                                            <td>{{ app.displayName }}</td>
-                                            <td>{{ app.appId }}</td>
-                                            <td>
-                                                <table id="table-principalName">
-                                                    <thead>
-                                                        <tr ng-repeat="name in app.replyUrls">
-                                                            <td>
-                                                                {{name}}
-                                                            </td>
-                                                        </tr>
-                                                    </thead>
-                                                </table>
-                                            </td>
-                                            <td>{{ app.endDate |  date:"MM/dd/yyyy h:mma" }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
                             </div>
                         </div>
-                        <div class="text-center">
-                            <dir-pagination-controls boundary-links="true" template-url="/Scripts/app/directives/directives.dirPagination.tpl.html"></dir-pagination-controls>
+                        <uif-command-bar-main uif-show-overflow='true'>
+                            <uif-command-bar-item ng-click="vm.openMenu()">
+                                <span>{{ 'SHOW_ENTRIES_TEXT' | translate }}</span>
+                                <uif-icon uif-type="chevronDown"></uif-icon>
+                                <uif-contextual-menu uif-is-open="vm.isMenuOpen" uif-close-on-click="true">
+                                    <uif-contextual-menu-item uif-text=10 ng-click="vm.setPageSize(10)" ng-model="vm.pageSize"></uif-contextual-menu-item>
+                                    <uif-contextual-menu-item uif-text=25 ng-click="vm.setPageSize(25)" ng-model="vm.pageSize"></uif-contextual-menu-item>
+                                    <uif-contextual-menu-item uif-text=50 ng-click="vm.setPageSize(50)" ng-model="vm.pageSize"></uif-contextual-menu-item>
+                                </uif-contextual-menu>
+                            </uif-command-bar-item>
+                        </uif-command-bar-main>
+                    </uif-command-bar>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <div class="text-center">
+                        <span us-spinner="{radius:30, width:8, length: 16}" spinner-key="spinner"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="ms-Table">
+                                <div class="ms-Table-row">
+                                    <span class="ms-Table-cell">{{ 'AAD_DISPLAY_NAME' | translate }} </span>
+                                    <span class="ms-Table-cell">{{ 'AAD_APPID_TEXT' | translate }} </span>
+                                    <span class="ms-Table-cell">{{ 'AAD_REPLY_URLS' | translate }}</span>
+                                    <span class="ms-Table-cell">{{ 'AAD_END_DATE' | translate }}</span>
+                                </div>
+                                <div class="ms-Table-row" dir-paginate="app in vm.applications | filter:vm.query | itemsPerPage: vm.pageSize" current-page="vm.currentPage">
+                                    <span class="ms-Table-cell">{{ app.displayName }}</span>
+                                    <span class="ms-Table-cell">{{ app.appId }}</span>
+                                    <span class="ms-Table-cell" ng-repeat="name in app.replyUrls">{{name}}</span>
+                                    <span class="ms-Table-cell">{{ app.endDate |  date:"MM/dd/yyyy h:mma" }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <div class="spacer"></div>
+                    <div class="row text-right ms-borderColor-themeTertiary">
+                        <div class="col-sm-12">
+                            <span class="ms-font-s">{{vm.applications.length }} {{'TOTAL_RECORDS_TEXT' | translate }} </span>
+                        </div>
+                    </div>
+                </div><!-- /.box-body -->
+                <div class="text-center">
+                    <dir-pagination-controls boundary-links="true" template-url="/Scripts/app/directives/directives.dirPagination.tpl.html"></dir-pagination-controls>
                 </div>
-            </div>
+            </div><!-- /.box -->
         </div>
     </div>
 </section>

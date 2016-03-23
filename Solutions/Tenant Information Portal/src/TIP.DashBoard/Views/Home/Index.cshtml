@@ -1,16 +1,16 @@
-﻿<section id="dashboard-view" data-ng-controller="DashBoardController as vm" ng-app="app">
+﻿<section id="dashboard-view" data-ng-controller="DashBoardController as vm" ng-app="app" class="content">
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">
+            <h1 class="ms-font-su">
                 {{ 'HOME_TEXT' | translate }} <small>{{ 'OVERVIEW_TEXT' | translate }}</small>
             </h1>
             <div class="alert alert-danger alert-dismissable" ng-show="vm.expiredPrincipals.length">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <i class="fa fa-exclamation-triangle"></i> <strong>{{ 'NOTIFICATION_EXPIRED_APPLICATIONS_TEXT' | translate }}</strong> 
+                <i class="ms-Icon ms-Icon--alert"></i> <strong>{{ 'NOTIFICATION_EXPIRED_APPLICATIONS_TEXT' | translate }}</strong> 
             </div>
             <div class="alert alert-danger alert-dismissable" ng-show="vm.expiredApplications.length">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <i class="fa fa-exclamation-triangle"></i> <strong>{{ 'NOTIFICATION_EXPIRED_PRINCIPALS_TEXT' | translate }}</strong>
+                <i class="ms-Icon ms-Icon--alert"></i> <strong>{{ 'NOTIFICATION_EXPIRED_PRINCIPALS_TEXT' | translate }}</strong>
             </div>
         </div>
     </div>
@@ -19,7 +19,7 @@
             <div class="box box-info">
                 <div class="box-header with-border">
                     <i class="fa fa-pie-chart"></i>
-                    <h3 class="box-title">{{'SERVICEPRINCIPALS_TEXT' | translate }}</h3>
+                    <h3 class="box-title ms-font-m">{{'SERVICEPRINCIPALS_TEXT' | translate }}</h3>
                 </div>
                 <div class="box-body">
                     <div class="medium-8 columns">
@@ -34,7 +34,7 @@
         </div>
         <div class="col-md-6">
             <div class="box box-info">
-                <div class="box-header with-border">
+                <div class="box-header with-border ms-font-m">
                     <i class="fa fa-pie-chart"></i>
                     <h3 class="box-title">{{'APPLICATIONS_TEXT' | translate }}</h3>
                 </div>
@@ -55,7 +55,7 @@
             <div class="box box-info">
                 <div class="box-header with-border">
                     <i class="fa fa-database"></i>
-                    <h3 class="box-title">{{'TENANT_SUMMARY_TEXT' | translate }}</h3>
+                    <h3 class="box-title ms-font-m">{{'TENANT_SUMMARY_TEXT' | translate }}</h3>
                 </div>
                 <div class="box-body">
                     <strong>{{ 'TENANT_DOMAIN_TEXT' | translate }}</strong>

@@ -214,6 +214,5 @@
                 vm.chartServicePrincipalsLabels = translatedValue.split(",");
             });
         }
-    };
-
+    }
 })();

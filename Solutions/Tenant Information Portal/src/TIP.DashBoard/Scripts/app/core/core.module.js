@@ -14,8 +14,8 @@
          /*
          * 3rd Party Modules
          */
-        'ui.bootstrap', 'pascalprecht.translate', 'angularSpinner', 'ngJsonExportExcel', 'chart.js',
-
+        'ui.bootstrap', 'pascalprecht.translate', 'angularSpinner', 'ngJsonExportExcel', 'chart.js', 'officeuifabric.core', 'officeuifabric.components', 'officeuifabric.components.commandbar',
+        
         /*
         * Directives
         */

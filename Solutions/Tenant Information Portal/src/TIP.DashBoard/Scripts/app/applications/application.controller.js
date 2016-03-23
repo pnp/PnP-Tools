@@ -65,6 +65,5 @@
                return vm.expiredPrincipals90;
            });
         }
-
-    };
+    }
 })();

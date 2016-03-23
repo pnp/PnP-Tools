@@ -12,8 +12,8 @@ The application uses the Active Directory Authentication Library (ADAL) to obtai
 This is open source repository, so feedback, issues and pull requests are absolutely welcome.
 
 ### Features ###
-- Dashboard that provides a visual indicator on Service Principals that are expired or that may be expiring in 30, 60, and 90 Days.
-- Displays/Exports all service principals that are registered within your Azure Active Directory Tenant.
+- Dashboard that provides a visual indicator on Service Principals and Applications that are expired or that may be expiring in 30, 60, and 90 Days.
+- Displays/Exports all Service Principals and Applications that are registered within your Azure Active Directory Tenant.
 - Displays Tenant Last Directory Synchronization time
 
 ### Applies to 
