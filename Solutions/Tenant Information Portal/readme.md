@@ -32,10 +32,10 @@ Tenant Information Portal (TIP) | Frank Marasco (Microsoft)
 ### Version history 
 Version  | Date | Comments
 ---------| -----| --------
-1.0  | September 28, 2015 | Initial version
+1.0.0  | September 28, 2015 | Initial version
 1.0.1 | February 23, 2016 | Date Format 
-1.1 | March 7, 2016 | Azure AD Applications Functionality
-1.2 | March 23, 2016 | UX Fabric 
+1.0.2 | March 7, 2016 | Azure AD Applications Functionality
+1.0.3 | March 23, 2016 | UX Fabric 
 
 See [Change Log](docs/changelog.md) for detailed information.
 
@@ -100,15 +100,10 @@ To deploy the TIP solution to Azure Web Sites, you will create 1 web site with a
 	- ida:ClientId and supply your ClientId
 	- ida:ClientSecret and supply your ClientSecret
 	- ida:Tenant and supply your tenant AAD tenant. e.g. contoso.onmicrosoft.com
-5. Uncomment the following in web.config
-	1. ```
-	<system.webServer>
-	   <staticContent> <!--Uncomment when deploying to Azure-->
-	  <!--<mimeMap fileExtension=".json" mimeType="application/json" />
-	  <remove fileExtension=".woff" /> 
-	  <mimeMap fileExtension=".woff" mimeType="application/x-font-woff" />-->
-	</staticContent>
-	```
+5. Uncomment in your `web.config` section  `<system.webServer><staticContent>` 
+	  `<mimeMap fileExtension=".json" mimeType="application/json" />`
+      `<remove fileExtension=".woff" /> `
+      `<mimeMap fileExtension=".woff" mimeType="application/x-font-woff" />`
 6. Right click within Visual Studio and publish to the Azure Web Site.
 
 
