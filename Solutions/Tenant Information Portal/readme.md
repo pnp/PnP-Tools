@@ -101,9 +101,11 @@ To deploy the TIP solution to Azure Web Sites, you will create 1 web site with a
 	- ida:ClientSecret and supply your ClientSecret
 	- ida:Tenant and supply your tenant AAD tenant. e.g. contoso.onmicrosoft.com
 5. Uncomment in your `web.config` section  `<system.webServer><staticContent>` 
+
 	  `<mimeMap fileExtension=".json" mimeType="application/json" />`
       `<remove fileExtension=".woff" /> `
       `<mimeMap fileExtension=".woff" mimeType="application/x-font-woff" />`
+
 6. Right click within Visual Studio and publish to the Azure Web Site.
 
 
