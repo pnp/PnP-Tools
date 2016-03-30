@@ -172,11 +172,13 @@ function Start-SharePointSync
    The sychronization service configuration consists on an Active Directory management agent, and a SharePoint management agent.  This function runs them in the following order:
    1. ADMA Import
    2. ADMA Sync
-   3. SPMA Import
-   4. SPMA Sync
-   5. SPMA Export
-   6. SPMA Import
-   7. SPMA Sync
+   4. SPMA Import
+   5. SPMA Sync
+   6. SPMA Export
+   7. SPMA Delta Export
+   8. SPMA Detal Import
+   9. SPMA Sync
+   10. ADMA Export
 .EXAMPLE
    Run the management agents in full mode (full import, full sync)
    Start-SharePointSync -Verbose
@@ -220,10 +222,11 @@ $($spma.NumExportDelete().ReturnValue) Deletes
 "@
 if ($PSCmdlet.ShouldProcess('SharePoint',$confirmMessage))
 {
-    ### Run the Export to SharePoint and Confirming Import
+    ### Run the Export to SharePoint and Confirming Import; Export to Active Directory
     Start-ManagementAgent -Name SPMA -RunProfile EXPORT
     Start-ManagementAgent -Name SPMA -RunProfile DELTAIMPORT
     Start-ManagementAgent -Name SPMA -RunProfile DELTASYNC
+    Start-ManagementAgent -Name ADMA -RunProfile EXPORT
 }
 
 }##Closing: function Start-SharePointSync
@@ -346,6 +349,7 @@ try{
     Start-ManagementAgent SPMA EXPORT     -StopOnError
     Start-ManagementAgent SPMA FULLIMPORT -StopOnError
     Start-ManagementAgent SPMA FULLSYNC   -StopOnError
+    Start-ManagementAgent ADMA EXPORT     -StopOnError
 }
 catch
 {    
