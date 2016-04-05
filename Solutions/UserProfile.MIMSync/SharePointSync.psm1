@@ -517,26 +517,26 @@ function Update-PartitionId
         [parameter(Mandatory=$true)] 
         $Path
     ) 
-	
-	$backupDir = $Path+'\backup'
-	if(!(Test-Path -Path $backupDir))
-	{
-		md $backupDir 
-	}
-	
-	$Path = Join-Path $Path *.xml
-	
-	### Backup the original file
-	Copy-Item $Path $backupDir -force
-	### Remove Readonly attribute for xmls
-	attrib -r $Path
-		
-	gci -Path $path | ForEach-Object{
-		$xml = [xml](Get-Content $_)
-		$xml.SelectNodes("//step/partition") | % { 
-			$_."#text" = $_."#text".ToUpper()    }
-		$xml.Save($_)
-	}	
+    
+    $backupDir = $Path+'\backup'
+    if(!(Test-Path -Path $backupDir))
+    {
+        md $backupDir 
+    }
+    
+    $Path = Join-Path $Path *.xml
+    
+    ### Backup the original file
+    Copy-Item $Path $backupDir -force
+    ### Remove Readonly attribute for xmls
+    attrib -r $Path
+    
+    gci -Path $path | ForEach-Object{
+    $xml = [xml](Get-Content $_)
+    $xml.SelectNodes("//step/partition") | % { 
+    $_."#text" = $_."#text".ToUpper()    }
+    $xml.Save($_)
+    }
 }
 
 function ConvertTo-SharePointEcma2
@@ -584,10 +584,10 @@ function ConvertTo-SharePointEcma2
         $Path
     )
 
-	Write-Verbose "Update the partition Id to upper case which FIM/MIM supported"
-	Update-PartitionId -Path $Path
-	Write-Verbose "Update partition id completed."
-	
+    Write-Verbose "Update the partition Id to upper case which FIM/MIM supported"
+    Update-PartitionId -Path $Path
+    Write-Verbose "Update partition id completed."
+    
     ### Get the ma-data file with category == Extensible and ma-listname == MOSS-UserProfile
     if (Test-Path -Path $Path -PathType Container)
     {
