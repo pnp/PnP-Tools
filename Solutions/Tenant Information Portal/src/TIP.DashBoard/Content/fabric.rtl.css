@@ -1,6 +1,6 @@
 /* Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE in the project root for license information. */
 /**
- * Office UI Fabric 2.1.0
+ * Office UI Fabric 2.4.1
  * The front-end framework for building experiences for Office 365.
  **/
 
@@ -145,6 +145,10 @@
 }
 
 .ms-bgColor-orangeLight {
+  background-color: #ea4300;
+}
+
+.ms-bgColor-orangeLighter {
   background-color: #ff8c00;
 }
 
@@ -220,14 +224,6 @@
   background-color: #bad80a;
 }
 
-.ms-bgColor-error {
-  background-color: #fde7e9;
-}
-
-.ms-bgColor-alert {
-  background-color: #f4f4f4;
-}
-
 .ms-bgColor-info {
   background-color: #f4f4f4;
 }
@@ -236,9 +232,12 @@
   background-color: #dff6dd;
 }
 
-.ms-bgColor-orangeLighter,
-.ms-bgColor-orangeLighter--hover:hover {
-  background-color: #ea4300;
+.ms-bgColor-alert {
+  background-color: #f4f4f4;
+}
+
+.ms-bgColor-error {
+  background-color: #fde7e9;
 }
 
 .ms-borderColor-themeDark,
@@ -354,6 +353,10 @@
 }
 
 .ms-borderColor-orangeLight {
+  border-color: #ea4300;
+}
+
+.ms-borderColor-orangeLighter {
   border-color: #ff8c00;
 }
 
@@ -429,15 +432,11 @@
   border-color: #bad80a;
 }
 
-.ms-borderColor-error {
-  border-color: #a80000;
-}
-
-.ms-borderColor-success {
+.ms-borderColor-info {
   border-color: #107c10;
 }
 
-.ms-borderColor-info {
+.ms-borderColor-success {
   border-color: #107c10;
 }
 
@@ -445,9 +444,8 @@
   border-color: #d83b01;
 }
 
-.ms-borderColor-orangeLighter,
-.ms-borderColor-orangeLighter--hover:hover {
-  border-color: #ea4300;
+.ms-borderColor-error {
+  border-color: #a80000;
 }
 
 .ms-borderColorTop-themePrimary,
@@ -921,15 +919,13 @@
   color: #d83b01;
 }
 
-.ms-fontColor-orangeLighter,
-.ms-fontColor-orangeLighter-hover:hover,
-.ms-fontColor-orangeLighter,
-.ms-fontColor-orangeLighter--hover:hover {
+.ms-fontColor-orangeLight,
+.ms-fontColor-orangeLight--hover:hover {
   color: #ea4300;
 }
 
-.ms-fontColor-orangeLight,
-.ms-fontColor-orangeLight--hover:hover {
+.ms-fontColor-orangeLighter,
+.ms-fontColor-orangeLighter--hover:hover {
   color: #ff8c00;
 }
 
@@ -1023,16 +1019,6 @@
   color: #bad80a;
 }
 
-.ms-fontColor-error,
-.ms-fontColor-error--hover:hover {
-  color: #a80000;
-}
-
-.ms-fontColor-alert,
-.ms-fontColor-alert--hover:hover {
-  color: #d83b01;
-}
-
 .ms-fontColor-info,
 .ms-fontColor-info--hover:hover {
   color: #107c10;
@@ -1041,6 +1027,16 @@
 .ms-fontColor-success,
 .ms-fontColor-success--hover:hover {
   color: #107c10;
+}
+
+.ms-fontColor-alert,
+.ms-fontColor-alert--hover:hover {
+  color: #d83b01;
+}
+
+.ms-fontColor-error,
+.ms-fontColor-error--hover:hover {
+  color: #a80000;
 }
 
 *[lang='ja-JP'] .ms-font-mi,
@@ -3679,6 +3675,76 @@
           transform: scaleX(-1);
 }
 
+.ms-u-slideRightIn10 {
+  -webkit-animation-name: fadeIn, slideRightIn10;
+          animation-name: fadeIn, slideRightIn10;
+  -webkit-animation-duration: 0.367s;
+     -moz-animation-duration: 0.367s;
+      -ms-animation-duration: 0.367s;
+       -o-animation-duration: 0.367s;
+  -webkit-animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+          animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+@-webkit-keyframes slideRightIn10 {
+  from {
+    -webkit-transform: translate3d(-10px, 0px, 0px);
+  }
+
+  to {
+    -webkit-transform: translate3d(0px, 0px, 0px);
+  }
+}
+
+@keyframes slideRightIn10 {
+  from {
+    -webkit-transform: translate3d(-10px, 0px, 0px);
+            transform: translate3d(-10px, 0px, 0px);
+  }
+
+  to {
+    -webkit-transform: translate3d(0px, 0px, 0px);
+            transform: translate3d(0px, 0px, 0px);
+  }
+}
+
+.ms-u-slideRightIn20 {
+  -webkit-animation-name: fadeIn, slideRightIn20;
+          animation-name: fadeIn, slideRightIn20;
+  -webkit-animation-duration: 0.367s;
+     -moz-animation-duration: 0.367s;
+      -ms-animation-duration: 0.367s;
+       -o-animation-duration: 0.367s;
+  -webkit-animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+          animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+@-webkit-keyframes slideRightIn20 {
+  from {
+    -webkit-transform: translate3d(-20px, 0px, 0px);
+  }
+
+  to {
+    -webkit-transform: translate3d(0px, 0px, 0px);
+  }
+}
+
+@keyframes slideRightIn20 {
+  from {
+    -webkit-transform: translate3d(-20px, 0px, 0px);
+            transform: translate3d(-20px, 0px, 0px);
+  }
+
+  to {
+    -webkit-transform: translate3d(0px, 0px, 0px);
+            transform: translate3d(0px, 0px, 0px);
+  }
+}
+
 .ms-u-slideRightIn40 {
   -webkit-animation-name: fadeIn, slideRightIn40;
           animation-name: fadeIn, slideRightIn40;
@@ -3706,6 +3772,76 @@
   from {
     -webkit-transform: translate3d(-40px, 0px, 0px);
             transform: translate3d(-40px, 0px, 0px);
+  }
+
+  to {
+    -webkit-transform: translate3d(0px, 0px, 0px);
+            transform: translate3d(0px, 0px, 0px);
+  }
+}
+
+.ms-u-slideLeftIn10 {
+  -webkit-animation-name: fadeIn, slideLeftIn10;
+          animation-name: fadeIn, slideLeftIn10;
+  -webkit-animation-duration: 0.367s;
+     -moz-animation-duration: 0.367s;
+      -ms-animation-duration: 0.367s;
+       -o-animation-duration: 0.367s;
+  -webkit-animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+          animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+@-webkit-keyframes slideLeftIn10 {
+  from {
+    -webkit-transform: translate3d(10px, 0px, 0px);
+  }
+
+  to {
+    -webkit-transform: translate3d(0px, 0px, 0px);
+  }
+}
+
+@keyframes slideLeftIn10 {
+  from {
+    -webkit-transform: translate3d(10px, 0px, 0px);
+            transform: translate3d(10px, 0px, 0px);
+  }
+
+  to {
+    -webkit-transform: translate3d(0px, 0px, 0px);
+            transform: translate3d(0px, 0px, 0px);
+  }
+}
+
+.ms-u-slideLeftIn20 {
+  -webkit-animation-name: fadeIn, slideLeftIn20;
+          animation-name: fadeIn, slideLeftIn20;
+  -webkit-animation-duration: 0.367s;
+     -moz-animation-duration: 0.367s;
+      -ms-animation-duration: 0.367s;
+       -o-animation-duration: 0.367s;
+  -webkit-animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+          animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+@-webkit-keyframes slideLeftIn20 {
+  from {
+    -webkit-transform: translate3d(20px, 0px, 0px);
+  }
+
+  to {
+    -webkit-transform: translate3d(0px, 0px, 0px);
+  }
+}
+
+@keyframes slideLeftIn20 {
+  from {
+    -webkit-transform: translate3d(20px, 0px, 0px);
+            transform: translate3d(20px, 0px, 0px);
   }
 
   to {
@@ -4625,9 +4761,61 @@
           animation-delay: 0.267s;
 }
 
+.ms-u-slideRightIn10 {
+  -webkit-animation-name: fadeIn, slideLeft10;
+          animation-name: fadeIn, slideLeft10;
+  -webkit-animation-duration: 0.367s;
+     -moz-animation-duration: 0.367s;
+      -ms-animation-duration: 0.367s;
+       -o-animation-duration: 0.367s;
+  -webkit-animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+          animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+.ms-u-slideRightIn20 {
+  -webkit-animation-name: fadeIn, slideLeft20;
+          animation-name: fadeIn, slideLeft20;
+  -webkit-animation-duration: 0.367s;
+     -moz-animation-duration: 0.367s;
+      -ms-animation-duration: 0.367s;
+       -o-animation-duration: 0.367s;
+  -webkit-animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+          animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
 .ms-u-slideRightIn40 {
   -webkit-animation-name: fadeIn, slideLeft40;
           animation-name: fadeIn, slideLeft40;
+  -webkit-animation-duration: 0.367s;
+     -moz-animation-duration: 0.367s;
+      -ms-animation-duration: 0.367s;
+       -o-animation-duration: 0.367s;
+  -webkit-animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+          animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+.ms-u-slideLeftIn10 {
+  -webkit-animation-name: fadeIn, slideRight10;
+          animation-name: fadeIn, slideRight10;
+  -webkit-animation-duration: 0.367s;
+     -moz-animation-duration: 0.367s;
+      -ms-animation-duration: 0.367s;
+       -o-animation-duration: 0.367s;
+  -webkit-animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+          animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+.ms-u-slideLeftIn20 {
+  -webkit-animation-name: fadeIn, slideRight20;
+          animation-name: fadeIn, slideRight20;
   -webkit-animation-duration: 0.367s;
      -moz-animation-duration: 0.367s;
       -ms-animation-duration: 0.367s;

@@ -45,7 +45,8 @@ $ms-color-whiteTranslucent40:  rgba(255,255,255,.4);
 $ms-color-yellow:        #ffb900;
 $ms-color-yellowLight:   #fff100;
 $ms-color-orange:        #d83b01;
-$ms-color-orangeLight:   #ff8c00;
+$ms-color-orangeLight:   #ea4300;
+$ms-color-orangeLighter: #ff8c00;
 $ms-color-redDark:       #a80000;
 $ms-color-red:           #e81123;
 $ms-color-magentaDark:   #5c005c;
@@ -66,14 +67,23 @@ $ms-color-green:         #107c10;
 $ms-color-greenLight:    #bad80a;
 
 
-//== Other Colors
+//== Message colors
 //
-$ms-color-error:             $ms-color-redDark;
-$ms-color-errorBackground:   #fde7e9;
+$ms-color-info:              $ms-color-green;
+$ms-color-infoBackground:    $ms-color-neutralLighter;
 $ms-color-success:           $ms-color-green;
 $ms-color-successBackground: #dff6dd;
 $ms-color-alert:             $ms-color-orange;
 $ms-color-alertBackground:   $ms-color-neutralLighter;
-$ms-color-infoBackground:    $ms-color-neutralLighter;
-$ms-color-info:              $ms-color-green;
-$ms-color-orangeLighter:     #ea4300;
+$ms-color-error:             $ms-color-redDark;
+$ms-color-errorBackground:   #fde7e9;
+
+
+//== High contrast colors
+//
+$ms-color-contrastBlackDisabled: #00ff00;
+$ms-color-contrastWhiteDisabled: #600000;
+$ms-color-contrastBlackSelected: #1AEBFF;
+$ms-color-contrastWhiteSelected: #37006E;
+$ms-color-contrastBlackLink: #8080ff;
+$ms-color-contrastWhiteLink: #00009F;

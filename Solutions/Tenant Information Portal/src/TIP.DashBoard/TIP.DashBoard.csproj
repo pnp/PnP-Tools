@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -76,12 +76,12 @@
       <HintPath>..\packages\Microsoft.Data.Services.Client.5.7.0\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=2.23.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.23.302261847\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=2.24.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.24.304111323\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms, Version=2.23.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.23.302261847\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms, Version=2.24.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.24.304111323\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Protocol.Extensions, Version=1.0.2.33, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -231,99 +231,38 @@
     <Content Include="Content\fabric.min.css" />
     <Content Include="Content\fabric.rtl.css" />
     <Content Include="Content\fabric.rtl.min.css" />
-    <Content Include="Scripts\plugins\office-fabric\jquery.fabric.js" />
-    <Content Include="Scripts\plugins\office-fabric\jquery.fabric.min.js" />
-    <Content Include="Scripts\app\common\ng-office-ui-fabric\ngOfficeUiFabric.js" />
-    <Content Include="Scripts\app\common\ng-office-ui-fabric\ngOfficeUiFabric.min.js" />
-    <Content Include="Scripts\plugins\chart\angular-chart.css" />
-    <Content Include="Content\bootstrap-theme.css" />
-    <Content Include="Content\bootstrap-theme.min.css" />
-    <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\font-awesome.css" />
-    <Content Include="Content\font-awesome.min.css" />
-    <Content Include="Content\foundation.css" />
-    <Content Include="Content\foundation.min.css" />
-    <Content Include="Scripts\plugins\metisMenu\metisMenu.css" />
-    <Content Include="Scripts\plugins\metisMenu\metisMenu.min.css" />
-    <Content Include="Scripts\plugins\prism\prism.css" />
-    <Content Include="Content\site.css" />
-    <Content Include="Scripts\plugins\toastr\toastr.css" />
-    <Content Include="Scripts\plugins\toastr\toastr.min.css" />
     <Content Include="Content\ui-bootstrap-csp.css" />
-    <Content Include="fonts\fontawesome-webfont.svg" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Global.asax" />
-    <Content Include="Content\site-new.css" />
-    <Content Include="Scripts\plugins\angular\angular-animate.js" />
-    <Content Include="Scripts\plugins\angular\angular-animate.min.js" />
-    <Content Include="Scripts\plugins\angular\angular-aria.js" />
-    <Content Include="Scripts\plugins\angular\angular-aria.min.js" />
-    <Content Include="Scripts\plugins\angular\angular-cookies.js" />
-    <Content Include="Scripts\plugins\angular\angular-cookies.min.js" />
-    <Content Include="Scripts\plugins\angular\angular-csp.css" />
-    <Content Include="Scripts\plugins\angular\angular-loader.js" />
-    <Content Include="Scripts\plugins\angular\angular-loader.min.js" />
-    <Content Include="Scripts\plugins\angular\angular-message-format.js" />
-    <Content Include="Scripts\plugins\angular\angular-message-format.min.js" />
-    <Content Include="Scripts\plugins\angular\angular-messages.js" />
-    <Content Include="Scripts\plugins\angular\angular-messages.min.js" />
-    <Content Include="Scripts\plugins\angular\angular-mocks.js" />
-    <Content Include="Scripts\plugins\angular\angular-resource.js" />
-    <Content Include="Scripts\plugins\angular\angular-resource.min.js" />
-    <Content Include="Scripts\plugins\angular\angular-route.js" />
-    <Content Include="Scripts\plugins\angular\angular-route.min.js" />
-    <Content Include="Scripts\plugins\angular\angular-sanitize.js" />
-    <Content Include="Scripts\plugins\angular\angular-sanitize.min.js" />
-    <Content Include="Scripts\plugins\angular\angular-scenario.js" />
-    <Content Include="Scripts\plugins\angular\angular-touch.js" />
-    <Content Include="Scripts\plugins\angular\angular-touch.min.js" />
-    <Content Include="Scripts\plugins\angular-translate\angular-translate-loader-static-files.min.js" />
-    <Content Include="Scripts\plugins\angular-translate\angular-translate-loader-url.js" />
-    <Content Include="Scripts\plugins\angular-translate\angular-translate-loader-url.min.js" />
-    <Content Include="Scripts\plugins\angular-translate\angular-translate.js" />
-    <Content Include="Scripts\plugins\angular-translate\angular-translate.min.js" />
+    <Content Include="Scripts\angular-animate.js" />
+    <Content Include="Scripts\angular-animate.min.js" />
+    <Content Include="Scripts\angular-aria.js" />
+    <Content Include="Scripts\angular-aria.min.js" />
+    <Content Include="Scripts\angular-cookies.js" />
+    <Content Include="Scripts\angular-cookies.min.js" />
+    <Content Include="Scripts\angular-csp.css" />
+    <Content Include="Scripts\angular-loader.js" />
+    <Content Include="Scripts\angular-loader.min.js" />
+    <Content Include="Scripts\angular-message-format.js" />
+    <Content Include="Scripts\angular-message-format.min.js" />
+    <Content Include="Scripts\angular-messages.js" />
+    <Content Include="Scripts\angular-messages.min.js" />
+    <Content Include="Scripts\angular-mocks.js" />
+    <Content Include="Scripts\angular-parse-ext.js" />
+    <Content Include="Scripts\angular-parse-ext.min.js" />
+    <Content Include="Scripts\angular-resource.js" />
+    <Content Include="Scripts\angular-resource.min.js" />
+    <Content Include="Scripts\angular-route.js" />
+    <Content Include="Scripts\angular-route.min.js" />
+    <Content Include="Scripts\angular-sanitize.js" />
+    <Content Include="Scripts\angular-sanitize.min.js" />
+    <Content Include="Scripts\angular-scenario.js" />
+    <Content Include="Scripts\angular-touch.js" />
+    <Content Include="Scripts\angular-touch.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap.min.js" />
-    <Content Include="Scripts\plugins\angular\angular.js" />
-    <Content Include="Scripts\plugins\angular\angular.min.js" />
-    <Content Include="Scripts\app\applications\application.controller.js" />
-    <Content Include="Scripts\app\applications\application.module.js" />
-    <Content Include="Scripts\app\common\chart\angular-chart.css" />
-    <Content Include="Scripts\app\common\chart\angular-chart.js" />
-    <Content Include="Scripts\app\common\chart\angular-chart.min.css" />
-    <Content Include="Scripts\app\common\chart\angular-chart.min.js" />
-    <Content Include="Scripts\app\common\exception\exception-handler.provider.js" />
-    <Content Include="Scripts\app\common\exception\exception.js" />
-    <Content Include="Scripts\app\common\exception\exception.module.js" />
-    <Content Include="Scripts\app\common\logger\logger.js" />
-    <Content Include="Scripts\app\common\excelExport\FileSaver.js" />
-    <Content Include="Scripts\app\common\excelExport\json-export-excel.js" />
-    <Content Include="Scripts\app\common\spinners\angular-spinner.js" />
-    <Content Include="Scripts\app\common\spinners\spin.min.js" />
-    <Content Include="Scripts\app\core\application.services.js" />
-    <Content Include="Scripts\app\core\constants.js" />
-    <Content Include="Scripts\app\core\core.module.js" />
-    <Content Include="Scripts\app\dashboard\dashboard.controller.js" />
-    <Content Include="Scripts\app\dashboard\dashboard.module.js" />
-    <Content Include="Scripts\app\directives\directives.dirPagination.js" />
-    <Content Include="Scripts\app\directives\directives.dirPagination.tpl.html" />
-    <Content Include="Scripts\app\principals\principal.module.js" />
-    <Content Include="Scripts\app\core\principal.services.js" />
-    <Content Include="Scripts\app\app.module.js" />
-    <Content Include="Scripts\app\principals\principal.controller.js" />
-    <Content Include="Scripts\app\reports\apps\reports.apps.expired.controller.js" />
-    <Content Include="Scripts\app\reports\principals\reports.allprincipals.controller.js" />
-    <Content Include="Scripts\app\reports\apps\reports.apps.expired90.controller.js" />
-    <Content Include="Scripts\app\reports\principals\reports.expired90.controller.js" />
-    <Content Include="Scripts\app\reports\principals\reports.expired60.controller.js" />
-    <Content Include="Scripts\app\reports\principals\reports.expired30.controller.js" />
-    <Content Include="Scripts\app\core\config.js" />
-    <Content Include="Scripts\app\reports\apps\reports.apps.expired60.controller.js" />
-    <Content Include="Scripts\plugins\bootstrap\bootstrap.js" />
-    <Content Include="Scripts\plugins\bootstrap\bootstrap.min.js" />
+    <Content Include="Scripts\angular.js" />
+    <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-dj.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-er.js" />
     <Content Include="Scripts\i18n\angular-locale_aa-et.js" />
@@ -1068,6 +1007,137 @@
     <Content Include="Scripts\i18n\angular-locale_zh.js" />
     <Content Include="Scripts\i18n\angular-locale_zu-za.js" />
     <Content Include="Scripts\i18n\angular-locale_zu.js" />
+    <Content Include="Content\sass\_Office.Color.Variables.scss" />
+    <Content Include="Content\sass\_Fabric.ZIndex.Variables.scss" />
+    <Content Include="Content\sass\_Fabric.Utilities.scss" />
+    <Content Include="Content\sass\_Fabric.Typography.Variables.scss" />
+    <Content Include="Content\sass\_Fabric.Typography.scss" />
+    <Content Include="Content\sass\_Fabric.Typography.Language.Overrides.scss" />
+    <Content Include="Content\sass\_Fabric.Typography.Fonts.scss" />
+    <Content Include="Content\sass\_Fabric.Responsive.Variables.scss" />
+    <Content Include="Content\sass\_Fabric.Responsive.Utilities.Variables.scss" />
+    <Content Include="Content\sass\_Fabric.Mixins.scss" />
+    <Content Include="Content\sass\_Fabric.Mixins.RTL.scss" />
+    <Content Include="Content\sass\_Fabric.Icons.scss" />
+    <Content Include="Content\sass\_Fabric.Grid.scss" />
+    <Content Include="Content\sass\_Fabric.Common.scss" />
+    <Content Include="Content\sass\_Fabric.Color.Variables.scss" />
+    <Content Include="Content\sass\_Fabric.Color.Mixins.scss" />
+    <Content Include="Content\sass\_Fabric.Animations.scss" />
+    <Content Include="Content\sass\_Fabric.Animations.RTL.scss" />
+    <Content Include="Content\sass\Fabric.Utilities.Output.scss" />
+    <Content Include="Content\sass\Fabric.Typography.Output.scss" />
+    <Content Include="Content\sass\Fabric.Typography.Language.Overrides.Output.scss" />
+    <Content Include="Content\sass\Fabric.Typography.Fonts.Output.scss" />
+    <Content Include="Content\sass\Fabric.scss" />
+    <Content Include="Content\sass\Fabric.RTL.scss" />
+    <Content Include="Content\sass\Fabric.Responsive.Utilities.Output.scss" />
+    <Content Include="Content\sass\Fabric.Icons.RTL.Output.scss" />
+    <Content Include="Content\sass\Fabric.Icons.Output.scss" />
+    <Content Include="Content\sass\Fabric.Icons.Font.Output.scss" />
+    <Content Include="Content\sass\Fabric.Grid.Output.scss" />
+    <Content Include="Content\sass\Fabric.Components.scss" />
+    <Content Include="Content\sass\Fabric.Color.Mixins.Output.scss" />
+    <Content Include="Content\sass\Fabric.Animations.RTL.Output.scss" />
+    <Content Include="Content\sass\Fabric.Animations.Output.scss" />
+    <None Include="Scripts\jquery-2.2.3.intellisense.js" />
+    <Content Include="Scripts\jquery-2.2.3.js" />
+    <Content Include="Scripts\jquery-2.2.3.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.fabric.js" />
+    <Content Include="Scripts\jquery.fabric.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\ngOfficeUiFabric.js" />
+    <Content Include="Scripts\ngOfficeUiFabric.min.js" />
+    <Content Include="Scripts\plugins\office-fabric\jquery.fabric.js" />
+    <Content Include="Scripts\plugins\office-fabric\jquery.fabric.min.js" />
+    <Content Include="Scripts\app\common\ng-office-ui-fabric\ngOfficeUiFabric.js" />
+    <Content Include="Scripts\app\common\ng-office-ui-fabric\ngOfficeUiFabric.min.js" />
+    <Content Include="Scripts\plugins\chart\angular-chart.css" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\foundation.css" />
+    <Content Include="Content\foundation.min.css" />
+    <Content Include="Scripts\plugins\metisMenu\metisMenu.css" />
+    <Content Include="Scripts\plugins\metisMenu\metisMenu.min.css" />
+    <Content Include="Scripts\plugins\prism\prism.css" />
+    <Content Include="Content\site.css" />
+    <Content Include="Scripts\plugins\toastr\toastr.css" />
+    <Content Include="Scripts\plugins\toastr\toastr.min.css" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\site-new.css" />
+    <Content Include="Scripts\plugins\angular\angular-animate.js" />
+    <Content Include="Scripts\plugins\angular\angular-animate.min.js" />
+    <Content Include="Scripts\plugins\angular\angular-aria.js" />
+    <Content Include="Scripts\plugins\angular\angular-aria.min.js" />
+    <Content Include="Scripts\plugins\angular\angular-cookies.js" />
+    <Content Include="Scripts\plugins\angular\angular-cookies.min.js" />
+    <Content Include="Scripts\plugins\angular\angular-csp.css" />
+    <Content Include="Scripts\plugins\angular\angular-loader.js" />
+    <Content Include="Scripts\plugins\angular\angular-loader.min.js" />
+    <Content Include="Scripts\plugins\angular\angular-message-format.js" />
+    <Content Include="Scripts\plugins\angular\angular-message-format.min.js" />
+    <Content Include="Scripts\plugins\angular\angular-messages.js" />
+    <Content Include="Scripts\plugins\angular\angular-messages.min.js" />
+    <Content Include="Scripts\plugins\angular\angular-mocks.js" />
+    <Content Include="Scripts\plugins\angular\angular-resource.js" />
+    <Content Include="Scripts\plugins\angular\angular-resource.min.js" />
+    <Content Include="Scripts\plugins\angular\angular-route.js" />
+    <Content Include="Scripts\plugins\angular\angular-route.min.js" />
+    <Content Include="Scripts\plugins\angular\angular-sanitize.js" />
+    <Content Include="Scripts\plugins\angular\angular-sanitize.min.js" />
+    <Content Include="Scripts\plugins\angular\angular-scenario.js" />
+    <Content Include="Scripts\plugins\angular\angular-touch.js" />
+    <Content Include="Scripts\plugins\angular\angular-touch.min.js" />
+    <Content Include="Scripts\plugins\angular-translate\angular-translate-loader-static-files.min.js" />
+    <Content Include="Scripts\plugins\angular-translate\angular-translate-loader-url.js" />
+    <Content Include="Scripts\plugins\angular-translate\angular-translate-loader-url.min.js" />
+    <Content Include="Scripts\plugins\angular-translate\angular-translate.js" />
+    <Content Include="Scripts\plugins\angular-translate\angular-translate.min.js" />
+    <Content Include="Scripts\plugins\angular\angular.js" />
+    <Content Include="Scripts\plugins\angular\angular.min.js" />
+    <Content Include="Scripts\app\applications\application.controller.js" />
+    <Content Include="Scripts\app\applications\application.module.js" />
+    <Content Include="Scripts\app\common\chart\angular-chart.css" />
+    <Content Include="Scripts\app\common\chart\angular-chart.js" />
+    <Content Include="Scripts\app\common\chart\angular-chart.min.css" />
+    <Content Include="Scripts\app\common\chart\angular-chart.min.js" />
+    <Content Include="Scripts\app\common\exception\exception-handler.provider.js" />
+    <Content Include="Scripts\app\common\exception\exception.js" />
+    <Content Include="Scripts\app\common\exception\exception.module.js" />
+    <Content Include="Scripts\app\common\logger\logger.js" />
+    <Content Include="Scripts\app\common\excelExport\FileSaver.js" />
+    <Content Include="Scripts\app\common\excelExport\json-export-excel.js" />
+    <Content Include="Scripts\app\common\spinners\angular-spinner.js" />
+    <Content Include="Scripts\app\common\spinners\spin.min.js" />
+    <Content Include="Scripts\app\core\application.services.js" />
+    <Content Include="Scripts\app\core\constants.js" />
+    <Content Include="Scripts\app\core\core.module.js" />
+    <Content Include="Scripts\app\dashboard\dashboard.controller.js" />
+    <Content Include="Scripts\app\dashboard\dashboard.module.js" />
+    <Content Include="Scripts\app\directives\directives.dirPagination.js" />
+    <Content Include="Scripts\app\directives\directives.dirPagination.tpl.html" />
+    <Content Include="Scripts\app\principals\principal.module.js" />
+    <Content Include="Scripts\app\core\principal.services.js" />
+    <Content Include="Scripts\app\app.module.js" />
+    <Content Include="Scripts\app\principals\principal.controller.js" />
+    <Content Include="Scripts\app\reports\apps\reports.apps.expired.controller.js" />
+    <Content Include="Scripts\app\reports\principals\reports.allprincipals.controller.js" />
+    <Content Include="Scripts\app\reports\apps\reports.apps.expired90.controller.js" />
+    <Content Include="Scripts\app\reports\principals\reports.expired90.controller.js" />
+    <Content Include="Scripts\app\reports\principals\reports.expired60.controller.js" />
+    <Content Include="Scripts\app\reports\principals\reports.expired30.controller.js" />
+    <Content Include="Scripts\app\core\config.js" />
+    <Content Include="Scripts\app\reports\apps\reports.apps.expired60.controller.js" />
+    <Content Include="Scripts\plugins\bootstrap\bootstrap.js" />
+    <Content Include="Scripts\plugins\bootstrap\bootstrap.min.js" />
     <Content Include="Scripts\plugins\jquery\jquery-2.2.1.js" />
     <Content Include="Scripts\plugins\jquery\jquery-2.2.1.min.js" />
     <Content Include="Scripts\plugins\metisMenu\metisMenu.js" />
@@ -1107,38 +1177,20 @@
     <Content Include="Scripts\plugins\angular\angular-aria.min.js.map" />
     <Content Include="Scripts\plugins\angular\angular-animate.min.js.map" />
     <Content Include="Scripts\plugins\jquery\jquery-2.2.1.min.map" />
-    <Content Include="Content\sass\_Office.Color.Variables.scss" />
-    <Content Include="Content\sass\_Fabric.ZIndex.Variables.scss" />
-    <Content Include="Content\sass\_Fabric.Utilities.scss" />
-    <Content Include="Content\sass\_Fabric.Typography.Variables.scss" />
-    <Content Include="Content\sass\_Fabric.Typography.scss" />
-    <Content Include="Content\sass\_Fabric.Typography.Language.Overrides.scss" />
-    <Content Include="Content\sass\_Fabric.Typography.Fonts.scss" />
-    <Content Include="Content\sass\_Fabric.Responsive.Variables.scss" />
-    <Content Include="Content\sass\_Fabric.Responsive.Utilities.Variables.scss" />
-    <Content Include="Content\sass\_Fabric.Mixins.scss" />
-    <Content Include="Content\sass\_Fabric.Icons.scss" />
-    <Content Include="Content\sass\_Fabric.Grid.scss" />
-    <Content Include="Content\sass\_Fabric.Common.scss" />
-    <Content Include="Content\sass\_Fabric.Color.Variables.scss" />
-    <Content Include="Content\sass\_Fabric.Color.Mixins.scss" />
-    <Content Include="Content\sass\_Fabric.Animations.scss" />
-    <Content Include="Content\sass\_Fabric.Animations.RTL.scss" />
-    <Content Include="Content\sass\Fabric.Utilities.Output.scss" />
-    <Content Include="Content\sass\Fabric.Typography.Output.scss" />
-    <Content Include="Content\sass\Fabric.Typography.Language.Overrides.Output.scss" />
-    <Content Include="Content\sass\Fabric.Typography.Fonts.Output.scss" />
-    <Content Include="Content\sass\Fabric.scss" />
-    <Content Include="Content\sass\Fabric.RTL.scss" />
-    <Content Include="Content\sass\Fabric.Responsive.Utilities.Output.scss" />
-    <Content Include="Content\sass\Fabric.Icons.RTL.Output.scss" />
-    <Content Include="Content\sass\Fabric.Icons.Output.scss" />
-    <Content Include="Content\sass\Fabric.Icons.Font.Output.scss" />
-    <Content Include="Content\sass\Fabric.Grid.Output.scss" />
-    <Content Include="Content\sass\Fabric.Components.scss" />
-    <Content Include="Content\sass\Fabric.Color.Mixins.Output.scss" />
-    <Content Include="Content\sass\Fabric.Animations.RTL.Output.scss" />
-    <Content Include="Content\sass\Fabric.Animations.Output.scss" />
+    <Content Include="Scripts\errors.json" />
+    <Content Include="Scripts\angular.min.js.map" />
+    <Content Include="Scripts\angular-touch.min.js.map" />
+    <Content Include="Scripts\angular-sanitize.min.js.map" />
+    <Content Include="Scripts\angular-route.min.js.map" />
+    <Content Include="Scripts\angular-resource.min.js.map" />
+    <Content Include="Scripts\angular-parse-ext.min.js.map" />
+    <Content Include="Scripts\angular-messages.min.js.map" />
+    <Content Include="Scripts\angular-message-format.min.js.map" />
+    <Content Include="Scripts\angular-loader.min.js.map" />
+    <Content Include="Scripts\angular-cookies.min.js.map" />
+    <Content Include="Scripts\angular-aria.min.js.map" />
+    <Content Include="Scripts\angular-animate.min.js.map" />
+    <Content Include="Scripts\jquery-2.2.3.min.map" />
     <None Include="Scripts\plugins\jquery-validate\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\plugins\jquery-validate\jquery.validate.js" />
     <Content Include="Scripts\plugins\jquery-validate\jquery.validate.min.js" />
@@ -1189,6 +1241,7 @@
     <Content Include="Views\Reports\ExpiredApplications60.cshtml" />
     <Content Include="Views\Reports\ExpiredApplications90.cshtml" />
     <Content Include="Scripts\plugins\angular\version.json" />
+    <Content Include="Scripts\version.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1248,7 +1301,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

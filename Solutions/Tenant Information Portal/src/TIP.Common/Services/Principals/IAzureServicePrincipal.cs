@@ -31,12 +31,12 @@ namespace TIP.Common.Services.Principals
     public interface IAzureServicePrincipal
     {
         /// <summary>
-        /// TODO
+        /// The unique identifier for the associated application
         /// </summary>
         string AppId { get; }
 
         /// <summary>
-        /// TODO 
+        /// The display name for the service principal.
         /// </summary>
         string DisplayName { get; }
 
@@ -46,10 +46,14 @@ namespace TIP.Common.Services.Principals
         DateTime? EndDate { get; }
 
         /// <summary>
-        /// TODO
+        /// The URIs that identify the associated application
         /// </summary>
         IList<string> PrincipalNames { get; }
 
+        /// <summary>
+        /// The URLs that user tokens are sent to for sign in with the associated application, or the redirect URIs that 
+        /// OAuth 2.0 authorization codes and access tokens are sent to for the associated application.
+        /// </summary>
         IList<string> ReplyUrls { get; }
     }
 }

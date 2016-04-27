@@ -1,14 +1,9 @@
 /* Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE in the project root for license information. */
 
 /**
- * Office UI Fabric 2.1.0
+ * Office UI Fabric 2.4.1
  * The front-end framework for building experiences for Office 365.
  **/
-
-.ms-ListItem:after,
-.ms-PeoplePicker-searchBox:after {
-  clear: both;
-}
 
 .ms-Breadcrumb {
   margin: 23px 0 1px;
@@ -83,7 +78,6 @@
   width: 16px;
   height: 16px;
   -webkit-transform: rotate(45deg);
-      -ms-transform: rotate(45deg);
           transform: rotate(45deg);
   background-color: #ffffff;
 }
@@ -108,19 +102,13 @@
 .ms-Breadcrumb-itemLink:hover,
 .ms-Breadcrumb-overflowButton:hover {
   background-color: #f4f4f4;
+  cursor: pointer;
 }
 
 .ms-Breadcrumb-itemLink:focus,
 .ms-Breadcrumb-overflowButton:focus {
-  outline: #767676 solid 1px;
+  outline: 1px solid #767676;
   color: #000000;
-}
-
-.ms-Breadcrumb-itemLink,
-.ms-Button {
-  color: #333333;
-  font-weight: 400;
-  display: inline-block;
 }
 
 .ms-Breadcrumb-itemLink:active,
@@ -130,8 +118,11 @@
 }
 
 .ms-Breadcrumb-itemLink {
-  font-family: 'Segoe UI Light WestEuropean','Segoe UI Light','Segoe UI',Tahoma,Arial,sans-serif;
+  color: #333333;
+  font-family: Segoe UI Light WestEuropean,Segoe UI Light,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 21px;
+  font-weight: 400;
+  display: inline-block;
   padding: 0 4px;
   max-width: 160px;
   white-space: nowrap;
@@ -176,36 +167,41 @@
 }
 
 .ms-Button {
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
+  color: #333333;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 14px;
+  font-weight: 400;
   box-sizing: border-box;
   margin: 0;
+  padding: 0;
   box-shadow: none;
   background-color: #f4f4f4;
   border: 1px solid #f4f4f4;
   cursor: pointer;
+  display: inline-block;
   height: 32px;
   min-width: 80px;
   padding: 4px 20px 6px;
 }
 
-.ms-Button:focus .ms-Button-label,
+.ms-Button:hover {
+  background-color: #eaeaea;
+  border-color: #eaeaea;
+  outline: 1px solid transparent;
+}
+
 .ms-Button:hover .ms-Button-label {
   color: #000000;
 }
 
-.ms-Button:focus,
-.ms-Button:hover {
-  background-color: #eaeaea;
-  outline: transparent solid 1px;
-}
-
-.ms-Button:hover {
-  border-color: #eaeaea;
-}
-
 .ms-Button:focus {
+  background-color: #eaeaea;
   border-color: #0078d7;
+  outline: 1px solid transparent;
+}
+
+.ms-Button:focus .ms-Button-label {
+  color: #000000;
 }
 
 .ms-Button:active {
@@ -242,7 +238,7 @@
 
 .ms-Button-label {
   color: #333333;
-  font-family: 'Segoe UI Semibold WestEuropean','Segoe UI Semibold','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semibold WestEuropean,Segoe UI Semibold,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 14px;
 }
 
@@ -314,7 +310,7 @@
 
 .ms-Button.ms-Button--hero .ms-Button-label {
   color: #0078d7;
-  font-family: 'Segoe UI Light WestEuropean','Segoe UI Light','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Light WestEuropean,Segoe UI Light,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 21px;
   position: relative;
   top: -5px;
@@ -355,20 +351,16 @@
 
 .ms-Button.ms-Button--compound .ms-Button-label {
   display: block;
-  font-family: 'Segoe UI Semibold WestEuropean','Segoe UI Semibold','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semibold WestEuropean,Segoe UI Semibold,Segoe UI,Tahoma,Arial,sans-serif;
   position: relative;
   text-align: right;
   margin-top: -5px;
 }
 
-.ms-Button.ms-Button--command .ms-Button-label,
-.ms-Button.ms-Button--compound .ms-Button-description {
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
-}
-
 .ms-Button.ms-Button--compound .ms-Button-description {
   color: #666666;
   display: block;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 12px;
   position: relative;
   text-align: right;
@@ -403,16 +395,8 @@
 
 .ms-Button.ms-Button--compound.is-disabled .ms-Button-description,
 .ms-Button.ms-Button--compound.is-disabled .ms-Button-label,
-.ms-Button.ms-Button--compound.is-disabled:active .ms-Button-description,
-.ms-Button.ms-Button--compound.is-disabled:active .ms-Button-label,
-.ms-Button.ms-Button--compound.is-disabled:focus .ms-Button-description,
-.ms-Button.ms-Button--compound.is-disabled:focus .ms-Button-label,
 .ms-Button.ms-Button--compound:disabled .ms-Button-description,
-.ms-Button.ms-Button--compound:disabled .ms-Button-label,
-.ms-Button.ms-Button--compound:disabled:active .ms-Button-description,
-.ms-Button.ms-Button--compound:disabled:active .ms-Button-label,
-.ms-Button.ms-Button--compound:disabled:focus .ms-Button-description,
-.ms-Button.ms-Button--compound:disabled:focus .ms-Button-label {
+.ms-Button.ms-Button--compound:disabled .ms-Button-label {
   color: #a6a6a6;
 }
 
@@ -422,6 +406,17 @@
 .ms-Button.ms-Button--compound:disabled:focus {
   border-color: #f4f4f4;
   background-color: #f4f4f4;
+}
+
+.ms-Button.ms-Button--compound.is-disabled:active .ms-Button-description,
+.ms-Button.ms-Button--compound.is-disabled:active .ms-Button-label,
+.ms-Button.ms-Button--compound.is-disabled:focus .ms-Button-description,
+.ms-Button.ms-Button--compound.is-disabled:focus .ms-Button-label,
+.ms-Button.ms-Button--compound:disabled:active .ms-Button-description,
+.ms-Button.ms-Button--compound:disabled:active .ms-Button-label,
+.ms-Button.ms-Button--compound:disabled:focus .ms-Button-description,
+.ms-Button.ms-Button--compound:disabled:focus .ms-Button-label {
+  color: #a6a6a6;
 }
 
 .ms-Button.ms-Button--command {
@@ -442,9 +437,8 @@
   position: relative;
 }
 
-.ms-Callout-subText,
-.ms-Callout-title {
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+.ms-Button.ms-Button--command .ms-Button-label {
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
 }
 
 .ms-Button.ms-Button--command:focus .ms-Button-icon,
@@ -494,7 +488,6 @@
   content: '';
   position: absolute;
   -webkit-transform: rotate(-45deg);
-      -ms-transform: rotate(-45deg);
           transform: rotate(-45deg);
   height: 0;
   width: 0;
@@ -505,7 +498,7 @@
 .ms-Callout.ms-Callout--arrowRight:before,
 .ms-Callout.ms-Callout--arrowTop:before {
   z-index: 0;
-  outline: transparent solid 1px;
+  outline: 1px solid transparent;
   box-shadow: 0 0 5px 0 rgba(0,0,0,0.4);
 }
 
@@ -570,32 +563,48 @@
   bottom: -10px;
 }
 
+@media screen and (-ms-high-contrast:active) {
+  .ms-Callout.ms-Callout--arrowBottom:after,
+  .ms-Callout.ms-Callout--arrowBottom:before,
+  .ms-Callout.ms-Callout--arrowLeft:after,
+  .ms-Callout.ms-Callout--arrowLeft:before,
+  .ms-Callout.ms-Callout--arrowRight:after,
+  .ms-Callout.ms-Callout--arrowRight:before,
+  .ms-Callout.ms-Callout--arrowTop:after,
+  .ms-Callout.ms-Callout--arrowTop:before {
+    border: 0;
+    width: 20px;
+    height: 20px;
+    background-color: #000000;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Callout.ms-Callout--arrowBottom:after,
+  .ms-Callout.ms-Callout--arrowBottom:before,
+  .ms-Callout.ms-Callout--arrowLeft:after,
+  .ms-Callout.ms-Callout--arrowLeft:before,
+  .ms-Callout.ms-Callout--arrowRight:after,
+  .ms-Callout.ms-Callout--arrowRight:before,
+  .ms-Callout.ms-Callout--arrowTop:after,
+  .ms-Callout.ms-Callout--arrowTop:before {
+    background-color: #ffffff;
+  }
+}
+
 .ms-Callout-main {
   position: relative;
   background-color: #ffffff;
   box-sizing: border-box;
-  outline: transparent solid 1px;
+  outline: 1px solid transparent;
   z-index: 5;
   box-shadow: 0 0 5px 0 rgba(0,0,0,0.4);
-}
-
-.ms-CommandBar:focus,
-.ms-CommandBarItem,
-.ms-CommandBarItem-link:focus {
-  outline: 0;
-}
-
-.ms-ChoiceField,
-.ms-ContextualMenu {
-  box-shadow: none;
-  font-weight: 400;
-  box-sizing: border-box;
 }
 
 .ms-Callout-close {
   margin: 0;
   border: 0;
-  background: 0 0;
+  background: none;
   cursor: pointer;
   position: absolute;
   top: 12px;
@@ -619,18 +628,23 @@
 }
 
 .ms-Callout-title {
-  margin: 0;
   font-size: 21px;
 }
 
-.ms-Callout-subText {
+.ms-Callout-subText,
+.ms-Callout-title {
   margin: 0;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
+}
+
+.ms-Callout-subText {
   color: #333333;
   font-size: 12px;
 }
 
 .ms-Callout-link {
   font-size: 14px;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
 }
 
 .ms-Callout-actions {
@@ -640,15 +654,14 @@
   white-space: nowrap;
 }
 
+.ms-Callout-action,
 .ms-Callout-actions .ms-Link.ms-Link--hero {
   position: relative;
   right: -8px;
 }
 
 .ms-Callout-action {
-  position: relative;
   top: 4px;
-  right: -8px;
   margin-right: 0!important;
 }
 
@@ -681,19 +694,17 @@
 }
 
 .ms-Callout.ms-Callout--OOBE .ms-Callout-title {
-  font-family: 'Segoe UI Light WestEuropean','Segoe UI Light','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Light WestEuropean,Segoe UI Light,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 28px;
   color: #ffffff;
 }
 
-.ms-Callout.ms-Callout--OOBE .ms-Callout-subText,
-.ms-Callout.ms-Callout--peek .ms-Callout-title,
-.ms-ChoiceField {
-  font-size: 14px;
-}
-
 .ms-Callout.ms-Callout--OOBE .ms-Callout-inner {
   padding-top: 20px;
+}
+
+.ms-Callout.ms-Callout--OOBE .ms-Callout-subText {
+  font-size: 14px;
 }
 
 .ms-Callout.ms-Callout--actionText .ms-Callout-actions {
@@ -720,6 +731,10 @@
   padding-bottom: 0;
 }
 
+.ms-Callout.ms-Callout--peek .ms-Callout-title {
+  font-size: 14px;
+}
+
 .ms-Callout.ms-Callout--peek .ms-Callout-actions {
   margin-top: 12px;
   margin-bottom: -4px;
@@ -741,9 +756,13 @@
 
 .ms-ChoiceField {
   color: #333333;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-shadow: none;
   min-height: 36px;
   position: relative;
 }
@@ -771,6 +790,36 @@
   color: #a6a6a6;
 }
 
+@media screen and (-ms-high-contrast:active) {
+  .ms-ChoiceField-input:disabled + .ms-ChoiceField-field:before {
+    background-color: #00ff00;
+    color: #00ff00;
+  }
+
+  .ms-ChoiceField-input:disabled + .ms-ChoiceField-field:after {
+    border-color: #00ff00;
+  }
+
+  .ms-ChoiceField-input:disabled + .ms-ChoiceField-field .ms-Label {
+    color: #00ff00;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-ChoiceField-input:disabled + .ms-ChoiceField-field:before {
+    background-color: #600000;
+    color: #600000;
+  }
+
+  .ms-ChoiceField-input:disabled + .ms-ChoiceField-field:after {
+    border-color: #600000;
+  }
+
+  .ms-ChoiceField-input:disabled + .ms-ChoiceField-field .ms-Label {
+    color: #600000;
+  }
+}
+
 .ms-ChoiceField-input {
   position: absolute;
   opacity: 0;
@@ -795,6 +844,7 @@
   width: 19px;
   height: 19px;
   cursor: pointer;
+  position: relative;
   font-weight: 400;
   right: -1px;
   top: -1px;
@@ -827,6 +877,20 @@
   box-sizing: border-box;
 }
 
+@media screen and (-ms-high-contrast:active) {
+  .ms-ChoiceField-input:checked + .ms-ChoiceField-field:before {
+    border-color: #ffffff;
+    background-color: #ffffff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-ChoiceField-input:checked + .ms-ChoiceField-field:before {
+    border-color: #000000;
+    background-color: #000000;
+  }
+}
+
 .ms-ChoiceField-input:checked + .ms-ChoiceField-field:hover:before {
   background-color: #212121;
   color: #212121;
@@ -853,12 +917,20 @@
   right: 3px;
 }
 
-.ms-CommandBarItem-link:focus:before,
-.ms-Dialog::before,
-.ms-Dropdown-items:before,
-.ms-ListItem:after,
-.ms-ListItem:before {
-  content: '';
+@media screen and (-ms-high-contrast:active) {
+  .ms-ChoiceField-input[type=checkbox]:checked + .ms-ChoiceField-field:before {
+    color: #ffffff;
+    border-color: transparent;
+    background-color: transparent;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-ChoiceField-input[type=checkbox]:checked + .ms-ChoiceField-field:before {
+    color: #000000;
+    border-color: transparent;
+    background-color: transparent;
+  }
 }
 
 .ms-ChoiceFieldGroup {
@@ -874,10 +946,20 @@
   position: relative;
 }
 
+.ms-CommandBar:focus {
+  outline: none;
+}
+
 .ms-CommandBar-mainArea {
   overflow-x: hidden;
   display: block;
   padding-right: 58px;
+}
+
+@media only screen and (min-width:1024px) {
+  .ms-CommandBar-mainArea {
+    padding-right: 24px;
+  }
 }
 
 .ms-CommandBar-sideCommands {
@@ -899,10 +981,6 @@
 }
 
 @media only screen and (min-width:1024px) {
-  .ms-CommandBar-mainArea {
-    padding-right: 24px;
-  }
-
   .ms-CommandBar-sideCommands {
     padding-left: 16px;
   }
@@ -912,6 +990,7 @@
   display: inline-block;
   color: #0078d7;
   height: 40px;
+  outline: none;
   vertical-align: top;
   margin-left: -4px;
 }
@@ -926,12 +1005,16 @@
     border-right: 1px solid #000000;
     border-left: 1px solid #000000;
     height: 38px;
-    outline: 0;
+    outline: none;
   }
+}
 
-  .ms-CommandBarItem:hover {
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-CommandBarItem {
     border-right: 1px solid #ffffff;
     border-left: 1px solid #ffffff;
+    height: 38px;
+    outline: none;
   }
 }
 
@@ -940,14 +1023,14 @@
   color: #0078d7;
 }
 
-@media screen and (-ms-high-contrast:black-on-white) {
-  .ms-CommandBarItem {
+@media screen and (-ms-high-contrast:active) {
+  .ms-CommandBarItem:hover {
     border-right: 1px solid #ffffff;
     border-left: 1px solid #ffffff;
-    height: 38px;
-    outline: 0;
   }
+}
 
+@media screen and (-ms-high-contrast:black-on-white) {
   .ms-CommandBarItem:hover {
     border-right: 1px solid #000000;
     border-left: 1px solid #000000;
@@ -997,13 +1080,20 @@
 
 .ms-CommandBarItem-link {
   line-height: 39px;
+  padding: 0 6px;
   cursor: pointer;
+  height: 40px;
   min-width: 20px;
   text-align: center;
   position: relative;
   padding: 0 8px;
   display: block;
   height: 100%;
+  text-decoration: none;
+}
+
+.ms-CommandBarItem-link:focus {
+  outline: none;
 }
 
 .ms-CommandBarItem-link:focus:before {
@@ -1013,10 +1103,12 @@
   top: 2px;
   bottom: 2px;
   border: 1px solid #a6a6a6;
+  content: '';
 }
 
 .ms-CommandBarItem-icon {
   font-size: 17px;
+  color: #0078d7;
 }
 
 .ms-CommandBarItem-chevronDown {
@@ -1043,7 +1135,7 @@
   position: relative;
   box-sizing: border-box;
   border-color: transparent;
-  transition: 167ms cubic-bezier(0.1, 0.9, 0.2, 1);
+  transition: 0.167s cubic-bezier(0.1, 0.9, 0.2, 1);
   transition-property: width, background-color;
 }
 
@@ -1052,13 +1144,6 @@
     overflow: hidden;
     width: 50px;
     position: absolute;
-  }
-
-  .ms-CommandBarSearch.is-active {
-    width: 100%;
-    position: absolute;
-    z-index: 10;
-    max-width: 100%;
   }
 }
 
@@ -1108,19 +1193,11 @@
   background-color: transparent;
   width: 100%;
   box-sizing: border-box;
-  outline: 0;
+  outline: none;
   cursor: pointer;
   font-size: 14px;
   -webkit-appearance: none;
   -webkit-border-radius: 0;
-}
-
-.ms-DatePicker-goToday:hover,
-.ms-DatePicker-monthOption:hover,
-.ms-DatePicker-table td:hover,
-.ms-DatePicker-yearOption:hover,
-.ms-Dialog-main {
-  outline: transparent solid 1px;
 }
 
 @media screen and (-ms-high-contrast:active) {
@@ -1157,30 +1234,19 @@
   font-size: 14px;
 }
 
-.ms-CommandBarSearch-input::placeholder {
-  color: #333333;
-  opacity: 1;
-  font-size: 14px;
-}
-
+.ms-CommandBarSearch-input::placeholder,
 .ms-CommandBarSearch-input:placeholder {
   color: #333333;
   opacity: 1;
   font-size: 14px;
 }
 
-.ms-CommandBarSearch.is-active,
-.ms-CommandBarSearch.is-active:hover {
-  background-color: #c7e0f4;
-  color: #000000;
-}
-
 .ms-CommandBarSearch-iconSearchWrapper {
   display: block;
+  padding-right: 15px;
 }
 
-.ms-CommandBarSearch-iconArrowWrapper,
-.ms-CommandBarSearch.is-active .ms-CommandBarSearch-iconSearchWrapper {
+.ms-CommandBarSearch-iconArrowWrapper {
   display: none;
 }
 
@@ -1198,18 +1264,48 @@
   z-index: 10;
 }
 
+.ms-CommandBarSearch.is-active {
+  background-color: #c7e0f4;
+  color: #000000;
+}
+
+@media only screen and (max-width:1023px) {
+  .ms-CommandBarSearch.is-active {
+    width: 100%;
+    position: absolute;
+    z-index: 10;
+    max-width: 100%;
+  }
+}
+
+.ms-CommandBarSearch.is-active:hover {
+  background-color: #c7e0f4;
+  color: #000000;
+}
+
 .ms-CommandBarSearch.is-active .ms-CommandBarSearch-input {
   cursor: text;
-  border-right-width: 8px;
   padding-left: 40px;
+  border-right-width: 8px;
 }
 
 .ms-CommandBarSearch.is-active.ms-CommandBarSearch--hasBack .ms-CommandBarSearch-input {
   border-right-width: 40px;
 }
 
-.ms-CommandBarSearch.is-active .ms-CommandBarSearch-iconClearWrapper,
+.ms-CommandBarSearch.is-active .ms-CommandBarSearch-iconSearchWrapper {
+  display: none;
+}
+
 .ms-CommandBarSearch.is-active.ms-CommandBarSearch--hasBack .ms-CommandBarSearch-iconArrowWrapper {
+  display: block;
+}
+
+.ms-CommandBarSearch.is-active .ms-CommandBarSearch-input {
+  padding-left: 40px;
+}
+
+.ms-CommandBarSearch.is-active .ms-CommandBarSearch-iconClearWrapper {
   display: block;
 }
 
@@ -1230,10 +1326,13 @@
 
 .ms-ContextualMenu {
   color: #333333;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 14px;
+  font-weight: 400;
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-shadow: none;
   display: none;
 }
 
@@ -1283,40 +1382,156 @@
   position: relative;
 }
 
+@media screen and (-ms-high-contrast:active) {
+  .ms-ContextualMenu-link {
+    border-color: #000000;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-ContextualMenu-link {
+    border-color: #ffffff;
+  }
+}
+
 .ms-ContextualMenu-link:first-child,
 .ms-ContextualMenu-link:last-child {
   height: 39px;
 }
 
 .ms-ContextualMenu-link:active,
+.ms-ContextualMenu-link:focus,
 .ms-ContextualMenu-link:hover {
   background-color: #eaeaea;
   color: #000000;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-ContextualMenu-link:hover {
+    background-color: #1aebff;
+    border-color: #1aebff;
+    color: #000000;
+  }
+
+  .ms-ContextualMenu-link:hover:focus {
+    border-color: #000000;
+  }
+
+  .ms-ContextualMenu-link:hover + .ms-ContextualMenu-caretRight,
+  .ms-ContextualMenu-link:hover + .ms-ContextualMenu-subMenuIcon {
+    color: #000000;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-ContextualMenu-link:hover {
+    background-color: #37006e;
+    border-color: #37006e;
+    color: #ffffff;
+  }
+
+  .ms-ContextualMenu-link:hover + .ms-ContextualMenu-caretRight,
+  .ms-ContextualMenu-link:hover + .ms-ContextualMenu-subMenuIcon {
+    color: #ffffff;
+  }
 }
 
 .ms-ContextualMenu-link:active {
   border: 1px solid #0078d7;
 }
 
+.ms-ContextualMenu-link:focus {
+  border-color: #0078d7;
+  outline: 0;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-ContextualMenu-link:focus {
+    border-color: #ffffff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-ContextualMenu-link:focus {
+    border-color: #000000;
+  }
+}
+
 .ms-ContextualMenu-link.is-selected {
   background-color: #c7e0f4;
   color: #000000;
-  font-family: 'Segoe UI Semibold WestEuropean','Segoe UI Semibold','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semibold WestEuropean,Segoe UI Semibold,Segoe UI,Tahoma,Arial,sans-serif;
 }
 
 .ms-ContextualMenu-link.is-selected:hover {
   background-color: #c7e0f4;
 }
 
+@media screen and (-ms-high-contrast:active) {
+  .ms-ContextualMenu-link.is-selected {
+    background-color: #1aebff;
+    border-color: #1aebff;
+    color: #000000;
+  }
+
+  .ms-ContextualMenu-link.is-selected:focus {
+    border-color: #000000;
+  }
+
+  .ms-ContextualMenu-link.is-selected + .ms-ContextualMenu-caretRight,
+  .ms-ContextualMenu-link.is-selected + .ms-ContextualMenu-subMenuIcon {
+    color: #000000;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-ContextualMenu-link.is-selected {
+    background-color: #37006e;
+    border-color: #37006e;
+    color: #ffffff;
+  }
+
+  .ms-ContextualMenu-link.is-selected + .ms-ContextualMenu-caretRight,
+  .ms-ContextualMenu-link.is-selected + .ms-ContextualMenu-subMenuIcon {
+    color: #ffffff;
+  }
+}
+
 .ms-ContextualMenu-link.is-disabled {
-  background-color: #ffffff;
   color: #a6a6a6;
   cursor: default;
   pointer-events: none;
 }
 
-.ms-ContextualMenu-link.is-disabled:active {
+.ms-ContextualMenu-link.is-disabled:active,
+.ms-ContextualMenu-link.is-disabled:focus {
   border-color: #ffffff;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-ContextualMenu-link.is-disabled:active,
+  .ms-ContextualMenu-link.is-disabled:focus {
+    border-color: #000000;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-ContextualMenu-link.is-disabled:active,
+  .ms-ContextualMenu-link.is-disabled:focus {
+    border-color: #ffffff;
+  }
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-ContextualMenu-link.is-disabled {
+    color: #00ff00;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-ContextualMenu-link.is-disabled {
+    color: #600000;
+  }
 }
 
 .ms-ContextualMenu-link.ms-ContextualMenu-link--hasMenu ~ .ms-ContextualMenu {
@@ -1354,6 +1569,7 @@
   font-family: Office365Icons;
   font-style: normal;
   font-weight: 400;
+  line-height: 1;
   speak: none;
   color: #333333;
   content: '\e041';
@@ -1366,9 +1582,10 @@
 
 .ms-DatePicker {
   box-sizing: border-box;
-  margin: 0 0 17px;
+  margin: 0;
   padding: 0;
   box-shadow: none;
+  margin-bottom: 17px;
   z-index: 300;
 }
 
@@ -1407,10 +1624,10 @@
 .ms-DatePicker-picker.ms-DatePicker-picker--opened .ms-DatePicker-holder {
   -webkit-animation-name: fadeIn,slideDownIn10;
           animation-name: fadeIn,slideDownIn10;
-  -webkit-animation-duration: 167ms;
-     -moz-animation-duration: 167ms;
-      -ms-animation-duration: 167ms;
-       -o-animation-duration: 167ms;
+  -webkit-animation-duration: 0.167s;
+     -moz-animation-duration: 0.167s;
+      -ms-animation-duration: 0.167s;
+       -o-animation-duration: 0.167s;
   -webkit-animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
           animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
   -webkit-animation-fill-mode: both;
@@ -1448,16 +1665,10 @@
 .ms-DatePicker-month,
 .ms-DatePicker-year {
   display: inline-block;
-  font-family: 'Segoe UI Light WestEuropean','Segoe UI Light','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Light WestEuropean,Segoe UI Light,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 21px;
   color: #0078d7;
   margin-top: -1px;
-}
-
-.ms-DatePicker-day,
-.ms-DatePicker-day--outfocus,
-.ms-DatePicker-weekday {
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
 }
 
 .ms-DatePicker-month:hover,
@@ -1487,12 +1698,17 @@
   padding: 0;
 }
 
+.ms-DatePicker-table td:hover {
+  outline: 1px solid transparent;
+}
+
 .ms-DatePicker-day,
 .ms-DatePicker-weekday {
   width: 40px;
   height: 40px;
   padding: 0;
   line-height: 40px;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 15px;
   font-weight: 400;
   color: #333333;
@@ -1509,6 +1725,7 @@
 
 .ms-DatePicker-day--outfocus {
   color: #a6a6a6;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
 }
 
 .ms-DatePicker-day--infocus:hover,
@@ -1575,7 +1792,7 @@
 .ms-DatePicker-prevYear:hover {
   color: #212121;
   cursor: pointer;
-  outline: transparent solid 1px;
+  outline: 1px solid transparent;
 }
 
 .ms-DatePicker-headerToggleView {
@@ -1592,7 +1809,7 @@
 .ms-DatePicker-currentYear {
   display: block;
   font-weight: 400;
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 21px;
   height: 40px;
   line-height: 42px;
@@ -1625,7 +1842,7 @@
   float: right;
   margin: 0 0 10px 10px;
   font-weight: 400;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 13px;
   color: #333333;
   text-align: center;
@@ -1634,6 +1851,7 @@
 .ms-DatePicker-monthOption:hover,
 .ms-DatePicker-yearOption:hover {
   background-color: #c8c8c8;
+  outline: 1px solid transparent;
 }
 
 .ms-DatePicker-monthOption.is-highlighted,
@@ -1646,13 +1864,17 @@
   bottom: 9px;
   color: #0078d7;
   cursor: pointer;
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 13px;
   height: 30px;
   line-height: 30px;
   padding: 0 10px;
   position: absolute;
   left: 9px;
+}
+
+.ms-DatePicker-goToday:hover {
+  outline: 1px solid transparent;
 }
 
 .ms-DatePicker.is-pickingYears .ms-DatePicker-dayPicker,
@@ -1672,9 +1894,7 @@
 
   .ms-DatePicker-month,
   .ms-DatePicker-year {
-    font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
-    font-size: 17px;
-    color: #333333;
+    font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   }
 
   .ms-DatePicker-header {
@@ -1686,12 +1906,15 @@
     box-sizing: border-box;
     border-left: 1px solid #eaeaea;
     width: 220px;
-    margin: -10px 0;
-    padding: 10px 0;
   }
 
   .ms-DatePicker-monthPicker {
     display: block;
+  }
+
+  .ms-DatePicker-dayPicker {
+    margin: -10px 0;
+    padding: 10px 0;
   }
 
   .ms-DatePicker-monthPicker,
@@ -1715,6 +1938,12 @@
     margin-right: 12px;
   }
 
+  .ms-DatePicker-month,
+  .ms-DatePicker-year {
+    font-size: 17px;
+    color: #333333;
+  }
+
   .ms-DatePicker-month:hover,
   .ms-DatePicker-year:hover {
     color: #333333;
@@ -1726,7 +1955,7 @@
     width: 30px;
     height: 30px;
     line-height: 30px;
-    font-family: 'Segoe UI Semibold WestEuropean','Segoe UI Semibold','Segoe UI',Tahoma,Arial,sans-serif;
+    font-family: Segoe UI Semibold WestEuropean,Segoe UI Semibold,Segoe UI,Tahoma,Arial,sans-serif;
     font-size: 12px;
   }
 
@@ -1767,7 +1996,7 @@
 
   .ms-DatePicker-monthOption:hover,
   .ms-DatePicker-yearOption:hover {
-    outline: transparent solid 1px;
+    outline: 1px solid transparent;
   }
 
   .ms-DatePicker-goToday {
@@ -1815,6 +2044,7 @@
   top: 0;
   right: 0;
   z-index: 300;
+  display: block;
   font-size: 0;
   line-height: 100vh;
   text-align: center;
@@ -1826,9 +2056,10 @@
           align-items: center;
 }
 
-.ms-Dialog::before {
+.ms-Dialog:before {
   vertical-align: middle;
   display: inline-block;
+  content: '';
   height: 100%;
   width: 0;
 }
@@ -1842,6 +2073,12 @@
   z-index: 0;
 }
 
+@media screen and (-ms-high-contrast:active) {
+  .ms-Dialog .ms-Overlay {
+    opacity: 0;
+  }
+}
+
 .ms-Dialog-main {
   vertical-align: middle;
   display: inline-block;
@@ -1853,21 +2090,16 @@
   width: 288px;
   position: relative;
   text-align: right;
-}
-
-.ms-Dialog-actions,
-.ms-Dialog-content,
-.ms-Dialog-header {
-  width: 100%;
-  position: relative;
+  outline: 3px solid transparent;
 }
 
 .ms-Dialog-button.ms-Dialog-button--close {
   display: none;
   position: absolute;
   margin: 0;
+  padding: 0;
   border: 0;
-  background: 0 0;
+  background: none;
   cursor: pointer;
   top: 12px;
   left: 12px;
@@ -1886,14 +2118,21 @@
 }
 
 .ms-Dialog-header {
+  position: relative;
+  width: 100%;
   box-sizing: border-box;
   padding: 12px 20px 15px;
 }
 
 .ms-Dialog-title {
   margin: 0;
-  font-family: 'Segoe UI Light WestEuropean','Segoe UI Light','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Light WestEuropean,Segoe UI Light,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 21px;
+}
+
+.ms-Dialog-content {
+  position: relative;
+  width: 100%;
 }
 
 .ms-Dialog-content .ms-Button.ms-Button--compound:not(:last-child) {
@@ -1903,12 +2142,14 @@
 .ms-Dialog-subText {
   margin: 0 0 20px;
   padding-top: 8px;
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   color: #333333;
   font-size: 12px;
 }
 
 .ms-Dialog-actions {
+  position: relative;
+  width: 100%;
   min-height: 24px;
   line-height: 24px;
   margin: 20px 0 0;
@@ -1956,12 +2197,11 @@
 
 .ms-Dialog.ms-Dialog--lgHeader .ms-Dialog-title {
   font-size: 28px;
-  font-family: 'Segoe UI Light WestEuropean','Segoe UI Light','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Light WestEuropean,Segoe UI Light,Segoe UI,Tahoma,Arial,sans-serif;
   color: #ffffff;
 }
 
-.ms-Dialog.ms-Dialog--lgHeader .ms-Dialog-subText,
-.ms-Dropdown {
+.ms-Dialog.ms-Dialog--lgHeader .ms-Dialog-subText {
   font-size: 14px;
 }
 
@@ -1975,23 +2215,16 @@
 
 .ms-Dropdown {
   color: #333333;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
+  font-size: 14px;
   font-weight: 400;
   box-sizing: border-box;
-  margin: 0 0 10px;
+  margin: 0;
   padding: 0;
   box-shadow: none;
+  margin-bottom: 10px;
   position: relative;
   outline: 0;
-}
-
-.ms-Dropdown-item:hover,
-.ms-ListItem-action:hover,
-.ms-ListItem.is-selected:hover,
-.ms-MessageBanner-close:focus,
-.ms-MessageBanner-expand:focus,
-.ms-NavBar {
-  outline: transparent solid 1px;
 }
 
 .ms-Dropdown:active .ms-Dropdown-caretDown,
@@ -2012,6 +2245,11 @@
   border-color: #0078d7;
 }
 
+.ms-Dropdown .ms-Label {
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
 .ms-Dropdown.is-disabled .ms-Dropdown-title {
   background-color: #f4f4f4;
   border-color: #f4f4f4;
@@ -2019,14 +2257,34 @@
   cursor: default;
 }
 
-.ms-Dropdown-item,
-.ms-Dropdown-title {
-  box-sizing: border-box;
-  cursor: pointer;
+@media screen and (-ms-high-contrast:active) {
+  .ms-Dropdown.is-disabled .ms-Dropdown-title {
+    border-color: #00ff00;
+    color: #00ff00;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Dropdown.is-disabled .ms-Dropdown-title {
+    border-color: #600000;
+    color: #600000;
+  }
 }
 
 .ms-Dropdown.is-disabled .ms-Dropdown-caretDown {
   color: #a6a6a6;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Dropdown.is-disabled .ms-Dropdown-caretDown {
+    color: #00ff00;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Dropdown.is-disabled .ms-Dropdown-caretDown {
+    color: #600000;
+  }
 }
 
 .ms-Dropdown.is-open .ms-Dropdown-items,
@@ -2050,10 +2308,10 @@
 }
 
 .ms-Dropdown-title {
-  margin: 0;
-  box-shadow: none;
+  padding: 0;
   background: #ffffff;
   border: 1px solid #c8c8c8;
+  cursor: pointer;
   display: block;
   height: 32px;
   line-height: 30px;
@@ -2062,17 +2320,22 @@
   overflow: hidden;
 }
 
-.ms-Dropdown-items {
+.ms-Dropdown-items,
+.ms-Dropdown-title {
   box-sizing: border-box;
   margin: 0;
-  padding: 0;
   box-shadow: none;
+}
+
+.ms-Dropdown-items {
+  padding: 0;
   box-shadow: 0 0 5px 0 rgba(0,0,0,0.4);
   background-color: #ffffff;
   display: none;
   list-style-type: none;
   position: absolute;
   width: 100%;
+  max-height: 200px;
   max-width: 268px;
   z-index: 400;
   top: 0;
@@ -2082,6 +2345,7 @@
 }
 
 .ms-Dropdown-items:before {
+  content: '';
   position: absolute;
   z-index: -1;
   top: 0;
@@ -2091,7 +2355,21 @@
   border: 1px solid #eaeaea;
 }
 
+@media screen and (-ms-high-contrast:active) {
+  .ms-Dropdown-items {
+    border: 1px solid #ffffff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Dropdown-items {
+    border: 1px solid #000000;
+  }
+}
+
 .ms-Dropdown-item {
+  box-sizing: border-box;
+  cursor: pointer;
   display: block;
   height: 40px;
   line-height: 38px;
@@ -2099,6 +2377,18 @@
   position: relative;
   border: 1px solid transparent;
   white-space: nowrap;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Dropdown-item {
+    border-color: #000000;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Dropdown-item {
+    border-color: #ffffff;
+  }
 }
 
 .ms-Dropdown-item:first-child,
@@ -2109,6 +2399,26 @@
 .ms-Dropdown-item:hover {
   background-color: #eaeaea;
   color: #000000;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Dropdown-item:hover {
+    background-color: #1aebff;
+    border-color: #1aebff;
+    color: #000000;
+  }
+
+  .ms-Dropdown-item:hover:focus {
+    border-color: #000000;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Dropdown-item:hover {
+    background-color: #37006e;
+    border-color: #37006e;
+    color: #ffffff;
+  }
 }
 
 .ms-Dropdown-item:active {
@@ -2136,40 +2446,27 @@
   background-color: #c7e0f4;
 }
 
-.ms-Link {
-  color: #0078d7;
-  text-decoration: none;
-  cursor: pointer;
+@media screen and (-ms-high-contrast:active) {
+  .ms-Dropdown-item.is-selected,
+  .ms-Dropdown-item.ms-Dropdown-item--selected {
+    background-color: #1aebff;
+    border-color: #1aebff;
+    color: #000000;
+  }
+
+  .ms-Dropdown-item.is-selected:focus,
+  .ms-Dropdown-item.ms-Dropdown-item--selected:focus {
+    border-color: #000000;
+  }
 }
 
-.ms-Link:focus,
-.ms-Link:hover {
-  color: #004578;
-}
-
-.ms-Link:active {
-  color: #0078d7;
-}
-
-.ms-Link.ms-Link--hero {
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
-  padding: 2px 8px 4px;
-}
-
-.ms-List,
-.ms-ListItem {
-  color: #333333;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  margin: 0;
-  box-shadow: none;
-  box-sizing: border-box;
-}
-
-.ms-List,
-.ms-ListItem.ms-ListItem--document {
-  padding: 0;
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Dropdown-item.is-selected,
+  .ms-Dropdown-item.ms-Dropdown-item--selected {
+    background-color: #37006e;
+    border-color: #37006e;
+    color: #ffffff;
+  }
 }
 
 @media (min-width:480px) {
@@ -2185,7 +2482,149 @@
   .ms-Dropdown.ms-Dropdown--open .ms-Dropdown-items {
     position: absolute;
   }
+}
 
+.ms-Facepile {
+  position: relative;
+  height: 32px;
+  width: auto;
+}
+
+.ms-Facepile .ms-PersonaCard {
+  display: none;
+  position: absolute;
+  top: 40px;
+  height: 200px;
+}
+
+.ms-Facepile .ms-PersonaCard.is-active {
+  display: block;
+}
+
+.ms-Facepile-itemBtn {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  position: relative;
+  height: 32px;
+  width: 32px;
+  line-height: 32px;
+  text-align: center;
+  float: right;
+  padding: 0;
+  margin-left: 4px;
+  outline: transparent;
+  border-radius: 50%;
+  vertical-align: top;
+}
+
+.ms-Facepile-itemBtn .ms-Persona-details,
+.ms-Facepile-itemBtn .ms-Persona-presence {
+  display: none;
+}
+
+.ms-Facepile-itemBtn.ms-Facepile-itemBtn--addPerson {
+  background-color: #0078d7;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.ms-Facepile-itemBtn.ms-Facepile-itemBtn--addPerson:focus,
+.ms-Facepile-itemBtn.ms-Facepile-itemBtn--addPerson:hover {
+  background-color: #005a9e;
+}
+
+.ms-Facepile-itemBtn.ms-Facepile-itemBtn--addPerson:active {
+  background-color: #004578;
+}
+
+.ms-Facepile-itemBtn.ms-Facepile-itemBtn--addPerson:disabled {
+  background-color: #c8c8c8;
+}
+
+.ms-Facepile-itemBtn.ms-Facepile-itemBtn--overflow {
+  background-color: #eaeaea;
+  color: #666666;
+  display: none;
+}
+
+.ms-Facepile-itemBtn.ms-Facepile-itemBtn--overflow.is-active {
+  display: block;
+}
+
+.ms-Facepile-itemBtn.ms-Facepile-itemBtn--overflow:hover {
+  color: #212121;
+}
+
+.ms-Facepile-itemBtn.ms-Facepile-itemBtn--overflow:disabled {
+  color: #c8c8c8;
+}
+
+.ms-Facepile-addPersonIcon {
+  position: relative;
+  top: -1px;
+}
+
+.ms-Facepile-overflowText {
+  font-size: 14px;
+}
+
+.ms-Facepile-panel.ms-Facepile-panel--overflow .ms-Panel-headerText,
+.ms-Facepile-panel.ms-Facepile-panel--overflow .ms-PeoplePicker-resultAction,
+.ms-Facepile-panel.ms-Facepile-panel--overflow .ms-PeoplePicker-results,
+.ms-Facepile-panel.ms-Facepile-panel--overflow .ms-PeoplePicker-searchBox {
+  display: none;
+}
+
+.ms-Facepile-panel.ms-Facepile-panel--overflow .ms-PeoplePicker-selectedHeader {
+  font-family: Segoe UI Light WestEuropean,Segoe UI Light,Segoe UI,Tahoma,Arial,sans-serif;
+  font-size: 21px;
+  color: #333333;
+  line-height: 82px;
+  height: 74px;
+  text-transform: none;
+}
+
+.ms-Link {
+  color: #0078d7;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ms-Link:focus,
+.ms-Link:hover {
+  color: #004578;
+}
+
+.ms-Link:active {
+  color: #0078d7;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Link {
+    color: #8080ff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Link {
+    color: #00009f;
+  }
+}
+
+.ms-List {
+  color: #333333;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  list-style-type: none;
+}
+
+@media (min-width:480px) {
   .ms-List.ms-List--grid .ms-ListItem {
     width: 33.33333333333333%;
     float: right;
@@ -2198,6 +2637,15 @@
 }
 
 .ms-ListItem {
+  color: #333333;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  *zoom: 1;
   padding: 9px 28px 3px;
   position: relative;
   display: block;
@@ -2206,7 +2654,12 @@
 .ms-ListItem:after,
 .ms-ListItem:before {
   display: table;
+  content: '';
   line-height: 0;
+}
+
+.ms-ListItem:after {
+  clear: both;
 }
 
 .ms-ListItem-primaryText,
@@ -2220,35 +2673,35 @@
 
 .ms-ListItem-primaryText {
   color: #212121;
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 21px;
   padding-left: 80px;
   position: relative;
   top: -4px;
 }
 
-.ms-ListItem-secondaryText,
-.ms-ListItem-tertiaryText {
+.ms-ListItem-secondaryText {
+  color: #333333;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 14px;
+  line-height: 25px;
   position: relative;
   top: -7px;
   padding-left: 30px;
 }
 
-.ms-ListItem-secondaryText {
-  color: #333333;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
-  line-height: 25px;
+.ms-ListItem-tertiaryText {
+  color: #767676;
+  font-size: 14px;
+  position: relative;
+  top: -9px;
+  margin-bottom: -4px;
+  padding-left: 30px;
 }
 
 .ms-ListItem-metaText,
 .ms-ListItem-tertiaryText {
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
-}
-
-.ms-ListItem-tertiaryText {
-  color: #767676;
-  line-height: 15px;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
 }
 
 .ms-ListItem-metaText {
@@ -2297,6 +2750,7 @@
 
 .ms-ListItem-action:hover {
   color: #666666;
+  outline: 1px solid transparent;
 }
 
 .ms-ListItem.is-unread {
@@ -2307,7 +2761,7 @@
 .ms-ListItem.is-unread .ms-ListItem-metaText,
 .ms-ListItem.is-unread .ms-ListItem-secondaryText {
   color: #0078d7;
-  font-family: 'Segoe UI Semibold WestEuropean','Segoe UI Semibold','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semibold WestEuropean,Segoe UI Semibold,Segoe UI,Tahoma,Arial,sans-serif;
 }
 
 .ms-ListItem.is-unseen:after {
@@ -2327,22 +2781,6 @@
   width: 20px;
 }
 
-.ms-ListItem.is-selectable:hover:before,
-.ms-ListItem.is-selected:before,
-.ms-ListItem.is-selected:hover:before {
-  display: inline-block;
-  font-family: Office365Icons;
-  line-height: 1;
-  position: absolute;
-  top: 12px;
-  right: 6px;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  font-style: normal;
-  speak: none;
-  font-weight: 400;
-}
-
 .ms-ListItem.is-selectable .ms-ListItem-image {
   margin-right: 0;
 }
@@ -2350,10 +2788,21 @@
 .ms-ListItem.is-selectable:hover {
   background-color: #eaeaea;
   cursor: pointer;
-  outline: transparent solid 1px;
+  outline: 1px solid transparent;
 }
 
 .ms-ListItem.is-selectable:hover:before {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  font-family: Office365Icons;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  speak: none;
+  position: absolute;
+  top: 12px;
+  right: 6px;
   height: 15px;
   width: 15px;
   border: 1px solid #767676;
@@ -2365,19 +2814,29 @@
 
 .ms-ListItem.is-selected:before,
 .ms-ListItem.is-selected:hover:before {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  font-family: Office365Icons;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  speak: none;
   content: '\e041';
   font-size: 15px;
   color: #767676;
-}
-
-.ms-ListItem.ms-ListItem--document .ms-ListItem-secondaryText,
-.ms-MessageBanner,
-.ms-NavBar {
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
+  position: absolute;
+  top: 12px;
+  right: 6px;
 }
 
 .ms-ListItem.is-selected:hover {
   background-color: #c7e0f4;
+  outline: 1px solid transparent;
+}
+
+.ms-ListItem.ms-ListItem--document {
+  padding: 0;
 }
 
 .ms-ListItem.ms-ListItem--document .ms-ListItem-itemIcon {
@@ -2406,12 +2865,17 @@
 
 .ms-ListItem.ms-ListItem--document .ms-ListItem-secondaryText {
   display: block;
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: #666666;
   font-size: 11px;
   padding-top: 6px;
+}
+
+.ms-ListItem.ms-ListItem--document .ms-ListItem-secondaryText,
+.ms-MessageBanner {
+  overflow: hidden;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
 }
 
 .ms-MessageBanner {
@@ -2425,13 +2889,12 @@
   width: 100%;
   height: 52px;
   text-align: center;
-  overflow: hidden;
   -webkit-animation-name: fadeIn,slideDownIn20;
           animation-name: fadeIn,slideDownIn20;
-  -webkit-animation-duration: 367ms;
-     -moz-animation-duration: 367ms;
-      -ms-animation-duration: 367ms;
-       -o-animation-duration: 367ms;
+  -webkit-animation-duration: 0.367s;
+     -moz-animation-duration: 0.367s;
+      -ms-animation-duration: 0.367s;
+       -o-animation-duration: 0.367s;
   -webkit-animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
           animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
   -webkit-animation-fill-mode: both;
@@ -2445,10 +2908,10 @@
 .ms-MessageBanner.hide {
   -webkit-animation-name: fadeOut,slideUpOut20;
           animation-name: fadeOut,slideUpOut20;
-  -webkit-animation-duration: 167ms;
-     -moz-animation-duration: 167ms;
-      -ms-animation-duration: 167ms;
-       -o-animation-duration: 167ms;
+  -webkit-animation-duration: 0.167s;
+     -moz-animation-duration: 0.167s;
+      -ms-animation-duration: 0.167s;
+       -o-animation-duration: 0.167s;
   -webkit-animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
           animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
   -webkit-animation-fill-mode: both;
@@ -2466,6 +2929,11 @@
   cursor: pointer;
   border: none;
   background-color: transparent;
+}
+
+.ms-MessageBanner-close:focus,
+.ms-MessageBanner-expand:focus {
+  outline: 1px solid transparent;
 }
 
 .ms-MessageBanner-close {
@@ -2553,22 +3021,25 @@
 
 .ms-NavBar {
   color: #333333;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 14px;
   font-weight: 400;
   box-sizing: border-box;
   margin: 0;
+  padding: 0;
   box-shadow: none;
   background-color: #f4f4f4;
   height: 40px;
   padding: 0 10px;
   width: 100%;
+  outline: 1px solid transparent;
 }
 
 .ms-NavBar .ms-Overlay {
   display: block;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 367ms cubic-bezier(0.1, 0.9, 0.2, 1);
+  transition: opacity 0.367s cubic-bezier(0.1, 0.9, 0.2, 1);
   z-index: 0;
 }
 
@@ -2592,7 +3063,7 @@
   display: block;
   height: 40px;
   line-height: 40px;
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 17px;
   padding-right: 20px;
   position: relative;
@@ -2613,7 +3084,7 @@
 }
 
 .ms-NavBar-item.is-selected {
-  font-family: 'Segoe UI Semibold WestEuropean','Segoe UI Semibold','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semibold WestEuropean,Segoe UI Semibold,Segoe UI,Tahoma,Arial,sans-serif;
 }
 
 .ms-NavBar-item.is-disabled {
@@ -2662,6 +3133,7 @@
   font-family: Office365Icons;
   font-style: normal;
   font-weight: 400;
+  line-height: 1;
   speak: none;
   color: #666666;
   content: '\e039';
@@ -2703,7 +3175,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    outline: transparent solid 1px;
+    outline: 1px solid transparent;
     z-index: 5;
   }
 
@@ -2713,19 +3185,14 @@
 }
 
 @media (min-width:320px) and (max-width:479px) {
-  .ms-NavBar-item .ms-ContextualMenu .ms-ContextualMenu-link,
-  .ms-NavBar-item.ms-NavBar-item--hasMenu.is-selected {
-    font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
-  }
-
   .ms-NavBar-item.ms-NavBar-item--hasMenu.is-selected {
     height: inherit;
     background-color: transparent;
+    font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   }
 
   .ms-NavBar-item.ms-NavBar-item--hasMenu.is-selected .ms-NavBar-chevronDown {
     -webkit-transform: scaleY(-1);
-        -ms-transform: scaleY(-1);
             transform: scaleY(-1);
   }
 
@@ -2737,6 +3204,7 @@
   }
 
   .ms-NavBar-item .ms-ContextualMenu .ms-ContextualMenu-link {
+    font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
     font-size: 17px;
   }
 
@@ -2746,11 +3214,6 @@
     opacity: 1;
     pointer-events: auto;
   }
-}
-
-.ms-OrgChart,
-.ms-Panel-closeIcon {
-  font-size: 14px;
 }
 
 @media (min-width:480px) {
@@ -2785,7 +3248,7 @@
   }
 
   .ms-NavBar-item.is-selected {
-    font-family: 'Segoe UI Semibold WestEuropean','Segoe UI Semibold','Segoe UI',Tahoma,Arial,sans-serif;
+    font-family: Segoe UI Semibold WestEuropean,Segoe UI Semibold,Segoe UI,Tahoma,Arial,sans-serif;
     border-bottom: 2px solid #0078d7;
   }
 
@@ -2804,7 +3267,8 @@
 
 .ms-OrgChart {
   color: #333333;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
+  font-size: 14px;
   font-weight: 400;
   box-sizing: border-box;
   margin: 0;
@@ -2835,7 +3299,7 @@
   position: relative;
   height: 50px;
   width: 100%;
-  background: 0 0;
+  background: none;
   border: 0;
   text-align: right;
   margin: 0;
@@ -2844,22 +3308,13 @@
 }
 
 .ms-Overlay {
-  background-color: rgba(255,255,255,0.4);
+  background-color: hsla(0,0%,100%,0.4);
   position: absolute;
   bottom: 0;
   right: 0;
   left: 0;
   top: 0;
   z-index: 200;
-}
-
-.ms-Panel,
-.ms-Panel-main {
-  position: fixed;
-  left: 0;
-  top: 0;
-  display: none;
-  bottom: 0;
 }
 
 .ms-Overlay.ms-Overlay--dark {
@@ -2871,17 +3326,283 @@
 }
 
 .ms-Panel {
+  bottom: 0;
   right: 0;
+  position: fixed;
+  left: 0;
+  top: 0;
   z-index: 300;
+}
+
+.ms-Panel,
+.ms-Panel .ms-Overlay {
+  display: none;
   pointer-events: none;
 }
 
 .ms-Panel .ms-Overlay {
   z-index: 0;
-  display: none;
-  pointer-events: none;
   opacity: 1;
-  transition: opacity 367ms cubic-bezier(0.1, 0.9, 0.2, 1);
+  cursor: pointer;
+  transition: opacity 0.367s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+.ms-Panel-main {
+  background-color: #ffffff;
+  bottom: 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: none;
+  z-index: 10;
+  width: 100%;
+}
+
+@media (min-width:480px) {
+  .ms-Panel-main {
+    border-right: 1px solid #eaeaea;
+    border-left: 1px solid #eaeaea;
+    pointer-events: auto;
+    width: 340px;
+    box-shadow: 30px 0 30px -30px rgba(0,0,0,0.2);
+    right: auto;
+  }
+}
+
+.ms-Panel-main .ms-CommandBar {
+  outline: 1px solid transparent;
+}
+
+@media (min-width:480px) {
+  .ms-Panel-main .ms-CommandBar {
+    display: none;
+  }
+}
+
+.ms-Panel-main .ms-CommandBarItem {
+  margin-right: 8px;
+}
+
+.ms-Panel-main .ms-CommandBarItem .ms-CommandBarItem-commandText {
+  display: inline-block;
+}
+
+.ms-Panel-main .ms-CommandBar-mainArea {
+  padding-right: 0;
+  margin-right: -1px;
+  overflow: hidden;
+}
+
+.ms-Panel.ms-Panel--lightDismiss .ms-Panel-main {
+  border-right: 1px solid #eaeaea;
+  border-left: 1px solid #eaeaea;
+  width: 272px;
+  box-shadow: 30px 0 30px -30px rgba(0,0,0,0.2);
+}
+
+.ms-Panel.ms-Panel--lightDismiss .ms-Panel-commands,
+.ms-Panel.ms-Panel--lightDismiss .ms-Panel-contentInner {
+  display: none;
+}
+
+.ms-Panel.ms-Panel--lightDismiss.ms-Panel-animateIn .ms-Panel-main {
+  -webkit-animation-name: fadeIn,slideLeftIn40;
+          animation-name: fadeIn,slideLeftIn40;
+  -webkit-animation-duration: 0.367s;
+     -moz-animation-duration: 0.367s;
+      -ms-animation-duration: 0.367s;
+       -o-animation-duration: 0.367s;
+  -webkit-animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
+          animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+.ms-Panel.ms-Panel--lightDismiss.ms-Panel-animateIn .ms-Overlay {
+  -webkit-animation-duration: 0.367s;
+          animation-duration: 0.367s;
+  -webkit-animation-name: fadeIn;
+          animation-name: fadeIn;
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+  -webkit-animation-duration: 0.267s;
+          animation-duration: 0.267s;
+}
+
+.ms-Panel.ms-Panel--lightDismiss.ms-Panel-animateOut .ms-Panel-main {
+  -webkit-animation-name: fadeOut,slideRightOut40;
+          animation-name: fadeOut,slideRightOut40;
+  -webkit-animation-duration: 0.167s;
+     -moz-animation-duration: 0.167s;
+      -ms-animation-duration: 0.167s;
+       -o-animation-duration: 0.167s;
+  -webkit-animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
+          animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+.ms-Panel.ms-Panel--lightDismiss.ms-Panel-animateOut .ms-Overlay {
+  -webkit-animation-duration: 0.367s;
+          animation-duration: 0.367s;
+  -webkit-animation-name: fadeOut;
+          animation-name: fadeOut;
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+  -webkit-animation-duration: 0.167s;
+          animation-duration: 0.167s;
+}
+
+.ms-Panel.ms-Panel--left .ms-Panel-main {
+  left: auto;
+  right: 0;
+  border-right: 1px solid #eaeaea;
+  border-left: 1px solid #eaeaea;
+  width: 272px;
+  box-shadow: 30px 0 30px 30px rgba(0,0,0,0.2);
+}
+
+.ms-Panel.ms-Panel--left .ms-Panel-commands,
+.ms-Panel.ms-Panel--left .ms-Panel-contentInner {
+  display: none;
+}
+
+.ms-Panel.ms-Panel--left.ms-Panel-animateIn .ms-Panel-main {
+  -webkit-animation-name: fadeIn,slideLeftIn40;
+          animation-name: fadeIn,slideLeftIn40;
+  -webkit-animation-duration: 0.367s;
+     -moz-animation-duration: 0.367s;
+      -ms-animation-duration: 0.367s;
+       -o-animation-duration: 0.367s;
+  -webkit-animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
+          animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+.ms-Panel.ms-Panel--left.ms-Panel-animateOut .ms-Panel-main {
+  -webkit-animation-name: fadeOut,slideRightOut40;
+          animation-name: fadeOut,slideRightOut40;
+  -webkit-animation-duration: 0.167s;
+     -moz-animation-duration: 0.167s;
+      -ms-animation-duration: 0.167s;
+       -o-animation-duration: 0.167s;
+  -webkit-animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
+          animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+.ms-Panel.ms-Panel--left.ms-Panel-animateOut .ms-Overlay {
+  -webkit-animation-duration: 0.367s;
+          animation-duration: 0.367s;
+  -webkit-animation-name: fadeOut;
+          animation-name: fadeOut;
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+  -webkit-animation-duration: 0.167s;
+          animation-duration: 0.167s;
+}
+
+.ms-Panel.ms-Panel--left.ms-Panel-animateIn .ms-Panel-main {
+  -webkit-animation-name: fadeIn,slideRightIn40;
+          animation-name: fadeIn,slideRightIn40;
+  -webkit-animation-duration: 0.367s;
+     -moz-animation-duration: 0.367s;
+      -ms-animation-duration: 0.367s;
+       -o-animation-duration: 0.367s;
+  -webkit-animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
+          animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+.ms-Panel.ms-Panel--left.ms-Panel-animateIn .ms-Overlay {
+  -webkit-animation-duration: 0.367s;
+          animation-duration: 0.367s;
+  -webkit-animation-name: fadeIn;
+          animation-name: fadeIn;
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+  -webkit-animation-duration: 0.267s;
+          animation-duration: 0.267s;
+}
+
+.ms-Panel.ms-Panel--left.ms-Panel--left.ms-Panel-animateOut .ms-Panel-main {
+  -webkit-animation-name: fadeOut,slideLeftOut40;
+          animation-name: fadeOut,slideLeftOut40;
+  -webkit-animation-duration: 0.167s;
+     -moz-animation-duration: 0.167s;
+      -ms-animation-duration: 0.167s;
+       -o-animation-duration: 0.167s;
+  -webkit-animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
+          animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+
+.ms-Panel.ms-Panel--left.ms-Panel--left.ms-Panel-animateOut .ms-Overlay {
+  -webkit-animation-duration: 0.367s;
+          animation-duration: 0.367s;
+  -webkit-animation-name: fadeOut;
+          animation-name: fadeOut;
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+  -webkit-animation-duration: 0.167s;
+          animation-duration: 0.167s;
+}
+
+.ms-Panel.ms-Panel--sm .ms-Panel-main {
+  width: 100%;
+}
+
+@media (min-width:480px) {
+  .ms-Panel.ms-Panel--sm .ms-Panel-main {
+    width: 340px;
+  }
+}
+
+@media (min-width:640px) {
+  .ms-Panel.ms-Panel--lg .ms-Panel-main,
+  .ms-Panel.ms-Panel--md .ms-Panel-main,
+  .ms-Panel.ms-Panel--xl .ms-Panel-main {
+    right: 48px;
+    width: auto;
+  }
+}
+
+@media (min-width:1024px) {
+  .ms-Panel.ms-Panel--md .ms-Panel-main {
+    right: auto;
+    width: 643px;
+  }
+}
+
+@media (min-width:1366px) {
+  .ms-Panel.ms-Panel--lg .ms-Panel-main {
+    right: 428px;
+  }
+}
+
+@media (min-width:1366px) {
+  .ms-Panel.ms-Panel--lg.ms-Panel--fixed .ms-Panel-main {
+    right: auto;
+    width: 940px;
+  }
+}
+
+@media (min-width:1366px) {
+  .ms-Panel.ms-Panel--xl .ms-Panel-main {
+    right: 176px;
+  }
+}
+
+.ms-Panel.is-open {
+  display: block;
+}
+
+.ms-Panel.is-open .ms-Panel-main {
+  opacity: 1;
 }
 
 .ms-Panel.is-open .ms-Overlay,
@@ -2890,117 +3611,26 @@
   display: block;
 }
 
-.ms-Panel-main {
-  background-color: #ffffff;
-  z-index: 10;
-  width: 100%;
+@media screen and (-ms-high-contrast:active) {
+  .ms-Panel.is-open .ms-Overlay {
+    opacity: 0;
+  }
 }
 
-.ms-Panel-main .ms-CommandBar .ms-CommandBarItem {
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-}
-
-.ms-Panel-main .ms-CommandBar .ms-CommandBarItem:hover {
-  background-color: #d7eaf9;
-}
-
-.ms-Panel-main .ms-CommandBar .ms-CommandBarItem:active {
-  background-color: #b5d8f4;
-}
-
-.ms-Panel-main .ms-CommandBar .ms-CommandBarItem:active .ms-CommandBarItem-icon {
-  color: #07288b;
-}
-
-.ms-Panel-main .ms-CommandBar .ms-CommandBarItem:active .ms-CommandBarItem-commandText {
-  color: #000000;
-}
-
-.ms-Panel-main .ms-CommandBar .ms-CommandBarItem:first-child .ms-CommandBarItem-commandText,
-.ms-Panel-main .ms-CommandBar .ms-CommandBarItem:first-child .ms-CommandBarItem-icon,
-.ms-Panel-main .ms-CommandBar .ms-CommandBarItem:first-child:hover .ms-CommandBarItem-commandText,
-.ms-Panel-main .ms-CommandBar .ms-CommandBarItem:first-child:hover .ms-CommandBarItem-icon {
-  color: #ffffff;
-}
-
-.ms-Panel-main .ms-CommandBar .ms-CommandBarItem:first-child {
-  background-color: #0078d7;
-  box-shadow: inset 0 1px 0 0 #2488d8;
-}
-
-.ms-Panel-main .ms-CommandBar .ms-CommandBarItem:first-child .ms-CommandBarItem-linkWrapper {
-  padding-right: 12px;
-  padding-left: 12px;
-}
-
-.ms-Panel-main .ms-CommandBar .ms-CommandBarItem:first-child:hover {
-  background-color: #005a9e;
-  box-shadow: none;
-}
-
-.ms-Panel-closeButton {
-  background: 0 0;
-  border: 0;
-  cursor: pointer;
-  position: absolute;
-  left: 12px;
-  top: 12px;
-  height: 24px;
-  width: 24px;
-  outline: 0;
-  padding: 0;
-  color: #666666;
-}
-
-.ms-Panel-closeButton:hover {
-  color: #333333;
-}
-
-.ms-Panel-contentInner {
-  position: absolute;
-  top: 40px;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  padding: 0 32px 20px;
-  overflow-y: auto;
-}
-
-.ms-Panel-headerText {
-  font-family: 'Segoe UI Light WestEuropean','Segoe UI Light','Segoe UI',Tahoma,Arial,sans-serif;
-  font-size: 21px;
-  color: #333333;
-  line-height: 82px;
-  height: 70px;
-}
-
-.ms-Panel.is-open {
-  display: block;
-}
-
-.ms-Panel.is-open .ms-CommandBar {
-  -webkit-animation-name: fadeIn,slideDownIn20;
-          animation-name: fadeIn,slideDownIn20;
-  -webkit-animation-duration: 367ms;
-     -moz-animation-duration: 367ms;
-      -ms-animation-duration: 367ms;
-       -o-animation-duration: 367ms;
-  -webkit-animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
-          animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
+.ms-Panel.is-open.ms-Panel-animateIn .ms-Panel-main {
+  -webkit-animation-duration: 0.367s;
+          animation-duration: 0.367s;
+  -webkit-animation-name: fadeIn;
+          animation-name: fadeIn;
   -webkit-animation-fill-mode: both;
           animation-fill-mode: both;
-  -webkit-animation-delay: 250ms;
-          animation-delay: 250ms;
-}
-
-.ms-Panel.is-open .ms-Panel-main {
-  opacity: 1;
+  -webkit-animation-duration: 0.167s;
+          animation-duration: 0.167s;
 }
 
 .ms-Panel.is-open.ms-Panel-animateOut .ms-Panel-main {
+  -webkit-animation-duration: 0.367s;
+          animation-duration: 0.367s;
   -webkit-animation-name: fadeOut;
           animation-name: fadeOut;
   -webkit-animation-fill-mode: both;
@@ -3013,24 +3643,14 @@
   display: none;
 }
 
-.ms-Panel .ms-CommandBarItem .ms-CommandBarItem-commandText {
-  display: inline-block;
-}
-
-.ms-Panel .ms-CommandBar-mainArea {
-  padding-right: 0;
-  margin-right: -1px;
-  overflow: hidden;
-}
-
 @media (min-width:480px) {
   .ms-Panel.is-open.ms-Panel-animateIn .ms-Panel-main {
     -webkit-animation-name: fadeIn,slideLeftIn40;
             animation-name: fadeIn,slideLeftIn40;
-    -webkit-animation-duration: 367ms;
-       -moz-animation-duration: 367ms;
-        -ms-animation-duration: 367ms;
-         -o-animation-duration: 367ms;
+    -webkit-animation-duration: 0.367s;
+       -moz-animation-duration: 0.367s;
+        -ms-animation-duration: 0.367s;
+         -o-animation-duration: 0.367s;
     -webkit-animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
             animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
     -webkit-animation-fill-mode: both;
@@ -3038,21 +3658,23 @@
   }
 
   .ms-Panel.is-open.ms-Panel-animateIn .ms-Overlay {
+    -webkit-animation-duration: 0.367s;
+            animation-duration: 0.367s;
     -webkit-animation-name: fadeIn;
             animation-name: fadeIn;
     -webkit-animation-fill-mode: both;
             animation-fill-mode: both;
-    -webkit-animation-duration: 267ms;
-            animation-duration: 267ms;
+    -webkit-animation-duration: 0.267s;
+            animation-duration: 0.267s;
   }
 
   .ms-Panel.is-open.ms-Panel-animateOut .ms-Panel-main {
     -webkit-animation-name: fadeOut,slideRightOut40;
             animation-name: fadeOut,slideRightOut40;
-    -webkit-animation-duration: 167ms;
-       -moz-animation-duration: 167ms;
-        -ms-animation-duration: 167ms;
-         -o-animation-duration: 167ms;
+    -webkit-animation-duration: 0.167s;
+       -moz-animation-duration: 0.167s;
+        -ms-animation-duration: 0.167s;
+         -o-animation-duration: 0.167s;
     -webkit-animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
             animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
     -webkit-animation-fill-mode: both;
@@ -3060,21 +3682,23 @@
   }
 
   .ms-Panel.is-open.ms-Panel-animateOut .ms-Overlay {
+    -webkit-animation-duration: 0.367s;
+            animation-duration: 0.367s;
     -webkit-animation-name: fadeOut;
             animation-name: fadeOut;
     -webkit-animation-fill-mode: both;
             animation-fill-mode: both;
-    -webkit-animation-duration: 167ms;
-            animation-duration: 167ms;
+    -webkit-animation-duration: 0.167s;
+            animation-duration: 0.167s;
   }
 
   .ms-Panel.is-open.ms-Panel--left.ms-Panel-animateIn .ms-Panel-main {
     -webkit-animation-name: fadeIn,slideRightIn40;
             animation-name: fadeIn,slideRightIn40;
-    -webkit-animation-duration: 367ms;
-       -moz-animation-duration: 367ms;
-        -ms-animation-duration: 367ms;
-         -o-animation-duration: 367ms;
+    -webkit-animation-duration: 0.367s;
+       -moz-animation-duration: 0.367s;
+        -ms-animation-duration: 0.367s;
+         -o-animation-duration: 0.367s;
     -webkit-animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
             animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
     -webkit-animation-fill-mode: both;
@@ -3082,21 +3706,23 @@
   }
 
   .ms-Panel.is-open.ms-Panel--left.ms-Panel-animateIn .ms-Overlay {
+    -webkit-animation-duration: 0.367s;
+            animation-duration: 0.367s;
     -webkit-animation-name: fadeIn;
             animation-name: fadeIn;
     -webkit-animation-fill-mode: both;
             animation-fill-mode: both;
-    -webkit-animation-duration: 267ms;
-            animation-duration: 267ms;
+    -webkit-animation-duration: 0.267s;
+            animation-duration: 0.267s;
   }
 
   .ms-Panel.is-open.ms-Panel--left.ms-Panel-animateOut .ms-Panel-main {
     -webkit-animation-name: fadeOut,slideLeftOut40;
             animation-name: fadeOut,slideLeftOut40;
-    -webkit-animation-duration: 167ms;
-       -moz-animation-duration: 167ms;
-        -ms-animation-duration: 167ms;
-         -o-animation-duration: 167ms;
+    -webkit-animation-duration: 0.167s;
+       -moz-animation-duration: 0.167s;
+        -ms-animation-duration: 0.167s;
+         -o-animation-duration: 0.167s;
     -webkit-animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
             animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
     -webkit-animation-fill-mode: both;
@@ -3104,38 +3730,14 @@
   }
 
   .ms-Panel.is-open.ms-Panel--left.ms-Panel-animateOut .ms-Overlay {
+    -webkit-animation-duration: 0.367s;
+            animation-duration: 0.367s;
     -webkit-animation-name: fadeOut;
             animation-name: fadeOut;
     -webkit-animation-fill-mode: both;
             animation-fill-mode: both;
-    -webkit-animation-duration: 167ms;
-            animation-duration: 167ms;
-  }
-
-  .ms-Panel.is-open .ms-CommandBar {
-    -webkit-animation-delay: 0.5s;
-            animation-delay: 0.5s;
-  }
-
-  .ms-Panel-main {
-    border-right: 1px solid #eaeaea;
-    border-left: 1px solid #eaeaea;
-    pointer-events: auto;
-    width: 340px;
-  }
-
-  .ms-Panel.is-open .ms-Panel-main {
-    box-shadow: 30px 0 30px -30px rgba(0,0,0,0.2);
-    right: auto;
-  }
-
-  .ms-Panel.ms-Panel--small.ms-Panel--left.is-open .ms-Panel-main {
-    box-shadow: -30px 0 30px -30px rgba(0,0,0,0.2);
-  }
-
-  .ms-Panel.ms-Panel--small.ms-Panel--left .ms-Panel-main {
-    right: 0;
-    left: auto;
+    -webkit-animation-duration: 0.167s;
+            animation-duration: 0.167s;
   }
 
   .ms-Panel.is-open .ms-Overlay {
@@ -3145,61 +3747,166 @@
   }
 }
 
-@media (min-width:640px) {
-  .ms-Panel.ms-Panel--extraLarge .ms-Panel-main,
-  .ms-Panel.ms-Panel--large .ms-Panel-main,
-  .ms-Panel.ms-Panel--medium .ms-Panel-main {
-    right: 47px;
-    width: auto;
-  }
-
-  .ms-Panel.ms-Panel--extraLarge.is-open .ms-Panel-main,
-  .ms-Panel.ms-Panel--large.is-open .ms-Panel-main,
-  .ms-Panel.ms-Panel--medium.is-open .ms-Panel-main {
-    width: auto;
+@media screen and (min-width:480px) and (-ms-high-contrast:active) {
+  .ms-Panel.is-open.ms-Panel--left.ms-Panel-animateIn .ms-Overlay,
+  .ms-Panel.is-open.ms-Panel-animateIn .ms-Overlay {
+    opacity: 0;
+    -webkit-animation-name: none;
+            animation-name: none;
   }
 }
 
-@media (min-width:1024px) {
-  .ms-Panel.ms-Panel--medium .ms-Panel-main {
-    right: auto;
-    width: 644px;
-  }
+.ms-Panel-closeButton {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  position: absolute;
+  left: 8px;
+  top: 0;
+  height: 40px;
+  width: 40px;
+  line-height: 40px;
+  outline: 0;
+  padding: 0;
+  color: #666666;
+  font-size: 14px;
+}
 
-  .ms-Panel.ms-Panel--medium.is-open .ms-Panel-main {
-    right: auto;
-    left: 0;
-    width: 644px;
+.ms-Panel-closeButton:hover {
+  color: #333333;
+}
+
+.ms-Panel-contentInner {
+  position: absolute;
+  top: 40px;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  padding: 0 16px 20px;
+  overflow-y: auto;
+}
+
+@media (min-width:640px) {
+  .ms-Panel-contentInner {
+    padding: 0 32px 20px;
   }
 }
 
 @media (min-width:1366px) {
-  .ms-Panel.ms-Panel--large .ms-Panel-main {
-    right: 427px;
+  .ms-Panel-contentInner {
+    padding: 0 40px 20px;
   }
+}
 
-  .ms-Panel.ms-Panel--extraLarge .ms-Panel-main {
-    right: 175px;
+.ms-Panel-headerText {
+  font-family: Segoe UI Light WestEuropean,Segoe UI Light,Segoe UI,Tahoma,Arial,sans-serif;
+  font-size: 21px;
+  color: #333333;
+  margin: 10px 0;
+  padding: 4px 0;
+  line-height: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+@media (min-width:1024px) {
+  .ms-Panel-headerText {
+    margin-top: 30px;
   }
+}
 
-  .ms-Panel.ms-Panel--small.ms-Panel--left {
-    display: none;
+@media (min-width:480px) {
+  .ms-Panel.ms-Panel--animatedCommands .ms-CommandBar {
+    display: block;
+  }
+}
+
+.ms-Panel.ms-Panel--animatedCommands .ms-CommandBarItem {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.ms-Panel.ms-Panel--animatedCommands .ms-CommandBarItem:hover {
+  background-color: #d7eaf9;
+}
+
+.ms-Panel.ms-Panel--animatedCommands .ms-CommandBarItem:active {
+  background-color: #b5d8f4;
+}
+
+.ms-Panel.ms-Panel--animatedCommands .ms-CommandBarItem:active .ms-CommandBarItem-icon {
+  color: #07288b;
+}
+
+.ms-Panel.ms-Panel--animatedCommands .ms-CommandBarItem:active .ms-CommandBarItem-commandText {
+  color: #000000;
+}
+
+.ms-Panel.ms-Panel--animatedCommands .ms-CommandBarItem:first-child {
+  background-color: #0078d7;
+  box-shadow: inset 0 1px 0 0 #2488d8;
+}
+
+.ms-Panel.ms-Panel--animatedCommands .ms-CommandBarItem:first-child .ms-CommandBarItem-commandText,
+.ms-Panel.ms-Panel--animatedCommands .ms-CommandBarItem:first-child .ms-CommandBarItem-icon {
+  color: #ffffff;
+}
+
+.ms-Panel.ms-Panel--animatedCommands .ms-CommandBarItem:first-child .ms-CommandBarItem-linkWrapper {
+  padding-right: 12px;
+  padding-left: 12px;
+  cursor: pointer;
+}
+
+.ms-Panel.ms-Panel--animatedCommands .ms-CommandBarItem:first-child:hover {
+  background-color: #005a9e;
+  box-shadow: none;
+}
+
+.ms-Panel.ms-Panel--animatedCommands .ms-CommandBarItem:first-child:hover .ms-CommandBarItem-commandText,
+.ms-Panel.ms-Panel--animatedCommands .ms-CommandBarItem:first-child:hover .ms-CommandBarItem-icon {
+  color: #ffffff;
+}
+
+.ms-Panel.ms-Panel--animatedCommands.is-open .ms-CommandBar {
+  -webkit-animation-name: fadeIn,slideDownIn20;
+          animation-name: fadeIn,slideDownIn20;
+  -webkit-animation-duration: 0.367s;
+     -moz-animation-duration: 0.367s;
+      -ms-animation-duration: 0.367s;
+       -o-animation-duration: 0.367s;
+  -webkit-animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
+          animation-timing-function: cubic-bezier(0.1,0.9,0.2,1);
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+  -webkit-animation-delay: 0.25s;
+          animation-delay: 0.25s;
+}
+
+@media (min-width:480px) {
+  .ms-Panel.ms-Panel--animatedCommands.is-open .ms-CommandBar {
+    -webkit-animation-delay: 0.5s;
+            animation-delay: 0.5s;
   }
 }
 
 .ms-PeoplePicker {
   color: #333333;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 14px;
   font-weight: 400;
   box-sizing: border-box;
-  margin: 0 0 10px;
+  margin: 0;
   padding: 0;
   box-shadow: none;
   background-color: #ffffff;
+  margin-bottom: 10px;
 }
 
 .ms-PeoplePicker-searchBox {
+  *zoom: 1;
   border: 1px solid #c8c8c8;
   box-sizing: border-box;
   min-height: 40px;
@@ -3211,6 +3918,10 @@
   display: table;
   content: '';
   line-height: 0;
+}
+
+.ms-PeoplePicker-searchBox:after {
+  clear: both;
 }
 
 .ms-PeoplePicker-searchBox:hover {
@@ -3227,7 +3938,7 @@
   display: inline-block;
   float: right;
   height: 38px;
-  outline: 0;
+  outline: none;
   padding-right: 8px;
   width: 100%;
 }
@@ -3236,6 +3947,7 @@
   display: inline-block;
   float: right;
   margin: 4px;
+  outline: 1px solid transparent;
 }
 
 .ms-PeoplePicker-persona .ms-Persona {
@@ -3249,9 +3961,10 @@
 }
 
 .ms-PeoplePicker-personaRemove {
-  background: #f4f4f4;
+  background: none;
   border: 0;
   cursor: pointer;
+  background-color: #f4f4f4;
   color: #666666;
   display: inline-block;
   float: right;
@@ -3270,7 +3983,7 @@
   background-color: #eaeaea;
   color: #333333;
   border: 1px solid #0078d7;
-  outline: 0;
+  outline: none;
 }
 
 .ms-PeoplePicker-results {
@@ -3305,7 +4018,7 @@
 
 .ms-PeoplePicker-resultGroupTitle {
   color: #0078d7;
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 12px;
   padding: 17px 12px 0 0;
   text-transform: uppercase;
@@ -3314,9 +4027,10 @@
 
 .ms-PeoplePicker-resultList {
   box-sizing: border-box;
-  margin: 0 0 -1px;
+  margin: 0;
   padding: 0;
   box-shadow: none;
+  margin-bottom: -1px;
   list-style-type: none;
 }
 
@@ -3343,7 +4057,7 @@
   box-sizing: border-box;
   height: 34px;
   width: 100%;
-  background: 0 0;
+  background: none;
   border: 0;
   text-align: right;
   margin: 0 0 10px;
@@ -3360,23 +4074,12 @@
 .ms-PeoplePicker-peopleListBtn:hover,
 .ms-PeoplePicker-resultBtn:hover {
   background-color: #eaeaea;
-  outline: transparent solid 1px;
+  outline: 1px solid transparent;
 }
 
 .ms-PeoplePicker-peopleListBtn:focus,
 .ms-PeoplePicker-resultBtn:focus {
   outline: 1;
-}
-
-.ms-PeoplePicker-resultAction:hover,
-.ms-PersonaCard,
-.ms-SearchBox-field,
-.ms-SearchBox.is-active .ms-SearchBox-closeButton,
-.ms-Table-row:hover,
-.ms-TextField-field,
-.ms-TextField-field:focus,
-.ms-TextField-field:hover {
-  outline: transparent solid 1px;
 }
 
 .ms-PeoplePicker-peopleListBtn.ms-PeoplePicker-resultBtn--compact,
@@ -3394,12 +4097,12 @@
 }
 
 .ms-PeoplePicker-resultAction {
-  background: 0 0;
+  background: none;
   border: 0;
   cursor: pointer;
   display: block;
   height: 34px;
-  transition: background-color 367ms cubic-bezier(0.1, 0.9, 0.2, 1);
+  transition: background-color 0.367s cubic-bezier(0.1, 0.9, 0.2, 1);
   position: absolute;
   left: 0;
   top: 0;
@@ -3420,6 +4123,7 @@
 
 .ms-PeoplePicker-resultAction:hover {
   background-color: #c8c8c8;
+  outline: 1px solid transparent;
 }
 
 .ms-PeoplePicker-resultAction:active {
@@ -3437,7 +4141,6 @@
 
 .ms-PeoplePicker-result.is-expanded .ms-PeoplePicker-resultAction .ms-Icon {
   -webkit-transform: rotate(180deg);
-      -ms-transform: rotate(180deg);
           transform: rotate(180deg);
 }
 
@@ -3469,8 +4172,7 @@
   display: block;
 }
 
-.ms-PeoplePicker-searchMore.is-searching .ms-PeoplePicker-searchMoreIcon .ms-Icon,
-.ms-PeoplePicker.ms-PeoplePicker--compact .ms-PeoplePicker-searchMoreSecondary {
+.ms-PeoplePicker-searchMore.is-searching .ms-PeoplePicker-searchMoreIcon .ms-Icon {
   display: none;
 }
 
@@ -3484,14 +4186,15 @@
 }
 
 .ms-PeoplePicker-searchMoreBtn {
-  background: 0 0;
+  background: none;
   border: 0;
   cursor: pointer;
   position: relative;
   height: 69px;
   width: 100%;
-  padding: 0 70px 0 0;
+  padding: 0;
   margin: 0;
+  padding-right: 70px;
   text-align: right;
 }
 
@@ -3529,14 +4232,13 @@
 
 .ms-PeoplePicker-searchMorePrimary {
   padding-top: 2px;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
 }
 
-.ms-PeoplePicker-searchMore.ms-PeoplePicker-searchMore--disconnected .ms-PeoplePicker-searchMorePrimary,
 .ms-PeoplePicker-searchMoreSecondary {
-  color: #666666;
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 11px;
+  color: #666666;
 }
 
 .ms-PeoplePicker-searchMore.ms-PeoplePicker-searchMore--disconnected:hover {
@@ -3549,15 +4251,12 @@
 }
 
 .ms-PeoplePicker-searchMore.ms-PeoplePicker-searchMore--disconnected .ms-PeoplePicker-searchMorePrimary {
+  color: #666666;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
+  font-size: 11px;
   line-height: 20px;
   position: relative;
   top: 12px;
-}
-
-.ms-PeoplePicker-peopleListHeader,
-.ms-PeoplePicker-selectedHeader,
-.ms-Persona {
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
 }
 
 .ms-PeoplePicker.ms-PeoplePicker--compact .ms-PeoplePicker-resultGroups {
@@ -3604,6 +4303,10 @@
   line-height: 45px;
 }
 
+.ms-PeoplePicker.ms-PeoplePicker--compact .ms-PeoplePicker-searchMoreSecondary {
+  display: none;
+}
+
 .ms-PeoplePicker.ms-PeoplePicker--Facepile .ms-PeoplePicker-searchBox,
 .ms-PeoplePicker.ms-PeoplePicker--membersList .ms-PeoplePicker-searchBox {
   height: 30px;
@@ -3644,7 +4347,8 @@
   box-shadow: none;
   margin: 0;
   max-width: 100%;
-  padding: 0 0 10px;
+  padding: 0;
+  padding-bottom: 10px;
   border-bottom: 1px solid #eaeaea;
 }
 
@@ -3696,7 +4400,9 @@
   .ms-PeoplePicker.ms-PeoplePicker--Facepile .ms-PeoplePicker-selectedPeople .ms-Persona .ms-Persona-secondaryText {
     display: block;
   }
+}
 
+@media (min-width:480px) {
   .ms-PeoplePicker.ms-PeoplePicker--Facepile .ms-PeoplePicker-peopleListBtn,
   .ms-PeoplePicker.ms-PeoplePicker--Facepile .ms-PeoplePicker-resultAction,
   .ms-PeoplePicker.ms-PeoplePicker--Facepile .ms-PeoplePicker-resultBtn {
@@ -3761,6 +4467,7 @@
 .ms-PeoplePicker-selectedHeader {
   color: #0078d7;
   font-size: 12px;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   height: 50px;
   line-height: 50px;
 }
@@ -3786,6 +4493,7 @@
 
 .ms-Persona {
   color: #333333;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 14px;
   font-weight: 400;
   box-sizing: border-box;
@@ -3805,6 +4513,19 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
+  z-index: 0;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Persona-imageArea {
+    border: 1px solid #ffffff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Persona-imageArea {
+    border: 1px solid #000000;
+  }
 }
 
 .ms-Persona-placeholder {
@@ -3819,15 +4540,8 @@
 .ms-Persona-initials {
   color: #ffffff;
   font-size: 17px;
-  font-family: 'Segoe UI Light WestEuropean','Segoe UI Light','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Light WestEuropean,Segoe UI Light,Segoe UI,Tahoma,Arial,sans-serif;
   line-height: 48px;
-}
-
-.ms-Persona-optionalText,
-.ms-Persona-primaryText,
-.ms-Persona-secondaryText,
-.ms-Persona-tertiaryText {
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
 }
 
 .ms-Persona-initials.ms-Persona-initials--lightBlue {
@@ -3936,6 +4650,7 @@
 
 .ms-Persona-primaryText {
   color: #333333;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 17px;
   margin-top: -3px;
   line-height: 1.4;
@@ -3945,6 +4660,7 @@
 .ms-Persona-secondaryText,
 .ms-Persona-tertiaryText {
   color: #666666;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 12px;
   white-space: nowrap;
   line-height: 1.3;
@@ -3976,19 +4692,26 @@
   border: 0;
 }
 
+@media screen and (-ms-high-contrast:active) {
+  .ms-Persona.ms-Persona--square .ms-Persona-presence {
+    border: 1px solid #ffffff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Persona.ms-Persona--square .ms-Persona-presence {
+    border: 1px solid #000000;
+  }
+}
+
 .ms-Persona.ms-Persona--tiny {
   height: 30px;
   display: inline-block;
 }
 
-.ms-Persona.ms-Persona--tiny .ms-Persona-secondaryText,
-.ms-Persona.ms-Persona--xs .ms-Persona-secondaryText {
-  display: none;
-}
-
 .ms-Persona.ms-Persona--tiny .ms-Persona-imageArea {
   overflow: visible;
-  background: 0 0;
+  background: transparent;
   height: 0;
   width: 0;
 }
@@ -4000,6 +4723,19 @@
   border: 0;
 }
 
+@media screen and (-ms-high-contrast:active) {
+  .ms-Persona.ms-Persona--tiny .ms-Persona-presence {
+    top: 9px;
+    border: 1px solid #ffffff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Persona.ms-Persona--tiny .ms-Persona-presence {
+    border: 1px solid #000000;
+  }
+}
+
 .ms-Persona.ms-Persona--tiny .ms-Persona-details {
   padding-right: 20px;
 }
@@ -4009,14 +4745,13 @@
   padding-top: 9px;
 }
 
+.ms-Persona.ms-Persona--tiny .ms-Persona-secondaryText {
+  display: none;
+}
+
 .ms-Persona.ms-Persona--tiny.ms-Persona--readonly {
   padding: 0;
   background-color: transparent;
-}
-
-.ms-Persona.ms-Persona--sm .ms-Persona-details,
-.ms-Persona.ms-Persona--xs .ms-Persona-details {
-  padding-right: 8px;
 }
 
 .ms-Persona.ms-Persona--tiny.ms-Persona--readonly .ms-Persona-primaryText:after {
@@ -4049,9 +4784,17 @@
   right: 19px;
 }
 
+.ms-Persona.ms-Persona--xs .ms-Persona-details {
+  padding-right: 8px;
+}
+
 .ms-Persona.ms-Persona--xs .ms-Persona-primaryText {
   font-size: 14px;
   padding-top: 3px;
+}
+
+.ms-Persona.ms-Persona--xs .ms-Persona-secondaryText {
+  display: none;
 }
 
 .ms-Persona.ms-Persona--square.ms-Persona--xs .ms-Persona-presence {
@@ -4078,6 +4821,10 @@
 
 .ms-Persona.ms-Persona--sm .ms-Persona-presence {
   right: 27px;
+}
+
+.ms-Persona.ms-Persona--sm .ms-Persona-details {
+  padding-right: 8px;
 }
 
 .ms-Persona.ms-Persona--sm .ms-Persona-primaryText {
@@ -4158,7 +4905,7 @@
 
 .ms-Persona.ms-Persona--xl .ms-Persona-primaryText {
   font-size: 21px;
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   margin-top: 0;
 }
 
@@ -4200,7 +4947,7 @@
 .ms-Persona.ms-Persona--selectable:not(.ms-Persona--xl):focus,
 .ms-Persona.ms-Persona--selectable:not(.ms-Persona--xl):hover {
   background-color: #deecf9;
-  outline: transparent solid 1px;
+  outline: 1px solid transparent;
 }
 
 .ms-Persona.ms-Persona--available .ms-Persona-presence {
@@ -4213,7 +4960,7 @@
 
 .ms-Persona.ms-Persona--blocked .ms-Persona-presence {
   background-color: #dedede;
-  background-image: linear-gradient(to bottom,#dedede 0,#dedede 48%,#c72d25 40%,#c72d25 58%,#dedede 52%,#dedede 100%);
+  background-image: linear-gradient(180deg,#dedede 0,#dedede 48%,#c72d25 0,#c72d25 58%,#dedede 0,#dedede);
 }
 
 .ms-Persona.ms-Persona--busy .ms-Persona-presence {
@@ -4223,12 +4970,12 @@
 
 .ms-Persona.ms-Persona--busy.ms-Persona--square .ms-Persona-presence {
   background-color: #d93b3b;
-  background: repeating-linear-gradient(-45deg,#e57a79,#e57a79 3px,#d00e0d 3px,#d00e0d 6px);
+  background: repeating-linear-gradient(-45deg,#e57a79,#e57a79 3px,#d00e0d 0,#d00e0d 6px);
 }
 
 .ms-Persona.ms-Persona--dnd .ms-Persona-presence {
   background-color: #c72d25;
-  background-image: linear-gradient(to bottom,#c72d25 0,#c72d25 48%,#ffffff 48%,#ffffff 52%,#c72d25 52%,#c72d25 100%);
+  background-image: linear-gradient(180deg,#c72d25 0,#c72d25 48%,#ffffff 0,#ffffff 52%,#c72d25 0,#c72d25);
 }
 
 .ms-Persona.ms-Persona--offline .ms-Persona-presence {
@@ -4237,15 +4984,15 @@
 
 .ms-PersonaCard {
   color: #333333;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 14px;
   font-weight: 400;
   -webkit-animation-name: fadeIn,slideUpIn10;
           animation-name: fadeIn,slideUpIn10;
-  -webkit-animation-duration: 167ms;
-     -moz-animation-duration: 167ms;
-      -ms-animation-duration: 167ms;
-       -o-animation-duration: 167ms;
+  -webkit-animation-duration: 0.167s;
+     -moz-animation-duration: 0.167s;
+      -ms-animation-duration: 0.167s;
+       -o-animation-duration: 0.167s;
   -webkit-animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
           animation-timing-function: cubic-bezier(0.1,0.25,0.75,0.9);
   -webkit-animation-fill-mode: both;
@@ -4254,6 +5001,7 @@
   right: 0;
   position: fixed;
   left: 0;
+  outline: 1px solid transparent;
 }
 
 .ms-PersonaCard-persona {
@@ -4332,7 +5080,6 @@
 .ms-PersonaCard-action.is-active:after {
   box-sizing: border-box;
   -webkit-transform: rotate(45deg);
-      -ms-transform: rotate(45deg);
           transform: rotate(45deg);
   content: '';
   width: 10px;
@@ -4377,7 +5124,7 @@
   min-height: 48px;
   color: #666666;
   padding: 9px 20px;
-  transition: max-height 267ms cubic-bezier(0.1, 0.9, 0.2, 1) 0.2s;
+  transition: max-height 0.267s cubic-bezier(0.1, 0.9, 0.2, 1) 0.2s;
   box-sizing: border-box;
 }
 
@@ -4401,6 +5148,10 @@
   margin: 0;
 }
 
+.ms-PersonaCard-detailOrg {
+  overflow-y: auto;
+}
+
 .ms-PersonaCard-detailChat {
   margin-right: 0;
 }
@@ -4418,7 +5169,6 @@
 }
 
 .ms-PersonaCard-detailOrg {
-  overflow-y: auto;
   margin-right: -400%;
 }
 
@@ -4517,47 +5267,117 @@
 }
 
 .ms-Pivot {
-  color: #333333;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
   font-size: 14px;
   font-weight: 400;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   box-shadow: none;
-  height: 30px;
+  height: 40px;
   list-style-type: none;
   overflow-x: hidden;
   white-space: nowrap;
 }
 
+.ms-Pivot,
 .ms-Pivot-link {
   color: #333333;
-  display: inline-block;
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
-  font-size: 15px;
-  line-height: 27px;
-  margin-left: 15px;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
 }
 
+.ms-Pivot-link {
+  display: inline-block;
+  position: relative;
+  font-size: 15px;
+  line-height: 40px;
+  margin-left: 8px;
+}
+
+.ms-Pivot-link:after {
+  content: '';
+  width: 100%;
+  position: absolute;
+  display: none;
+  bottom: 0;
+  right: 0;
+  height: 2px;
+  background-color: #0078d7;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Pivot-link:after {
+    background-color: #1aebff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Pivot-link:after {
+    background-color: #37006e;
+  }
+}
+
+.ms-Pivot-link:active,
 .ms-Pivot-link:focus,
 .ms-Pivot-link:hover {
   color: #000000;
   cursor: pointer;
 }
 
+.ms-Pivot-link:active + .ms-Pivot-dropdownIcon,
+.ms-Pivot-link:focus + .ms-Pivot-dropdownIcon,
+.ms-Pivot-link:hover + .ms-Pivot-dropdownIcon {
+  color: #212121;
+}
+
 .ms-Pivot-link:active {
-  color: #0078d7;
+  font-family: Segoe UI Semibold WestEuropean,Segoe UI Semibold,Segoe UI,Tahoma,Arial,sans-serif;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Pivot-link:active {
+    color: #1aebff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Pivot-link:active {
+    color: #37006e;
+  }
+}
+
+.ms-Pivot-link:active:after {
+  display: block;
 }
 
 .ms-Pivot-link.is-selected {
-  color: #0078d7;
-  font-family: 'Segoe UI Semibold WestEuropean','Segoe UI Semibold','Segoe UI',Tahoma,Arial,sans-serif;
+  color: #000000;
+  font-family: Segoe UI Semibold WestEuropean,Segoe UI Semibold,Segoe UI,Tahoma,Arial,sans-serif;
 }
 
-.ms-Pivot.ms-Pivot--large .ms-Pivot-link.is-selected,
-.ms-Pivot.ms-Pivot--tabs .ms-Pivot-link.is-selected {
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+@media screen and (-ms-high-contrast:active) {
+  .ms-Pivot-link.is-selected {
+    color: #1aebff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Pivot-link.is-selected {
+    color: #37006e;
+  }
+}
+
+.ms-Pivot-link.is-selected:after {
+  display: block;
+}
+
+.ms-Pivot-link.is-selected + .ms-Pivot-dropdownIcon {
+  color: #212121;
+}
+
+.ms-Pivot-dropdownIcon {
+  font-size: 16px;
+  position: relative;
+  top: 2px;
 }
 
 .ms-Pivot-link.ms-Pivot-link--overflow {
@@ -4573,8 +5393,8 @@
   color: #212121;
 }
 
-.ms-Pivot-link.ms-Pivot-link--overflow:active {
-  color: #0078d7!important;
+.ms-Pivot-link.ms-Pivot-link--overflow:active:after {
+  display: none;
 }
 
 .ms-Pivot-ellipsis {
@@ -4583,7 +5403,15 @@
   top: 0;
 }
 
-.ms-Pivot.ms-Pivot--large .ms-Pivot-link,
+.ms-Pivot.ms-Pivot--large .ms-Pivot-link {
+  font-size: 17px;
+}
+
+.ms-Pivot.ms-Pivot--large .ms-Pivot-link.is-selected,
+.ms-Pivot.ms-Pivot--large .ms-Pivot-link:active {
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
+}
+
 .ms-Pivot.ms-Pivot--large .ms-Pivot-link.ms-Pivot-link--overflow:after {
   font-size: 17px;
 }
@@ -4598,6 +5426,7 @@
   line-height: 40px;
   margin-left: -2px;
   padding: 0 10px;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif!important;
 }
 
 .ms-Pivot.ms-Pivot--tabs .ms-Pivot-link:focus:not(.is-selected):not(.ms-Pivot-link--overflow),
@@ -4608,11 +5437,41 @@
 .ms-Pivot.ms-Pivot--tabs .ms-Pivot-link:active {
   color: #ffffff!important;
   background-color: #0078d7;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Pivot.ms-Pivot--tabs .ms-Pivot-link:active {
+    background-color: #1aebff;
+    color: #000000;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Pivot.ms-Pivot--tabs .ms-Pivot-link:active {
+    background-color: #37006e;
+    color: #ffffff;
+  }
 }
 
 .ms-Pivot.ms-Pivot--tabs .ms-Pivot-link.is-selected {
   background-color: #0078d7;
   color: #ffffff;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Pivot.ms-Pivot--tabs .ms-Pivot-link.is-selected {
+    background-color: #1aebff;
+    color: #000000;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Pivot.ms-Pivot--tabs .ms-Pivot-link.is-selected {
+    background-color: #37006e;
+    color: #ffffff;
+  }
 }
 
 .ms-Pivot.ms-Pivot--tabs .ms-Pivot-link.ms-Pivot-link--overflow:focus:not(.is-selected),
@@ -4633,20 +5492,12 @@
 
 @media screen and (-ms-high-contrast:active) {
   .ms-Pivot.ms-Pivot--tabs .ms-Pivot-link.is-selected {
-    font-family: 'Segoe UI Semibold WestEuropean','Segoe UI Semibold','Segoe UI',Tahoma,Arial,sans-serif;
+    font-family: Segoe UI Semibold WestEuropean,Segoe UI Semibold,Segoe UI,Tahoma,Arial,sans-serif;
   }
-}
-
-.ms-ProgressIndicator-itemDescription,
-.ms-ProgressIndicator-itemName,
-.ms-SearchBox {
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
-  font-weight: 400;
 }
 
 .ms-ProgressIndicator-itemName {
   color: #333333;
-  font-size: 14px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -4654,7 +5505,15 @@
   line-height: 20px;
 }
 
+.ms-ProgressIndicator-itemDescription,
+.ms-ProgressIndicator-itemName {
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
 .ms-ProgressIndicator-itemDescription {
+  color: #333333;
   color: #767676;
   font-size: 11px;
   line-height: 18px;
@@ -4672,6 +5531,7 @@
   width: 100%;
   height: 2px;
   background-color: #eaeaea;
+  outline: 1px solid transparent;
 }
 
 .ms-ProgressIndicator-progressBar {
@@ -4680,23 +5540,46 @@
   background-color: #0078d7;
 }
 
-.ms-SearchBox,
-.ms-SearchBox-field {
-  position: relative;
-  font-size: 14px;
-  box-shadow: none;
-  box-sizing: border-box;
+@media screen and (-ms-high-contrast:active) {
+  .ms-ProgressIndicator-progressBar {
+    background-color: #ffffff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-ProgressIndicator-progressBar {
+    background-color: #000000;
+  }
 }
 
 .ms-SearchBox {
   color: #333333;
-  margin: 0 0 10px;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  box-sizing: border-box;
+  margin: 0;
   padding: 0;
+  box-shadow: none;
+  position: relative;
+  margin-bottom: 10px;
   display: inline-block;
 }
 
 .ms-SearchBox.is-disabled .ms-SearchBox-label {
-  color: #333333;
+  color: #a6a6a6;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-SearchBox.is-disabled .ms-SearchBox-label {
+    color: #00ff00;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-SearchBox.is-disabled .ms-SearchBox-label {
+    color: #600000;
+  }
 }
 
 .ms-SearchBox.is-disabled .ms-SearchBox-icon {
@@ -4712,13 +5595,20 @@
 
 .ms-SearchBox.is-active .ms-SearchBox-closeButton {
   display: block;
+  outline: 1px solid transparent;
 }
 
 .ms-SearchBox-field {
+  position: relative;
+  box-sizing: border-box;
   margin: 0;
+  padding: 0;
+  box-shadow: none;
   border: 1px solid #71afe5;
+  outline: 1px solid transparent;
   border-radius: 0;
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
+  font-size: 14px;
   color: #000000;
   height: 32px;
   padding: 6px 10px 7px 3px;
@@ -4727,10 +5617,9 @@
   z-index: 5;
 }
 
-.ms-SearchBox-field.hovering,
-.ms-SearchBox-field:focus {
+.ms-SearchBox-field.hovering {
   border-color: #0078d7;
-  background-color: rgba(0,120,215,0.2);
+  background-color: #deecf9;
 }
 
 .ms-SearchBox-field.hovering + .ms-SearchBox-label {
@@ -4743,6 +5632,8 @@
 
 .ms-SearchBox-field:focus {
   padding: 6px 10px 7px 32px;
+  border-color: #0078d7;
+  background-color: #deecf9;
 }
 
 .ms-SearchBox-field::-ms-clear {
@@ -4801,9 +5692,22 @@
   opacity: 0;
 }
 
+@media screen and (-ms-high-contrast:active) {
+  .ms-Spinner-circle {
+    background-color: #ffffff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Spinner-circle {
+    background-color: #000000;
+  }
+}
+
 .ms-Spinner-label {
   position: relative;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
+  color: #333333;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 12px;
   font-weight: 400;
   color: #0078d7;
@@ -4814,82 +5718,112 @@
 .ms-Table {
   display: table;
   width: 100%;
+  border-collapse: collapse;
 }
 
-.ms-Table-row {
+.ms-Table--fixed {
+  table-layout: fixed;
+}
+
+.ms-Table-row,
+.ms-Table tr {
   display: table-row;
-  height: 30px;
   line-height: 30px;
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 12px;
   color: #333333;
 }
 
-.ms-Table-row.is-selected .ms-Table-rowCheck:after,
-.ms-Table-row:first-child .ms-Table-rowCheck:after {
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  font-style: normal;
-  line-height: 1;
-  speak: none;
-  content: '\e041';
-  position: absolute;
-  right: 4px;
-  top: 9px;
-  font-weight: 400;
-}
-
-.ms-Table-row:hover {
+.ms-Table-row:hover,
+.ms-Table tr:hover {
   background-color: #f4f4f4;
   cursor: pointer;
+  outline: 1px solid transparent;
 }
 
-.ms-Table-row.is-selected {
+.ms-Table-row.is-selected,
+.ms-Table tr.is-selected {
   background-color: #c7e0f4;
 }
 
-.ms-Table-row.is-selected .ms-Table-rowCheck {
+.ms-Table-row.is-selected .ms-Table-rowCheck,
+.ms-Table tr.is-selected .ms-Table-rowCheck {
   background-color: #0078d7;
 }
 
-.ms-Table-row.is-selected .ms-Table-rowCheck:before {
+.ms-Table-row.is-selected .ms-Table-rowCheck:before,
+.ms-Table tr.is-selected .ms-Table-rowCheck:before {
   display: none;
 }
 
-.ms-Table-row.is-selected .ms-Table-rowCheck:after {
+.ms-Table-row.is-selected .ms-Table-rowCheck:after,
+.ms-Table tr.is-selected .ms-Table-rowCheck:after {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
   display: inline-block;
   font-family: Office365Icons;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  speak: none;
+  content: '\e041';
   color: #ffffff;
   font-size: 12px;
+  position: absolute;
+  right: 4px;
+  top: 9px;
 }
 
-.ms-Table-cell {
+.ms-Table-cell,
+.ms-Table td,
+.ms-Table th {
   display: table-cell;
   padding: 0 10px;
 }
 
-.ms-Table-row:first-child {
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+.ms-Table-head,
+.ms-Table thead th {
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 11px;
   color: #666666;
 }
 
-.ms-Table-row:first-child .ms-Table-cell,
-.ms-Table-row:first-child .ms-Table-rowCheck {
+.ms-Table-head .ms-Table-cell,
+.ms-Table-head .ms-Table-rowCheck,
+.ms-Table-head td,
+.ms-Table-head th,
+.ms-Table thead .ms-Table-cell,
+.ms-Table thead .ms-Table-rowCheck,
+.ms-Table thead td,
+.ms-Table thead th {
+  font-weight: 400;
+  text-align: right;
   border-bottom: 1px solid #eaeaea;
 }
 
-.ms-Table-row:first-child .ms-Table-rowCheck:after {
+.ms-Table-head .ms-Table-rowCheck:after,
+.ms-Table thead .ms-Table-rowCheck:after {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
   display: inline-block;
   font-family: Office365Icons;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  speak: none;
+  content: '\e041';
   color: #a6a6a6;
   font-size: 12px;
+  position: absolute;
+  right: 4px;
+  top: 9px;
 }
 
 .ms-Table-rowCheck {
   display: table-cell;
   width: 20px;
   position: relative;
+  padding: 0;
 }
 
 .ms-Table-rowCheck:before {
@@ -4905,7 +5839,7 @@
 
 @media screen and (-ms-high-contrast:active) {
   .ms-Table-row.is-selected .ms-Table-rowCheck {
-    background: 0 0;
+    background: none;
   }
 
   .ms-Table-row.is-selected .ms-Table-rowCheck:before {
@@ -4915,18 +5849,14 @@
 
 .ms-TextField {
   color: #333333;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 14px;
   font-weight: 400;
   box-sizing: border-box;
-  margin: 0 0 8px;
+  margin: 0;
   padding: 0;
   box-shadow: none;
-}
-
-.ms-TextField-field,
-.ms-TextField.ms-TextField--placeholder .ms-Label {
-  font-family: 'Segoe UI Semilight WestEuropean','Segoe UI Semilight','Segoe UI',Tahoma,Arial,sans-serif;
+  margin-bottom: 8px;
 }
 
 .ms-TextField.is-disabled .ms-TextField-field {
@@ -4963,15 +5893,18 @@
 .ms-TextField-field {
   box-sizing: border-box;
   margin: 0;
+  padding: 0;
   box-shadow: none;
   border: 1px solid #c8c8c8;
   border-radius: 0;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 12px;
   color: #333333;
   height: 32px;
   padding: 6px 10px 8px;
   width: 100%;
   min-width: 180px;
+  outline: 0;
 }
 
 .ms-TextField-field:hover {
@@ -4980,6 +5913,20 @@
 
 .ms-TextField-field:focus {
   border-color: #0078d7;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-TextField-field:focus,
+  .ms-TextField-field:hover {
+    border-color: #1aebff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-TextField-field:focus,
+  .ms-TextField-field:hover {
+    border-color: #37006e;
+  }
 }
 
 .ms-TextField-field:-moz-placeholder,
@@ -5000,18 +5947,27 @@
 
 .ms-TextField.ms-TextField--placeholder .ms-Label {
   position: absolute;
+  font-family: Segoe UI Semilight WestEuropean,Segoe UI Semilight,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 12px;
   color: #666666;
   padding: 7px 10px 7px 0;
 }
 
-.ms-TextField.ms-TextField--placeholder.is-disabled {
+.ms-TextField.ms-TextField--placeholder.is-disabled,
+.ms-TextField.ms-TextField--placeholder.is-disabled .ms-Label {
   color: #a6a6a6;
 }
 
-.ms-TextField.ms-TextField--placeholder.is-disabled .ms-Label,
-.ms-TextField.ms-TextField--underlined.is-disabled .ms-Label {
-  color: #333333;
+@media screen and (-ms-high-contrast:active) {
+  .ms-TextField.ms-TextField--placeholder.is-disabled .ms-Label {
+    color: #00ff00;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-TextField.ms-TextField--placeholder.is-disabled .ms-Label {
+    color: #600000;
+  }
 }
 
 .ms-TextField.ms-TextField--underlined {
@@ -5023,6 +5979,18 @@
 
 .ms-TextField.ms-TextField--underlined:hover {
   border-color: #767676;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-TextField.ms-TextField--underlined:hover {
+    border-color: #1aebff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-TextField.ms-TextField--underlined:hover {
+    border-color: #37006e;
+  }
 }
 
 .ms-TextField.ms-TextField--underlined:active,
@@ -5052,7 +6020,8 @@
 }
 
 .ms-TextField.ms-TextField--underlined .ms-TextField-field:active,
-.ms-TextField.ms-TextField--underlined .ms-TextField-field:focus {
+.ms-TextField.ms-TextField--underlined .ms-TextField-field:focus,
+.ms-TextField.ms-TextField--underlined .ms-TextField-field:hover {
   outline: 0;
 }
 
@@ -5060,17 +6029,41 @@
   border-bottom-color: #eaeaea;
 }
 
+.ms-TextField.ms-TextField--underlined.is-disabled .ms-Label {
+  color: #a6a6a6;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-TextField.ms-TextField--underlined.is-disabled .ms-Label {
+    color: #00ff00;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-TextField.ms-TextField--underlined.is-disabled .ms-Label {
+    color: #600000;
+  }
+}
+
 .ms-TextField.ms-TextField--underlined.is-disabled .ms-TextField-field {
   background-color: transparent;
   color: #a6a6a6;
 }
 
-.ms-Label,
-.ms-TextField.ms-TextField--multiline .ms-TextField-field {
-  color: #333333;
-  font-size: 12px;
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
-  font-weight: 400;
+.ms-TextField.ms-TextField--underlined.is-active {
+  border-color: #0078d7;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-TextField.ms-TextField--underlined.is-active {
+    border-color: #1aebff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-TextField.ms-TextField--underlined.is-active {
+    border-color: #37006e;
+  }
 }
 
 .ms-TextField.ms-TextField--multiline .ms-TextField-field {
@@ -5081,8 +6074,17 @@
   overflow: auto;
 }
 
+.ms-Label,
+.ms-TextField.ms-TextField--multiline .ms-TextField-field {
+  color: #333333;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+
 .ms-Label {
   margin: 0;
+  padding: 0;
   box-shadow: none;
   box-sizing: border-box;
   display: block;
@@ -5094,21 +6096,50 @@
   color: #a80000;
 }
 
-.ms-Label.is-disabled,
-.ms-Toggle {
-  color: #333333;
+.ms-Label.is-disabled {
+  color: #a6a6a6;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Label.is-disabled {
+    color: #00ff00;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Label.is-disabled {
+    color: #600000;
+  }
+}
+
+.is-disabled .ms-Label {
+  color: #a6a6a6;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .is-disabled .ms-Label {
+    color: #00ff00;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .is-disabled .ms-Label {
+    color: #600000;
+  }
 }
 
 .ms-Toggle {
-  font-family: 'Segoe UI Regular WestEuropean','Segoe UI',Tahoma,Arial,sans-serif;
+  color: #333333;
+  font-family: Segoe UI Regular WestEuropean,Segoe UI,Tahoma,Arial,sans-serif;
   font-size: 14px;
   font-weight: 400;
   box-sizing: border-box;
-  margin: 0 0 26px;
+  margin: 0;
   padding: 0;
   box-shadow: none;
   position: relative;
   display: block;
+  margin-bottom: 26px;
 }
 
 .ms-Toggle .ms-Label {
@@ -5121,9 +6152,24 @@
   color: #000000;
 }
 
-.ms-Toggle.is-disabled .ms-Label,
 .ms-Toggle:active .ms-Label {
   color: #333333;
+}
+
+.ms-Toggle.is-disabled .ms-Label {
+  color: #a6a6a6;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Toggle.is-disabled .ms-Label {
+    color: #00ff00;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Toggle.is-disabled .ms-Label {
+    color: #600000;
+  }
 }
 
 .ms-Toggle.is-disabled .ms-Toggle-field {
@@ -5135,6 +6181,20 @@
 
 .ms-Toggle.is-disabled .ms-Toggle-field:before {
   background-color: #c8c8c8!important;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Toggle.is-disabled .ms-Toggle-field,
+  .ms-Toggle.is-disabled .ms-Toggle-field:before {
+    border-color: #00ff00;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Toggle.is-disabled .ms-Toggle-field,
+  .ms-Toggle.is-disabled .ms-Toggle-field:before {
+    border-color: #600000;
+  }
 }
 
 .ms-Toggle-description {
@@ -5161,31 +6221,43 @@
   top: 0;
 }
 
-.ms-Toggle-input + .ms-Toggle-field:before,
-.ms-Toggle-input:checked + .ms-Toggle-field:before {
-  position: absolute;
-  box-sizing: content-box;
-  content: '';
-  top: -2.5px;
-  width: 12px;
-  height: 20px;
-  outline: transparent solid 2px;
-}
-
 .ms-Toggle-input + .ms-Toggle-field {
   background-color: #f4f4f4;
 }
 
 .ms-Toggle-input + .ms-Toggle-field:before {
+  position: absolute;
   display: block;
+  box-sizing: content-box;
+  content: '';
+  top: -2.5px;
   right: -2.5px;
+  width: 12px;
+  height: 20px;
   background-color: #767676;
+  outline: 2px solid transparent;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Toggle-input + .ms-Toggle-field:before {
+    border: 2.5px solid #ffffff;
+    height: 15px;
+    outline: 0;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Toggle-input + .ms-Toggle-field:before {
+    border-color: #000000;
+  }
+}
+
+.ms-Toggle-input + .ms-Toggle-field:before {
   left: auto;
   border-left: 2.5px solid #ffffff;
 }
 
-.ms-Toggle-input + .ms-Toggle-field:active,
-.ms-Toggle-input:checked + .ms-Toggle-field {
+.ms-Toggle-input + .ms-Toggle-field:active {
   background-color: #0078d7;
 }
 
@@ -5197,10 +6269,38 @@
   display: none;
 }
 
+.ms-Toggle-input:checked + .ms-Toggle-field {
+  background-color: #0078d7;
+}
+
 .ms-Toggle-input:checked + .ms-Toggle-field:before {
+  position: absolute;
   display: block;
+  box-sizing: content-box;
+  content: '';
+  top: -2.5px;
   left: -2.5px;
+  width: 12px;
+  height: 20px;
   background-color: #767676;
+  outline: 2px solid transparent;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Toggle-input:checked + .ms-Toggle-field:before {
+    border: 2.5px solid #ffffff;
+    height: 15px;
+    outline: 0;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Toggle-input:checked + .ms-Toggle-field:before {
+    border-color: #000000;
+  }
+}
+
+.ms-Toggle-input:checked + .ms-Toggle-field:before {
   right: auto;
   border-right: 2.5px solid #ffffff;
 }
@@ -5215,6 +6315,18 @@
 
 .ms-Toggle-input:checked + .ms-Toggle-field .ms-Label--on {
   display: block;
+}
+
+@media screen and (-ms-high-contrast:active) {
+  .ms-Toggle-input:checked + .ms-Toggle-field {
+    background-color: #ffffff;
+  }
+}
+
+@media screen and (-ms-high-contrast:black-on-white) {
+  .ms-Toggle-input:checked + .ms-Toggle-field {
+    background-color: #000000;
+  }
 }
 
 .ms-Toggle-input:focus + .ms-Toggle-field,
