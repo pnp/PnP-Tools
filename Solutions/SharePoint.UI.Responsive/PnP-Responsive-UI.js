@@ -40,9 +40,12 @@ PnPResponsiveApp.setUpToggling = function () {
     var sideNavToggle = $('<button>');
     sideNavToggle.attr('id', 'navbar-toggle')
     sideNavToggle.addClass('mobile-only');
+	sideNavToggle.addClass('burger');
     sideNavToggle.attr('type', 'button');
+	sideNavToggle.html("<span></span>");
     sideNavToggle.click(function() { 
         $("body").toggleClass('shownav');
+		sideNavToggle.toggleClass('selected');
     });
     $("#pageTitle").before(sideNavToggle);
 }
