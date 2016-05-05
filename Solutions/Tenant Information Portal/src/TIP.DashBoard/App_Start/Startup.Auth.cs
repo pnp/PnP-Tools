@@ -92,6 +92,7 @@ namespace TIP.Dashboard
                         },
                         AuthenticationFailed = (context) =>
                         {
+                            System.Diagnostics.Trace.TraceError(context.Exception.ToString());
                             context.OwinContext.Response.Redirect("/Home/Error");
                             context.HandleResponse(); // Suppress the exception
                             return Task.FromResult(0);
