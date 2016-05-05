@@ -70,10 +70,52 @@
       "metadata": {
         "description": "Describes plan's instance count"
       }
-    }
+    },
+      "sqlserverAdminLogin": {
+          "type": "string",
+          "minLength": 1
+      },
+      "sqlserverAdminLoginPassword": {
+          "type": "securestring"
+      },
+      "dashboarddbName": {
+          "type": "string",
+          "minLength": 1
+      },
+      "dashboarddbCollation": {
+          "type": "string",
+          "minLength": 1,
+          "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+      },
+      "dashboarddbEdition": {
+          "type": "string",
+          "defaultValue": "Basic",
+          "allowedValues": [
+              "Basic",
+              "Standard",
+              "Premium"
+          ]
+      },
+      "dashboarddbRequestedServiceObjectiveName": {
+          "type": "string",
+          "defaultValue": "Basic",
+          "allowedValues": [
+              "Basic",
+              "S0",
+              "S1",
+              "S2",
+              "P1",
+              "P2",
+              "P3"
+          ],
+          "metadata": {
+              "description": "Describes the performance level for Edition"
+          }
+      }
   },
   "variables": {
-    "postLogoutRedirectUri": "[concat('https://',parameters('webSiteName'),'.azurewebsites.net')]"
+    "postLogoutRedirectUri": "[concat('https://',parameters('webSiteName'),'.azurewebsites.net')]",
+      "sqlserverName": "[concat('sqlserver', uniqueString(resourceGroup().id))]"
   },
   "resources": [
     {
@@ -135,6 +177,21 @@
             "RepoUrl": "[parameters('repoUrl')]",
             "branch": "[parameters('branch')]",
             "IsManualIntegration": true
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "type": "config",
+          "name": "connectionstrings",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/', parameters('webSiteName'))]",
+            "[concat('Microsoft.Sql/servers/', variables('sqlserverName'))]"
+          ],
+          "properties": {
+            "DefaultConnection": {
+              "value": "[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('dashboarddbName'), ';User Id=', parameters('sqlserverAdminLogin'), '@', variables('sqlserverName'), ';Password=', parameters('sqlserverAdminLoginPassword'), ';')]",
+              "Type": 2
+            }
           }
         }
       ]
@@ -356,6 +413,53 @@
       "properties": {
         "applicationId": "[parameters('webSiteName')]"
       }
-    }
+    },
+      {
+          "name": "[variables('sqlserverName')]",
+          "type": "Microsoft.Sql/servers",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [ ],
+          "tags": {
+              "displayName": "sqlserver"
+          },
+          "properties": {
+              "administratorLogin": "[parameters('sqlserverAdminLogin')]",
+              "administratorLoginPassword": "[parameters('sqlserverAdminLoginPassword')]"
+          },
+          "resources": [
+              {
+                  "name": "AllowAllWindowsAzureIps",
+                  "type": "firewallrules",
+                  "location": "[resourceGroup().location]",
+                  "apiVersion": "2014-04-01-preview",
+                  "dependsOn": [
+                      "[concat('Microsoft.Sql/servers/', variables('sqlserverName'))]"
+                  ],
+                  "properties": {
+                      "startIpAddress": "0.0.0.0",
+                      "endIpAddress": "0.0.0.0"
+                  }
+              },
+              {
+                  "name": "[parameters('dashboarddbName')]",
+                  "type": "databases",
+                  "location": "[resourceGroup().location]",
+                  "apiVersion": "2014-04-01-preview",
+                  "dependsOn": [
+                      "[variables('sqlserverName')]"
+                  ],
+                  "tags": {
+                      "displayName": "dashboarddb"
+                  },
+                  "properties": {
+                      "collation": "[parameters('dashboarddbCollation')]",
+                      "edition": "[parameters('dashboarddbEdition')]",
+                      "maxSizeBytes": "1073741824",
+                      "requestedServiceObjectiveName": "[parameters('dashboarddbRequestedServiceObjectiveName')]"
+                  }
+              }
+          ]
+      }
   ]
 }
