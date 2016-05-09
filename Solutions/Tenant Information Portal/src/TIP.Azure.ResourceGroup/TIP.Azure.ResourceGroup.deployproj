@@ -26,15 +26,14 @@
   <!-- vertag<:>end -->
   <ItemGroup>
     <Folder Include="Scripts\" />
-    <Folder Include="Templates\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Deployment.targets">
       <Visible>False</Visible>
     </None>
     <Content Include="Scripts\Deploy-AzureResourceGroup.ps1" />
-    <Content Include="Templates\WebSite.json" />
     <Content Include="Templates\WebSite.parameters.json" />
+    <Content Include="Templates\WebSite.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
 </Project>
