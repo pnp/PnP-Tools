@@ -213,7 +213,7 @@ namespace Perficient.Provisioning.VSTools
         }
 
         /// <summary>
-        /// Gets the database connection string from SharePoint for autohosted app.
+        /// Gets the database connection string from SharePoint for autohosted add-in.
         /// This method is deprecated because the autohosted option is no longer available.
         /// </summary>
         [ObsoleteAttribute("This method is deprecated because the autohosted option is no longer available.", true)]
