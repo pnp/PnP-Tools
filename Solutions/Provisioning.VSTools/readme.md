@@ -21,6 +21,7 @@ Provisioning.VSTools | Jerry Fetzer (Perficient, Inc.) <br>Tatjana Starovoitva (
 Version  | Date | Comments
 ---------| -----| --------
 0.5  | November 10th 2015| Initial beta release
+0.6  | May 25th 2016| Updated nuget packages, including the PnP Core package
 
 ### Disclaimer ###
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
