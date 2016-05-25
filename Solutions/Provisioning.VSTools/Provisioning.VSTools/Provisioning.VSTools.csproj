@@ -248,6 +248,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Helpers\ProjectHelpers.cs" />
     <Compile Include="Helpers\XmlHelpers.cs" />
     <Compile Include="Models\ItemEventType.cs" />

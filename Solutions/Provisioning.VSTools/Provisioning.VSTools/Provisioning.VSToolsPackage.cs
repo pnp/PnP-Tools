@@ -353,6 +353,14 @@ namespace Perficient.Provisioning.VSTools
                     // when folder with files is added, event is raised separately for all files as well
                     return;
                 }
+
+                if (!ProjectHelpers.IncludeFile(projectItem.Name))
+                {
+                    // do not handle .bundle or .map files the other files that are part of the bundle should be handled.
+                    // others may be defined in Constants.ExtensionsToIgnore
+                    return;
+                }
+
                 var projectItemFullPath = ProjectHelpers.GetFullPath(projectItem);
                 outputWindowPane.OutputString(string.Format("Item added : {0} \n", projectItemFullPath));
 
