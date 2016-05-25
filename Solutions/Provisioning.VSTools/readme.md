@@ -27,8 +27,18 @@ Version  | Date | Comments
 
 
 ----------
+# Debugging the extension package #
+To debug the extension package, some debug options need to be set on the project.
+1) Load the project in Visual Studio
+2) restore all nuget packages and ensure the project builds
+3) Navigate to project properties > debug
+4) Select 'start external program' and set the path to your copy of visual studio (devenv.exe)
+5) Set "Start Options" to: /rootsuffix Exp
+6) Press F5 or click 'Start'
 
-# Installing the extension package #
+![](readme.images/debugDialog.png)
+
+# Installing the extension package (instead of debugging it) #
 To install the extension package, either a setup project is needed to create an MSI file or the VSIX file from the extension project itself can be used.  The VSIX can also be hosted on a private extension gallery to help maintain the deployments to multiple users and machines.
 
 The process of hosting in a private gallery is described in the following blog post http://blogs.msdn.com/b/visualstudio/archive/2011/10/03/private-extension-galleries-for-the-enterprise.aspx (note: the post references Visual Studio 2010, but the same process is used for new versions of Visual Studio).
