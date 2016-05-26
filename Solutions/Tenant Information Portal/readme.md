@@ -92,7 +92,12 @@ See [Change Log](docs/changelog.md) for detailed information.
 
 ### Azure Deployment
 To deploy the TIP solution to Azure Web Sites, you will create 1 web site with a SQL Server instance, publish the project to the web site.
+#### Automatic Deployment with Azure Resource Manager Template
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https:%2F%2Fraw.githubusercontent.com%2Fsjkp%2FPnP-Tools%2Fmaster%2FSolutions%2FTenant%20Information%20Portal%2Fsrc%2FTIP.Azure.ResourceGroup%2FTemplates%2FWebSite.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
 
+#### Manual Deployment
 1. Navigate to the [Azure management portal](https://manage.windowsazure.com).
 2. Click on Web Sites in the left hand nav.
 3. Click New in the bottom left hand corner, select Compute --> Web Site --> Custom Create, select the hosting plan and region, and give your web site a name, e.g. tenantinfoportal.azurewebsites.net.  Select a database to use, or create a new one.  Click Create Web Site.
@@ -100,13 +105,8 @@ To deploy the TIP solution to Azure Web Sites, you will create 1 web site with a
 	- ida:ClientId and supply your ClientId
 	- ida:ClientSecret and supply your ClientSecret
 	- ida:Tenant and supply your tenant AAD tenant. e.g. contoso.onmicrosoft.com
-5. Uncomment in your `web.config` section `<system.webServer><staticContent>` 
 
-	  `<mimeMap fileExtension=".json" mimeType="application/json" />`
-      `<remove fileExtension=".woff" /> `
-      `<mimeMap fileExtension=".woff" mimeType="application/x-font-woff" />`
-
-6. Right click within Visual Studio and publish to the Azure Web Site.
+5. Right click within Visual Studio and publish to the Azure Web Site.
 
 
 ### Additonal Information	

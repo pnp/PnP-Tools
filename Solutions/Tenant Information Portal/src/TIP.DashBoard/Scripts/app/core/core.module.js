@@ -9,7 +9,7 @@
          /*
          * Reusable app modules
          */
-        'common.exception', 'common.logger',
+        'common.logger', 'common.exception',
 
          /*
          * 3rd Party Modules

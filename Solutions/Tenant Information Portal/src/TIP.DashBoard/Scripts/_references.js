@@ -61,6 +61,7 @@
 /// <reference path="plugins/angular/angular-aria.min.js" />
 /// <reference path="plugins/angular/angular-cookies.min.js" />
 /// <reference path="plugins/angular/angular-loader.min.js" />
+/// <reference path="plugins/angular/angular-message-format.js" />
 /// <reference path="plugins/angular/angular-message-format.min.js" />
 /// <reference path="plugins/angular/angular-messages.min.js" />
 /// <reference path="plugins/angular/angular-mocks.js" />

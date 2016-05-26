@@ -80,18 +80,19 @@ namespace TIP.Dashboard
 
                             return Task.FromResult(0);
                         },
-                        //RedirectToIdentityProvider = (context) =>
-                        //{
-                        //    // This ensures that the address used for sign in and sign out is picked up dynamically from the request
-                        //    // this allows you to deploy your app (to Azure Web Sites, for example)without having to change settings
-                        //    // Remember that the base URL of the address used here must be provisioned in Azure AD beforehand.
-                        //    string appBaseUrl = context.Request.Scheme + "://" + context.Request.Host + context.Request.PathBase;
-                        //    context.ProtocolMessage.RedirectUri = appBaseUrl + "/";
-                        //    context.ProtocolMessage.PostLogoutRedirectUri = appBaseUrl;
-                        //    return Task.FromResult(0);
-                        //},
+                        RedirectToIdentityProvider = (context) =>
+                        {
+                            // This ensures that the address used for sign in and sign out is picked up dynamically from the request
+                            // this allows you to deploy your app (to Azure Web Sites, for example)without having to change settings
+                            // Remember that the base URL of the address used here must be provisioned in Azure AD beforehand.
+                            string appBaseUrl = context.Request.Scheme + "://" + context.Request.Host + context.Request.PathBase;
+                            context.ProtocolMessage.RedirectUri = appBaseUrl + "/";
+                            context.ProtocolMessage.PostLogoutRedirectUri = appBaseUrl;
+                            return Task.FromResult(0);
+                        },
                         AuthenticationFailed = (context) =>
                         {
+                            System.Diagnostics.Trace.TraceError(context.Exception.ToString());
                             context.OwinContext.Response.Redirect("/Home/Error");
                             context.HandleResponse(); // Suppress the exception
                             return Task.FromResult(0);
