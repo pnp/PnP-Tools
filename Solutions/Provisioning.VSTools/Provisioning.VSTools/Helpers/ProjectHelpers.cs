@@ -108,5 +108,22 @@ namespace Perficient.Provisioning.VSTools.Helpers
             }
             return string.Empty;
         }
+
+        /// <summary>
+        /// Checks if the supplied filePath should be included
+        /// </summary>
+        /// <returns>true if the file should be included</returns>
+        public static bool IncludeFile(string filePath)
+        {
+            try
+            {
+                System.IO.FileInfo fileInfo = new FileInfo(filePath);
+                return !Constants.ExtensionsToIgnore.Contains(fileInfo.Extension.ToLower());
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
