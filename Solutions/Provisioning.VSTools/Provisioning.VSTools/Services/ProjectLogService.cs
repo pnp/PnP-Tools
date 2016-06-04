@@ -9,7 +9,7 @@ namespace Provisioning.VSTools.Services
 {
     public class ProjectLogService : Provisioning.VSTools.Services.ILogService
     {
-        private const string MESSAGE_FORMAT = "({0}) {1}";
+        private const string MESSAGE_FORMAT = "({0}) {1}\n";
 
         private OutputWindowPane outputWindowPane { get; set; }
 

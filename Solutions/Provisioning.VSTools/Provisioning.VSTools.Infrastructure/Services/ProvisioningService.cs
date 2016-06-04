@@ -60,55 +60,6 @@ namespace Provisioning.VSTools.Services
             return config;
         }
 
-        //public async System.Threading.Tasks.Task<bool> DeployProvisioningTemplate(string name, ProvisioningTemplate template, ProvisioningTemplateToolsConfiguration config)
-        //{
-        //    bool success = true;
-        //    var siteUrl = config.Deployment.TargetSite;
-        //    var login = config.Deployment.Credentials.Username;
-
-        //    LogService.Info(string.Format("\nStart - provisioning template '{0}'...\n", name));
-        //    IsBusy = true;
-
-        //    await System.Threading.Tasks.Task.Run(() =>
-        //    {
-
-        //        try
-        //        {
-        //            using (ClientContext clientContext = new ClientContext(siteUrl))
-        //            {
-        //                LogService.Info("Signing in...\n");
-        //                clientContext.Credentials = new SharePointOnlineCredentials(login, config.Deployment.Credentials.GetSecurePassword());
-
-        //                LogService.Info("Loading web...\n");
-        //                Web web = clientContext.Web;
-        //                clientContext.Load(web);
-        //                clientContext.ExecuteQuery();
-
-        //                ProvisioningTemplateApplyingInformation ptai = new ProvisioningTemplateApplyingInformation();
-        //                ptai.ProgressDelegate = delegate(string message, int step, int total)
-        //                {
-        //                    LogService.Info(string.Format("Deploying {0}, Step {1}/{2} \n", message, step, total));
-        //                };
-
-        //                LogService.Info("Applying template...\n");
-        //                clientContext.Web.ApplyProvisioningTemplate(template, ptai);
-        //            }
-
-        //            success = true;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            LogService.Info("Error during provisioning: " + ex.Message);
-        //            success = false;
-        //        }
-        //    });
-
-        //    IsBusy = false;
-        //    LogService.Info(string.Format("End - provisioning template '{0}', success={1}\n\n", name, success));
-
-        //    return success;
-        //}
-
         public async System.Threading.Tasks.Task<bool> DeployProvisioningTemplates(IEnumerable<DeployTemplateItem> templates)
         {
             bool success = true;
@@ -120,7 +71,7 @@ namespace Provisioning.VSTools.Services
             {
                 foreach (var deployItem in pendingTemplatesToDeploy)
                 {
-                    LogService.Info(string.Format("\nStart - '{0}'...\n", deployItem.Title));
+                    LogService.Info(string.Format("Start - '{0}'...", deployItem.Title));
                     var siteUrl = deployItem.Config.Deployment.TargetSite;
                     var login = deployItem.Config.Deployment.Credentials.Username;
 
@@ -128,10 +79,10 @@ namespace Provisioning.VSTools.Services
                     {
                         using (ClientContext clientContext = new ClientContext(siteUrl))
                         {
-                            LogService.Info("Signing in...\n");
+                            LogService.Info("Signing in - " + siteUrl);
                             clientContext.Credentials = new SharePointOnlineCredentials(login, deployItem.Config.Deployment.Credentials.GetSecurePassword());
 
-                            LogService.Info("Loading web...\n");
+                            LogService.Info("Loading web...");
                             Web web = clientContext.Web;
                             clientContext.Load(web);
                             clientContext.ExecuteQuery();
@@ -139,10 +90,10 @@ namespace Provisioning.VSTools.Services
                             ProvisioningTemplateApplyingInformation ptai = new ProvisioningTemplateApplyingInformation();
                             ptai.ProgressDelegate = delegate(string message, int step, int total)
                             {
-                                LogService.Info(string.Format("Deploying {0}, Step {1}/{2} \n", message, step, total));
+                                LogService.Info(string.Format("Deploying {0}, Step {1}/{2}", message, step, total));
                             };
 
-                            LogService.Info("Applying template...\n");
+                            LogService.Info("Applying template...");
                             clientContext.Web.ApplyProvisioningTemplate(deployItem.Template, ptai);
                         }
 
@@ -154,7 +105,7 @@ namespace Provisioning.VSTools.Services
                         success = false;
                     }
 
-                    LogService.Info(string.Format("End - '{0}', success={1}\n\n", deployItem.Title, success));
+                    LogService.Info(string.Format("End (success={1}) - '{0}'", deployItem.Title, success));
                 }
             });
 

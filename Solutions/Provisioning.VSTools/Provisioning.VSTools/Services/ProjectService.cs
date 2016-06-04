@@ -278,41 +278,13 @@ namespace Provisioning.VSTools.Services
         //    return null;
         //}
 
-        private void ProjItemAdded(EnvDTE.ProjectItem projectItem)
+        private async Task<bool> AddItemToTemplate_Async(EnvDTE.ProjectItem projectItem)
         {
-            if (!IsActive())
-            {
-                return;
-            }
-
             try
             {
                 var projectFolderPath = Path.GetDirectoryName(projectItem.ContainingProject.FullName);
-
                 var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath);
-
-                if (projectItem.Kind != EnvDTE.Constants.vsProjectItemKindPhysicalFile)
-                {
-                    // we handle only files
-                    // when folder with files is added, event is raised separately for all files as well
-                    return;
-                }
-
-                if (!ProjectHelpers.IncludeFile(projectItem.Name))
-                {
-                    // do not handle .bundle or .map files the other files that are part of the bundle should be handled.
-                    // others may be defined in Constants.ExtensionsToIgnore
-                    return;
-                }
-
                 var projectItemFullPath = ProjectHelpers.GetFullPath(projectItem);
-                LogService.Info(string.Format("Item added : {0} \n", projectItemFullPath));
-
-                // Get an instance of the currently running Visual Studio IDE
-                //DTE dte = (DTE)GetService(typeof(DTE));
-                //string solutionDir = System.IO.Path.GetDirectoryName(dte.Solution.FullName);
-                //string solutionDir2 = System.IO.Path.GetDirectoryName(dte.);
-                LogService.Info(string.Format("Item added : {0} \n", projectItemFullPath));
 
                 var pnpTemplateInfo = GetParentProvisioningTemplateInformation(projectItem, config);
                 if (pnpTemplateInfo != null)
@@ -320,23 +292,6 @@ namespace Provisioning.VSTools.Services
                     // Item is PnP resource. 
                     var src = ProvisioningHelper.MakeRelativePath(projectItemFullPath, pnpTemplateInfo.ResourcesPath);
                     var targetFolder = String.Join("/", Path.GetDirectoryName(src).Split('\\'));
-
-                    /*var templatePath = Path.Combine(pnpTemplateInfo.TemplateFolderPath, pnpTemplateInfo.TemplateFileName);
-                    var xmlDocument = XDocument.Load(templatePath);
-                    var templatesNode = XmlHelpers.GetElementByLocalName(xmlDocument.Root, "Templates");
-                    var templateNode = XmlHelpers.GetElementByLocalName(templatesNode, "ProvisioningTemplate");
-                    var filesNode = XmlHelpers.GetElementByLocalName(templateNode, "Files");
-                    if (filesNode == null)
-                    {
-                        filesNode = new XElement(templateNode.Name.Namespace + "Files");
-                        templateNode.Add(filesNode);
-                    }
-                    filesNode.Add(new XElement(filesNode.Name.Namespace+"File",
-                        new XAttribute("Src", src),
-                        new XAttribute("Folder", targetFolder),
-                        new XAttribute("Overwrite", "true")
-                        ));
-                    xmlDocument.Save(templatePath);*/
 
                     // PnP-powered code
 
@@ -355,6 +310,8 @@ namespace Provisioning.VSTools.Services
                         });
 
                         provider.Save(template);
+
+                        return true;
                     }
 
                 }
@@ -364,22 +321,47 @@ namespace Provisioning.VSTools.Services
                 LogService.Exception("Error in item added events", ex);
             }
 
+            return false;
         }
 
-        private void ProjItemRemoved(EnvDTE.ProjectItem projectItem)
+        private async void ProjItemAdded(EnvDTE.ProjectItem projectItem)
         {
             if (!IsActive())
             {
                 return;
             }
 
+            if (projectItem.Kind != EnvDTE.Constants.vsProjectItemKindPhysicalFile)
+            {
+                // we handle only files
+                // when folder with files is added, event is raised separately for all files as well
+                return;
+            }
+
+            if (!ProjectHelpers.IncludeFile(projectItem.Name))
+            {
+                // do not handle .bundle or .map files the other files that are part of the bundle should be handled.
+                // others may be defined in Constants.ExtensionsToIgnore
+                return;
+            }
+
+            var result = await AddItemToTemplate_Async(projectItem);
+            
+            if (result)
+            {
+                var projectItemFullPath = ProjectHelpers.GetFullPath(projectItem);
+                LogService.Info(string.Format("Item added: {0}", projectItemFullPath));
+            }
+        }
+
+        private async Task<bool> RemoveItemFromTemplate_Async(EnvDTE.ProjectItem projectItem)
+        {
             try
             {
                 var projectFolderPath = Path.GetDirectoryName(projectItem.ContainingProject.FullName);
                 var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath, false);
 
                 var projectItemFullPath = ProjectHelpers.GetFullPath(projectItem);
-                LogService.Info(string.Format("Item removed : {0} \n", projectItemFullPath));
 
                 if (projectItem.Kind == EnvDTE.Constants.vsProjectItemKindPhysicalFolder)
                 {
@@ -397,8 +379,9 @@ namespace Provisioning.VSTools.Services
                             template.Files.RemoveAll(f => f.Src.StartsWith(src, StringComparison.InvariantCultureIgnoreCase));
 
                             provider.Save(template);
-                        }
 
+                            return true;
+                        }
                     }
                 }
                 else if (projectItem.Kind == EnvDTE.Constants.vsProjectItemKindPhysicalFile)
@@ -408,38 +391,20 @@ namespace Provisioning.VSTools.Services
                     {
                         var src = ProvisioningHelper.MakeRelativePath(projectItemFullPath, pnpTemplateInfo.ResourcesPath);
 
-
-                        // Item is PnP resource. 
-                        /*var templatePath = Path.Combine(pnpTemplateInfo.TemplateFolderPath, pnpTemplateInfo.TemplateFileName);
-                        var xmlDocument = XDocument.Load(templatePath);
-                        var templatesNode = XmlHelpers.GetElementByLocalName(xmlDocument.Root, "Templates");
-                        var templateNode = XmlHelpers.GetElementByLocalName(templatesNode, "ProvisioningTemplate");
-                        var filesNode = XmlHelpers.GetElementByLocalName(templateNode, "Files");
-                        if (filesNode != null)
-                        {
-                            var fileNode = filesNode.Elements().FirstOrDefault(el => el.Attribute("Src") != null && 
-                                el.Attribute("Src").Value.Equals(src, StringComparison.InvariantCultureIgnoreCase));
-                            fileNode.Remove();
-                        }
-
-                        xmlDocument.Save(templatePath);*/
-
                         // PNP-powered code
                         XMLFileSystemTemplateProvider provider = this.ProvisioningService.InitializeProvisioningTemplateProvider(pnpTemplateInfo);
                         ProvisioningTemplate template = this.InitProvisioningTemplate(provider, pnpTemplateInfo);
 
                         if (template != null)
                         {
-
                             template.Files.RemoveAll(f => f.Src.Equals(src, StringComparison.InvariantCultureIgnoreCase));
 
                             provider.Save(template);
-                        }
 
+                            return true;
+                        }
                     }
                 }
-
-
 
             }
             catch (Exception ex)
@@ -447,16 +412,26 @@ namespace Provisioning.VSTools.Services
                 LogService.Exception("Error in item removed event", ex);
             }
 
-
+            return false;
         }
 
-        private void ProjItemRenamed(EnvDTE.ProjectItem projectItem, string oldName)
+        private async void ProjItemRemoved(EnvDTE.ProjectItem projectItem)
         {
             if (!IsActive())
             {
                 return;
             }
 
+            var result = await RemoveItemFromTemplate_Async(projectItem);
+            if (result)
+            {
+                var projectItemFullPath = ProjectHelpers.GetFullPath(projectItem);
+                LogService.Info(string.Format("Item removed: {0}", projectItemFullPath));
+            }
+        }
+
+        private async Task<bool> RenameTemplateItem_Async(EnvDTE.ProjectItem projectItem, string oldName)
+        {
             try
             {
                 var projectItemFullPath = ProjectHelpers.GetFullPath(projectItem);
@@ -464,7 +439,6 @@ namespace Provisioning.VSTools.Services
 
                 var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath);
 
-                LogService.Info(string.Format("Item renamed : {0}, old name: {1} \n", projectItemFullPath, oldName));
 
                 if (projectItem.Kind == EnvDTE.Constants.vsProjectItemKindPhysicalFolder)
                 {
@@ -488,8 +462,8 @@ namespace Provisioning.VSTools.Services
                             }
 
                             provider.Save(template);
+                            return true;
                         }
-
                     }
                 }
                 else if (projectItem.Kind == EnvDTE.Constants.vsProjectItemKindPhysicalFile)
@@ -501,23 +475,6 @@ namespace Provisioning.VSTools.Services
                         // Item is PnP resource. 
                         var src = ProvisioningHelper.MakeRelativePath(projectItemFullPath, pnpTemplateInfo.ResourcesPath);
                         var oldSrc = Path.Combine(Path.GetDirectoryName(src), oldName);
-
-                        /*var templatePath = Path.Combine(pnpTemplateInfo.TemplateFolderPath, pnpTemplateInfo.TemplateFileName);
-                    var xmlDocument = XDocument.Load(templatePath);
-                    var templatesNode = XmlHelpers.GetElementByLocalName(xmlDocument.Root, "Templates");
-                    var templateNode = XmlHelpers.GetElementByLocalName(templatesNode, "ProvisioningTemplate");
-                    var filesNode = XmlHelpers.GetElementByLocalName(templateNode, "Files");
-                    if (filesNode != null)
-                    {
-                        var fileNode = filesNode.Elements().FirstOrDefault(el => el.Attribute("Src") != null && 
-                            el.Attribute("Src").Value.Equals(oldSrc, StringComparison.InvariantCultureIgnoreCase));
-                        if (fileNode != null)
-                        {
-                            fileNode.SetAttributeValue("Src", src);
-                        }
-                    }
-
-                    xmlDocument.Save(templatePath);*/
 
                         //PNP-powered code
                         XMLFileSystemTemplateProvider provider = this.ProvisioningService.InitializeProvisioningTemplateProvider(pnpTemplateInfo);
@@ -535,10 +492,9 @@ namespace Provisioning.VSTools.Services
                                 file.Src = src;
                                 provider.Save(template);
 
+                                return true;
                             }
-
                         }
-
                     }
                 }
             }
@@ -546,11 +502,28 @@ namespace Provisioning.VSTools.Services
             {
                 LogService.Exception("Error in item renamed event", ex);
             }
+
+            return false;
+        }
+
+        private async void ProjItemRenamed(EnvDTE.ProjectItem projectItem, string oldName)
+        {
+            if (!IsActive())
+            {
+                return;
+            }
+
+            var result = await RenameTemplateItem_Async(projectItem, oldName);
+            if (result)
+            {
+                var projectItemFullPath = ProjectHelpers.GetFullPath(projectItem);
+                LogService.Info(string.Format("Item renamed : {0}, old name: {1}", projectItemFullPath, oldName));
+            }
         }
 
         private void DocEventsDocSaved(EnvDTE.Document Doc)
         {
-            LogService.Info(string.Format("Document Saved : {0} \n", Doc.Name));
+            LogService.Info(string.Format("Document Saved : {0}", Doc.Name));
         }
 
         private ProvisioningTemplate InitProvisioningTemplate(XMLFileSystemTemplateProvider provider, ProvisioningTemplateLocationInfo pnpTemplateInfo)
@@ -662,6 +635,7 @@ namespace Provisioning.VSTools.Services
                         var projectFolderPath = Path.GetDirectoryName(projectItem.ContainingProject.FullName);
                         var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath, false);
                         string itemPath = projectItem.Properties.Item("FullPath").Value as string;
+
                         if (!string.IsNullOrEmpty(itemPath) && ProjectHelpers.IncludeFile(itemPath))
                         {
                             var ti = new TemplateItem(this.ProvisioningService)
