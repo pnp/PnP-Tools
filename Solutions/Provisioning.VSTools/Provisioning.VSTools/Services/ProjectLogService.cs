@@ -39,7 +39,7 @@ namespace Provisioning.VSTools.Services
             if (validate())
             {
                 string msg = string.Format(MESSAGE_FORMAT, "Info", message);
-                outputWindowPane.OutputString(msg);
+                WriteOutput(msg);
             }
         }
 
@@ -48,7 +48,7 @@ namespace Provisioning.VSTools.Services
             if (validate())
             {
                 string msg = string.Format(MESSAGE_FORMAT, "Info", string.Format(message, args));
-                outputWindowPane.OutputString(msg);
+                WriteOutput(msg);
             }
         }
 
@@ -57,7 +57,7 @@ namespace Provisioning.VSTools.Services
             if (validate())
             {
                 string msg = string.Format(MESSAGE_FORMAT, "Warning", message);
-                outputWindowPane.OutputString(msg);
+                WriteOutput(msg);
             }
         }
 
@@ -66,7 +66,7 @@ namespace Provisioning.VSTools.Services
             if (validate())
             {
                 string msg = string.Format(MESSAGE_FORMAT, "Warning", string.Format(message, args));
-                outputWindowPane.OutputString(msg);
+                WriteOutput(msg);
             }
         }
 
@@ -75,7 +75,7 @@ namespace Provisioning.VSTools.Services
             if (validate())
             {
                 string msg = string.Format(MESSAGE_FORMAT, "Error", message);
-                outputWindowPane.OutputString(msg);
+                WriteOutput(msg);
             }
         }
 
@@ -84,7 +84,7 @@ namespace Provisioning.VSTools.Services
             if (validate())
             {
                 string msg = string.Format(MESSAGE_FORMAT, "Error", string.Format(message, args));
-                outputWindowPane.OutputString(msg);
+                WriteOutput(msg);
             }
         }
 
@@ -100,6 +100,21 @@ namespace Provisioning.VSTools.Services
 #else
             this.Error("{0}, exception details: {1}", message, ex.Message);
 #endif
+        }
+
+        private void WriteOutput(string message)
+        {
+            try
+            {
+                if (outputWindowPane != null)
+                {
+                    outputWindowPane.OutputString(message);
+                }
+            }
+            catch
+            {
+                System.Diagnostics.Trace.TraceWarning("(outputWindowPane not available) " + message);
+            }
         }
     }
 }
