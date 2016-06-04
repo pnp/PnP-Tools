@@ -11,10 +11,26 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace Perficient.Provisioning.VSTools.Helpers
+namespace Provisioning.VSTools.Helpers
 {
     public static class ProjectHelpers
     {
+        internal static T GetConfigFile<T>(string filepath, bool projectItem = true)
+        {
+            if (System.IO.File.Exists(filepath))
+            {
+                var dte = (EnvDTE.DTE)Microsoft.VisualStudio.Shell.Package.GetGlobalService(typeof(EnvDTE.DTE));
+                var solutionItem = dte.Solution.FindProjectItem(filepath);
+
+                if (solutionItem != null || projectItem == false)
+                {
+                    return XmlHelpers.DeserializeObject<T>(filepath);
+                }
+            }
+
+            return default(T);
+        }
+
         public static string GetFullPath(ProjectItem projectItem)
         {
             return Convert.ToString(projectItem.Properties.Item("FullPath").Value);
@@ -23,18 +39,6 @@ namespace Perficient.Provisioning.VSTools.Helpers
         public static bool IsItemInsideFolder(string itemPath, string folderPath)
         {
             return itemPath.StartsWith(folderPath, true, CultureInfo.InvariantCulture);
-        }
-
-        public static string MakeRelativePath(string filespec, string folder)
-        {
-            Uri pathUri = new Uri(filespec);
-            // Folders must end in a slash
-            if (!folder.EndsWith(Path.DirectorySeparatorChar.ToString()))
-            {
-                folder += Path.DirectorySeparatorChar;
-            }
-            Uri folderUri = new Uri(folder);
-            return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
         }
 
         public static ProjectItem GetProjectItem(this IVsHierarchy hierarchy, uint ItemID)
@@ -48,7 +52,7 @@ namespace Perficient.Provisioning.VSTools.Helpers
             return prjItemObject as ProjectItem;
         }
 
-        public static EnvDTE.Project GetProject(this IVsHierarchy hierarchy, uint ItemID)
+        private static EnvDTE.Project GetProject(this IVsHierarchy hierarchy, uint ItemID)
         {
             if (hierarchy == null)
                 throw new ArgumentNullException("hierarchy");
@@ -56,6 +60,11 @@ namespace Perficient.Provisioning.VSTools.Helpers
             ErrorHandler.ThrowOnFailure(hierarchy.GetProperty(
                 ItemID, (int)__VSHPROPID.VSHPROPID_ExtObject, out prjItemObject));
 
+            if (prjItemObject is EnvDTE.ProjectItem)
+            {
+                return ((EnvDTE.ProjectItem)prjItemObject).ContainingProject;
+            }
+         
             return prjItemObject as EnvDTE.Project;
         }
 
@@ -70,7 +79,14 @@ namespace Perficient.Provisioning.VSTools.Helpers
         public static string GetProjectPath()
         {
             var project = GetProject();
-            return Path.GetDirectoryName(project.FullName);
+            if (project != null)
+            {
+                return Path.GetDirectoryName(project.FullName);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public static IVsHierarchy GetCurrentHierarchy(out uint projectItemId)

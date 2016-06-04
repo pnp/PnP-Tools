@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Perficient.Provisioning.VSTools.Models
+namespace Provisioning.VSTools.Models
 {
-    enum ItemEventType
+    public enum ItemEventType
     {
         ItemAdded,
         ItemRemoved,

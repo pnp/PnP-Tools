@@ -2,7 +2,7 @@
 using Microsoft.SharePoint.Client;
 using System.Collections.Generic;
 
-namespace Perficient.Provisioning.VSTools.Models
+namespace Provisioning.VSTools.Models
 {
     public class ProvisioningTemplateToolsConfiguration
     {
@@ -12,7 +12,6 @@ namespace Perficient.Provisioning.VSTools.Models
         [XmlArray("Templates")]
         [XmlArrayItem("Template")]
         public List<Template> Templates { get; set; }
-
 
         public ProvisioningTemplateToolsConfiguration()
         {
@@ -24,8 +23,8 @@ namespace Perficient.Provisioning.VSTools.Models
     public class Deployment
     {
         public string TargetSite { get; set; }
-        
-        internal ProvisioningCredentials Credentials { get; set; }
+
+        public ProvisioningCredentials Credentials { get; set; }
     }
 
     public class Template

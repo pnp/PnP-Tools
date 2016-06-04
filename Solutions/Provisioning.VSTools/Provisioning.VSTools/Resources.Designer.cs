@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Perficient.Provisioning.VSTools {
+namespace Provisioning.VSTools {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Perficient.Provisioning.VSTools {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Perficient.Provisioning.VSTools.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Provisioning.VSTools.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -81,6 +81,7 @@ namespace Perficient.Provisioning.VSTools {
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
         ///&lt;pnp:Provisioning xmlns:pnp=&quot;http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema&quot;&gt;
+        ///  &lt;pnp:Preferences Generator=&quot;OfficeDevPnP.Core, Version=2.1.1602.0, Culture=neutral, PublicKeyToken=3751622786b357c2&quot; /&gt;
         ///  &lt;pnp:Templates ID=&quot;CONTAINER-DefaultTemplate&quot;&gt;
         ///    &lt;pnp:ProvisioningTemplate ID=&quot;DefaultTemplate&quot; Version=&quot;1&quot;&gt;
         ///    &lt;/pnp:ProvisioningTemplate&gt;

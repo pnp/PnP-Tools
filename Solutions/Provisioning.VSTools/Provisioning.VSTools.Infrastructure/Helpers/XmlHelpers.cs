@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.Shell;
-using Perficient.Provisioning.VSTools.Models;
+﻿using Provisioning.VSTools.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,30 +9,15 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
-namespace Perficient.Provisioning.VSTools.Helpers
+namespace Provisioning.VSTools.Helpers
 {
     public static class XmlHelpers
     {
-        internal static T GetConfigFile<T>(string filepath, bool projectItem = true)
-        {
-            if (System.IO.File.Exists(filepath))
-            {
-                var dte = (EnvDTE.DTE)Package.GetGlobalService(typeof(EnvDTE.DTE));
-                var solutionItem = dte.Solution.FindProjectItem(filepath);
-
-                if (solutionItem != null || projectItem == false)
-                {
-                    return XmlHelpers.DeserializeObject<T>(filepath);
-                }
-            }
-
-            return default(T);
-        }
 
         /// <summary>
         /// Deserializes a file to the specified type
         /// </summary>
-        internal static T DeserializeObject<T>(string filename)
+        public static T DeserializeObject<T>(string filename)
         {
             T result;
 
@@ -49,7 +33,7 @@ namespace Perficient.Provisioning.VSTools.Helpers
         /// <summary>
         /// Serializes an item to the specied file
         /// </summary>
-        internal static void SerializeObject(object source, string filename)
+        public static void SerializeObject(object source, string filename)
         {
             if (source == null)
             {
@@ -72,7 +56,7 @@ namespace Perficient.Provisioning.VSTools.Helpers
         /// <summary>
         /// Writes an xml string to a file
         /// </summary>
-        internal static void WriteXmlStringToFile(string inputXml, string filePath)
+        public static void WriteXmlStringToFile(string inputXml, string filePath)
         {
             System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
             doc.LoadXml(inputXml);

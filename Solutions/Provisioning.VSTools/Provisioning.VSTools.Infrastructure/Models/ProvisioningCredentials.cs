@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Perficient.Provisioning.VSTools.Models
+namespace Provisioning.VSTools.Models
 {
     public class ProvisioningCredentials
     {
@@ -13,13 +13,13 @@ namespace Perficient.Provisioning.VSTools.Models
 
         public void SetSecurePassword(string password)
         {
-            var securePw = Helpers.SecureStringHelper.ToSecureString(password);
-            this.SecurePassword = Helpers.SecureStringHelper.EncryptString(securePw);
+            var securePw = Provisioning.VSTools.Helpers.SecureStringHelper.ToSecureString(password);
+            this.SecurePassword = Provisioning.VSTools.Helpers.SecureStringHelper.EncryptString(securePw);
         }
 
         public System.Security.SecureString GetSecurePassword()
         {
-            return Helpers.SecureStringHelper.DecryptString(this.SecurePassword);
+            return Provisioning.VSTools.Helpers.SecureStringHelper.DecryptString(this.SecurePassword);
         }
 
         public string SecurePassword { get; set; }

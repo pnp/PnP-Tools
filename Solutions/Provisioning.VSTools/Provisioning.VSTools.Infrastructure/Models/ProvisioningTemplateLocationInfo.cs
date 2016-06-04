@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Perficient.Provisioning.VSTools.Models
+namespace Provisioning.VSTools.Models
 {
-    class ProvisioningTemplateLocationInfo
+    public class ProvisioningTemplateLocationInfo
     {
         public string TemplateFolderPath { get; set; }
 

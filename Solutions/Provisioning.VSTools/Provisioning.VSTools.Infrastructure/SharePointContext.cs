@@ -7,7 +7,7 @@ using System.Security.Principal;
 using System.Web;
 using System.Web.Configuration;
 
-namespace Provisioning.VSTools
+namespace Provisioning.VSTools.Infrastructure
 {
     /// <summary>
     /// Encapsulates all the information from SharePoint.
@@ -213,7 +213,7 @@ namespace Provisioning.VSTools
         }
 
         /// <summary>
-        /// Gets the database connection string from SharePoint for autohosted add-in.
+        /// Gets the database connection string from SharePoint for autohosted app.
         /// This method is deprecated because the autohosted option is no longer available.
         /// </summary>
         [ObsoleteAttribute("This method is deprecated because the autohosted option is no longer available.", true)]

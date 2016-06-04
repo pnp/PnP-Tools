@@ -5,7 +5,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Perficient.Provisioning.VSTools.Helpers
+namespace Provisioning.VSTools.Helpers
 {
     /// <summary>
     /// Credit: http://weblogs.asp.net/jongalloway/encrypting-passwords-in-a-net-app-config-file
