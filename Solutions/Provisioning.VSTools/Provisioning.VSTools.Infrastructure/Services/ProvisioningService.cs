@@ -71,7 +71,7 @@ namespace Provisioning.VSTools.Services
             {
                 foreach (var deployItem in pendingTemplatesToDeploy)
                 {
-                    LogService.Info(string.Format("Start - '{0}'...", deployItem.Title));
+                    LogService.Info(string.Format("Start - {0}...", deployItem.Title));
                     var siteUrl = deployItem.Config.Deployment.TargetSite;
                     var login = deployItem.Config.Deployment.Credentials.Username;
 
@@ -105,7 +105,7 @@ namespace Provisioning.VSTools.Services
                         success = false;
                     }
 
-                    LogService.Info(string.Format("End (success={1}) - '{0}'", deployItem.Title, success));
+                    LogService.Info(string.Format("End (success={1}) - {0}", deployItem.Title, success));
                 }
             });
 

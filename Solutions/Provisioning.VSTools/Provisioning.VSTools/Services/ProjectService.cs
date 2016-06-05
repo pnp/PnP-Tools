@@ -36,8 +36,8 @@ namespace Provisioning.VSTools.Services
         private EnvDTE.ProjectItemsEvents projItemsEvents;
         private EnvDTE.DocumentEvents docEvents;
 
-        private IEnumerable<TemplateItem> pendingItemTemplates = null;
-        private IEnumerable<TemplateItem> pendingFolderTemplates = null;
+        private Queue<TemplateItem> pendingItemTemplates = null;
+        private Queue<TemplateItem> pendingFolderTemplates = null;
 
         public IVsSolution VSSolution { get; set; }
 
@@ -202,8 +202,9 @@ namespace Provisioning.VSTools.Services
                 {
                     var pnpResourcesFolderPath = Path.Combine(projectFolderPath, template.ResourcesFolder);
                     var templateFilePath = Path.Combine(projectFolderPath, template.Path);
+                    bool isTemplateXmlFile = string.Compare(System.IO.Path.GetFileName(projectItemFullPath), System.IO.Path.GetFileName(template.Path), true) == 0;
 
-                    if (ProjectHelpers.IsItemInsideFolder(projectItemFullPath, pnpResourcesFolderPath))
+                    if (ProjectHelpers.IsItemInsideFolder(projectItemFullPath, pnpResourcesFolderPath) || isTemplateXmlFile)
                     {
                         return new ProvisioningTemplateLocationInfo()
                         {
@@ -557,28 +558,58 @@ namespace Provisioning.VSTools.Services
 
         private DeployTemplateItem GetDeployItem(TemplateItem sourceTemplateItem)
         {
-            var src = ProvisioningHelper.MakeRelativePath(sourceTemplateItem.ItemPath, sourceTemplateItem.TemplateInfo.ResourcesPath);
-            XMLFileSystemTemplateProvider provider = this.ProvisioningService.InitializeProvisioningTemplateProvider(sourceTemplateItem.TemplateInfo);
-            ProvisioningTemplate sourceTemplate = this.InitProvisioningTemplate(provider, sourceTemplateItem.TemplateInfo);
-
-            if (sourceTemplate != null)
+            if (System.IO.Path.Combine(sourceTemplateItem.TemplateInfo.TemplateFolderPath, sourceTemplateItem.TemplateInfo.TemplateFileName) == sourceTemplateItem.ItemPath)
             {
-                var files = sourceTemplate.Files.Where(
-                    f => f.Src.StartsWith(src, StringComparison.InvariantCultureIgnoreCase)
-                    ).ToList();
-
-                if (files.Count > 0)
+                ProvisioningTemplate pnpTemplate = null;
+                try
                 {
-                    var filesUnderFolderTemplate = new ProvisioningTemplate(sourceTemplate.Connector);
-                    filesUnderFolderTemplate.Files.AddRange(files);
+                    //load the template xml file
+                    XMLFileSystemTemplateProvider provider = this.ProvisioningService.InitializeProvisioningTemplateProvider(sourceTemplateItem.TemplateInfo);
+                    pnpTemplate = this.InitProvisioningTemplate(provider, sourceTemplateItem.TemplateInfo);
+                }
+                catch (Exception ex)
+                {
+                    LogService.Exception("Error reading template file " + sourceTemplateItem.ItemPath, ex);
+                }
 
+                if (pnpTemplate != null)
+                {
+                    //deploy complete template
                     var deployItem = new DeployTemplateItem()
                     {
                         Config = sourceTemplateItem.ProvisioningConfig,
-                        Template = filesUnderFolderTemplate,
-                        Title = string.Format("Deploying {0} from template {1}", src, sourceTemplateItem.TemplateInfo.TemplateFileName),
+                        Template = pnpTemplate,
+                        Title = string.Format("Deploying complete template {0}", sourceTemplateItem.TemplateInfo.TemplateFileName),
                     };
                     return deployItem;
+                }
+            }
+            else
+            {
+                //deploy specific file(s)
+                var src = ProvisioningHelper.MakeRelativePath(sourceTemplateItem.ItemPath, sourceTemplateItem.TemplateInfo.ResourcesPath);
+                XMLFileSystemTemplateProvider provider = this.ProvisioningService.InitializeProvisioningTemplateProvider(sourceTemplateItem.TemplateInfo);
+                ProvisioningTemplate sourceTemplate = this.InitProvisioningTemplate(provider, sourceTemplateItem.TemplateInfo);
+
+                if (sourceTemplate != null)
+                {
+                    var files = sourceTemplate.Files.Where(
+                        f => f.Src.StartsWith(src, StringComparison.InvariantCultureIgnoreCase)
+                        ).ToList();
+
+                    if (files.Count > 0)
+                    {
+                        var filesUnderFolderTemplate = new ProvisioningTemplate(sourceTemplate.Connector);
+                        filesUnderFolderTemplate.Files.AddRange(files);
+
+                        var deployItem = new DeployTemplateItem()
+                        {
+                            Config = sourceTemplateItem.ProvisioningConfig,
+                            Template = filesUnderFolderTemplate,
+                            Title = string.Format("Deploying {0} from template {1}", src, sourceTemplateItem.TemplateInfo.TemplateFileName),
+                        };
+                        return deployItem;
+                    }
                 }
             }
 
@@ -594,8 +625,9 @@ namespace Provisioning.VSTools.Services
 
             List<DeployTemplateItem> deployItems = new List<DeployTemplateItem>();
 
-            foreach (var sourceTemplateItem in pendingFolderTemplates)
+            while (pendingFolderTemplates.Count > 0)
             {
+                var sourceTemplateItem = pendingFolderTemplates.Dequeue();
                 var deployItem = GetDeployItem(sourceTemplateItem);
                 if (deployItem != null)
                 {
@@ -619,8 +651,9 @@ namespace Provisioning.VSTools.Services
 
             List<DeployTemplateItem> deployItems = new List<DeployTemplateItem>();
 
-            foreach (var sourceTemplateItem in pendingItemTemplates)
+            while (pendingItemTemplates.Count > 0)
             {
+                var sourceTemplateItem = pendingItemTemplates.Dequeue();
                 var deployItem = GetDeployItem(sourceTemplateItem);
                 if (deployItem != null)
                 {
@@ -677,9 +710,17 @@ namespace Provisioning.VSTools.Services
             return templateItems;
         }
 
+        private void ResetPendingItems()
+        {
+            pendingItemTemplates.Clear();
+            pendingFolderTemplates.Clear();
+        }
+
         //Context menu check for specific file name
         void menuCommand_ProjectItemBeforeQueryStatus(object sender, EventArgs e)
         {
+            ResetPendingItems();
+
             // get the menu that fired the event
             var menuCommand = sender as OleMenuCommand;
             if (menuCommand != null)
@@ -693,8 +734,9 @@ namespace Provisioning.VSTools.Services
                     return;
                 }
 
-                pendingItemTemplates = GetSelectedItemTempateItems();
-                if (pendingItemTemplates != null && pendingItemTemplates.Count() > 0)
+                //enqueue items
+                ((List<TemplateItem>)GetSelectedItemTempateItems()).ForEach(t => pendingItemTemplates.Enqueue(t));
+                if (pendingItemTemplates.Count() > 0)
                 {
                     menuCommand.Enabled = true;
                 }
@@ -703,6 +745,8 @@ namespace Provisioning.VSTools.Services
 
         void menuCommand_ProjectFolderBeforeQueryStatus(object sender, EventArgs e)
         {
+            ResetPendingItems();
+
             // get the menu that fired the event
             var menuCommand = sender as OleMenuCommand;
             if (menuCommand != null)
@@ -717,8 +761,9 @@ namespace Provisioning.VSTools.Services
                     return;
                 }
 
-                pendingFolderTemplates = GetSelectedItemTempateItems();
-                if (pendingFolderTemplates != null && pendingFolderTemplates.Count() > 0)
+                //enqueue items
+                ((List<TemplateItem>)GetSelectedItemTempateItems()).ForEach(t => pendingFolderTemplates.Enqueue(t));
+                if (pendingItemTemplates.Count() > 0)
                 {
                     menuCommand.Enabled = true;
                 }
@@ -741,10 +786,17 @@ namespace Provisioning.VSTools.Services
 
         private bool IsActive()
         {
+            var project = ProjectHelpers.GetActiveProject();
+
+            return IsActive(project);
+        }
+
+        private bool IsActive(Project project)
+        {
             bool isActive = false;
             try
             {
-                var projectFolderPath = Helpers.ProjectHelpers.GetProjectPath();
+                var projectFolderPath = Helpers.ProjectHelpers.GetProjectPath(project);
                 var configFilePath = Path.Combine(projectFolderPath, Resources.FileNameProvisioningTemplate);
 
                 if (System.IO.File.Exists(configFilePath))
@@ -799,7 +851,7 @@ namespace Provisioning.VSTools.Services
                 if (config == null)
                 {
                     var resourcesFolder = Resources.DefaultResourcesRelativePath;
-                    EnsureResourcesFolder(resourcesFolder);
+                    EnsureResourcesFolder(projectFolderPath, resourcesFolder);
                     config = this.ProvisioningService.GenerateDefaultProvisioningConfig(Resources.DefaultFileNamePnPTemplate, resourcesFolder);
                 }
 
@@ -807,7 +859,7 @@ namespace Provisioning.VSTools.Services
                 if (config.Templates == null)
                 {
                     var resourcesFolder = Resources.DefaultResourcesRelativePath;
-                    EnsureResourcesFolder(resourcesFolder);
+                    EnsureResourcesFolder(projectFolderPath, resourcesFolder);
                     var tempConfig = this.ProvisioningService.GenerateDefaultProvisioningConfig(Resources.DefaultFileNamePnPTemplate, resourcesFolder);
                     config.Templates = tempConfig.Templates;
                 }
@@ -826,10 +878,10 @@ namespace Provisioning.VSTools.Services
                 //ensure pnp template files
                 foreach (var t in config.Templates)
                 {
-                    string templatePath = System.IO.Path.Combine(Helpers.ProjectHelpers.GetProjectPath(), t.Path);
+                    string templatePath = System.IO.Path.Combine(projectFolderPath, t.Path);
                     if (!System.IO.File.Exists(templatePath))
                     {
-                        string resourcesPath = System.IO.Path.Combine(Helpers.ProjectHelpers.GetProjectPath(), Resources.DefaultResourcesRelativePath);
+                        string resourcesPath = System.IO.Path.Combine(projectFolderPath, Resources.DefaultResourcesRelativePath);
                         this.ProvisioningService.GenerateDefaultPnPTemplate(resourcesPath, templatePath);
                         AddTemplateToProject(templatePath);
                     }
@@ -883,9 +935,8 @@ namespace Provisioning.VSTools.Services
             catch { }
         }
 
-        private string EnsureResourcesFolder(string folderRelativePath)
+        private string EnsureResourcesFolder(string projectPath, string folderRelativePath)
         {
-            string projectPath = Helpers.ProjectHelpers.GetProjectPath();
             string folderPath = System.IO.Path.Combine(projectPath, folderRelativePath);
 
             if (!System.IO.Directory.Exists(folderPath))
@@ -903,21 +954,18 @@ namespace Provisioning.VSTools.Services
             return folderPath;
         }
 
-        private ProvisioningTemplateToolsConfiguration GetConfig(bool createIfNotExists)
+        private ProvisioningTemplateToolsConfiguration GetConfig(string projectFolderPath, bool createIfNotExists)
         {
-            var projectFolderPath = Helpers.ProjectHelpers.GetProjectPath();
-
             var configFilePath = Path.Combine(projectFolderPath, Resources.FileNameProvisioningTemplate);
             var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath, createIfNotExists);
 
             return config;
         }
 
-        private bool SaveConfig(ProvisioningTemplateToolsConfiguration config)
+        private bool SaveConfig(string projectFolderPath, ProvisioningTemplateToolsConfiguration config)
         {
             try
             {
-                var projectFolderPath = Helpers.ProjectHelpers.GetProjectPath();
                 var configFilePath = Path.Combine(projectFolderPath, Resources.FileNameProvisioningTemplate);
                 XmlHelpers.SerializeObject(config, configFilePath);
 
@@ -942,18 +990,20 @@ namespace Provisioning.VSTools.Services
             var menuCommand = sender as OleMenuCommand;
             if (menuCommand != null)
             {
-                var config = GetConfig(true);
+                var project = Helpers.ProjectHelpers.GetActiveProject();
+                string projectPath = ProjectHelpers.GetProjectPath(project);
+                var config = GetConfig(projectPath, true);
 
                 //toggle the enabled item & flag
                 if (menuCommand.Text == Resources.EnablePnPToolsText)
                 {
                     config.ToolsEnabled = true;
-                    SaveConfig(config);
+                    SaveConfig(projectPath, config);
                 }
                 else
                 {
                     config.ToolsEnabled = false;
-                    SaveConfig(config);
+                    SaveConfig(projectPath, config);
                 }
             }
 
@@ -961,10 +1011,11 @@ namespace Provisioning.VSTools.Services
 
         private void EditConnMenuItemCallback(object sender, EventArgs e)
         {
-            var projectFolderPath = Helpers.ProjectHelpers.GetProjectPath();
+            var project = ProjectHelpers.GetActiveProject();
+            var projectFolderPath = Helpers.ProjectHelpers.GetProjectPath(project);
             var configFileCredsPath = Path.Combine(projectFolderPath, Resources.FileNameProvisioningUserCreds);
 
-            var config = GetConfig(true);
+            var config = GetConfig(projectFolderPath, true);
 
             GetUserCreds(config, configFileCredsPath);
 
@@ -973,7 +1024,7 @@ namespace Provisioning.VSTools.Services
             //site url was changed, persist it to the xml file
             if (originalSiteUrl != config.Deployment.TargetSite)
             {
-                SaveConfig(config);
+                SaveConfig(projectFolderPath, config);
             }
         }
 

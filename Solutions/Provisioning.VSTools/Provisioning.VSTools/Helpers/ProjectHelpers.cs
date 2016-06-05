@@ -64,8 +64,46 @@ namespace Provisioning.VSTools.Helpers
             {
                 return ((EnvDTE.ProjectItem)prjItemObject).ContainingProject;
             }
-         
+
             return prjItemObject as EnvDTE.Project;
+        }
+
+        public static EnvDTE.Project GetProjectFromExplorer(EnvDTE80.DTE2 dte)
+        {
+            UIHierarchy hierarchy = dte.ToolWindows.SolutionExplorer;
+            var selectedItems = (Array)hierarchy.SelectedItems;
+            if (selectedItems != null && selectedItems.Length > 0)
+            {
+                foreach (UIHierarchyItem selectedItem in selectedItems)
+                {
+                    ProjectItem projectItem = selectedItem.Object as ProjectItem;
+                    if (projectItem != null && projectItem.ContainingProject != null)
+                    {
+                        return projectItem.ContainingProject;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        //public static string GetProjectPath()
+        //{
+        //    //var project = GetProject();
+        //    var project = GetActiveProject();
+        //    return GetProjectPath(project);
+        //}
+
+        public static string GetProjectPath(Project project)
+        {
+            if (project != null)
+            {
+                return Path.GetDirectoryName(project.FullName);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public static EnvDTE.Project GetProject()
@@ -76,17 +114,18 @@ namespace Provisioning.VSTools.Helpers
             return ProjectHelpers.GetProject(hierarchy, projectItemId);
         }
 
-        public static string GetProjectPath()
+        internal static Project GetActiveProject()
         {
-            var project = GetProject();
-            if (project != null)
+            DTE dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
+            Project activeProject = null;
+
+            Array activeSolutionProjects = dte.ActiveSolutionProjects as Array;
+            if (activeSolutionProjects != null && activeSolutionProjects.Length > 0)
             {
-                return Path.GetDirectoryName(project.FullName);
+                activeProject = activeSolutionProjects.GetValue(0) as Project;
             }
-            else
-            {
-                return null;
-            }
+
+            return activeProject;
         }
 
         public static IVsHierarchy GetCurrentHierarchy(out uint projectItemId)
