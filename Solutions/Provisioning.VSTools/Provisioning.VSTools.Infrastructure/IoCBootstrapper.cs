@@ -9,18 +9,30 @@ namespace Provisioning.VSTools
 {
     public static class IoCBootstrapper
     {
+        private static Container _container = null;
+
         public static Container GetContainer(bool registerGenericLogger = true)
         {
-            Container c = new Container();
-
-            //register types
-            if (registerGenericLogger)
+            if (_container == null)
             {
-                c.Register<Services.ILogService, Services.GenericLogService>(SimpleInjector.Lifestyle.Singleton);
-            }
-            c.Register<Services.IProvisioningService, Services.ProvisioningService>(SimpleInjector.Lifestyle.Transient);
+                _container = new Container();
 
-            return c;
+                //register types
+                if (registerGenericLogger)
+                {
+                    _container.Register<Services.ILogService, Services.GenericLogService>(SimpleInjector.Lifestyle.Singleton);
+                }
+                _container.Register<Services.IProvisioningService, Services.ProvisioningService>(SimpleInjector.Lifestyle.Transient);
+            }
+
+            return _container;
+        }
+
+        public static Services.ILogService GetLoggerInstance()
+        {
+            var c = GetContainer();
+            
+            return c.GetInstance<Services.ILogService>();
         }
     }
 }

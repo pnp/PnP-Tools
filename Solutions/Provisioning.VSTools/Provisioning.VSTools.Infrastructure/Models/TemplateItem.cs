@@ -20,5 +20,60 @@ namespace Provisioning.VSTools.Models
         public string ProjectPath { get; set; }
         public ProvisioningTemplateToolsConfiguration ProvisioningConfig { get; set; }
         public ProvisioningTemplateLocationInfo TemplateInfo { get; set; }
+        public DeployTemplateItem GetDeployItem(Services.ILogService logService)
+        {
+            LoadedXMLProvisioningTemplate loadedTemplate = null;
+            try
+            {
+                //load the template xml file
+                loadedTemplate = this.TemplateInfo.LoadXmlTemplate();
+            }
+            catch (Exception ex)
+            {
+                logService.Exception("Error reading template file " + this.ItemPath, ex);
+                return null;
+            }
+
+            if (loadedTemplate.Template != null)
+            {
+                if (this.TemplateInfo.TemplatePath == this.ItemPath)
+                {
+                    //deploy complete template
+                    var deployItem = new DeployTemplateItem()
+                    {
+                        Config = this.ProvisioningConfig,
+                        Template = loadedTemplate.Template,
+                        Title = string.Format("Deploying complete template {0}", this.TemplateInfo.TemplateFileName),
+                    };
+                    return deployItem;
+                }
+                else
+                {
+                    //deploy specific file(s)
+                    var src = Helpers.ProvisioningHelper.MakeRelativePath(this.ItemPath, this.TemplateInfo.ResourcesPath);
+
+                    var files = loadedTemplate.Template.Files.Where(
+                        f => f.Src.StartsWith(src, StringComparison.InvariantCultureIgnoreCase)
+                        ).ToList();
+
+                    if (files.Count > 0)
+                    {
+                        //create a new template for the specified file
+                        var filesUnderFolderTemplate = new OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate(loadedTemplate.Template.Connector);
+                        filesUnderFolderTemplate.Files.AddRange(files);
+
+                        var deployItem = new DeployTemplateItem()
+                        {
+                            Config = this.ProvisioningConfig,
+                            Template = filesUnderFolderTemplate,
+                            Title = string.Format("Deploying {0} from template {1}", src, this.TemplateInfo.TemplateFileName),
+                        };
+                        return deployItem;
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }

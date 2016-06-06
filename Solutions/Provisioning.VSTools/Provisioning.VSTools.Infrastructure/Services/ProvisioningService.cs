@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace Provisioning.VSTools.Services
 {
+    /// <summary>
+    /// Responsible for provisioning activities to the target SharePoint sites.
+    /// </summary>
     public class ProvisioningService : Provisioning.VSTools.Services.IProvisioningService
     {
         private List<DeployTemplateItem> _pendingTemplatesToDeploy = new List<DeployTemplateItem>();
@@ -43,21 +46,6 @@ namespace Provisioning.VSTools.Services
         public ProvisioningService(Services.ILogService logSvc)
         {
             this.LogService = logSvc;
-        }
-
-        public ProvisioningTemplateToolsConfiguration GenerateDefaultProvisioningConfig(string pnpTemplatePath, string resourceFolderName)
-        {
-            var config = new ProvisioningTemplateToolsConfiguration();
-            config.ToolsEnabled = true;
-            config.Templates.Add(new Template()
-            {
-                Path = pnpTemplatePath,//Resources.DefaultFileNamePnPTemplate,
-                ResourcesFolder = resourceFolderName,
-            });
-            config.Deployment.TargetSite = "https://yourtenant.sharepoint.com/sites/testsite";
-            config.Deployment.Credentials = new ProvisioningCredentials();
-
-            return config;
         }
 
         public async System.Threading.Tasks.Task<bool> DeployProvisioningTemplates(IEnumerable<DeployTemplateItem> templates)
@@ -114,44 +102,5 @@ namespace Provisioning.VSTools.Services
             return success;
         }
 
-        public void GenerateDefaultPnPTemplate(string resourcesPath, string templatePath, string containerName = "")
-        {
-            if (string.IsNullOrEmpty(containerName))
-            {
-                containerName = "DefaultContainer";
-            }
-
-            string templateFilename = System.IO.Path.GetFileName(templatePath);
-
-            XMLTemplateProvider provider = new XMLFileSystemTemplateProvider(resourcesPath, containerName);
-            FileSystemConnector fileConnector = new FileSystemConnector(resourcesPath, containerName);
-            ProvisioningTemplate template = new ProvisioningTemplate(fileConnector);
-            provider.SaveAs(template, templatePath);
-        }
-
-        public XMLFileSystemTemplateProvider InitializeProvisioningTemplateProvider(ProvisioningTemplateLocationInfo templateInfo)
-        {
-            XMLFileSystemTemplateProvider provider = new XMLFileSystemTemplateProvider(templateInfo.TemplateFolderPath, "");
-            return provider;
-        }
-
-        public ProvisioningTemplate InitializeProvisioningTemplate(XMLFileSystemTemplateProvider provider, ProvisioningTemplateLocationInfo templateInfo)
-        {
-            ProvisioningTemplate template = null;
-
-            try
-            {
-                template = provider.GetTemplate(templateInfo.TemplateFileName);
-                template.Connector = new OfficeDevPnP.Core.Framework.Provisioning.Connectors.FileSystemConnector(templateInfo.ResourcesPath, "");
-            }
-            catch (Exception ex)
-            {
-                LogService.Info(string.Format("Error parsing Provisioning Template: {0}, {1}", ex.Message, ex.StackTrace));
-                throw;
-                //this.ShowMessage("Error parsing Provisioning Template", string.Format("Could not load template: {0}, {1}", ex.Message, ex.StackTrace));
-            }
-
-            return template;
-        }
     }
 }

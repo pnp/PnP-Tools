@@ -10,6 +10,7 @@ using System.IO;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Provisioning.VSTools.Models;
 
 namespace Provisioning.VSTools.Helpers
 {
@@ -179,6 +180,33 @@ namespace Provisioning.VSTools.Helpers
             {
                 return false;
             }
+        }
+
+        public static ProvisioningTemplateLocationInfo GetParentProvisioningTemplateInformation(string projectItemFullPath, string projectFolderPath, ProvisioningTemplateToolsConfiguration config)
+        {
+            ProvisioningTemplateLocationInfo templateInfo = null;
+
+            if (config != null && config.Templates != null)
+            {
+                foreach (var template in config.Templates)
+                {
+                    var pnpResourcesFolderPath = Path.Combine(projectFolderPath, template.ResourcesFolder);
+                    var templateFilePath = Path.Combine(projectFolderPath, template.Path);
+                    bool isTemplateXmlFile = string.Compare(System.IO.Path.GetFileName(projectItemFullPath), System.IO.Path.GetFileName(template.Path), true) == 0;
+
+                    if (ProjectHelpers.IsItemInsideFolder(projectItemFullPath, pnpResourcesFolderPath) || isTemplateXmlFile)
+                    {
+                        templateInfo = new ProvisioningTemplateLocationInfo()
+                        {
+                            ResourcesPath = pnpResourcesFolderPath,
+                            TemplateFolderPath = Path.GetDirectoryName(templateFilePath),
+                            TemplateFileName = Path.GetFileName(templateFilePath)
+                        };
+                    }
+                }
+            }
+
+            return templateInfo;
         }
     }
 }

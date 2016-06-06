@@ -183,7 +183,8 @@
     <Compile Include="Helpers\XmlHelpers.cs" />
     <Compile Include="IoCBootstrapper.cs" />
     <Compile Include="Models\DeployTemplateItem.cs" />
-    <Compile Include="Models\ItemEventType.cs" />
+    <Compile Include="Models\LoadedXMLProvisioningTemplate.cs" />
+    <Compile Include="Models\ProjectItemRequest.cs" />
     <Compile Include="Models\ProvisioningCredentials.cs" />
     <Compile Include="Models\ProvisioningTemplateLocationInfo.cs" />
     <Compile Include="Models\ProvisioningTemplateToolsConfiguration.cs" />
