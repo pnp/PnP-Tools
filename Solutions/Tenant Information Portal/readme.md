@@ -94,7 +94,7 @@ See [Change Log](docs/changelog.md) for detailed information.
 ### Azure Deployment
 To deploy the TIP solution to Azure Web Sites, you will create 1 web site with a SQL Server instance, publish the project to the web site.
 #### Automatic Deployment with Azure Resource Manager Template
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https:%2F%2Fraw.githubusercontent.com%2Fsjkp%2FPnP-Tools%2Fmaster%2FSolutions%2FTenant%20Information%20Portal%2Fsrc%2FTIP.Azure.ResourceGroup%2FTemplates%2FWebSite.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https:%2F%2Fraw.githubusercontent.com%2Fofficedev%2FPnP-Tools%2Fmaster%2FSolutions%2FTenant%20Information%20Portal%2Fsrc%2FTIP.Azure.ResourceGroup%2FTemplates%2FWebSite.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
