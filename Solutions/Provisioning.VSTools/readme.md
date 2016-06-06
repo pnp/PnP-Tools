@@ -21,17 +21,30 @@ Provisioning.VSTools | Jerry Fetzer (Perficient, Inc.) <br>Tatjana Starovoitva (
 Version  | Date | Comments
 ---------| -----| --------
 0.5  | November 10th 2015| Initial beta release
+0.6  | May 25th 2016| Updated nuget packages, including the PnP Core package
 
 ### Disclaimer ###
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
 
 
 ----------
+# Debugging the extension package #
+To debug the extension package, some debug options need to be set on the project.
+1) Load the project in Visual Studio
+2) restore all nuget packages and ensure the project builds
+3) Navigate to project properties > debug
+4) Select 'start external program' and set the path to your copy of visual studio (devenv.exe)
+5) Set "Start Options" to: /rootsuffix Exp
+6) Press F5 or click 'Start'
 
-# Configuring and enabling the extension package #
-Extension packages can be deployed in several ways, including VSIX package format for use with the Visual Studio Gallery and MSI deployment by creating a Setup project as part of the solution.  Extension packages can also be hosted in a private gallery to allow for controlled distribution of the extension and ease of installation and updates in Visual Studio via the Extension and Updates Tool menu item.  We chose the private gallery deployment for the easy install and easy updates when the package changes.  The process of hosting in a private gallery is described in the following blog post http://blogs.msdn.com/b/visualstudio/archive/2011/10/03/private-extension-galleries-for-the-enterprise.aspx (note: the post references Visual Studio 2010, but the same process is used for new versions of Visual Studio).
+![](readme.images/debugDialog.png)
 
-One item that was required in the web.config file of the private gallery website, that wasn’t mentioned in the blog, was to add the following MIME map for the VSIX file extension:
+# Installing the extension package (instead of debugging it) #
+To install the extension package, either a setup project is needed to create an MSI file or the VSIX file from the extension project itself can be used.  The VSIX can also be hosted on a private extension gallery to help maintain the deployments to multiple users and machines.
+
+The process of hosting in a private gallery is described in the following blog post http://blogs.msdn.com/b/visualstudio/archive/2011/10/03/private-extension-galleries-for-the-enterprise.aspx (note: the post references Visual Studio 2010, but the same process is used for new versions of Visual Studio).
+
+In addition to the steps outlined in the blog post above, the web.config file of the gallery website needs to be modified to add the following MIME map for the VSIX file extension:
 ```XML
   <system.webServer>
     <staticContent>
@@ -39,20 +52,27 @@ One item that was required in the web.config file of the private gallery website
     </staticContent>
   </system.webServer> 
 ```
-Once the VSIX package is hosted and available in Visual Studio, it can be installed from the Extension and Updates Tool menu item.  Once installed, the package functionality can be turned on or off by right-clicking your project and selecting Enable PnP Provisioning Tools 
+
+Private galleries are managed via the Extensions and Tools menu.  Once the VSIX package is available in the private gallery, users can choose to install/uninstall as needed.
+
+# Enabling the PnP Provisioning Tools Extension #
+Once installed, the extension functionality can be turned on or off by right-clicking your project and selecting Enable PnP Provisioning Tools.
 
 ![](readme.images/enablePnPCommand.png)
 
-Enabling Provisioning tools creates "ProvisioningTemplateTools.config" file in the root of the project. 
+The first time this is done, the user will be prompted to enter the connection credentials and target site url.  This dialog can also be found by clicking the "Edit PnP Provisioning Tools Connection" menu item.
+
+![](readme.images/connectionDialog.png)
+
+Enabling Provisioning tools creates "ProvisioningTemplateTools.config" file in the root of the project.  After entering the credentials for connecting to the SharePoint site, another file "ProvisioningTemplateTools.config.user" will be created.  This file contains the users login name and an encrypted password and should be excluded from source control systems for security purposes.
 
 You will need to fill in the login information to your Office365 site as well as information about your provisioning templates:
 
 - Deployment
 	- TargetSite: Enter URL of Office 365 site you are using for development (required for right-click -> deploy)
-	- Authentication: Enter your username/password for the entered site (required for right-click -> deploy)
 - Templates - add your provisioning templates 
 	- Template
-		- Path: Project-relative path to ypur template.xml file
+		- Path: Project-relative path to your template.xml file
 		- ResourcesFolder: Project-relative path to folder that will contain files specified in template
 
 ```XML
@@ -60,14 +80,7 @@ You will need to fill in the login information to your Office365 site as well as
 <ProvisioningTemplateToolsConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ToolsEnabled>true</ToolsEnabled>
   <Deployment>
-    <TargetSite>https://{yourtenant}.sharepoint.com/sites/{yourtargetsite}/</TargetSite>
-    <Authentication
-      Type="Office365">
-      <Office365>
-        <Username>{your_office365_username}</Username>
-        <Password>{your_office365_password}</Password>
-      </Office365>
-    </Authentication>
+    <TargetSite>https://{yourtenant}.sharepoint.com/sites/{targetsite}</TargetSite>
   </Deployment>
   <Templates>
     <Template
@@ -116,7 +129,7 @@ Monitoring progress: VSTools adds it's own pane to the "Output" tool window (Vie
 - Wait until deployment completes. You can monitor progress in "Output window" -> "PnP deployment Tools" pane
 
 
-## Deploying whole provisioning template ##
+## Deploying the full PnP provisioning template ##
 
 - Make sure template is listed in ProvisioningTemplateTools.config file
 - Right-click template xml file and select "Deploy with PnP Tools"
