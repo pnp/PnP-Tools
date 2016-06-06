@@ -36,7 +36,7 @@ Version  | Date | Comments
 1.0.1 | February 23, 2016 | Date Format 
 1.0.2 | March 7, 2016 | Azure AD Applications Functionality
 1.0.3 | March 23, 2016 | UX Fabric 
-1.0.4 | June 6, 2016 | Error Controller 
+1.0.4 | June 6, 2016 | Error Controller, Owin Middleware, Azure Resource Deployment (Simon J.K. Pedersen)
 
 See [Change Log](docs/changelog.md) for detailed information.
 
