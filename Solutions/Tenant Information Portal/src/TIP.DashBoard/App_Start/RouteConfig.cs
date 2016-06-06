@@ -20,8 +20,6 @@
 //SOFTWARE.
 // ------------------------------------------------------------------------------
 
-
-
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -33,16 +31,17 @@ namespace TIP.Dashboard
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            // routes.MapRoute(
-            //    name: "Details_AllExpired",
-            //    url: "Principal/{id}",
-            //    defaults: new { controller = "Principal", action = "ExpiredPrincipals", id = UrlParameter.Optional, angularController = "PrincipalController"}
-            //);
+            routes.MapRoute(
+              name: "Errors",
+              url: "Error/{errorMessage}",
+              defaults: new { controller = "Error", action = "Index", errorMessage = UrlParameter.Optional }
+            );
+
 
             routes.MapRoute(
-             name: "Reports",
-             url: "Reports/{action}/{id}",
-             defaults: new { controller = "Reports", action = "ExpiredPrincipals", id = UrlParameter.Optional, angularController = UrlParameter.Optional }
+                name: "Reports",
+                url: "Reports/{action}/{id}",
+                defaults: new { controller = "Reports", action = "ExpiredPrincipals", id = UrlParameter.Optional, angularController = UrlParameter.Optional }
             );
 
             routes.MapRoute(

@@ -20,9 +20,6 @@
 //SOFTWARE.
 // ------------------------------------------------------------------------------
 
-
-
-
 namespace Microsoft.Online.Applications.Core.Authentication
 {
     /// <summary>

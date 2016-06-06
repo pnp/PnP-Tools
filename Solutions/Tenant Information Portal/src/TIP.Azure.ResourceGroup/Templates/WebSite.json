@@ -32,7 +32,7 @@
     },
     "repoUrl": {
       "type": "string",
-      "defaultValue": "https://github.com/sjkp/PnP-Tools.git"
+      "defaultValue": "https://github.com/OfficeDev/PnP-Tools.git"
     },
     "branch": {
       "type": "string",

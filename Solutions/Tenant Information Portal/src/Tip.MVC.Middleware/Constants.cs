@@ -1,7 +1,7 @@
 ﻿// ------------------------------------------------------------------------------
 //The MIT License(MIT)
 
-//Copyright(c) 2015 Office Developer
+//Copyright(c) 2016 Office Developer
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
 //in the Software without restriction, including without limitation the rights
@@ -19,28 +19,21 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 // ------------------------------------------------------------------------------
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
-
-namespace TIP.Dashboard
+namespace Tip.Mvc.Middleware
 {
-    public static class WebApiConfig
+    /// <summary>
+    /// Constants
+    /// </summary>
+    public static class Constants
     {
-        public static void Register(HttpConfiguration config)
+        /// <summary>
+        /// Contains the constants used in the Response Headers
+        /// </summary>
+        public static class ResponseHeaders
         {
-            config.MapHttpAttributeRoutes();
-
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{action}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
-
-            var appXmlType = config.Formatters.XmlFormatter.SupportedMediaTypes.FirstOrDefault(t => t.MediaType == "application/xml");
-            config.Formatters.XmlFormatter.SupportedMediaTypes.Remove(appXmlType);
+            public static readonly string DURATION_RESPONSE_HEADER = "X-RequestDuration";
         }
+
+      
     }
 }

@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployment", "deployment", 
 EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "TIP.Azure.ResourceGroup", "TIP.Azure.ResourceGroup\TIP.Azure.ResourceGroup.deployproj", "{474DFEC6-94ED-4893-92E0-F8F70467A9D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tip.Mvc.Middleware", "Tip.MVC.Middleware\Tip.Mvc.Middleware.csproj", "{BF957296-1BA0-49B0-B6B9-54CC92EB9613}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{474DFEC6-94ED-4893-92E0-F8F70467A9D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{474DFEC6-94ED-4893-92E0-F8F70467A9D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{474DFEC6-94ED-4893-92E0-F8F70467A9D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF957296-1BA0-49B0-B6B9-54CC92EB9613}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF957296-1BA0-49B0-B6B9-54CC92EB9613}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF957296-1BA0-49B0-B6B9-54CC92EB9613}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF957296-1BA0-49B0-B6B9-54CC92EB9613}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,5 +73,6 @@ Global
 		{F7E70780-B1CD-4823-8F41-31F4686E57E2} = {942E3C53-BFD8-47F2-92C8-8F9764521590}
 		{7BBBBB45-2E83-4565-8AD7-46407264B059} = {BF54BCF4-E030-436E-895B-BD70FC82553A}
 		{474DFEC6-94ED-4893-92E0-F8F70467A9D9} = {7BBBBB45-2E83-4565-8AD7-46407264B059}
+		{BF957296-1BA0-49B0-B6B9-54CC92EB9613} = {BF54BCF4-E030-436E-895B-BD70FC82553A}
 	EndGlobalSection
 EndGlobal

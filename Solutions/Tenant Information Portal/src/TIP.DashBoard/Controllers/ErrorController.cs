@@ -1,7 +1,7 @@
 ﻿// ------------------------------------------------------------------------------
 //The MIT License(MIT)
 
-//Copyright(c) 2015 Office Developer
+//Copyright(c) 2016 Office Developer
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
 //in the Software without restriction, including without limitation the rights
@@ -18,29 +18,21 @@
 //LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
-// ------------------------------------------------------------------------------
+// ----------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
+using System.Web.Mvc;
 
-namespace TIP.Dashboard
+namespace TIP.Dashboard.Controllers
 {
-    public static class WebApiConfig
+    public class ErrorController : Controller
     {
-        public static void Register(HttpConfiguration config)
+        public ActionResult Index(string errorMessage)
         {
-            config.MapHttpAttributeRoutes();
-
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{action}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
-
-            var appXmlType = config.Formatters.XmlFormatter.SupportedMediaTypes.FirstOrDefault(t => t.MediaType == "application/xml");
-            config.Formatters.XmlFormatter.SupportedMediaTypes.Remove(appXmlType);
+            if(!string.IsNullOrEmpty(errorMessage))
+            {
+                ViewBag.ErrorMessage = errorMessage;
+            }
+            return View();
         }
     }
 }

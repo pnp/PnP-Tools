@@ -19,6 +19,7 @@
   "DISPLAY_SURNAME_TEXT": "Last Name",
   "DISPLAY_FIRST_NAME_TEXT": "First Name",
   "EMAIL_TEXT": "Email",
+  "ERROR_HEADER_TEST":  "Oops, this is probably our fault.",
   "EXPIRED_APPLICATIONS_TEXT": "Expired Applications",
   "EXPIRED_APPLICATIONS_30_TEXT": "Applications Expiring in 30 Days",
   "EXPIRED_APPLICATIONS_60_TEXT": "Applications Expiring in 60 Days",

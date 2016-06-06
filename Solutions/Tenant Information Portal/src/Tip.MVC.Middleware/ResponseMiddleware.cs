@@ -1,7 +1,7 @@
 ﻿// ------------------------------------------------------------------------------
 //The MIT License(MIT)
 
-//Copyright(c) 2015 Office Developer
+//Copyright(c) 2016 Office Developer
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
 //in the Software without restriction, including without limitation the rights
@@ -20,20 +20,46 @@
 //SOFTWARE.
 // ------------------------------------------------------------------------------
 
-using Owin;
-using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Web;
+using System.Diagnostics;
+using Microsoft.Owin;
 
-namespace TIP.Dashboard
+namespace Tip.Mvc.Middleware
 {
-    public partial class Startup
+    /// <summary>
+    /// Middleware to add ElapsedMilliseconds in the response headers
+    /// </summary>
+    public class ResponseMiddleware : OwinMiddleware
     {
-        public void Configuration(IAppBuilder app)
+        #region Constructor
+        /// <summary>
+        /// Default Contructor
+        /// </summary>
+        /// <param name="next"></param>
+        public ResponseMiddleware(OwinMiddleware next) : base(next)
         {
-            app.UseResponseMiddleware();
-            ConfigureAuth(app);
+            
         }
+        #endregion
+
+        #region
+        /// <summary>
+        /// Adds X-RequestDuration in the response header for the request duration in Milliseconds
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override async Task Invoke(IOwinContext context)
+        {
+            var _sw = Stopwatch.StartNew();
+            context.Response.OnSendingHeaders((state) =>
+            {
+                _sw.Stop();
+                var _responseTime = string.Format("{0}{1}", _sw.ElapsedMilliseconds.ToString(), "ms");
+                context.Response.Headers.Add(Constants.ResponseHeaders.DURATION_RESPONSE_HEADER, new string[] { _responseTime } );
+
+            }, null);
+            await Next.Invoke(context);
+        }
+        #endregion
     }
 }

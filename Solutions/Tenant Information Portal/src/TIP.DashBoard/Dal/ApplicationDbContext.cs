@@ -29,7 +29,6 @@ using TIP.Dashboard.Models;
 
 namespace TIP.Dashboard.Dal
 {
-
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext()
