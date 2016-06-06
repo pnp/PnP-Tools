@@ -17,29 +17,9 @@ namespace Provisioning.VSTools.Services
     /// </summary>
     public class ProvisioningService : Provisioning.VSTools.Services.IProvisioningService
     {
-        private List<DeployTemplateItem> _pendingTemplatesToDeploy = new List<DeployTemplateItem>();
-        public IEnumerable<DeployTemplateItem> pendingTemplatesToDeploy
-        {
-            get
-            {
-                return _pendingTemplatesToDeploy;
-            }
-        }
+        private Queue<DeployTemplateItem> pendingTemplatesToDeploy = new Queue<DeployTemplateItem>();
+        
         public bool IsBusy { get; set; }
-        public void ResetPendingTemplates()
-        {
-            if (!IsBusy)
-            {
-                _pendingTemplatesToDeploy.Clear();
-            }
-        }
-        private void AddToPendingTemplates(IEnumerable<DeployTemplateItem> templates)
-        {
-            if (templates != null)
-            {
-                _pendingTemplatesToDeploy.AddRange(templates);
-            }
-        }
 
         private Services.ILogService LogService = null;
 
@@ -48,59 +28,92 @@ namespace Provisioning.VSTools.Services
             this.LogService = logSvc;
         }
 
+        public void ResetPendingTemplates()
+        {
+            if (!IsBusy)
+            {
+                pendingTemplatesToDeploy.Clear();
+            }
+        }
+
+        private void AddToPendingTemplates(IEnumerable<DeployTemplateItem> templates)
+        {
+            if (templates != null)
+            {
+                templates.ToList().ForEach(t => pendingTemplatesToDeploy.Enqueue(t));
+            }
+        }
+
         public async System.Threading.Tasks.Task<bool> DeployProvisioningTemplates(IEnumerable<DeployTemplateItem> templates)
         {
+            if (IsBusy)
+            {
+                LogService.Warn("DeployProvisioningTemplates is busy processing pending requests.");
+                return false;
+            }
+
             bool success = true;
 
             IsBusy = true;
-            this.AddToPendingTemplates(templates);
 
-            await System.Threading.Tasks.Task.Run(() =>
+            try
             {
-                foreach (var deployItem in pendingTemplatesToDeploy)
+                this.ResetPendingTemplates();
+                this.AddToPendingTemplates(templates);
+
+                await System.Threading.Tasks.Task.Run(() =>
                 {
-                    LogService.Info(string.Format("Start - {0}...", deployItem.Title));
-                    var siteUrl = deployItem.Config.Deployment.TargetSite;
-                    var login = deployItem.Config.Deployment.Credentials.Username;
-
-                    try
+                    while (pendingTemplatesToDeploy.Count > 0)
                     {
-                        using (ClientContext clientContext = new ClientContext(siteUrl))
+                        var deployItem = pendingTemplatesToDeploy.Dequeue();
+                        LogService.Info(string.Format("Start {1:t} - {0}...", deployItem.Title, System.DateTime.Now));
+                        var siteUrl = deployItem.Config.Deployment.TargetSite;
+                        var login = deployItem.Config.Deployment.Credentials.Username;
+
+                        try
                         {
-                            LogService.Info("Signing in - " + siteUrl);
-                            clientContext.Credentials = new SharePointOnlineCredentials(login, deployItem.Config.Deployment.Credentials.GetSecurePassword());
-
-                            LogService.Info("Loading web...");
-                            Web web = clientContext.Web;
-                            clientContext.Load(web);
-                            clientContext.ExecuteQuery();
-
-                            ProvisioningTemplateApplyingInformation ptai = new ProvisioningTemplateApplyingInformation();
-                            ptai.ProgressDelegate = delegate(string message, int step, int total)
+                            using (ClientContext clientContext = new ClientContext(siteUrl))
                             {
-                                LogService.Info(string.Format("Deploying {0}, Step {1}/{2}", message, step, total));
-                            };
+                                LogService.Info("Signing in - " + siteUrl);
+                                clientContext.Credentials = new SharePointOnlineCredentials(login, deployItem.Config.Deployment.Credentials.GetSecurePassword());
 
-                            LogService.Info("Applying template...");
-                            clientContext.Web.ApplyProvisioningTemplate(deployItem.Template, ptai);
+                                Web web = clientContext.Web;
+                                clientContext.Load(web);
+                                clientContext.ExecuteQuery();
+
+                                ProvisioningTemplateApplyingInformation ptai = new ProvisioningTemplateApplyingInformation();
+                                ptai.ProgressDelegate = delegate(string message, int step, int total)
+                                {
+                                    LogService.Info(string.Format("Deploying {0}, Step {1}/{2}", message, step, total));
+                                };
+
+                                LogService.Info("Applying template...");
+                                clientContext.Web.ApplyProvisioningTemplate(deployItem.Template, ptai);
+                            }
+
+                            success = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            LogService.Info("Error during provisioning: " + ex.Message);
+                            success = false;
                         }
 
-                        success = true;
+                        LogService.Info(string.Format("End {2:t} (success={1}) - {0}", deployItem.Title, success, System.DateTime.Now));
                     }
-                    catch (Exception ex)
-                    {
-                        LogService.Info("Error during provisioning: " + ex.Message);
-                        success = false;
-                    }
-
-                    LogService.Info(string.Format("End (success={1}) - {0}", deployItem.Title, success));
-                }
-            });
-
-            IsBusy = false;
+                });
+            }
+            catch (Exception ex)
+            {
+                success = false;
+                LogService.Exception("DeployProvisioningTemplates", ex);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
 
             return success;
         }
-
     }
 }

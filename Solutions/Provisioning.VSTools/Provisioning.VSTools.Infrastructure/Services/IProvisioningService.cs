@@ -9,7 +9,6 @@ namespace Provisioning.VSTools.Services
     {
         System.Threading.Tasks.Task<bool> DeployProvisioningTemplates(IEnumerable<DeployTemplateItem> templates);
         //System.Threading.Tasks.Task<bool> DeployProvisioningTemplate(string name, OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate template, Provisioning.VSTools.Models.ProvisioningTemplateToolsConfiguration config);
-        IEnumerable<DeployTemplateItem> pendingTemplatesToDeploy { get; }
         void ResetPendingTemplates();
         bool IsBusy { get; }
     }

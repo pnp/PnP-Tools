@@ -241,7 +241,7 @@ namespace Provisioning.VSTools.Services
                             var loadedTemplate = kvp.Value;
                             loadedTemplate.Provider.Save(loadedTemplate.Template);
 
-                            LogService.Info("Saved template: " + loadedTemplate.TemplatePath);
+                            //LogService.Info("Saved template: " + loadedTemplate.TemplatePath);
                         }
                     }
                     catch (Exception ex)
@@ -308,7 +308,7 @@ namespace Provisioning.VSTools.Services
                 }
                 else
                 {
-                    LogService.Warn("No template loaded for item ({0}) {1}: ", pendingItem.RequestType, pendingItem.ItemPath);
+                    LogService.Warn("No template loaded for item ({0}) {1}", pendingItem.RequestType, pendingItem.ItemPath);
                 }
 
                 GetNextPendingItemRequest(loadedTemplates);
