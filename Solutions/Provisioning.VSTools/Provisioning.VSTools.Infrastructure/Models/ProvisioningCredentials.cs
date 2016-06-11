@@ -25,5 +25,8 @@ namespace Provisioning.VSTools.Models
         public string SecurePassword { get; set; }
 
         public string AuthType { get { return "Office365"; } }
+        
+        [System.Xml.Serialization.XmlIgnore]
+        public string FilePath { get; set; }
     }
 }

@@ -43,10 +43,11 @@ namespace Provisioning.VSTools.Helpers
         public static ProvisioningTemplateToolsConfiguration GenerateDefaultProvisioningConfig(string pnpTemplatePath, string resourceFolderName)
         {
             var config = new ProvisioningTemplateToolsConfiguration();
-            config.ToolsEnabled = true;
+            config.EnsureInitialState();
+            config.ToolsEnabled = false;
             config.Templates.Add(new Template()
             {
-                Path = pnpTemplatePath,//Resources.DefaultFileNamePnPTemplate,
+                Path = pnpTemplatePath,
                 ResourcesFolder = resourceFolderName,
             });
             config.Deployment.TargetSite = "https://yourtenant.sharepoint.com/sites/testsite";

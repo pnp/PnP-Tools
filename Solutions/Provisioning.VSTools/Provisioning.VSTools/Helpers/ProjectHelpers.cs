@@ -95,7 +95,7 @@ namespace Provisioning.VSTools.Helpers
         //    return GetProjectPath(project);
         //}
 
-        public static string GetProjectPath(Project project)
+        public static string GetProjectFolder(Project project)
         {
             if (project != null)
             {

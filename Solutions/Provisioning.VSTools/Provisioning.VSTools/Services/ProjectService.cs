@@ -340,7 +340,7 @@ namespace Provisioning.VSTools.Services
 
         private async void ProjItemAdded(EnvDTE.ProjectItem projectItem)
         {
-            if (!IsActive())
+            if (!IsEnabledForCurrentProject())
             {
                 return;
             }
@@ -415,7 +415,7 @@ namespace Provisioning.VSTools.Services
 
         private async void ProjItemRemoved(EnvDTE.ProjectItem projectItem)
         {
-            if (!IsActive())
+            if (!IsEnabledForCurrentProject())
             {
                 return;
             }
@@ -493,7 +493,7 @@ namespace Provisioning.VSTools.Services
 
         private async void ProjItemRenamed(EnvDTE.ProjectItem projectItem, string oldName)
         {
-            if (!IsActive())
+            if (!IsEnabledForCurrentProject())
             {
                 return;
             }
@@ -547,7 +547,7 @@ namespace Provisioning.VSTools.Services
 
         private async void DeployFolderMenuItemCallback(object sender, EventArgs e)
         {
-            if (!IsActive() || ProvisioningService.IsBusy)
+            if (!IsEnabledForCurrentProject() || ProvisioningService.IsBusy)
             {
                 return;
             }
@@ -573,7 +573,7 @@ namespace Provisioning.VSTools.Services
 
         private async void DeployMenuItemCallback(object sender, EventArgs e)
         {
-            if (!IsActive() || ProvisioningService.IsBusy)
+            if (!IsEnabledForCurrentProject() || ProvisioningService.IsBusy)
             {
                 return;
             }
@@ -658,7 +658,7 @@ namespace Provisioning.VSTools.Services
                 menuCommand.Visible = true;
                 menuCommand.Enabled = false;
 
-                if (!IsActive() || ProvisioningService.IsBusy)
+                if (!IsEnabledForCurrentProject() || ProvisioningService.IsBusy)
                 {
                     return;
                 }
@@ -685,7 +685,7 @@ namespace Provisioning.VSTools.Services
                 menuCommand.Visible = true;
                 menuCommand.Enabled = false;
 
-                if (!IsActive() || ProvisioningService.IsBusy)
+                if (!IsEnabledForCurrentProject() || ProvisioningService.IsBusy)
                 {
                     return;
                 }
@@ -705,47 +705,88 @@ namespace Provisioning.VSTools.Services
             var menuCommand = sender as OleMenuCommand;
             if (menuCommand != null)
             {
-                menuCommand.Text = Resources.EnablePnPToolsText;
-                if (IsActive() || ProvisioningService.IsBusy)
+                bool isEnabled = IsEnabledForCurrentProject();
+                if (isEnabled || ProvisioningService.IsBusy)
+                {
+                    menuCommand.Text = Resources.DisablePnPToolsText;
+                }
+                else
+                {
+                    menuCommand.Text = Resources.EnablePnPToolsText;
+                }
+            }
+        }
+
+        private void ToggleToolsMenuItemCallback(object sender, EventArgs e)
+        {
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand != null)
+            {
+                var config = GetConfig(true);
+
+                //if not enabled and user is trying to enable, ensure valid creds before setting enabled to true
+                if (config != null)
+                {
+                    //check if we should get the user credentials
+                    if (!config.ToolsEnabled && !config.Deployment.IsValid)
+                    {
+                        GetUserCreds(config, config.ProjectPath, config.Deployment.Credentials.FilePath);
+                    }
+
+                    //toggle if valid, otherwise set to false
+                    if (config.Deployment.IsValid)
+                    {
+                        config.ToolsEnabled = !config.ToolsEnabled;
+                    }
+                    else
+                    {
+                        config.ToolsEnabled = false;
+                    }
+
+                    SaveConfig(config.ProjectPath, config);
+                }
+
+                //update the menu item to reflect enabled status
+                if (config != null && config.ToolsEnabled == true)
+                {
+                    menuCommand.Text = Resources.EnablePnPToolsText;
+                }
+                else
                 {
                     menuCommand.Text = Resources.DisablePnPToolsText;
                 }
             }
         }
 
-        private bool IsActive()
+        private bool IsEnabledForCurrentProject()
         {
             var project = ProjectHelpers.GetActiveProject();
 
-            return IsActive(project);
+            return IsEnabledForProject(project);
         }
 
-        private bool IsActive(Project project)
+        private bool IsEnabledForProject(Project project)
         {
-            bool isActive = false;
+            bool isEnabled = false;
             try
             {
-                var projectFolderPath = Helpers.ProjectHelpers.GetProjectPath(project);
-                var configFilePath = Path.Combine(projectFolderPath, Resources.FileNameProvisioningTemplate);
+                var projectFolderPath = Helpers.ProjectHelpers.GetProjectFolder(project);
 
-                if (System.IO.File.Exists(configFilePath))
+                var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath, false);
+                if (config != null && config.ToolsEnabled)
                 {
-                    var config = Helpers.ProjectHelpers.GetConfigFile<ProvisioningTemplateToolsConfiguration>(configFilePath);
-                    if (config != null && config.ToolsEnabled)
-                    {
-                        isActive = true;
-                    }
+                    isEnabled = true;
                 }
             }
             catch (Exception ex)
             {
-                LogService.Exception("Error checking if active", ex);
+                LogService.Exception("Error checking if enabled", ex);
             }
 
-            return isActive;
+            return isEnabled;
         }
 
-        private void GetUserCreds(ProvisioningTemplateToolsConfiguration config, string credsFilePath)
+        private void GetUserCreds(ProvisioningTemplateToolsConfiguration config, string projectFolderPath, string credsFilePath)
         {
             ProvisioningCredentials creds = null;
 
@@ -755,8 +796,10 @@ namespace Provisioning.VSTools.Services
             cfgWindow.txtUsername.Text = config.Deployment.Credentials.Username;
             cfgWindow.ShowDialog();
 
+            bool saveNeeded = false;
             if (cfgWindow.DialogResult.HasValue && cfgWindow.DialogResult.Value)
             {
+                config.Deployment.TargetSite = cfgWindow.txtSiteUrl.Text;
                 creds = new ProvisioningCredentials()
                 {
                     Username = cfgWindow.txtUsername.Text,
@@ -764,13 +807,16 @@ namespace Provisioning.VSTools.Services
                 creds.SetSecurePassword(cfgWindow.txtPassword.Password);
                 config.Deployment.Credentials = creds;
 
-                if (config.Deployment.TargetSite != cfgWindow.txtSiteUrl.Text && !string.IsNullOrEmpty(cfgWindow.txtSiteUrl.Text))
-                {
-                    config.Deployment.TargetSite = cfgWindow.txtSiteUrl.Text;
-                }
+                saveNeeded = true;
+            }
 
+            if (saveNeeded)
+            {
                 //serialize the credentials to a file
                 XmlHelpers.SerializeObject(config.Deployment.Credentials, credsFilePath);
+
+                //save the config to a file
+                SaveConfig(projectFolderPath, config);
             }
         }
 
@@ -808,6 +854,21 @@ namespace Provisioning.VSTools.Services
             return folderPath;
         }
 
+        private ProvisioningTemplateToolsConfiguration GetConfig(bool createIfNotExists)
+        {
+            var project = ProjectHelpers.GetActiveProject();
+            string projectPath = ProjectHelpers.GetProjectFolder(project);
+            return GetConfig(projectPath, createIfNotExists);
+        }
+
+        private ProvisioningTemplateToolsConfiguration GetConfig(string projectFolderPath, bool createIfNotExists)
+        {
+            var configFilePath = Path.Combine(projectFolderPath, Resources.FileNameProvisioningTemplate);
+            var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath, createIfNotExists);
+
+            return config;
+        }
+
         private ProvisioningTemplateToolsConfiguration GetProvisioningTemplateToolsConfiguration(string projectFolderPath, bool createIfNotExists = false)
         {
             ProvisioningTemplateToolsConfiguration config = null;
@@ -821,13 +882,48 @@ namespace Provisioning.VSTools.Services
             {
                 //get the config from file
                 config = Helpers.ProjectHelpers.GetConfigFile<ProvisioningTemplateToolsConfiguration>(configFilePath);
-
-                //get the user creds from file
                 creds = Helpers.ProjectHelpers.GetConfigFile<ProvisioningCredentials>(configFileCredsPath, false);
 
+                if (config == null && createIfNotExists)
+                {
+                    var resourcesFolder = Resources.DefaultResourcesRelativePath;
+                    EnsureResourcesFolder(projectFolderPath, resourcesFolder);
+                    config = ProvisioningHelper.GenerateDefaultProvisioningConfig(Resources.DefaultFileNamePnPTemplate, resourcesFolder);
+                }
+
+                config.EnsureInitialState();
+
+                //set the deserialized creds
                 if (creds != null)
                 {
                     config.Deployment.Credentials = creds;
+                }
+
+                //set paths
+                config.FilePath = configFilePath;
+                config.ProjectPath = projectFolderPath;
+                config.Deployment.Credentials.FilePath = configFileCredsPath;
+
+                //ensure a default template exists if createIfNotExists is true
+                if (config.Templates.Count == 0 && createIfNotExists)
+                {
+                    var resourcesFolder = Resources.DefaultResourcesRelativePath;
+                    EnsureResourcesFolder(projectFolderPath, resourcesFolder);
+                    var tempConfig = ProvisioningHelper.GenerateDefaultProvisioningConfig(Resources.DefaultFileNamePnPTemplate, resourcesFolder);
+                    config.Templates = tempConfig.Templates;
+                    XmlHelpers.SerializeObject(config, configFilePath);
+
+                    //ensure pnp template files
+                    foreach (var t in config.Templates)
+                    {
+                        string templatePath = System.IO.Path.Combine(projectFolderPath, t.Path);
+                        if (!System.IO.File.Exists(templatePath))
+                        {
+                            string resourcesPath = System.IO.Path.Combine(projectFolderPath, Resources.DefaultResourcesRelativePath);
+                            ProvisioningHelper.GenerateDefaultPnPTemplate(resourcesPath, templatePath);
+                            AddTemplateToProject(templatePath);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -835,58 +931,6 @@ namespace Provisioning.VSTools.Services
                 ShowOutputPane();
                 LogService.Exception("Error in GetProvisioningTemplateToolsConfiguration", ex);
             }
-
-            //create the default files if requested
-            if (createIfNotExists)
-            {
-                //config file
-                if (config == null)
-                {
-                    var resourcesFolder = Resources.DefaultResourcesRelativePath;
-                    EnsureResourcesFolder(projectFolderPath, resourcesFolder);
-                    config = ProvisioningHelper.GenerateDefaultProvisioningConfig(Resources.DefaultFileNamePnPTemplate, resourcesFolder);
-                }
-
-                //ensure a default template exists
-                if (config.Templates == null)
-                {
-                    var resourcesFolder = Resources.DefaultResourcesRelativePath;
-                    EnsureResourcesFolder(projectFolderPath, resourcesFolder);
-                    var tempConfig = ProvisioningHelper.GenerateDefaultProvisioningConfig(Resources.DefaultFileNamePnPTemplate, resourcesFolder);
-                    config.Templates = tempConfig.Templates;
-                }
-                XmlHelpers.SerializeObject(config, configFilePath);
-
-                //create the creds file
-                if (creds != null)
-                {
-                    config.Deployment.Credentials = creds;
-                }
-                else
-                {
-                    GetUserCreds(config, configFileCredsPath);
-                }
-
-                //ensure pnp template files
-                foreach (var t in config.Templates)
-                {
-                    string templatePath = System.IO.Path.Combine(projectFolderPath, t.Path);
-                    if (!System.IO.File.Exists(templatePath))
-                    {
-                        string resourcesPath = System.IO.Path.Combine(projectFolderPath, Resources.DefaultResourcesRelativePath);
-                        ProvisioningHelper.GenerateDefaultPnPTemplate(resourcesPath, templatePath);
-                        AddTemplateToProject(templatePath);
-                    }
-                }
-            }
-
-            return config;
-        }
-
-        private ProvisioningTemplateToolsConfiguration GetConfig(string projectFolderPath, bool createIfNotExists)
-        {
-            var configFilePath = Path.Combine(projectFolderPath, Resources.FileNameProvisioningTemplate);
-            var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath, createIfNotExists);
 
             return config;
         }
@@ -914,47 +958,14 @@ namespace Provisioning.VSTools.Services
             return true;
         }
 
-        private void ToggleToolsMenuItemCallback(object sender, EventArgs e)
-        {
-            var menuCommand = sender as OleMenuCommand;
-            if (menuCommand != null)
-            {
-                var project = Helpers.ProjectHelpers.GetActiveProject();
-                string projectPath = ProjectHelpers.GetProjectPath(project);
-                var config = GetConfig(projectPath, true);
-
-                //toggle the enabled item & flag
-                if (menuCommand.Text == Resources.EnablePnPToolsText)
-                {
-                    config.ToolsEnabled = true;
-                    SaveConfig(projectPath, config);
-                }
-                else
-                {
-                    config.ToolsEnabled = false;
-                    SaveConfig(projectPath, config);
-                }
-            }
-
-        }
-
         private void EditConnMenuItemCallback(object sender, EventArgs e)
         {
             var project = ProjectHelpers.GetActiveProject();
-            var projectFolderPath = Helpers.ProjectHelpers.GetProjectPath(project);
-            var configFileCredsPath = Path.Combine(projectFolderPath, Resources.FileNameProvisioningUserCreds);
+            var projectPath = Helpers.ProjectHelpers.GetProjectFolder(project);
+            var configFileCredsPath = Path.Combine(projectPath, Resources.FileNameProvisioningUserCreds);
 
-            var config = GetConfig(projectFolderPath, true);
-
-            GetUserCreds(config, configFileCredsPath);
-
-            string originalSiteUrl = config.Deployment.TargetSite;
-
-            //site url was changed, persist it to the xml file
-            if (originalSiteUrl != config.Deployment.TargetSite)
-            {
-                SaveConfig(projectFolderPath, config);
-            }
+            var config = GetConfig(projectPath, true);
+            GetUserCreds(config, projectPath, configFileCredsPath);
         }
 
         public bool IsSingleProjectItemSelection(out IVsHierarchy hierarchy, out uint itemid)
