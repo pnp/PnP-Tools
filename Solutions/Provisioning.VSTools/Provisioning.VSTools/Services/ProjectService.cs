@@ -21,9 +21,6 @@ namespace Provisioning.VSTools.Services
 {
     public class ProjectService : Provisioning.VSTools.Services.IProjectService
     {
-        private const string OUTPUT_WINDOW_PANE_NAME = "PnP Deployment Tools";
-        private const int PROJECT_ITEM_DELAY_IN_MS = 1000; //delay to process project items (in milliseconds)
-
         private bool initialized = false;
 
         private Services.ILogService LogService = null;
@@ -100,7 +97,7 @@ namespace Provisioning.VSTools.Services
             if (this._outputWindowPane == null)
             {
                 OutputWindow outputWindow = (OutputWindow)this.DTE.Windows.Item(EnvDTE.Constants.vsWindowKindOutput).Object;
-                this._outputWindowPane = outputWindow.OutputWindowPanes.Add(OUTPUT_WINDOW_PANE_NAME);
+                this._outputWindowPane = outputWindow.OutputWindowPanes.Add(Constants.OUTPUT_WINDOW_PANE_NAME);
 
                 if (this.LogService is Services.ProjectLogService)
                 {
@@ -222,7 +219,7 @@ namespace Provisioning.VSTools.Services
         /// </summary>
         private void ProcessPendingProjectItemRequestsWithDelay()
         {
-            System.Threading.Thread.Sleep(PROJECT_ITEM_DELAY_IN_MS); //wait a short time so that changes are queued up
+            System.Threading.Thread.Sleep(Constants.PROJECT_ITEM_DELAY_IN_MS); //wait a short time so that changes are queued up
 
             lock (_lockObject)
             {

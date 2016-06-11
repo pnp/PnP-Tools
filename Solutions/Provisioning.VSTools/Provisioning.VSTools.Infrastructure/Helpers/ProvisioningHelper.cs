@@ -50,7 +50,7 @@ namespace Provisioning.VSTools.Helpers
                 Path = pnpTemplatePath,
                 ResourcesFolder = resourceFolderName,
             });
-            config.Deployment.TargetSite = "https://yourtenant.sharepoint.com/sites/testsite";
+            config.Deployment.TargetSite = Provisioning.VSTools.Constants.DEFAULT_TARGET_SITE;
             config.Deployment.Credentials = new ProvisioningCredentials();
 
             return config;
