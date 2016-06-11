@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="CorrelationMiddleware.cs" />
     <Compile Include="Extensions\BuilderExtensions.cs" />
     <Compile Include="ResponseMiddleware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

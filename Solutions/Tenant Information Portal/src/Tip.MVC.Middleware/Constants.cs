@@ -27,11 +27,12 @@ namespace Tip.Mvc.Middleware
     public static class Constants
     {
         /// <summary>
-        /// Contains the constants used in the Response Headers
+        /// Contains the constants used in the Headers
         /// </summary>
-        public static class ResponseHeaders
+        public static class HTTPHeaders
         {
             public static readonly string DURATION_RESPONSE_HEADER = "X-RequestDuration";
+            public static readonly string CORRELATION_ID_HEADER = "X-CorrelationID";
         }
 
       

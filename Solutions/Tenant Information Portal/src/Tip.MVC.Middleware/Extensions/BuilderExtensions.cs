@@ -33,10 +33,20 @@ namespace Owin
         /// Extension Method for using the <see cref="Tip.Mvc.Middleware.ResponseMiddleware"/> to add the response header
         /// </summary>
         /// <param name="app"></param>
-        /// <returns></returns>
+        /// <returns><see cref="IAppBuilder"/></returns>
         public static IAppBuilder UseResponseMiddleware(this IAppBuilder app)
         {
             return app.Use<ResponseMiddleware>();
+        }
+
+        /// <summary>
+        /// Extension method for using the <see cref="Tip.Mvc.Middleware.CorrelationMiddleware"/> to add the correlation id to the headers
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns><see cref="IAppBuilder"/></returns>
+        public static IAppBuilder UserCorrelationMiddleware(this IAppBuilder app)
+        {
+            return app.Use<CorrelationMiddleware>();
         }
     }
 }

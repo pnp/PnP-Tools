@@ -50,15 +50,25 @@ namespace Tip.Mvc.Middleware
         /// <returns></returns>
         public override async Task Invoke(IOwinContext context)
         {
+            this.HandleDurationResponseHeader(context);
+            await Next.Invoke(context);
+        }
+
+        /// <summary>
+        /// Sets the Response Duration Header
+        /// </summary>
+        /// <param name="context"></param>
+        private void HandleDurationResponseHeader(IOwinContext context)
+        {
             var _sw = Stopwatch.StartNew();
             context.Response.OnSendingHeaders((state) =>
             {
                 _sw.Stop();
                 var _responseTime = string.Format("{0}{1}", _sw.ElapsedMilliseconds.ToString(), "ms");
-                context.Response.Headers.Add(Constants.ResponseHeaders.DURATION_RESPONSE_HEADER, new string[] { _responseTime } );
+                context.Response.Headers.Add(Constants.HTTPHeaders.DURATION_RESPONSE_HEADER, new string[] { _responseTime });
 
             }, null);
-            await Next.Invoke(context);
+
         }
         #endregion
     }
