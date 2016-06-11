@@ -21,10 +21,13 @@ namespace Provisioning.VSTools.Services
 {
     public class ProjectService : Provisioning.VSTools.Services.IProjectService
     {
-        private bool initialized = false;
-
+        #region variables and properties
         private Services.ILogService LogService = null;
         private Services.IProvisioningService ProvisioningService = null;
+
+        private bool initialized = false;
+        private bool isBusyPendingItems = false;
+        private static readonly object _lockObject = new object();
 
         private OleMenuCommand _projectItemDeployCommand;
         private OleMenuCommand _projectFolderDeployCommand;
@@ -46,6 +49,10 @@ namespace Provisioning.VSTools.Services
 
         public DTE2 DTE { get; private set; }
 
+        public OleMenuCommandService MenuCommandService { get; private set; }
+        #endregion
+
+        #region ctor and initialization
         public ProjectService(Services.ILogService logSvc, Services.IProvisioningService prvSvc)
         {
             this.LogService = logSvc;
@@ -66,8 +73,315 @@ namespace Provisioning.VSTools.Services
                 this.initialized = true;
             }
         }
+        #endregion
 
-        public OleMenuCommandService MenuCommandService { get; private set; }
+        #region project event handlers
+
+        private async void ProjItemAdded(EnvDTE.ProjectItem projectItem)
+        {
+            if (!IsEnabledForCurrentProject())
+            {
+                return;
+            }
+
+            if (projectItem.Kind != EnvDTE.Constants.vsProjectItemKindPhysicalFile)
+            {
+                // we handle only files
+                // when folder with files is added, event is raised separately for all files as well
+                return;
+            }
+
+            if (!ProjectHelpers.IncludeFile(projectItem.Name))
+            {
+                // do not handle .bundle or .map files the other files that are part of the bundle should be handled.
+                // others may be defined in Constants.ExtensionsToIgnore
+                return;
+            }
+
+            try
+            {
+                var projectFolderPath = Path.GetDirectoryName(projectItem.ContainingProject.FullName);
+                var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath);
+                var projectItemFullPath = ProjectHelpers.GetFullPath(projectItem);
+                var pnpTemplateInfo = GetParentProvisioningTemplateInformation(projectItemFullPath, projectFolderPath, config);
+
+                if (pnpTemplateInfo != null)
+                {
+                    this.pendingProjectItemRequests.Enqueue(new ProjectItemRequestAdd()
+                    {
+                        ItemPath = projectItemFullPath,
+                        ItemKind = projectItem.Kind,
+                        TemplateInfo = pnpTemplateInfo,
+                    });
+
+                    await System.Threading.Tasks.Task.Run(() => ProcessPendingProjectItemRequestsWithDelay());
+                    //ProcessPendingProjectItemRequests();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogService.Exception("Error in ItemAdded", ex);
+            }
+        }
+
+        private async void ProjItemRemoved(EnvDTE.ProjectItem projectItem)
+        {
+            if (!IsEnabledForCurrentProject())
+            {
+                return;
+            }
+
+            try
+            {
+                var projectFolderPath = Path.GetDirectoryName(projectItem.ContainingProject.FullName);
+                var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath, false);
+                var projectItemFullPath = ProjectHelpers.GetFullPath(projectItem);
+                var pnpTemplateInfo = GetParentProvisioningTemplateInformation(projectItemFullPath, projectFolderPath, config);
+                var projectItemKind = projectItem.Kind;
+
+                if (pnpTemplateInfo != null)
+                {
+                    this.pendingProjectItemRequests.Enqueue(new ProjectItemRequestRemove()
+                    {
+                        ItemPath = projectItemFullPath,
+                        ItemKind = projectItem.Kind,
+                        TemplateInfo = pnpTemplateInfo,
+                    });
+
+                    await System.Threading.Tasks.Task.Run(() => ProcessPendingProjectItemRequestsWithDelay());
+                    //ProcessPendingProjectItemRequests();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogService.Exception("Error in ItemRemoved", ex);
+            }
+        }
+
+        private async void ProjItemRenamed(EnvDTE.ProjectItem projectItem, string oldName)
+        {
+            if (!IsEnabledForCurrentProject())
+            {
+                return;
+            }
+
+            if (projectItem.Kind != EnvDTE.Constants.vsProjectItemKindPhysicalFile)
+            {
+                // we handle only files
+                // when folder with files is added, event is raised separately for all files as well
+                return;
+            }
+
+            if (!ProjectHelpers.IncludeFile(projectItem.Name))
+            {
+                // do not handle .bundle or .map files the other files that are part of the bundle should be handled.
+                // others may be defined in Constants.ExtensionsToIgnore
+                return;
+            }
+
+            try
+            {
+                var projectFolderPath = Path.GetDirectoryName(projectItem.ContainingProject.FullName);
+                var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath, false);
+                var projectItemFullPath = ProjectHelpers.GetFullPath(projectItem);
+                var pnpTemplateInfo = GetParentProvisioningTemplateInformation(projectItemFullPath, projectFolderPath, config);
+                var projectItemKind = projectItem.Kind;
+
+                if (pnpTemplateInfo != null)
+                {
+                    this.pendingProjectItemRequests.Enqueue(new ProjectItemRequestRename()
+                    {
+                        ItemPath = projectItemFullPath,
+                        ItemKind = projectItem.Kind,
+                        TemplateInfo = pnpTemplateInfo,
+                        OldName = oldName
+                    });
+
+                    await System.Threading.Tasks.Task.Run(() => ProcessPendingProjectItemRequestsWithDelay());
+                    //ProcessPendingProjectItemRequests();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogService.Exception("Error in ItemRenamed", ex);
+            }
+        }
+
+        private async void DeployFolderMenuItemCallback(object sender, EventArgs e)
+        {
+            if (!IsEnabledForCurrentProject() || ProvisioningService.IsBusy)
+            {
+                return;
+            }
+
+            List<DeployTemplateItem> deployItems = new List<DeployTemplateItem>();
+
+            while (pendingFolderTemplates.Count > 0)
+            {
+                var sourceTemplateItem = pendingFolderTemplates.Dequeue();
+                var deployItem = sourceTemplateItem.GetDeployItem(this.LogService);
+                if (deployItem != null)
+                {
+                    deployItems.Add(deployItem);
+                }
+            }
+
+            if (deployItems.Count() > 0)
+            {
+                ShowOutputPane();
+                var result = await ProvisioningService.DeployProvisioningTemplates(deployItems);
+            }
+        }
+
+        private async void DeployMenuItemCallback(object sender, EventArgs e)
+        {
+            if (!IsEnabledForCurrentProject() || ProvisioningService.IsBusy)
+            {
+                return;
+            }
+
+            List<DeployTemplateItem> deployItems = new List<DeployTemplateItem>();
+
+            while (pendingItemTemplates.Count > 0)
+            {
+                var sourceTemplateItem = pendingItemTemplates.Dequeue();
+                var deployItem = sourceTemplateItem.GetDeployItem(this.LogService);
+                if (deployItem != null)
+                {
+                    deployItems.Add(deployItem);
+                }
+            }
+
+            if (deployItems.Count() > 0)
+            {
+                ShowOutputPane();
+                var result = await ProvisioningService.DeployProvisioningTemplates(deployItems);
+            }
+        }
+
+        //Context menu check for specific file name
+        void menuCommand_ProjectItemBeforeQueryStatus(object sender, EventArgs e)
+        {
+            ResetPendingItems();
+
+            // get the menu that fired the event
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand != null)
+            {
+                // start by assuming that the menu will not be shown
+                menuCommand.Visible = true;
+                menuCommand.Enabled = false;
+
+                if (!IsEnabledForCurrentProject() || ProvisioningService.IsBusy)
+                {
+                    return;
+                }
+
+                //enqueue items
+                ((List<TemplateItem>)GetSelectedItemTempateItems()).ForEach(t => pendingItemTemplates.Enqueue(t));
+                if (pendingItemTemplates.Count() > 0)
+                {
+                    menuCommand.Enabled = true;
+                }
+            }
+        }
+
+        void menuCommand_ProjectFolderBeforeQueryStatus(object sender, EventArgs e)
+        {
+            ResetPendingItems();
+
+            // get the menu that fired the event
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand != null)
+            {
+
+                // start by assuming that the menu will not be shown
+                menuCommand.Visible = true;
+                menuCommand.Enabled = false;
+
+                if (!IsEnabledForCurrentProject() || ProvisioningService.IsBusy)
+                {
+                    return;
+                }
+
+                //enqueue items
+                ((List<TemplateItem>)GetSelectedItemTempateItems()).ForEach(t => pendingFolderTemplates.Enqueue(t));
+                if (pendingItemTemplates.Count() > 0)
+                {
+                    menuCommand.Enabled = true;
+                }
+            }
+        }
+
+        private void ToggleToolsMenuItemOnBeforeQueryStatus(object sender, EventArgs eventArgs)
+        {
+            // get the menu that fired the event
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand != null)
+            {
+                bool isEnabled = IsEnabledForCurrentProject();
+                if (isEnabled || ProvisioningService.IsBusy)
+                {
+                    menuCommand.Text = Resources.DisablePnPToolsText;
+                }
+                else
+                {
+                    menuCommand.Text = Resources.EnablePnPToolsText;
+                }
+            }
+        }
+
+        private void ToggleToolsMenuItemCallback(object sender, EventArgs e)
+        {
+            var menuCommand = sender as OleMenuCommand;
+            if (menuCommand != null)
+            {
+                var config = GetConfig(true);
+
+                //if not enabled and user is trying to enable, ensure valid creds before setting enabled to true
+                if (config != null)
+                {
+                    //check if we should get the user credentials
+                    if (!config.ToolsEnabled && !config.Deployment.IsValid)
+                    {
+                        GetUserCreds(config, config.ProjectPath, config.Deployment.Credentials.FilePath);
+                    }
+
+                    //toggle if valid, otherwise set to false
+                    if (config.Deployment.IsValid)
+                    {
+                        config.ToolsEnabled = !config.ToolsEnabled;
+                    }
+                    else
+                    {
+                        config.ToolsEnabled = false;
+                    }
+
+                    SaveConfigForProject(config.ProjectPath, config);
+                }
+
+                //update the menu item to reflect enabled status
+                if (config != null && config.ToolsEnabled == true)
+                {
+                    menuCommand.Text = Resources.EnablePnPToolsText;
+                }
+                else
+                {
+                    menuCommand.Text = Resources.DisablePnPToolsText;
+                }
+            }
+        }
+
+        private void EditConnMenuItemCallback(object sender, EventArgs e)
+        {
+            var project = ProjectHelpers.GetActiveProject();
+            var projectPath = Helpers.ProjectHelpers.GetProjectFolder(project);
+            var configFileCredsPath = Path.Combine(projectPath, Resources.FileNameProvisioningUserCreds);
+
+            var config = GetConfig(projectPath, true);
+            GetUserCreds(config, projectPath, configFileCredsPath);
+        }
+        #endregion
 
         /// <summary>
         /// Displays a message box dialog
@@ -260,9 +574,6 @@ namespace Provisioning.VSTools.Services
             }
         }
 
-        private bool isBusyPendingItems = false;
-        private static readonly object _lockObject = new object();
-
         private void GetNextPendingItemRequest(IDictionary<string, LoadedXMLProvisioningTemplate> loadedTemplates)
         {
             while (this.pendingProjectItemRequests.Count > 0)
@@ -335,53 +646,6 @@ namespace Provisioning.VSTools.Services
             return false;
         }
 
-        private async void ProjItemAdded(EnvDTE.ProjectItem projectItem)
-        {
-            if (!IsEnabledForCurrentProject())
-            {
-                return;
-            }
-
-            if (projectItem.Kind != EnvDTE.Constants.vsProjectItemKindPhysicalFile)
-            {
-                // we handle only files
-                // when folder with files is added, event is raised separately for all files as well
-                return;
-            }
-
-            if (!ProjectHelpers.IncludeFile(projectItem.Name))
-            {
-                // do not handle .bundle or .map files the other files that are part of the bundle should be handled.
-                // others may be defined in Constants.ExtensionsToIgnore
-                return;
-            }
-
-            try
-            {
-                var projectFolderPath = Path.GetDirectoryName(projectItem.ContainingProject.FullName);
-                var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath);
-                var projectItemFullPath = ProjectHelpers.GetFullPath(projectItem);
-                var pnpTemplateInfo = GetParentProvisioningTemplateInformation(projectItemFullPath, projectFolderPath, config);
-
-                if (pnpTemplateInfo != null)
-                {
-                    this.pendingProjectItemRequests.Enqueue(new ProjectItemRequestAdd()
-                    {
-                        ItemPath = projectItemFullPath,
-                        ItemKind = projectItem.Kind,
-                        TemplateInfo = pnpTemplateInfo,
-                    });
-
-                    await System.Threading.Tasks.Task.Run(() => ProcessPendingProjectItemRequestsWithDelay());
-                    //ProcessPendingProjectItemRequests();
-                }
-            }
-            catch (Exception ex)
-            {
-                LogService.Exception("Error in ItemAdded", ex);
-            }
-        }
-
         private bool RemoveItemFromTemplate(string projectItemFullPath, string projectItemKind, LoadedXMLProvisioningTemplate loadedTemplate)
         {
             if (loadedTemplate != null && loadedTemplate.Template != null)
@@ -408,40 +672,6 @@ namespace Provisioning.VSTools.Services
             }
 
             return false;
-        }
-
-        private async void ProjItemRemoved(EnvDTE.ProjectItem projectItem)
-        {
-            if (!IsEnabledForCurrentProject())
-            {
-                return;
-            }
-
-            try
-            {
-                var projectFolderPath = Path.GetDirectoryName(projectItem.ContainingProject.FullName);
-                var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath, false);
-                var projectItemFullPath = ProjectHelpers.GetFullPath(projectItem);
-                var pnpTemplateInfo = GetParentProvisioningTemplateInformation(projectItemFullPath, projectFolderPath, config);
-                var projectItemKind = projectItem.Kind;
-
-                if (pnpTemplateInfo != null)
-                {
-                    this.pendingProjectItemRequests.Enqueue(new ProjectItemRequestRemove()
-                    {
-                        ItemPath = projectItemFullPath,
-                        ItemKind = projectItem.Kind,
-                        TemplateInfo = pnpTemplateInfo,
-                    });
-
-                    await System.Threading.Tasks.Task.Run(() => ProcessPendingProjectItemRequestsWithDelay());
-                    //ProcessPendingProjectItemRequests();
-                }
-            }
-            catch (Exception ex)
-            {
-                LogService.Exception("Error in ItemRemoved", ex);
-            }
         }
 
         private bool RenameTemplateItem(string projectItemFullPath, string projectItemKind, string oldName, LoadedXMLProvisioningTemplate loadedTemplate)
@@ -488,110 +718,9 @@ namespace Provisioning.VSTools.Services
             return false;
         }
 
-        private async void ProjItemRenamed(EnvDTE.ProjectItem projectItem, string oldName)
-        {
-            if (!IsEnabledForCurrentProject())
-            {
-                return;
-            }
-
-            if (projectItem.Kind != EnvDTE.Constants.vsProjectItemKindPhysicalFile)
-            {
-                // we handle only files
-                // when folder with files is added, event is raised separately for all files as well
-                return;
-            }
-
-            if (!ProjectHelpers.IncludeFile(projectItem.Name))
-            {
-                // do not handle .bundle or .map files the other files that are part of the bundle should be handled.
-                // others may be defined in Constants.ExtensionsToIgnore
-                return;
-            }
-
-            try
-            {
-                var projectFolderPath = Path.GetDirectoryName(projectItem.ContainingProject.FullName);
-                var config = GetProvisioningTemplateToolsConfiguration(projectFolderPath, false);
-                var projectItemFullPath = ProjectHelpers.GetFullPath(projectItem);
-                var pnpTemplateInfo = GetParentProvisioningTemplateInformation(projectItemFullPath, projectFolderPath, config);
-                var projectItemKind = projectItem.Kind;
-
-                if (pnpTemplateInfo != null)
-                {
-                    this.pendingProjectItemRequests.Enqueue(new ProjectItemRequestRename()
-                    {
-                        ItemPath = projectItemFullPath,
-                        ItemKind = projectItem.Kind,
-                        TemplateInfo = pnpTemplateInfo,
-                        OldName = oldName
-                    });
-
-                    await System.Threading.Tasks.Task.Run(() => ProcessPendingProjectItemRequestsWithDelay());
-                    //ProcessPendingProjectItemRequests();
-                }
-            }
-            catch (Exception ex)
-            {
-                LogService.Exception("Error in ItemRenamed", ex);
-            }
-        }
-
         private void DocEventsDocSaved(EnvDTE.Document Doc)
         {
             LogService.Info(string.Format("Document Saved : {0}", Doc.Name));
-        }
-
-        private async void DeployFolderMenuItemCallback(object sender, EventArgs e)
-        {
-            if (!IsEnabledForCurrentProject() || ProvisioningService.IsBusy)
-            {
-                return;
-            }
-
-            List<DeployTemplateItem> deployItems = new List<DeployTemplateItem>();
-
-            while (pendingFolderTemplates.Count > 0)
-            {
-                var sourceTemplateItem = pendingFolderTemplates.Dequeue();
-                var deployItem = sourceTemplateItem.GetDeployItem(this.LogService);
-                if (deployItem != null)
-                {
-                    deployItems.Add(deployItem);
-                }
-            }
-
-            if (deployItems.Count() > 0)
-            {
-                ShowOutputPane();
-                var result = await ProvisioningService.DeployProvisioningTemplates(deployItems);
-            }
-        }
-
-        private async void DeployMenuItemCallback(object sender, EventArgs e)
-        {
-            if (!IsEnabledForCurrentProject() || ProvisioningService.IsBusy)
-            {
-                return;
-            }
-
-            List<DeployTemplateItem> deployItems = new List<DeployTemplateItem>();
-
-            while (pendingItemTemplates.Count > 0)
-            {
-                var sourceTemplateItem = pendingItemTemplates.Dequeue();
-                var deployItem = sourceTemplateItem.GetDeployItem(this.LogService);
-                if (deployItem != null)
-                {
-                    deployItems.Add(deployItem);
-                }
-            }
-
-            if (deployItems.Count() > 0)
-            {
-                ShowOutputPane();
-                var result = await ProvisioningService.DeployProvisioningTemplates(deployItems);
-            }
         }
 
         private IEnumerable<TemplateItem> GetSelectedItemTempateItems()
@@ -640,119 +769,6 @@ namespace Provisioning.VSTools.Services
         {
             pendingItemTemplates.Clear();
             pendingFolderTemplates.Clear();
-        }
-
-        //Context menu check for specific file name
-        void menuCommand_ProjectItemBeforeQueryStatus(object sender, EventArgs e)
-        {
-            ResetPendingItems();
-
-            // get the menu that fired the event
-            var menuCommand = sender as OleMenuCommand;
-            if (menuCommand != null)
-            {
-                // start by assuming that the menu will not be shown
-                menuCommand.Visible = true;
-                menuCommand.Enabled = false;
-
-                if (!IsEnabledForCurrentProject() || ProvisioningService.IsBusy)
-                {
-                    return;
-                }
-
-                //enqueue items
-                ((List<TemplateItem>)GetSelectedItemTempateItems()).ForEach(t => pendingItemTemplates.Enqueue(t));
-                if (pendingItemTemplates.Count() > 0)
-                {
-                    menuCommand.Enabled = true;
-                }
-            }
-        }
-
-        void menuCommand_ProjectFolderBeforeQueryStatus(object sender, EventArgs e)
-        {
-            ResetPendingItems();
-
-            // get the menu that fired the event
-            var menuCommand = sender as OleMenuCommand;
-            if (menuCommand != null)
-            {
-
-                // start by assuming that the menu will not be shown
-                menuCommand.Visible = true;
-                menuCommand.Enabled = false;
-
-                if (!IsEnabledForCurrentProject() || ProvisioningService.IsBusy)
-                {
-                    return;
-                }
-
-                //enqueue items
-                ((List<TemplateItem>)GetSelectedItemTempateItems()).ForEach(t => pendingFolderTemplates.Enqueue(t));
-                if (pendingItemTemplates.Count() > 0)
-                {
-                    menuCommand.Enabled = true;
-                }
-            }
-        }
-
-        private void ToggleToolsMenuItemOnBeforeQueryStatus(object sender, EventArgs eventArgs)
-        {
-            // get the menu that fired the event
-            var menuCommand = sender as OleMenuCommand;
-            if (menuCommand != null)
-            {
-                bool isEnabled = IsEnabledForCurrentProject();
-                if (isEnabled || ProvisioningService.IsBusy)
-                {
-                    menuCommand.Text = Resources.DisablePnPToolsText;
-                }
-                else
-                {
-                    menuCommand.Text = Resources.EnablePnPToolsText;
-                }
-            }
-        }
-
-        private void ToggleToolsMenuItemCallback(object sender, EventArgs e)
-        {
-            var menuCommand = sender as OleMenuCommand;
-            if (menuCommand != null)
-            {
-                var config = GetConfig(true);
-
-                //if not enabled and user is trying to enable, ensure valid creds before setting enabled to true
-                if (config != null)
-                {
-                    //check if we should get the user credentials
-                    if (!config.ToolsEnabled && !config.Deployment.IsValid)
-                    {
-                        GetUserCreds(config, config.ProjectPath, config.Deployment.Credentials.FilePath);
-                    }
-
-                    //toggle if valid, otherwise set to false
-                    if (config.Deployment.IsValid)
-                    {
-                        config.ToolsEnabled = !config.ToolsEnabled;
-                    }
-                    else
-                    {
-                        config.ToolsEnabled = false;
-                    }
-
-                    SaveConfig(config.ProjectPath, config);
-                }
-
-                //update the menu item to reflect enabled status
-                if (config != null && config.ToolsEnabled == true)
-                {
-                    menuCommand.Text = Resources.EnablePnPToolsText;
-                }
-                else
-                {
-                    menuCommand.Text = Resources.DisablePnPToolsText;
-                }
-            }
         }
 
         private bool IsEnabledForCurrentProject()
@@ -813,7 +829,7 @@ namespace Provisioning.VSTools.Services
                 XmlHelpers.SerializeObject(config.Deployment.Credentials, credsFilePath);
 
                 //save the config to a file
-                SaveConfig(projectFolderPath, config);
+                SaveConfigForProject(projectFolderPath, config);
             }
         }
 
@@ -932,7 +948,7 @@ namespace Provisioning.VSTools.Services
             return config;
         }
 
-        private bool SaveConfig(string projectFolderPath, ProvisioningTemplateToolsConfiguration config)
+        private bool SaveConfigForProject(string projectFolderPath, ProvisioningTemplateToolsConfiguration config)
         {
             try
             {
@@ -953,77 +969,6 @@ namespace Provisioning.VSTools.Services
             }
 
             return true;
-        }
-
-        private void EditConnMenuItemCallback(object sender, EventArgs e)
-        {
-            var project = ProjectHelpers.GetActiveProject();
-            var projectPath = Helpers.ProjectHelpers.GetProjectFolder(project);
-            var configFileCredsPath = Path.Combine(projectPath, Resources.FileNameProvisioningUserCreds);
-
-            var config = GetConfig(projectPath, true);
-            GetUserCreds(config, projectPath, configFileCredsPath);
-        }
-
-        public bool IsSingleProjectItemSelection(out IVsHierarchy hierarchy, out uint itemid)
-        {
-            hierarchy = null;
-            itemid = VSConstants.VSITEMID_NIL;
-            int hr = VSConstants.S_OK;
-
-            var monitorSelection = Package.GetGlobalService(typeof(SVsShellMonitorSelection)) as IVsMonitorSelection;
-
-            if (monitorSelection == null || this.VSSolution == null)
-            {
-                return false;
-            }
-
-            IVsMultiItemSelect multiItemSelect = null;
-            IntPtr hierarchyPtr = IntPtr.Zero;
-            IntPtr selectionContainerPtr = IntPtr.Zero;
-
-            try
-            {
-                hr = monitorSelection.GetCurrentSelection(out hierarchyPtr, out itemid, out multiItemSelect, out selectionContainerPtr);
-
-                if (ErrorHandler.Failed(hr) || hierarchyPtr == IntPtr.Zero || itemid == VSConstants.VSITEMID_NIL)
-                {
-                    // there is no selection
-                    return false;
-                }
-
-                // multiple items are selected
-                if (multiItemSelect != null) return false;
-
-                // there is a hierarchy root node selected, thus it is not a single item inside a project
-
-                if (itemid == VSConstants.VSITEMID_ROOT) return false;
-
-                hierarchy = System.Runtime.InteropServices.Marshal.GetObjectForIUnknown(hierarchyPtr) as IVsHierarchy;
-                if (hierarchy == null) return false;
-
-                Guid guidProjectID = Guid.Empty;
-
-                if (ErrorHandler.Failed(this.VSSolution.GetGuidOfProject(hierarchy, out guidProjectID)))
-                {
-                    return false; // hierarchy is not a project inside the Solution if it does not have a ProjectID Guid
-                }
-
-                // if we got this far then there is a single project item selected
-                return true;
-            }
-            finally
-            {
-                if (selectionContainerPtr != IntPtr.Zero)
-                {
-                    System.Runtime.InteropServices.Marshal.Release(selectionContainerPtr);
-                }
-
-                if (hierarchyPtr != IntPtr.Zero)
-                {
-                    System.Runtime.InteropServices.Marshal.Release(hierarchyPtr);
-                }
-            }
         }
 
         public IEnumerable<ProjectItem> GetSelectedProjectItems()
@@ -1050,24 +995,6 @@ namespace Provisioning.VSTools.Services
             }
 
             return selectedProjectItems;
-        }
-
-        public void TrimItemPaths(string rootFolderPath, List<string> projectItems)
-        {
-            for (int i = projectItems.Count - 1; i >= 0; i--)
-            {
-                string itemPath = projectItems[i];
-                if (!itemPath.StartsWith(rootFolderPath))
-                {
-                    projectItems.RemoveAt(i);
-                    continue;
-                }
-                else
-                {
-                    itemPath = itemPath.Substring(rootFolderPath.Length);
-                    projectItems[i] = itemPath;
-                }
-            }
         }
 
         //public IEnumerable<string> GetItemSelections(out IVsHierarchy hierarchy, out uint itemid)
