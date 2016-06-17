@@ -158,7 +158,11 @@
         display: block;
     }
 
-    #siteIcon, .ms-siteicon-img, .ms-siteicon-a, #s4-titlerow {
+    #siteIcon, .ms-siteicon-img, .ms-siteicon-a {
+        max-height: 75px;
+    }
+
+	#s4-titlerow {
         height: 75px;
     }
 
