@@ -90,6 +90,11 @@
 		transform: rotate(-45deg);
 	}
 
+	/* Other mobile and table styles  - not sure if this should apply for all screen sizes */
+	img {
+		max-width: 100%;
+	}
+	
 }
 
 
