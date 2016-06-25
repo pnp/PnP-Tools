@@ -81,6 +81,10 @@
     <Compile Include="Configuration\ConfigurationFactory.cs" />
     <Compile Include="Configuration\Internal\ConfigManager.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Diagnostics\EventCategory.cs" />
+    <Compile Include="Diagnostics\ILog.cs" />
+    <Compile Include="Diagnostics\ILogger.cs" />
+    <Compile Include="Diagnostics\LogEntry.cs" />
     <Compile Include="Exceptions\Error.cs" />
     <Compile Include="Exceptions\ErrorResponse.cs" />
     <Compile Include="Exceptions\TIPException.cs" />

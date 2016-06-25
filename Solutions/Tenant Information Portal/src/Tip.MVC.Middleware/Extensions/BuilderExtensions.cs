@@ -1,7 +1,7 @@
 ﻿// ------------------------------------------------------------------------------
 //The MIT License(MIT)
 
-//Copyright(c) 2015 Office Developer
+//Copyright(c) 2016 Office Developer
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
 //in the Software without restriction, including without limitation the rights
@@ -20,27 +20,33 @@
 //SOFTWARE.
 // ------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
+using Tip.Mvc.Middleware;
 
-namespace TIP.Dashboard
+namespace Owin
 {
-    public static class WebApiConfig
+    /// <summary>
+    /// Extension Methods for Middleware
+    /// </summary>
+    public static class BuilderExtensions
     {
-        public static void Register(HttpConfiguration config)
+        /// <summary>
+        /// Extension Method for using the <see cref="Tip.Mvc.Middleware.ResponseMiddleware"/> to add the response header
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns><see cref="IAppBuilder"/></returns>
+        public static IAppBuilder UseResponseMiddleware(this IAppBuilder app)
         {
-            config.MapHttpAttributeRoutes();
+            return app.Use<ResponseMiddleware>();
+        }
 
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{action}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
-
-            var appXmlType = config.Formatters.XmlFormatter.SupportedMediaTypes.FirstOrDefault(t => t.MediaType == "application/xml");
-            config.Formatters.XmlFormatter.SupportedMediaTypes.Remove(appXmlType);
+        /// <summary>
+        /// Extension method for using the <see cref="Tip.Mvc.Middleware.CorrelationMiddleware"/> to add the correlation id to the headers
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns><see cref="IAppBuilder"/></returns>
+        public static IAppBuilder UserCorrelationMiddleware(this IAppBuilder app)
+        {
+            return app.Use<CorrelationMiddleware>();
         }
     }
 }

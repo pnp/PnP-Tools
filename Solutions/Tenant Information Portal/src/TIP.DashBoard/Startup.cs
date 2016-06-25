@@ -21,6 +21,10 @@
 // ------------------------------------------------------------------------------
 
 using Owin;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace TIP.Dashboard
 {
@@ -28,6 +32,7 @@ namespace TIP.Dashboard
     {
         public void Configuration(IAppBuilder app)
         {
+            app.UseResponseMiddleware();
             ConfigureAuth(app);
         }
     }

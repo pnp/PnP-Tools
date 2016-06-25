@@ -20,11 +20,11 @@
 //SOFTWARE.
 // ------------------------------------------------------------------------------
 
-
 using System;
 
 namespace TIP.Common.Exceptions
 {
+    [Serializable]
     public class TIPException : Exception
     {
         public TIPException(Error error, Exception innerException = null)

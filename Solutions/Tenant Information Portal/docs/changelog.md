@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 1.0.4
+* Fixed Error Controller in Bug https://github.com/OfficeDev/PnP-Tools/issues/57
+* OWIN Middleware to add X-RequestDuration response header
+* Azure Resource Deployment Project 
+
 ## Version 1.0.3
 * Remove unneccessary images
 * Office UI Fabric  https://github.com/ngOfficeUIFabric
