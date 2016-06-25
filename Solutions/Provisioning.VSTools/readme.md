@@ -1,7 +1,7 @@
 # Provisioning.VSTools #
 
 ### Summary ###
-This sample demonstrates using the PnP provisioning engine within a Visual Studio extension package to assist with common deployment tasks for SharePoint assets.  The VSTools extension package maintains the PnP provisioning engine XML file automatically as files are added or removed from the project instead of the developer having to fill out the file manually which usually results in missing items, misspelled items, etc.  In addition to the XML file, the extension package also provides some useful developer shortcuts such as right-click to quickly deploy a file (rather than all items in the XML file) and right-click to quickly deploy the entire provisioning template.  The PnP provisioning engine XML file is fully supported (ie: content types, site columns, etc.) and deployable, however the extension package only maintains file references within this XML file at this time.
+This sample demonstrates using the PnP provisioning engine within a Visual Studio extension package to assist with common deployment tasks for SharePoint assets.  The VSTools extension package maintains the PnP provisioning engine XML file automatically as files are added or removed from the project instead of the developer having to fill out the file manually which usually results in missing items, misspelled items, etc.  In addition to the XML file, the extension package also provides some useful developer shortcuts such as right-click to quickly deploy a file (rather than all items in the XML file) and right-click to quickly deploy the entire provisioning template.  The PnP provisioning engine XML file is fully supported (ie: content types, site columns, etc.) and deployable, however the extension package only maintains file references within this XML file at this time. 
 
 ### Applies to ###
 -  Office 365 Multi Tenant (MT)
@@ -37,7 +37,7 @@ To debug the extension package, some debug options need to be set on the project
 5) Set "Start Options" to: /rootsuffix Exp
 6) Press F5 or click 'Start'
 
-![](readme.images/debugDialog.png)
+![Debugging view in the VS project](readme.images/debugDialog.png)
 
 # Installing the extension package (instead of debugging it) #
 To install the extension package, either a setup project is needed to create an MSI file or the VSIX file from the extension project itself can be used.  The VSIX can also be hosted on a private extension gallery to help maintain the deployments to multiple users and machines.
@@ -58,11 +58,11 @@ Private galleries are managed via the Extensions and Tools menu.  Once the VSIX 
 # Enabling the PnP Provisioning Tools Extension #
 Once installed, the extension functionality can be turned on or off by right-clicking your project and selecting Enable PnP Provisioning Tools.
 
-![](readme.images/enablePnPCommand.png)
+![Context menu with Enable PnP Provisioning Tools option](readme.images/enablePnPCommand.png)
 
 The first time this is done, the user will be prompted to enter the connection credentials and target site url.  This dialog can also be found by clicking the "Edit PnP Provisioning Tools Connection" menu item.
 
-![](readme.images/connectionDialog.png)
+![Popup windows with tenant, username and password details](readme.images/connectionDialog.png)
 
 Enabling Provisioning tools creates "ProvisioningTemplateTools.config" file in the root of the project.  After entering the credentials for connecting to the SharePoint site, another file "ProvisioningTemplateTools.config.user" will be created.  This file contains the users login name and an encrypted password and should be excluded from source control systems for security purposes.
 
@@ -93,7 +93,7 @@ You will need to fill in the login information to your Office365 site as well as
 You can disable/enable tools at any point by right-clicking on the project in Solution explorer and Selecting "Enable/Disable PnP Provisioning Tools".
 Alternatively you can set the ToolEnabled element in the ProvisioningTemplateToolsConfiguration.xml file to “true/false”.
 
-![](readme.images/configToolsEnabled.png)
+![XML fragment with ToolsEnabled element with value of False](readme.images/configToolsEnabled.png)
 
 
 
@@ -111,14 +111,14 @@ Provisioning.VSTools assumes the convention that files inside Template Resources
 
 Monitoring progress: VSTools adds it's own pane to the "Output" tool window (View -> Output) called "PnP Deployment Tools". All notifications about file synchronization and deployments are displayed in this pane.
 
-![](readme.images/outputPane.PNG)
+![Output window](readme.images/outputPane.PNG)
 
 ## Deploying single file ##
 
 - Make sure file is located under {Template Resources Folder}
 - Right-click file and select "Deploy with PnP Tools"
 
-![](readme.images/deployWithPnPCommand.png)
+![Selection of menu item](readme.images/deployWithPnPCommand.png)
 
 - Wait until deployment completes. You can monitor progress in "Output window" -> "PnP deployment Tools" pane
 
