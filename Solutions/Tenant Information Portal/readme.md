@@ -7,7 +7,7 @@ This application was built using AngularJS/MVC that is invoking a web API that i
 The application uses the Active Directory Authentication Library (ADAL) to obtain a JWT access token through the OAuth 2.0 protocol. The access token is sent to the ASP.NET 5 Web API, which authenticates the user using the OWIN OAuth Bearer Authentication middleware.
 
 
-![](http://i.imgur.com/I2VYM3a.png)
+![SharePoint Patterns and Practices logo](http://i.imgur.com/I2VYM3a.png)
  
 This is open source repository, so feedback, issues and pull requests are absolutely welcome.
 
@@ -49,19 +49,19 @@ See [Change Log](docs/changelog.md) for detailed information.
 ## Running the CODE
 
 ### Landing Page
-![](http://i.imgur.com/y1gvCfx.png)
+![Landing page picture where service principals and applications are shown](http://i.imgur.com/y1gvCfx.png)
 
 ### Expired Applications Report
 
-![](http://i.imgur.com/Si5u2Kz.png)
+![List of expired applications with name and expiration date details](http://i.imgur.com/Si5u2Kz.png)
 
 
 ### All Principals Report
 
-![](http://i.imgur.com/TcYzpMZ.png)
+![List of all principals](http://i.imgur.com/TcYzpMZ.png)
 
 ### Expired Principals
-![](http://i.imgur.com/Bglwvyg.png)
+![List of expired principals](http://i.imgur.com/Bglwvyg.png)
 
 
 
