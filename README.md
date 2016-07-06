@@ -1,5 +1,5 @@
 # Patterns and Practices - Tools #
-This is an open repository for community driven SharePoint Patterns and Practices program (PnP) which links closely to the work done also in the Office 365 Patterns and Practices (http://aka.ms/OfficeDevPnP). 
+This is an open repository for community driven SharePoint Patterns and Practices program (PnP) which links closely to the work done also in the Office 365 Patterns and Practices (http://aka.ms/OfficeDevPnP).  
 
 ![](http://i.imgur.com/I2VYM3a.png)
 
@@ -13,3 +13,4 @@ Sub folders have been named with PnP taxonomy, so that you could easily find wha
  
 # "Sharing is caring" #
 
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
