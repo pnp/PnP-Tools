@@ -185,6 +185,9 @@ function Start-SharePointSync
 .EXAMPLE
    Run the management agents in delta mode (delta import, delta sync)
    Start-SharePointSync -Delta -Verbose
+.EXAMPLE
+   Run a additional management agents, including the default ADMA and SPMA
+   Start-SharePointSync -AdditionalManagementAgents "ADMA-CONTOSO,ADMA-FABRIKAM"
 #>
 
     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='High')]
@@ -193,7 +196,9 @@ function Start-SharePointSync
     (
         # Turn on Delta operations for the management agents
         [Switch]
-        $Delta
+        $Delta,
+	[Parameter(Mandatory=$false, Position=1)]
+	[string[]]$AdditionalManagementAgents
     )
 
 ### Run the connectors
@@ -201,6 +206,16 @@ if ($Delta)
 {
     Start-ManagementAgent -Name ADMA -RunProfile DELTAIMPORT
     Start-ManagementAgent -Name ADMA -RunProfile DELTASYNC
+    
+    if($AdditionalManagementAgents -ne $null -and $AdditionalManagementAgents.Count -gt 0)
+    {
+        foreach($managementAgent in $AdditionalManagementAgents)
+	{
+	    Start-ManagementAgent -Name $managementAgent -RunProfile DELTAIMPORT
+	    Start-ManagementAgent -Name $managementAgent -RunProfile DELTASYNC
+	}
+    }
+
     Start-ManagementAgent -Name SPMA -RunProfile DELTAIMPORT
     Start-ManagementAgent -Name SPMA -RunProfile DELTASYNC
 }
@@ -208,6 +223,16 @@ else
 {
     Start-ManagementAgent -Name ADMA -RunProfile FULLIMPORT
     Start-ManagementAgent -Name ADMA -RunProfile FULLSYNC
+    
+    if($AdditionalManagementAgents -ne $null -and $AdditionalManagementAgents.Count -gt 0)
+    {
+        foreach($managementAgent in $AdditionalManagementAgents)
+	{
+	    Start-ManagementAgent -Name $managementAgent -RunProfile DELTAIMPORT
+	    Start-ManagementAgent -Name $managementAgent -RunProfile DELTASYNC
+	}
+    }
+
     Start-ManagementAgent -Name SPMA -RunProfile FULLIMPORT
     Start-ManagementAgent -Name SPMA -RunProfile FULLSYNC
 }
@@ -227,6 +252,14 @@ if ($PSCmdlet.ShouldProcess('SharePoint',$confirmMessage))
     Start-ManagementAgent -Name SPMA -RunProfile DELTAIMPORT
     Start-ManagementAgent -Name SPMA -RunProfile DELTASYNC
     Start-ManagementAgent -Name ADMA -RunProfile EXPORT
+    
+    if($AdditionalManagementAgents -ne $null -and $AdditionalManagementAgents.Count -gt 0)
+    {
+        foreach($managementAgent in $AdditionalManagementAgents)
+	{
+	    Start-ManagementAgent -Name $managementAgent -RunProfile EXPORT
+	}
+    }
 }
 
 }##Closing: function Start-SharePointSync
