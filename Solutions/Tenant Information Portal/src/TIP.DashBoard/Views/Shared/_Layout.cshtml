@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>{{ 'APPLICATION_TITLE' | translate }}</title>
+
+    <!-- Application site-->
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body ng-cloak class="hold-transition">
+    <div id="wrapper">
+        <header class="main-header">
+            <!-- Navigation -->
+            <nav class="navbar navbar-static-top ms-bgColor-themePrimary" role="navigation">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand"  href="https://portal.office.com/home">{{ 'O365_TEXT' | translate }}</a>
+                    <div class="NavLine"></div> 
+                    <a class="navbar-brand" href=@Url.Action("Index", "Home")>{{ 'APPLICATION_TITLE' | translate }}</a>
+                </div>
+                <!-- /.navbar-header -->
+                <ul class="nav navbar-top-links navbar-right">
+                    @Html.Partial("_LoginPartial")
+                </ul>
+            </nav>
+        </header>
+        <!--Side Bar-->
+        @Html.Partial("_LayoutSideBar")
+        
+        <!--Page-->    
+        <div id="page-wrapper">
+            @RenderBody()
+        </div> 
+    </div> <!---./wrapper-->
+
+  
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/metisMenu")
+    @Scripts.Render("~/bundles/javascript")
+    @Scripts.Render("~/bundles/toastr")
+    @Scripts.Render("~/bundles/angular")
+    @Scripts.Render("~/bundles/appCommon")
+    @Scripts.Render("~/bundles/app")
+    @Scripts.Render("~/bundles/appDashboard")
+    @Scripts.Render("~/bundles/reports")
+    @Scripts.Render("~/bundles/appCore")
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

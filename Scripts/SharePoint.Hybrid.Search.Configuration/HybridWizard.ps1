@@ -11,6 +11,8 @@
  experience, you may want to contact a Microsoft Certified Partner or the Microsoft fee-based consulting 
  line at (800) 936-5200. 
 
+# Added to Github PnP-Tools Repository
+
 # HYBRID CONFIGURATION WIZARD # 
 # 20/11/2015 - Release v0.9
 # 20/11/2015 - Added pre req checks and more graceful exit
