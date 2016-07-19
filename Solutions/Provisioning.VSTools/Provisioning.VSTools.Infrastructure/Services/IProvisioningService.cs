@@ -11,5 +11,6 @@ namespace Provisioning.VSTools.Services
         //System.Threading.Tasks.Task<bool> DeployProvisioningTemplate(string name, OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate template, Provisioning.VSTools.Models.ProvisioningTemplateToolsConfiguration config);
         void ResetPendingTemplates();
         bool IsBusy { get; }
+        void ResetSPContexts();
     }
 }

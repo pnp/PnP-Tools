@@ -830,6 +830,9 @@ namespace Provisioning.VSTools.Services
 
                 //save the config to a file
                 SaveConfigForProject(projectFolderPath, config);
+
+                //reset any cached sp contexts
+                ProvisioningService.ResetSPContexts();
             }
         }
 

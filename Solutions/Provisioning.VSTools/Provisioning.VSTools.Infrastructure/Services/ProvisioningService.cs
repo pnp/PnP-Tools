@@ -18,10 +18,12 @@ namespace Provisioning.VSTools.Services
     public class ProvisioningService : Provisioning.VSTools.Services.IProvisioningService
     {
         private Queue<DeployTemplateItem> pendingTemplatesToDeploy = new Queue<DeployTemplateItem>();
-        
+
         public bool IsBusy { get; set; }
 
         private Services.ILogService LogService = null;
+
+        private IDictionary<string, ClientContext> SPContextCollection = new Dictionary<string, ClientContext>();
 
         public ProvisioningService(Services.ILogService logSvc)
         {
@@ -53,11 +55,11 @@ namespace Provisioning.VSTools.Services
             }
 
             bool success = true;
-
             IsBusy = true;
 
             try
             {
+                //this.ResetSPContextCollection();
                 this.ResetPendingTemplates();
                 this.AddToPendingTemplates(templates);
 
@@ -72,24 +74,16 @@ namespace Provisioning.VSTools.Services
 
                         try
                         {
-                            using (ClientContext clientContext = new ClientContext(siteUrl))
+                            var ctx = GetSPContext(siteUrl, login, deployItem.Config.Deployment.Credentials.GetSecurePassword());
+
+                            ProvisioningTemplateApplyingInformation ptai = new ProvisioningTemplateApplyingInformation();
+                            ptai.ProgressDelegate = delegate (string message, int step, int total)
                             {
-                                LogService.Info("Signing in - " + siteUrl);
-                                clientContext.Credentials = new SharePointOnlineCredentials(login, deployItem.Config.Deployment.Credentials.GetSecurePassword());
+                                LogService.Info(string.Format("Deploying {0}, Step {1}/{2}", message, step, total));
+                            };
 
-                                Web web = clientContext.Web;
-                                clientContext.Load(web);
-                                clientContext.ExecuteQuery();
-
-                                ProvisioningTemplateApplyingInformation ptai = new ProvisioningTemplateApplyingInformation();
-                                ptai.ProgressDelegate = delegate(string message, int step, int total)
-                                {
-                                    LogService.Info(string.Format("Deploying {0}, Step {1}/{2}", message, step, total));
-                                };
-
-                                LogService.Info("Applying template...");
-                                clientContext.Web.ApplyProvisioningTemplate(deployItem.Template, ptai);
-                            }
+                            LogService.Info("Applying template...");
+                            ctx.Web.ApplyProvisioningTemplate(deployItem.Template, ptai);
 
                             success = true;
                         }
@@ -107,13 +101,66 @@ namespace Provisioning.VSTools.Services
             {
                 success = false;
                 LogService.Exception("DeployProvisioningTemplates", ex);
+                this.ResetSPContexts();
             }
             finally
             {
                 IsBusy = false;
+                //this.ResetSPContextCollection();
             }
 
             return success;
+        }
+
+        private ClientContext GetSPContext(string webUrl, string login, System.Security.SecureString password)
+        {
+            if (this.SPContextCollection == null)
+            {
+                throw new NullReferenceException("spContextCollection cannot be null.");
+            }
+
+            ClientContext ctx = null;
+            this.SPContextCollection.TryGetValue(webUrl, out ctx);
+
+            if (ctx != null && ctx.Url == webUrl)
+            {
+                this.LogService.Info("Getting SP ClientContext (cached) - " + webUrl);
+                return ctx;
+            }
+
+            this.LogService.Info("Getting SP ClientContext (signing in) - " + webUrl);
+            ctx = new ClientContext(webUrl);
+            ctx.Credentials = new SharePointOnlineCredentials(login, password);
+
+            this.LogService.Info("Querying web..." + webUrl);
+            Web web = ctx.Web;
+            ctx.Load(web);
+            ctx.ExecuteQuery();
+
+            this.SPContextCollection.Add(webUrl, ctx);
+
+            return ctx;
+        }
+
+        public void ResetSPContexts()
+        {
+            if (SPContextCollection == null)
+            {
+                SPContextCollection = new Dictionary<string, ClientContext>();
+            }
+
+            if (SPContextCollection.Count > 0)
+            {
+                foreach (var ctxItem in SPContextCollection)
+                {
+                    if (ctxItem.Value != null && ctxItem.Value is ClientContext)
+                    {
+                        ((ClientContext)ctxItem.Value).Dispose();
+                    }
+                }
+
+                SPContextCollection.Clear();
+            }
         }
     }
 }
