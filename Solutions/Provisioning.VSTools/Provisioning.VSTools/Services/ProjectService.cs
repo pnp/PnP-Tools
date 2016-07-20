@@ -242,15 +242,35 @@ namespace Provisioning.VSTools.Services
 
             List<DeployTemplateItem> deployItems = new List<DeployTemplateItem>();
 
+            string prevItemTemplatePath = null;
+            DeployTemplateItem prevDeployitem = null;
+
             while (pendingItemTemplates.Count > 0)
             {
                 var sourceTemplateItem = pendingItemTemplates.Dequeue();
+
                 var deployItem = sourceTemplateItem.GetDeployItem(this.LogService);
                 if (deployItem != null)
                 {
-                    deployItems.Add(deployItem);
+                    //if this item is part of the same template as the prevDeployItem, add this items file to the prevDeployItem
+                    if (prevDeployitem != null && sourceTemplateItem.TemplateInfo.TemplatePath == prevItemTemplatePath)
+                    {
+                        prevDeployitem.Template.Files.AddRange(deployItem.Template.Files.ToList());
+                        //no need to add the deployItem to the collection since we've updated the prevDeployItem
+                    }
+                    else
+                    {
+                        deployItems.Add(deployItem);
+
+                        //preserve prev references for comparison and consolidation purposes
+                        prevDeployitem = deployItem;
+                        prevItemTemplatePath = sourceTemplateItem.TemplateInfo.TemplatePath;
+                    }
                 }
             }
+
+            prevDeployitem = null;
+            prevItemTemplatePath = null;
 
             if (deployItems.Count() > 0)
             {
@@ -306,7 +326,7 @@ namespace Provisioning.VSTools.Services
 
                 //enqueue items
                 ((List<TemplateItem>)GetSelectedItemTempateItems()).ForEach(t => pendingFolderTemplates.Enqueue(t));
-                if (pendingItemTemplates.Count() > 0)
+                if (pendingFolderTemplates.Count() > 0)
                 {
                     menuCommand.Enabled = true;
                 }

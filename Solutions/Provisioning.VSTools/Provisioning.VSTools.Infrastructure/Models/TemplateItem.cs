@@ -43,7 +43,8 @@ namespace Provisioning.VSTools.Models
                     {
                         Config = this.ProvisioningConfig,
                         Template = loadedTemplate.Template,
-                        Title = string.Format("Deploying complete template {0}", this.TemplateInfo.TemplateFileName),
+                        TemplateName = loadedTemplate.TemplateFileName,
+                        IsCompleteTemplate = true,
                     };
                     return deployItem;
                 }
@@ -66,7 +67,8 @@ namespace Provisioning.VSTools.Models
                         {
                             Config = this.ProvisioningConfig,
                             Template = filesUnderFolderTemplate,
-                            Title = string.Format("Deploying {0} from template {1}", src, this.TemplateInfo.TemplateFileName),
+                            TemplateName = loadedTemplate.TemplateFileName,
+                            IsCompleteTemplate = false,
                         };
                         return deployItem;
                     }

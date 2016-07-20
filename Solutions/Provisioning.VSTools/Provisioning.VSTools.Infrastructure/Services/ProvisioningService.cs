@@ -68,7 +68,7 @@ namespace Provisioning.VSTools.Services
                     while (pendingTemplatesToDeploy.Count > 0)
                     {
                         var deployItem = pendingTemplatesToDeploy.Dequeue();
-                        LogService.Info(string.Format("Start {1:t} - {0}...", deployItem.Title, System.DateTime.Now));
+                        LogService.Info(string.Format("Start {1:t} - {0}...", deployItem.GetDeployTitle(), System.DateTime.Now));
                         var siteUrl = deployItem.Config.Deployment.TargetSite;
                         var login = deployItem.Config.Deployment.Credentials.Username;
 
@@ -93,7 +93,7 @@ namespace Provisioning.VSTools.Services
                             success = false;
                         }
 
-                        LogService.Info(string.Format("End {2:t} (success={1}) - {0}", deployItem.Title, success, System.DateTime.Now));
+                        LogService.Info(string.Format("End {2:t} (success={1}) - {0}", deployItem.GetDeployTitle(), success, System.DateTime.Now));
                     }
                 });
             }
