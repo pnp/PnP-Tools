@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Perficient.Provisioning.VSTools
+namespace Provisioning.VSTools
 {
     /// <summary>
     /// Interaction logic for VSToolsConfigWindow.xaml

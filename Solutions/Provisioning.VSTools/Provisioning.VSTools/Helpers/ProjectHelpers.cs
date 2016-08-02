@@ -10,11 +10,28 @@ using System.IO;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Provisioning.VSTools.Models;
 
-namespace Perficient.Provisioning.VSTools.Helpers
+namespace Provisioning.VSTools.Helpers
 {
     public static class ProjectHelpers
     {
+        internal static T GetConfigFile<T>(string filepath, bool projectItem = true)
+        {
+            if (System.IO.File.Exists(filepath))
+            {
+                var dte = (EnvDTE.DTE)Microsoft.VisualStudio.Shell.Package.GetGlobalService(typeof(EnvDTE.DTE));
+                var solutionItem = dte.Solution.FindProjectItem(filepath);
+
+                if (solutionItem != null || projectItem == false)
+                {
+                    return XmlHelpers.DeserializeObject<T>(filepath);
+                }
+            }
+
+            return default(T);
+        }
+
         public static string GetFullPath(ProjectItem projectItem)
         {
             return Convert.ToString(projectItem.Properties.Item("FullPath").Value);
@@ -23,18 +40,6 @@ namespace Perficient.Provisioning.VSTools.Helpers
         public static bool IsItemInsideFolder(string itemPath, string folderPath)
         {
             return itemPath.StartsWith(folderPath, true, CultureInfo.InvariantCulture);
-        }
-
-        public static string MakeRelativePath(string filespec, string folder)
-        {
-            Uri pathUri = new Uri(filespec);
-            // Folders must end in a slash
-            if (!folder.EndsWith(Path.DirectorySeparatorChar.ToString()))
-            {
-                folder += Path.DirectorySeparatorChar;
-            }
-            Uri folderUri = new Uri(folder);
-            return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
         }
 
         public static ProjectItem GetProjectItem(this IVsHierarchy hierarchy, uint ItemID)
@@ -48,7 +53,7 @@ namespace Perficient.Provisioning.VSTools.Helpers
             return prjItemObject as ProjectItem;
         }
 
-        public static EnvDTE.Project GetProject(this IVsHierarchy hierarchy, uint ItemID)
+        private static EnvDTE.Project GetProject(this IVsHierarchy hierarchy, uint ItemID)
         {
             if (hierarchy == null)
                 throw new ArgumentNullException("hierarchy");
@@ -56,7 +61,50 @@ namespace Perficient.Provisioning.VSTools.Helpers
             ErrorHandler.ThrowOnFailure(hierarchy.GetProperty(
                 ItemID, (int)__VSHPROPID.VSHPROPID_ExtObject, out prjItemObject));
 
+            if (prjItemObject is EnvDTE.ProjectItem)
+            {
+                return ((EnvDTE.ProjectItem)prjItemObject).ContainingProject;
+            }
+
             return prjItemObject as EnvDTE.Project;
+        }
+
+        public static EnvDTE.Project GetProjectFromExplorer(EnvDTE80.DTE2 dte)
+        {
+            UIHierarchy hierarchy = dte.ToolWindows.SolutionExplorer;
+            var selectedItems = (Array)hierarchy.SelectedItems;
+            if (selectedItems != null && selectedItems.Length > 0)
+            {
+                foreach (UIHierarchyItem selectedItem in selectedItems)
+                {
+                    ProjectItem projectItem = selectedItem.Object as ProjectItem;
+                    if (projectItem != null && projectItem.ContainingProject != null)
+                    {
+                        return projectItem.ContainingProject;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        //public static string GetProjectPath()
+        //{
+        //    //var project = GetProject();
+        //    var project = GetActiveProject();
+        //    return GetProjectPath(project);
+        //}
+
+        public static string GetProjectFolder(Project project)
+        {
+            if (project != null)
+            {
+                return Path.GetDirectoryName(project.FullName);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public static EnvDTE.Project GetProject()
@@ -67,10 +115,18 @@ namespace Perficient.Provisioning.VSTools.Helpers
             return ProjectHelpers.GetProject(hierarchy, projectItemId);
         }
 
-        public static string GetProjectPath()
+        internal static Project GetActiveProject()
         {
-            var project = GetProject();
-            return Path.GetDirectoryName(project.FullName);
+            DTE dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
+            Project activeProject = null;
+
+            Array activeSolutionProjects = dte.ActiveSolutionProjects as Array;
+            if (activeSolutionProjects != null && activeSolutionProjects.Length > 0)
+            {
+                activeProject = activeSolutionProjects.GetValue(0) as Project;
+            }
+
+            return activeProject;
         }
 
         public static IVsHierarchy GetCurrentHierarchy(out uint projectItemId)
@@ -124,6 +180,33 @@ namespace Perficient.Provisioning.VSTools.Helpers
             {
                 return false;
             }
+        }
+
+        public static ProvisioningTemplateLocationInfo GetParentProvisioningTemplateInformation(string projectItemFullPath, string projectFolderPath, ProvisioningTemplateToolsConfiguration config)
+        {
+            ProvisioningTemplateLocationInfo templateInfo = null;
+
+            if (config != null && config.Templates != null)
+            {
+                foreach (var template in config.Templates)
+                {
+                    var pnpResourcesFolderPath = Path.Combine(projectFolderPath, template.ResourcesFolder);
+                    var templateFilePath = Path.Combine(projectFolderPath, template.Path);
+                    bool isTemplateXmlFile = string.Compare(System.IO.Path.GetFileName(projectItemFullPath), System.IO.Path.GetFileName(template.Path), true) == 0;
+
+                    if (ProjectHelpers.IsItemInsideFolder(projectItemFullPath, pnpResourcesFolderPath) || isTemplateXmlFile)
+                    {
+                        templateInfo = new ProvisioningTemplateLocationInfo()
+                        {
+                            ResourcesPath = pnpResourcesFolderPath,
+                            TemplateFolderPath = Path.GetDirectoryName(templateFilePath),
+                            TemplateFileName = Path.GetFileName(templateFilePath)
+                        };
+                    }
+                }
+            }
+
+            return templateInfo;
         }
     }
 }

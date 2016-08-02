@@ -3,7 +3,7 @@
 using System;
 using System.ComponentModel.Design;
 
-namespace Perficient.Provisioning.VSTools
+namespace Provisioning.VSTools
 {
     static class PkgCmdIDList
     {

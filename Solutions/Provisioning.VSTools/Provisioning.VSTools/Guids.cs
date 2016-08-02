@@ -2,7 +2,7 @@
 // MUST match guids.h
 using System;
 
-namespace Perficient.Provisioning.VSTools
+namespace Provisioning.VSTools
 {
     static class GuidList
     {
