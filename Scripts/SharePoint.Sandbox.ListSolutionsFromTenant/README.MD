@@ -1,5 +1,5 @@
 # Generate list of sandbox solutions from SharePoint Online tenant #
-This script can be used to generate list of sandbox solutions in SharePoint Online tenant. You will need to use tenant administrator account to connect to SharePoint Online and script will generate a list of sandbox solutions to seperate txt file, which can be imported to Excel for further analyses.
+This script can be used to generate list of sandbox solutions in SharePoint Online tenant. You will need to use tenant administrator account to connect to SharePoint Online and script will generate a list of sandbox solutions to separate txt file, which can be imported to Excel for further analyses.
 
 >**Note**: This script is relatively simple and does not use multi-threading, so execution in larger tenants might take a while. We are looking for further enhancing the script with multi-threading support, if there's demand for this. Also community contributions on this side are more than welcome.
 
@@ -9,23 +9,24 @@ Output file has following columns
 * Author field from the sandbox solution - who uploaded the file
 * Created field from the sandbox solution - when solution was uploaded
 * Status field - 1=Activated, 0=Not activated
+* HasAssemblies field - 1=solution has assemblies , 0=solution does not have assemblies
 
 Example output file, which can be easily imported to Excel for further analyses
 ```PowerShell
-https://contoso.sharepoint.com/sites/635993483643159661,MyCoolWebPart.wsp,Vesa Juvonen,07/27/2016 00:55:22,0
-https://contoso.sharepoint.com/sites/devpub,PnPRocks.wsp,System Account,07/27/2016 01:03:36,0
-https://contoso.sharepoint.com/sites/team,WhosReadingThese.wsp,Vesa Juvonen,06/07/2016 12:58:05,1
-https://contoso.sharepoint.com/sites/team,HiMom.wsp,Vesa Juvonen,06/22/2016 12:41:04,1
-https://contoso.sharepoint.com/sites/team,WhatsUp.wsp,Vesa Juvonen,07/27/2016 00:47:54,0
-https://contoso.sharepoint.com/sites/team,MrVanRules.wsp,Vesa Juvonen,07/29/2016 22:26:43,1
-https://contoso.sharepoint.com/sites/templatesite,RememberIgniteOnSeptember.wsp,Vesa Juvonen,07/27/2016 00:50:50,0
-https://contoso.sharepoint.com/sites/templatesite,WhatsUp.wsp,Vesa Juvonen,07/27/2016 00:56:32,1
-https://contoso.sharepoint.com/sites/visiodemos,UsefullForYouGiveFeedback.wsp,Provisioning User 0,03/24/2014 21:44:25,1
+https://contoso.sharepoint.com/sites/635993483643159661,MyCoolWebPart.wsp,Vesa Juvonen,07/27/2016 00:55:22,0,1
+https://contoso.sharepoint.com/sites/devpub,PnPRocks.wsp,System Account,07/27/2016 01:03:36,0,1
+https://contoso.sharepoint.com/sites/team,WhosReadingThese.wsp,Vesa Juvonen,06/07/2016 12:58:05,1,0
+https://contoso.sharepoint.com/sites/team,HiMom.wsp,Vesa Juvonen,06/22/2016 12:41:04,1,1
+https://contoso.sharepoint.com/sites/team,WhatsUp.wsp,Vesa Juvonen,07/27/2016 00:47:54,0,0
+https://contoso.sharepoint.com/sites/team,MrVanRules.wsp,Vesa Juvonen,07/29/2016 22:26:43,1,1
+https://contoso.sharepoint.com/sites/templatesite,RememberIgniteOnSeptember.wsp,Vesa Juvonen,07/27/2016 00:50:50,0,1
+https://contoso.sharepoint.com/sites/templatesite,WhatsUp.wsp,Vesa Juvonen,07/27/2016 00:56:32,1,0
+https://contoso.sharepoint.com/sites/visiodemos,UsefullForYouGiveFeedback.wsp,Provisioning User 0,03/24/2014 21:44:25,1,0
 
 ```
 
 **What will be reported?**
-Scripts reports all sandbox solution from solution gallery regardless if they contain code behind or regardless ho they were created. Here's different kind of sandbox solutions, which you can have in the report.
+Scripts reports all sandbox solution from solution gallery regardless if they contain code behind or regardless how they were created. Here's different kind of sandbox solutions, which you can have in the report.
 * Site templates
 * Design Manager Packages
 * InfoPath Forms with code behind
@@ -33,7 +34,7 @@ Scripts reports all sandbox solution from solution gallery regardless if they co
 
  
 >**Note**: This is an **Open Source** project, and any contribution from the community
-is more than welcome. Feel free to review the code and submit any [Issues](https://github.com/OfficeDev/PnP-Tools/issues) or [Pull Requests](https://github.com/OfficeDev/PnP-Tools/pulls), using GitHub. If you want to assist the community on this journey around sandbox solutions, we are looking for example improvements on identifying sandbox solution type, code behind existance or to add multi-threading support.
+is more than welcome. Feel free to review the code and submit any [Issues](https://github.com/OfficeDev/PnP-Tools/issues) or [Pull Requests](https://github.com/OfficeDev/PnP-Tools/pulls), using GitHub. If you want to assist the community on this journey around sandbox solutions, we are looking for example improvements on identifying sandbox solution type, code behind existence or to add multi-threading support.
  
 # Setup Instructions #
 In order to get list of sandbox solutions using this script, you'll need to:
@@ -97,11 +98,12 @@ The example above performs as sandbox solution scan in contoso tenant with admin
 ### Script ###
 Script | Author(s)
 ---------|----------
-SharePoint.Sandbox.ListSolutionsFromTenant | Karine Bosch (Microsoft), Vesa Juvonen (Microsoft)
+SharePoint.Sandbox.ListSolutionsFromTenant | Karine Bosch (Microsoft), Vesa Juvonen (Microsoft), Daniel Budimir (Microsoft)
 
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.1  | August 3rd 2016 | Added HasAssemblies to output
 1.0  | August 3rd 2016 | Initial release
 
 ### Disclaimer ###

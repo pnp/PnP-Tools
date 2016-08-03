@@ -75,24 +75,36 @@ foreach ($site in $sites)
         $context.ExecuteQuery()
 
         if ($items.Count -gt 0) {
-
             #List the sandbox solutions
             foreach ($item in $items)
             {  
-               # Resolve status of the solution - 1=Activate, 0=not active
-               $statusField = $item["Status"]
-               if ($statusField){
-                 $status = 1
-               } else {
-                 $status = 0
-               }
-               
-               # Output to console
-               Write-Host $site.Url "," $item["FileLeafRef"].ToString() "," $item["Author"].LookupValue "," $item["Created"] "," $status
-               
-               # Output report in format, which can be imported to excel
-               Add-Content $logfile ($site.Url + "," + $item["FileLeafRef"].ToString() + "," + $item["Author"].LookupValue + "," + $item["Created"] + "," + $status)
-            }
+				# Resolve status of the solution - 1=Activate, 0=not active
+				$statusField = $item["Status"]
+				if ($statusField)
+				{
+					$status = 1
+				} else 
+				{
+					$status = 0
+				}
+				$hasAssembly = 0
+				$metaInfoFields = $item["MetaInfo"].Split("`r`n")
+				foreach ($metaInfoField in $metaInfoFields)
+				{
+					if ($metaInfoField.Contains("SolutionHasAssemblies"))
+					{
+						if ($metaInfoField.Contains("1")) 
+						{
+							$hasAssembly = 1
+						}
+						break;     
+					}
+				}
+				# Output to console
+				Write-Host $site.Url "," $item["FileLeafRef"].ToString() "," $item["Author"].LookupValue "," $item["Created"] "," $status "," $hasAssembly
+				# Output report in format, which can be imported to excel
+				Add-Content $logfile ($site.Url + "," + $item["FileLeafRef"].ToString() + "," + $item["Author"].LookupValue + "," + $item["Created"] + "," + $status + "," + $hasAssembly)
+			}
 
         }
         # Output to file right next to script location
