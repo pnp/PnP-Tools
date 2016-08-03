@@ -91,7 +91,7 @@ foreach ($site in $sites)
                Write-Host $site.Url "," $item["FileLeafRef"].ToString() "," $item["Author"].LookupValue "," $item["Created"] "," $status
                
                # Output report in format, which can be imported to excel
-               Add-Content $logfile ($site.Url + "," + $item["FileLeafRef"].ToString() + "," + $item["Author"].LookupValue + "," + $item["Created"] + "," + $statu
+               Add-Content $logfile ($site.Url + "," + $item["FileLeafRef"].ToString() + "," + $item["Author"].LookupValue + "," + $item["Created"] + "," + $status)
             }
 
         }
