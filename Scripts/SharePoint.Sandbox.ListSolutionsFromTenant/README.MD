@@ -91,7 +91,7 @@ The example above performs as sandbox solution scan in contoso tenant with admin
 -  Office 365 Multi Tenant (MT)
 
 ### Prerequisites ###
-- You will need to have [SharePoint PowerShell CmdLets](https://www.microsoft.com/en-us/download/details.aspx?id=35588) installed on the machine where script is executed. 
+- You will need to have [SharePoint PowerShell CmdLets](https://www.microsoft.com/en-us/download/details.aspx?id=35588) installed on the machine where script is executed
 - You will need to use tenant administrator credentials to be able to list site collections from target tenant
 
 ### Script ###
