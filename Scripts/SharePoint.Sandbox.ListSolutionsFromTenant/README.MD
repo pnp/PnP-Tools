@@ -36,8 +36,7 @@ Scripts reports all sandbox solution from solution gallery regardless if they co
 is more than welcome. Feel free to review the code and submit any [Issues](a href="https://github.com/OfficeDev/PnP-Tools/issues) or [Pull Requests](https://github.com/OfficeDev/PnP-Tools/pulls), using GitHub. If you want to assist the community on this journey around sandbox solutions, we are looking for example improvements on identifying sandbox solution type, code behind existance or to add multi-threading support.
  
 # Setup Instructions #
-In order to setup the solution and to enable the Responsive UI on a target
-Site Collection, you simply need to:
+In order to get list of sandbox solutions using this script, you'll need to:
 * [Download the files included in this solution](#download)
 * [Setup software requirements](#requirements)
 * [Execute the *Get-SPOnlineSandboxSolutionList* cmdlet](#execute)
