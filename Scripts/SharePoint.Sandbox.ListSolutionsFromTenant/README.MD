@@ -79,7 +79,7 @@ The example above performs as sandbox solution scan in contoso tenant with admin
 ###EXAMPLE 2
 ```PowerShell
 PS C:\> $creds = Get-Credential
-PS C:\> .\Get-SPOnlineSandboxSolutionList.ps1 -AdminUrl https://contoso-admin.sharepoint.com -Credentials $creds
+PS C:\> .\Get-SPOnlineSandboxSolutionList.ps1 -AdminUrl "https://contoso-admin.sharepoint.com" -Credentials $creds
 ```
  
 The example above performs as sandbox solution scan in contoso tenant with admin URL https://contoso-admin.sharepoint.com. The user's credentials are  provided through the *$creds* variable.
