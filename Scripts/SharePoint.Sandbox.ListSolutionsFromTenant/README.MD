@@ -1,4 +1,4 @@
-# Generate list of sandbox solutions in SharePoint Online tenant #
+# Generate list of sandbox solutions from SharePoint Online tenant #
 This script can be used to generate list of sandbox solutions in SharePoint Online tenant. You will need to use tenant administrator account to connect to SharePoint Online and script will generate a list of sandbox solutions to seperate txt file, which can be imported to Excel for further analyses.
 
 >**Note**: This script is relatively simple and does not use multi-threading, so execution in larger tenants might take a while. We are looking for further enhancing the script with multi-threading support, if there's demand for this. Also community contributions on this side are more than welcome.
