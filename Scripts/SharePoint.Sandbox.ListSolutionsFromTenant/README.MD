@@ -33,7 +33,7 @@ Scripts reports all sandbox solution from solution gallery regardless if they co
 
  
 >**Note**: This is an **Open Source** project, and any contribution from the community
-is more than welcome. Feel free to review the code and submit any [Issues](a href="https://github.com/OfficeDev/PnP-Tools/issues) or [Pull Requests](https://github.com/OfficeDev/PnP-Tools/pulls), using GitHub. If you want to assist the community on this journey around sandbox solutions, we are looking for example improvements on identifying sandbox solution type, code behind existance or to add multi-threading support.
+is more than welcome. Feel free to review the code and submit any [Issues](https://github.com/OfficeDev/PnP-Tools/issues) or [Pull Requests](https://github.com/OfficeDev/PnP-Tools/pulls), using GitHub. If you want to assist the community on this journey around sandbox solutions, we are looking for example improvements on identifying sandbox solution type, code behind existance or to add multi-threading support.
  
 # Setup Instructions #
 In order to get list of sandbox solutions using this script, you'll need to:
