@@ -33,13 +33,10 @@ Scripts reports all sandbox solution from solution gallery regardless if they co
 
  
 >**Note**: This is an **Open Source** project, and any contribution from the community
-is more than welcome. Thus, feel free to review the code and submit any 
-<a href="https://github.com/OfficeDev/PnP-Tools/issues">Issues</a> or
-<a href="https://github.com/OfficeDev/PnP-Tools/pulls">Pull Requests</a>, using GitHub.
+is more than welcome. Feel free to review the code and submit any [Issues](a href="https://github.com/OfficeDev/PnP-Tools/issues) or [Pull Requests](https://github.com/OfficeDev/PnP-Tools/pulls), using GitHub. If you want to assist the community on this journey around sandbox solutions, we are looking for example improvements on identifying sandbox solution type, code behind existance or to add multi-threading support.
  
 # Setup Instructions #
-In order to setup the solution and to enable the Responsive UI on a target
-Site Collection, you simply need to:
+In order to get list of sandbox solutions using this script, you'll need to:
 * [Download the files included in this solution](#download)
 * [Setup software requirements](#requirements)
 * [Execute the *Get-SPOnlineSandboxSolutionList* cmdlet](#execute)
@@ -63,14 +60,14 @@ from the following link:
 ## Execute the *Get-SPOnlineSandboxSolutionList* cmdlet
 Once you have installed the SharePoint PowerShell commands, you can  simply open a 
 PowerShell console, go to the path where you stored the files and execute the *Get-SPOnlineSandboxSolutionList*
-cmdlet, which is included in the
-<a href="./Get-SPOnlineSandboxSolutionList">Get-SPOnlineSandboxSolutionList.ps1</a> script file of this solution.
+cmdlet, which is included in the 
+<a href="./Get-SPOnlineSandboxSolutionList.ps1">Get-SPOnlineSandboxSolutionList.ps1</a> script file of this solution.
 
 The *Get-SPOnlineSandboxSolutionList* cmdlet accepts the following three parameters:
 * **AdminUrl**: it is a mandatory parameter, which declares the URL of the admin site for the tenant where the sandbox solution scan will be performed. It has to be provided as a full URL, like for example: https://contoso-admin.sharepoint.com
 * **Credentials**: it is an optional parameter, which defines the user credentials that will be used to authenticate against both the target Site Collection and the infrastructure Site Collection, if any. Should be the credentials of a user, who is Site Collection Administrator for the target Site Collections. If you don't provide this parameter, the script will directly prompt you for credentials.
 
-Here you can see a couple of examples about how to invoke the *Enable-SPResponsiveUI* cmdlet:
+Here you can see a couple of examples about how to invoke the *Get-SPOnlineSandboxSolutionList.ps1* script:
 
 ###EXAMPLE 1
 ```PowerShell
