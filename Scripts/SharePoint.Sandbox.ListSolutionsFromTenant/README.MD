@@ -12,15 +12,15 @@ Output file has following columns
 
 Example output file, which can be easily imported to Excel for further analyses
 ```PowerShell
-https://contoso.sharepoint.com/sites/635993483643159661,Fuubar.wsp,Vesa Juvonen,07/27/2016 00:55:22,0
-https://contoso.sharepoint.com/sites/devpub,Dev Pub-1.0.wsp,System Account,07/27/2016 01:03:36,0
-https://contoso.sharepoint.com/sites/team,SPrello.wsp,Vesa Juvonen,06/07/2016 12:58:05,1
-https://contoso.sharepoint.com/sites/team,Template.wsp,Vesa Juvonen,06/22/2016 12:41:04,1
-https://contoso.sharepoint.com/sites/team,SharePointProject1.wsp,Vesa Juvonen,07/27/2016 00:47:54,0
-https://contoso.sharepoint.com/sites/team,EmptySandbox.wsp,Vesa Juvonen,07/29/2016 22:26:43,1
-https://contoso.sharepoint.com/sites/templatesite,SharePointProject1.wsp,Vesa Juvonen,07/27/2016 00:50:50,0
-https://contoso.sharepoint.com/sites/templatesite,Fuubar.wsp,Vesa Juvonen,07/27/2016 00:56:32,1
-https://contoso.sharepoint.com/sites/visiodemos,UpdateVSDXDataConnections.wsp,Provisioning User 0,03/24/2014 21:44:25,1
+https://contoso.sharepoint.com/sites/635993483643159661,MyCoolWebPart.wsp,Vesa Juvonen,07/27/2016 00:55:22,0
+https://contoso.sharepoint.com/sites/devpub,PnPRocks.wsp,System Account,07/27/2016 01:03:36,0
+https://contoso.sharepoint.com/sites/team,WhosReadingThese.wsp,Vesa Juvonen,06/07/2016 12:58:05,1
+https://contoso.sharepoint.com/sites/team,HiMom.wsp,Vesa Juvonen,06/22/2016 12:41:04,1
+https://contoso.sharepoint.com/sites/team,WhatsUp.wsp,Vesa Juvonen,07/27/2016 00:47:54,0
+https://contoso.sharepoint.com/sites/team,MrVanRules.wsp,Vesa Juvonen,07/29/2016 22:26:43,1
+https://contoso.sharepoint.com/sites/templatesite,RememberIgniteOnSeptember.wsp,Vesa Juvonen,07/27/2016 00:50:50,0
+https://contoso.sharepoint.com/sites/templatesite,WhatsUp.wsp,Vesa Juvonen,07/27/2016 00:56:32,1
+https://contoso.sharepoint.com/sites/visiodemos,UsefullForYouGiveFeedback.wsp,Provisioning User 0,03/24/2014 21:44:25,1
 
 ```
 
