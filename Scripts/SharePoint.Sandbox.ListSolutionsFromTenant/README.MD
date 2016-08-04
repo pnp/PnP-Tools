@@ -6,7 +6,7 @@ This script can be used to analyze what kind of sandbox solutions exists in spec
 Output file has following columns
 * URL of the site collection
 * Name of the sandbox solution
-* Author field from the sandbox solution - who uploaded the file
+* Author field from the sandbox solution - who uploaded the file. If value contains a comma, it will be removed in output
 * Created field from the sandbox solution - when solution was uploaded
 * Status field - 1=Activated, 0=Not activated
 * HasAssemblies field - 1=solution has assemblies , 0=solution does not have assemblies
