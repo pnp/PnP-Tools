@@ -13,6 +13,7 @@ Output file has following columns
 
 Example output file, which can be easily imported to Excel for further analyses
 ```PowerShell
+SiteURL,WSPName,Author,CreatedDate,Activated,HasAssemblies
 https://contoso.sharepoint.com/sites/635993483643159661,MyCoolWebPart.wsp,Vesa Juvonen,07/27/2016 00:55:22,0,1
 https://contoso.sharepoint.com/sites/devpub,PnPRocks.wsp,System Account,07/27/2016 01:03:36,0,1
 https://contoso.sharepoint.com/sites/team,WhosReadingThese.wsp,Vesa Juvonen,06/07/2016 12:58:05,1,0
@@ -67,6 +68,7 @@ cmdlet, which is included in the
 The *Get-SPOnlineSandboxSolutionList* cmdlet accepts the following three parameters:
 * **AdminUrl**: it is a mandatory parameter, which declares the URL of the admin site for the tenant where the sandbox solution scan will be performed. It has to be provided as a full URL, like for example: https://contoso-admin.sharepoint.com
 * **Credentials**: it is an optional parameter, which defines the user credentials that will be used to authenticate against both the target Site Collection and the infrastructure Site Collection, if any. Should be the credentials of a user, who is Site Collection Administrator for the target Site Collections. If you don't provide this parameter, the script will directly prompt you for credentials.
+* **Delimiter**: it is an optional parameter, by default is ',' and can be used to specify a different separation character for CSV output.
 
 Here you can see a couple of examples about how to invoke the *Get-SPOnlineSandboxSolutionList.ps1* script:
 
@@ -78,6 +80,14 @@ PS C:\> .\Get-SPOnlineSandboxSolutionList.ps1 -AdminUrl "https://contoso-admin.s
 The example above performs as sandbox solution scan in contoso tenant with admin URL https://contoso-admin.sharepoint.com. The user's credentials are not provided, so the cmdlet will directly prompt the user.
 
 ###EXAMPLE 2
+```PowerShell
+PS C:\> .\Get-SPOnlineSandboxSolutionList.ps1 -AdminUrl "https://contoso-admin.sharepoint.com" -Delimiter ';'
+```
+
+This example above shows how to specify a custom character as delimiter for CSV output
+
+
+###EXAMPLE 3
 ```PowerShell
 PS C:\> $creds = Get-Credential
 PS C:\> .\Get-SPOnlineSandboxSolutionList.ps1 -AdminUrl "https://contoso-admin.sharepoint.com" -Credentials $creds
@@ -92,17 +102,24 @@ The example above performs as sandbox solution scan in contoso tenant with admin
 -  Office 365 Multi Tenant (MT)
 
 ### Prerequisites ###
-- You will need to have [SharePoint PowerShell CmdLets](https://www.microsoft.com/en-us/download/details.aspx?id=35588) installed on the machine where script is executed
-- You will need to use tenant administrator credentials to be able to list site collections from target tenant
+Following software installation packages have to be downloaded and installed on the machine where script will execute
+- [SharePoint Online Client Components SDK](https://www.microsoft.com/en-us/download/details.aspx?id=42038)
+- [SharePoint Online Management Shell](https://www.microsoft.com/en-us/download/details.aspx?id=35588)
+- [SharePoint PowerShell CmdLets](https://www.microsoft.com/en-us/download/details.aspx?id=35588)
+
+### **Note** ### 
+`You will need to use tenant administrator credentials to be able to list site collections from target tenant.  
+This account must have as well access to all site collections, in order to be able to access their solutions gallery.`
 
 ### Script ###
 Script | Author(s)
 ---------|----------
-SharePoint.Sandbox.ListSolutionsFromTenant | Karine Bosch (Microsoft), Vesa Juvonen (Microsoft), Daniel Budimir (Microsoft)
+SharePoint.Sandbox.ListSolutionsFromTenant | Karine Bosch (Microsoft), Vesa Juvonen (Microsoft), Daniel Budimir (Microsoft), Massimo Prota (Rapid Circle)
 
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.2  | August 4th 2016 | Added possibility to specify CSV delimiter, headers to output, better ClientContext handling
 1.1  | August 3rd 2016 | Added HasAssemblies to output
 1.0  | August 3rd 2016 | Initial release
 
