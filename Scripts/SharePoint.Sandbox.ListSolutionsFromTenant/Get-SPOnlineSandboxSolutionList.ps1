@@ -28,7 +28,9 @@ Add-Type –Path "C:\Program Files\Common Files\microsoft shared\Web Server Exte
 
 # Log file for output with the current time
 $date = Get-Date
-$logfile = ((Get-Item -Path ".\" -Verbose).FullName + "\SandboxReport_" + $date.ToFileTime() + ".txt")
+$logfile = ((Get-Item -Path ".\" -Verbose).FullName + "\SandboxReport_" + $date.ToFileTime() + ".csv")
+
+Add-Content $logfile "Url,Sandbox name,Uploaded by,Uploaded at,IsActivated,HasAssembly"
 
 Write-Host -ForegroundColor White "---------------------------------------------------------------------------"
 Write-Host -ForegroundColor White "|               Get List of Sandbox solutions from tenant                 |"
@@ -101,7 +103,7 @@ foreach ($site in $sites)
 					}
 				}
 				# Output to console
-				Write-Host $site.Url "," $item["FileLeafRef"].ToString() "," $item["Author"].LookupValue.Replace(",", "") "," $item["Created"] "," $status "," $hasAssembly
+				Write-Host ($site.Url + "," + $item["FileLeafRef"].ToString() + "," + $item["Author"].LookupValue.Replace(",", "") + "," + $item["Created"] + "," + $status + "," + $hasAssembly)
 				# Output report in format, which can be imported to excel
 				Add-Content $logfile ($site.Url + "," + $item["FileLeafRef"].ToString() + "," + $item["Author"].LookupValue.Replace(",", "") + "," + $item["Created"] + "," + $status + "," + $hasAssembly)
 			}
@@ -117,7 +119,7 @@ foreach ($site in $sites)
         # Possible public site exception handler
         if ($site.Url -notlike "*public.*")
         {
-            Write-Host -ForegroundColor Red "Exception occurred!" 
+            Write-Host -ForegroundColor Red ("Exception occurred while scanning " + $site.Url + "!")
             Write-Host -ForegroundColor Red "Exception Type: $($_.Exception.GetType().FullName)"
             Write-Host -ForegroundColor Red "Exception Message: $($_.Exception.Message)"
         }
