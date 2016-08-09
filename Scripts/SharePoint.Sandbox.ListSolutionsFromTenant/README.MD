@@ -10,19 +10,20 @@ Output file has following columns
 * Created field from the sandbox solution - when solution was uploaded
 * Status field - 1=Activated, 0=Not activated
 * HasAssemblies field - 1=solution has assemblies , 0=solution does not have assemblies
+* SolutionHash field - hash of the solution. If solution is exactly the same cross site collections, has is the same. If solution has small adjustments or it's different version regardless of the wsp name matching, it's a different solution
 
 Example output file, which can be easily imported to Excel for further analyses
 ```PowerShell
-SiteURL,WSPName,Author,CreatedDate,Activated,HasAssemblies
-https://contoso.sharepoint.com/sites/635993483643159661,MyCoolWebPart.wsp,Vesa Juvonen,07/27/2016 00:55:22,0,1
-https://contoso.sharepoint.com/sites/devpub,PnPRocks.wsp,System Account,07/27/2016 01:03:36,0,1
-https://contoso.sharepoint.com/sites/team,WhosReadingThese.wsp,Vesa Juvonen,06/07/2016 12:58:05,1,0
-https://contoso.sharepoint.com/sites/team,HiMom.wsp,Vesa Juvonen,06/22/2016 12:41:04,1,1
-https://contoso.sharepoint.com/sites/team,WhatsUp.wsp,Vesa Juvonen,07/27/2016 00:47:54,0,0
-https://contoso.sharepoint.com/sites/team,MrVanRules.wsp,Vesa Juvonen,07/29/2016 22:26:43,1,1
-https://contoso.sharepoint.com/sites/templatesite,RememberIgniteOnSeptember.wsp,Vesa Juvonen,07/27/2016 00:50:50,0,1
-https://contoso.sharepoint.com/sites/templatesite,WhatsUp.wsp,Vesa Juvonen,07/27/2016 00:56:32,1,0
-https://contoso.sharepoint.com/sites/visiodemos,UsefullForYouGiveFeedback.wsp,Provisioning User 0,03/24/2014 21:44:25,1,0
+SiteURL,WSPName,Author,CreatedDate,Activated,HasAssemblies,SolutionHash
+https://contoso.sharepoint.com/sites/635993483643159661,MyCoolWebPart.wsp,Vesa Juvonen,07/27/2016 00:55:22,0,1,IEYyOmzpYRAWRTLIuh0VbtUQFNJEsNxP6vVbECvVIY0=
+https://contoso.sharepoint.com/sites/devpub,PnPRocks.wsp,System Account,07/27/2016 01:03:36,0,1,4KmaeOO1r7vw8/MDBuEmBzKMUtXxYhvc42vv/mw+Nnw=
+https://contoso.sharepoint.com/sites/team,WhosReadingThese.wsp,Vesa Juvonen,06/07/2016 12:58:05,1,0,l8oO15G6LKX61wbTHZCCGyzNxZhYC3bbz5F+KsMbWYU=
+https://contoso.sharepoint.com/sites/team,HiMom.wsp,Vesa Juvonen,06/22/2016 12:41:04,1,1,cdLgVhgD3uZCuoSl0VF/wBBF903ldJQJAG7sZWcAojw=
+https://contoso.sharepoint.com/sites/team,WhatsUp.wsp,Vesa Juvonen,07/27/2016 00:47:54,0,0,tRB8KTZc6VTzJ6rGqtYCeFMozMroeIksQO2Bg0RJzcw=
+https://contoso.sharepoint.com/sites/team,MrVanRules.wsp,Vesa Juvonen,07/29/2016 22:26:43,1,1,a48UeIRwd8HTReQ+UNnvH9w3NIKu2u4hYXK412riFgg=
+https://contoso.sharepoint.com/sites/templatesite,RememberIgniteOnSeptember.wsp,Vesa Juvonen,07/27/2016 00:50:50,0,1,DsZBtAYAHjfNtHL8qytqI3//VwzSL3kR7rgkOG03Hl0=
+https://contoso.sharepoint.com/sites/templatesite,WhatsUp.wsp,Vesa Juvonen,07/27/2016 00:56:32,1,0,MZ8BAIfCKdDhUx2rzQi9TlhVZ1lBn6f1F4/7+q0WekE=
+https://contoso.sharepoint.com/sites/visiodemos,UsefullForYouGiveFeedback.wsp,Provisioning User 0,03/24/2014 21:44:25,1,0,xoCOeSDyhnYAY6nkXNpDpCL0A5TbLUTU4qX0q25ZFgE=
 
 ```
 
@@ -119,6 +120,7 @@ SharePoint.Sandbox.ListSolutionsFromTenant | Karine Bosch (Microsoft), Vesa Juvo
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.3  | August 9th 2016 | Added hash of the solution as output
 1.2  | August 4th 2016 | Added possibility to specify CSV delimiter, headers to output, better ClientContext handling
 1.1  | August 3rd 2016 | Added HasAssemblies to output
 1.0  | August 3rd 2016 | Initial release
