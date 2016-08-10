@@ -39,15 +39,12 @@
         topNavClone.attr('id', topNavClone.attr('id') + "_mobileClone");
         topNav.addClass('no-mobile');
         $('#sideNavBox').append(topNavClone);
-        var sideNavToggle = $('<button>');
-        sideNavToggle.attr('id', 'navbar-toggle');
-        sideNavToggle.addClass('mobile-only');
-        sideNavToggle.addClass('burger');
-        sideNavToggle.attr('type', 'button');
-        sideNavToggle.html("<span></span>");
-        sideNavToggle.click(function () {
+
+        var sideNavToggle = $('<button id="navbar-toggle" class="mobile-only burger" type="button"><span></span></button>');
+        sideNavToggle.click(function (event) {
+            event.preventDefault();
             $("body").toggleClass('shownav');
-            sideNavToggle.toggleClass('selected');
+            $(this).toggleClass('selected');
         });
         $("#pageTitle").before(sideNavToggle);
     };
