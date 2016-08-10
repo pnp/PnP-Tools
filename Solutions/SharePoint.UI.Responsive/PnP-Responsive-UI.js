@@ -24,7 +24,7 @@
             settingsDiv.appendTo(settingsRoot);
         });
         settingsRoot.find("table").remove();
-    }
+    };
 
 
     PnPResponsiveApp.setUpToggling = function () {
@@ -34,13 +34,13 @@
 
         // Set up sidenav toggling
         var topNav = $('#DeltaTopNavigation');
-        var topNavClone = topNav.clone()
+        var topNavClone = topNav.clone();
         topNavClone.addClass('mobile-only');
         topNavClone.attr('id', topNavClone.attr('id') + "_mobileClone");
         topNav.addClass('no-mobile');
         $('#sideNavBox').append(topNavClone);
         var sideNavToggle = $('<button>');
-        sideNavToggle.attr('id', 'navbar-toggle')
+        sideNavToggle.attr('id', 'navbar-toggle');
         sideNavToggle.addClass('mobile-only');
         sideNavToggle.addClass('burger');
         sideNavToggle.attr('type', 'button');
@@ -50,7 +50,7 @@
             sideNavToggle.toggleClass('selected');
         });
         $("#pageTitle").before(sideNavToggle);
-    }
+    };
 
     PnPResponsiveApp.init = function () {
         if (!window.jQuery) {
@@ -83,10 +83,10 @@
                     originalResizeFunction();
                     // fix the body container width
                     $("#s4-bodyContainer").width($("#s4-workspace").width());
-                }
+                };
             });
         }
-    }
+    };
 
     /* Dynamic CSS/JS embedding and loading */
     function loadCSS(url) {
