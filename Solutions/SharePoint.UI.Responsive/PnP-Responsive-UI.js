@@ -16,8 +16,8 @@
         }
 
         $(".ms-siteSettings-root .ms-linksection-level1").each(function () {
-            var self = $(this);
-            var settingsDiv = $('<div>');
+            var self = $(this),
+                settingsDiv = $('<div>');
             settingsDiv.addClass("pnp-settingsdiv");
             self.find(".ms-linksection-iconCell img").appendTo(settingsDiv);
             self.find(".ms-linksection-textCell").children().appendTo(settingsDiv);
@@ -33,8 +33,8 @@
             return;
 
         // Set up sidenav toggling
-        var topNav = $('#DeltaTopNavigation');
-        var topNavClone = topNav.clone();
+        var topNav = $('#DeltaTopNavigation'),
+            topNavClone = topNav.clone();
         topNavClone.addClass('mobile-only');
         topNavClone.attr('id', topNavClone.attr('id') + "_mobileClone");
         topNav.addClass('no-mobile');
@@ -90,8 +90,8 @@
 
     /* Dynamic CSS/JS embedding and loading */
     function loadCSS(url) {
-        var head = document.getElementsByTagName('head')[0];
-        var style = document.createElement('link');
+        var head = document.getElementsByTagName('head')[0],
+            style = document.createElement('link');
         style.type = 'text/css';
         style.rel = 'stylesheet';
         style.href = url;
@@ -99,8 +99,8 @@
     }
 
     function loadScript(url, callback) {
-        var head = document.getElementsByTagName('head')[0];
-        var script = document.createElement('script');
+        var head = document.getElementsByTagName('head')[0],
+            script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = url;
         script.onreadystatechange = callback;
@@ -109,15 +109,15 @@
     }
 
     function addViewport() {
-        var head = document.getElementsByTagName('head')[0];
-        var viewport = document.createElement('meta');
+        var head = document.getElementsByTagName('head')[0],
+            viewport = document.createElement('meta');
         viewport.name = "viewport";
         viewport.content = "width=device-width, initial-scale=1";
         head.appendChild(viewport);
     }
 
 
-// embedding of jQuery, and initialization of responsiveness when ready
+    // embedding of jQuery, and initialization of responsiveness when ready
     loadScript("//code.jquery.com/jquery-1.12.0.min.js", function () {
         PnPResponsiveApp.init();
     });
