@@ -77,13 +77,14 @@
                 };
 
                 // extend/override some SP native functions to fix resizing quirks
-                var originalResizeFunction = FixRibbonAndWorkspaceDimensions;
-                FixRibbonAndWorkspaceDimensions = function () {
-                    // let sharepoint do its thing
+                var FixRibbonAndWorkspaceDimensions = function () {
+                    // let SharePoint do its thing
                     originalResizeFunction();
                     // fix the body container width
                     $("#s4-bodyContainer").width($("#s4-workspace").width());
                 };
+                var originalResizeFunction = FixRibbonAndWorkspaceDimensions;
+
             });
         }
     };
