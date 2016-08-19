@@ -195,7 +195,7 @@ sandboxtool -m scanandanalyze -r https://contoso.sharepoint.com/*,https://contos
 
 -r, --urls             List of (wildcard) urls (e.g.
                        https://contoso.sharepoint.com/*,https://contoso-my.sharepoint.com,https://contoso-my.sharepo
-                       int.com/personal/*) that you want to get scanned. When you specify the --tenant optoin then
+                       int.com/personal/*) that you want to get scanned. When you specify the --tenant option then
                        this parameter is ignored
 
 -c, --clientid         Client ID of the app-only principal used to scan your site collections
