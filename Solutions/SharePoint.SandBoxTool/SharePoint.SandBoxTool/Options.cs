@@ -67,7 +67,11 @@ namespace SharePoint.SandBoxTool
                 AddDashesToOption = true,
                 MaximumDisplayWidth = 120
             };
-            help.AddPreOptionsLine("See the PnP-Tools repo for more information at: https://github.com/OfficeDev/PnP-Tools/tree/master/Solutions");
+            help.AddPreOptionsLine("");
+            help.AddPreOptionsLine("==========================================================");
+            help.AddPreOptionsLine("");
+            help.AddPreOptionsLine("See the PnP-Tools repo for more information at:");
+            help.AddPreOptionsLine("https://github.com/OfficeDev/PnP-Tools/tree/master/Solutions/SharePoint.SandBoxTool");
             help.AddPreOptionsLine("");
             help.AddPreOptionsLine("Let the tool figure out your urls (works only for SPO MT):");
             help.AddPreOptionsLine("==========================================================");

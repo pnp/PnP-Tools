@@ -12,7 +12,7 @@ namespace SharePoint.SandBoxTool
         {
             // parse command line
             var options = new Options();
-            var parser = new Parser(settings => { settings.MutuallyExclusive = true;  });
+            var parser = new Parser(settings => { settings.MutuallyExclusive = true; settings.HelpWriter = Parser.Default.Settings.HelpWriter;  });
             if (!parser.ParseArguments(args, options))
             {
                 Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
