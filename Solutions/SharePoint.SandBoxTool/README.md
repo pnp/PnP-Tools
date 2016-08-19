@@ -29,7 +29,12 @@ Version  | Date | Comments
 The main purpose of this tool is to give you a detailed view on the sandbox solutions in your environment. You'll not only be able to see which sites do have sandbox solutions, whether they've an assembly and are activated, but the tool also can download and analyze the solution for you giving you information about what's inside (is it an InfoPath solution, does it contain web parts, does it contain event receivers,...). This information will be helpful in finding the needed remediation guidance and it will help assessing the sandbox remediation needs. 
 
 # Quick start guide #
-Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder with the tool .exe file + supporting assemblies. Start a (PowerShell) prompt and navigate to that folder so that you can use the tool like is shown in below samples:
+## Download the tool ##
+You can download the tool from here:
+ - [Sandbox tool for SharePoint Online](https://github.com/OfficeDev/PnP-Tools/blob/master/Solutions/SharePoint.SandBoxTool/Releases/SandboxTool%20For%20SharePoint%20Online.zip "SandboxTool for SharePoint Online")
+ - Sandbox tool for SharePoint on-premises (coming soon!)
+
+Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder with the tool .exe file + supporting assemblies. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
 ## Authentication options ##
 Since this tool needs to be able to scan all site collections it's recommended to use an app-only principal with tenant scoped permissions for the scan. This approach will ensure the tool has access, if you use an account (e.g. your SharePoint tenant admin account) then the tool can only access the sites where this user also has access.
@@ -38,7 +43,7 @@ Since this tool needs to be able to scan all site collections it's recommended t
 Below steps show how to setup the app-only principal with the needed permissions. Note that you'll need to he a SharePoint tenant administrator to complete these steps.
 
 #### Create a new principal ####
-Navigate to a site in your tenant (e.g. https://contoso.sharepoint.com) and then call the appregnew.aspx page (e.g. https://contoso.sharepoint.com/_layouts/15/appregnew.aspx). In this page click on the **Generate** button to generate a client id and client secret and fill the remaining information like shown in the screen-shot below.
+Navigate to a site in your tenant (e.g. https://contoso.sharepoint.com) and then call the **appregnew.aspx** page (e.g. https://contoso.sharepoint.com/_layouts/15/appregnew.aspx). In this page click on the **Generate** button to generate a client id and client secret and fill the remaining information like shown in the screen-shot below.
 
 ![create app-only principal](http://i.imgur.com/pKoD872.png)
 
@@ -46,7 +51,7 @@ Navigate to a site in your tenant (e.g. https://contoso.sharepoint.com) and then
 > - Store the retrieved information (client id and client secret) since you'll need this in the next step!
 
 #### Grant permissions to the created principal ####
-Next step is granting permissions to the newly created principal. Since we're granting tenant scoped permissions this granting can only be done via the appinv.aspx page on the tenant administration site. You can reach this site via https://contoso-admin.sharepoint.com/_layouts/15/appinv.aspx. Once the page is loaded add your client id and look up the created principal:
+Next step is granting permissions to the newly created principal. Since we're granting tenant scoped permissions this granting can only be done via the **appinv.aspx** page on the tenant administration site. You can reach this site via https://contoso-admin.sharepoint.com/_layouts/15/appinv.aspx. Once the page is loaded add your client id and look up the created principal:
 
 ![Grant permissions to app-only principal](http://i.imgur.com/L0AkFKZ.png)
 
