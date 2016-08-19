@@ -50,17 +50,17 @@ namespace SharePoint.SandBoxTool
                     firstSiteCollectionDone = true;
 
                     // Telemetry
-                    e.SiteClientContext.ClientTag = "SPDev:SBScanner";
-                    e.SiteClientContext.Load(e.SiteClientContext.Web, p => p.Description);
-                    e.SiteClientContext.ExecuteQuery();
+                    e.WebClientContext.ClientTag = "SPDev:SBScanner";
+                    e.WebClientContext.Load(e.WebClientContext.Web, p => p.Description);
+                    e.WebClientContext.ExecuteQuery();
                 }
 
                 // Query the solution gallery
                 CamlQuery camlQuery = CamlQuery.CreateAllItemsQuery();
-                ListItemCollection itemCollection = e.SiteClientContext.Web.GetCatalog(121).GetItems(camlQuery);
-                e.SiteClientContext.Load(e.SiteClientContext.Site, s => s.Id);
-                e.SiteClientContext.Load(itemCollection);
-                e.SiteClientContext.ExecuteQueryRetry();
+                ListItemCollection itemCollection = e.WebClientContext.Web.GetCatalog(121).GetItems(camlQuery);
+                e.WebClientContext.Load(e.WebClientContext.Site, s => s.Id);
+                e.WebClientContext.Load(itemCollection);
+                e.WebClientContext.ExecuteQueryRetry();
 
                 string siteOwner = string.Empty;
                 int totalSolutions = 0;
@@ -100,9 +100,9 @@ namespace SharePoint.SandBoxTool
                     {
                         // Let's add site owners for the solutions which need our attention
                         List<string> admins = new List<string>();
-                        UserCollection users = e.SiteClientContext.Web.SiteUsers;
-                        e.SiteClientContext.Load(users);
-                        e.SiteClientContext.ExecuteQueryRetry();
+                        UserCollection users = e.WebClientContext.Web.SiteUsers;
+                        e.WebClientContext.Load(users);
+                        e.WebClientContext.ExecuteQueryRetry();
                         foreach (User u in users)
                         {
                             if (u.IsSiteAdmin)
@@ -127,7 +127,7 @@ namespace SharePoint.SandBoxTool
                         Activated = status,
                         HasAssemblies = hasAssembly,
                         SolutionHash = item["SolutionHash"].ToString(),
-                        SiteId = e.SiteClientContext.Site.Id.ToString(),
+                        SiteId = e.WebClientContext.Site.Id.ToString(),
                     };
 
                     // Doing more than a simple scan...
@@ -141,15 +141,15 @@ namespace SharePoint.SandBoxTool
 
                             // Download the WSP package
                             ClientResult<Stream> data = item.File.OpenBinaryStream();
-                            e.SiteClientContext.Load(item.File);
-                            e.SiteClientContext.ExecuteQueryRetry();
+                            e.WebClientContext.Load(item.File);
+                            e.WebClientContext.ExecuteQueryRetry();
 
                             if (data != null)
                             {
                                 int position = 1;
                                 int bufferSize = 200000;
                                 Byte[] readBuffer = new Byte[bufferSize];
-                                string localFilePath = System.IO.Path.Combine(".", this.OutputFolder, e.SiteClientContext.Site.Id.ToString());
+                                string localFilePath = System.IO.Path.Combine(".", this.OutputFolder, e.WebClientContext.Site.Id.ToString());
                                 System.IO.Directory.CreateDirectory(localFilePath);
 
                                 string wspPath = System.IO.Path.Combine(localFilePath, item["FileLeafRef"].ToString());
