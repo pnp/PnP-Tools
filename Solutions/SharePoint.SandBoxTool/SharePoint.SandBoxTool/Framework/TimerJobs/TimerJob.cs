@@ -1327,7 +1327,7 @@ namespace SharePoint.SandBoxTool.Framework.TimerJobs
         }
 #endregion
 
-#region Helper methods
+        #region Helper methods
         /// <summary>
         /// Verifies if the passed Url has a valid structure
         /// </summary>
@@ -1498,6 +1498,6 @@ namespace SharePoint.SandBoxTool.Framework.TimerJobs
                 return false;
             }
         }
-#endregion
+        #endregion
     }
 }
