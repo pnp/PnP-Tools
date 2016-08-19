@@ -6,8 +6,8 @@ Using this command line utility you can scan, download and analyze the sandbox s
 ### Applies to ###
 -  Office 365 Multi Tenant (MT)
 -  Office 365 Dedicated (D)
--  SharePoint 2013 on-premises (coming soon!)
--  SharePoint 2016 on-premises (coming soon!)
+-  SharePoint 2013 on-premises
+-  SharePoint 2016 on-premises
 
 ### Solution ###
 Solution | Author(s)
@@ -32,11 +32,12 @@ The main purpose of this tool is to give you a detailed view on the sandbox solu
 ## Download the tool ##
 You can download the tool from here:
  - [Sandbox tool for SharePoint Online](https://github.com/OfficeDev/PnP-Tools/blob/master/Solutions/SharePoint.SandBoxTool/Releases/SandboxTool%20For%20SharePoint%20Online.zip?raw=true "SandboxTool for SharePoint Online")
- - Sandbox tool for SharePoint on-premises (coming soon!)
+ - [Sandbox tool for SharePoint 2016](https://github.com/OfficeDev/PnP-Tools/blob/master/Solutions/SharePoint.SandBoxTool/Releases/SandboxTool%20For%20SharePoint%202016.zip?raw=true "Sandbox tool for SharePoint 2016")
+ - [Sandbox tool for SharePoint 2013](https://github.com/OfficeDev/PnP-Tools/blob/master/Solutions/SharePoint.SandBoxTool/Releases/SandboxTool%20For%20SharePoint%202013.zip?raw=true "Sandbox tool for SharePoint 2013")
 
 Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder with the tool .exe file + supporting assemblies. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
-## Authentication options ##
+## Using the tool for SharePoint Online ##
 Since this tool needs to be able to scan all site collections it's recommended to use an app-only principal with tenant scoped permissions for the scan. This approach will ensure the tool has access, if you use an account (e.g. your SharePoint tenant admin account) then the tool can only access the sites where this user also has access.
 
 ### Setting up an app-only principal with tenant permissions ###
@@ -72,7 +73,7 @@ When you click on **Create** you'll be presented with a permission consent dialo
 
 With the preparation work done let's continue with doing a scan.
 
-## Scanning and analyzing your SharePoint Online MT environment ##
+### Scanning and analyzing your SharePoint Online MT environment ###
 Below option is the typical usage of the tool for most customers: you specify a mode, your tenant name and the created client id and secret:
 
 ```console
@@ -117,6 +118,23 @@ After the run you'll find a new sub folder (e.g. 636072073126632445) which conta
  - **error.csv**: if the scan tool encountered errors then these are logged in this file.
  - **Multiple folder with a guid as name**: if you've chosen the **scanandanalyze** or **scananddownload** mode then whenever we find an sandbox solution with an assembly it will be downloaded by the tool. The downloaded file is placed in a folder per site collection (we use site id as the folder name). If a site collection contains multiple sandbox solutions with an assembly then these are all added to the same site collection folder.
 
+## Using the tool for SharePoint 2013 or SharePoint 2016 ##
+When using this tool for SharePoint 2013 or SharePoint 2016 you'll need to use regular credentials. In on-premises SharePoint you can easily grant an given account full control on all the site collections using web application policies.
+
+### Scanning and analyzing your SharePoint 2013 or SharePoint 2016 environment ###
+Below option is the typical usage of the tool for most customers: you specify a mode, the sites to scan, your account, password and domain:
+
+```console
+sandboxtool -m scanandanalyze -r <sitestoscan> -u <user> -o <domain> -p <pwd>
+```
+
+A real life sample:
+
+```console
+sandboxtool -m scanandanalyze -r https://portal2013.pnp.com/*,https://mysites2013.pnp.com/* -u user -o domain -p pwd
+```
+
+The output you'll see is similar than the output shown previously in the SharePoint Online documentation.
 
 # Understanding the scan output (sandboxreport.csv file) #
 Depending on the chosen scan mode you'll see the below columns in the report:
@@ -187,7 +205,7 @@ sandboxtool -m scanandanalyze -r https://contoso.sharepoint.com/*,https://contos
 ```
 
 
-# Complete list of command line switches #
+# Complete list of command line switches for the SharePoint Online version #
 
 ```Console
 -m, --mode             Required. (Default: scananddownload) Execution mode. Choose scan for a basic scan,
@@ -223,5 +241,34 @@ sandboxtool -m scanandanalyze -r https://contoso.sharepoint.com/*,https://contos
 -v, --verbose          (Default: False) Show more execution details
 
 --help                 Display this help screen.
+```
+
+# Complete list of command line switches for the SharePoint 2013/2016 version #
+
+```Console
+
+-m, --mode          Required. (Default: scananddownload) Execution mode. Choose scan for a basic scan,
+                    scananddownload for also downloading the sandbox solutions or scanandanalyze for downloading +
+                    analyzing the SB solutions
+
+-r, --urls          List of (wildcard) urls (e.g.
+                    https://team.contoso.com/*,https://mysites.contoso.com,https://mysites.contoso.com/personal/*)
+                    that you want to get scanned
+
+-u, --user          User id used to scan/enumerate your site collections
+
+-o, --domain        Domain of the user used to scan/enumerate your site collections
+
+-p, --password      Password of the user used to scan/enumerate your site collections
+
+-e, --seperator     (Default: ,) Separator used in output CSV files
+
+-h, --threads       (Default: 10) Number of parallel threads, maximum = 100
+
+-d, --duplicates    (Default: False) Download and process all sandbox solutions, not just the unique ones
+
+-v, --verbose       (Default: False) Show more execution details
+
+--help              Display this help screen.
 ```
 
