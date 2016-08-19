@@ -194,3 +194,5 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+/Solutions/Tenant Information Portal/src/TIP.Azure.ResourceGroup/Templates/WebSite.parameters.json
+/Solutions/Tenant Information Portal/src/TIP.Azure.ResourceGroup/Templates/WebSite.parameters.local.json

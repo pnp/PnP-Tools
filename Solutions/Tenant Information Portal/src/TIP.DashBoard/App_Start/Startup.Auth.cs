@@ -20,8 +20,6 @@
 //SOFTWARE.
 // ------------------------------------------------------------------------------
 
-
-
 using System;
 using System.IdentityModel.Claims;
 using System.Threading.Tasks;
@@ -32,14 +30,13 @@ using Microsoft.Owin.Security.OpenIdConnect;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Owin;
 using TIP.Dashboard.Models;
-using Microsoft.Online.Applications.Core;
-using Microsoft.Online.Applications.Core.Configuration;
 using TIP.Common.Configuration;
 using TIP.Dashboard.Dal;
+using Microsoft.Online.Applications.Core;
+using Microsoft.Online.Applications.Core.Configuration;
 
 namespace TIP.Dashboard
 {
-
     public partial class Startup
     {   
         AppConfig _appConfig = ConfigurationFactory.Instance.GetApplicationConfiguration();
@@ -76,23 +73,30 @@ namespace TIP.Dashboard
 
                             AuthenticationContext authContext = new AuthenticationContext(string.Format("https://login.microsoftonline.com/{0}", tenantID), new ADALTokenCache(signedInUserID));
                             AuthenticationResult result = authContext.AcquireTokenByAuthorizationCode(
-                            code, new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path)), credential, Constants.Authentication.GraphServiceUrl);
+                                        code, 
+                                        new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path)), 
+                                        credential, 
+                                        Constants.Authentication.GraphServiceUrl);
 
                             return Task.FromResult(0);
                         },
-                        //RedirectToIdentityProvider = (context) =>
-                        //{
-                        //    // This ensures that the address used for sign in and sign out is picked up dynamically from the request
-                        //    // this allows you to deploy your app (to Azure Web Sites, for example)without having to change settings
-                        //    // Remember that the base URL of the address used here must be provisioned in Azure AD beforehand.
-                        //    string appBaseUrl = context.Request.Scheme + "://" + context.Request.Host + context.Request.PathBase;
-                        //    context.ProtocolMessage.RedirectUri = appBaseUrl + "/";
-                        //    context.ProtocolMessage.PostLogoutRedirectUri = appBaseUrl;
-                        //    return Task.FromResult(0);
-                        //},
+                        RedirectToIdentityProvider = (context) =>
+                        {
+                            // This ensures that the address used for sign in and sign out is picked up dynamically from the request
+                            // this allows you to deploy your app (to Azure Web Sites, for example)without having to change settings
+                            // Remember that the base URL of the address used here must be provisioned in Azure AD beforehand.
+                            string appBaseUrl = context.Request.Scheme + "://" + context.Request.Host + context.Request.PathBase;
+                            context.ProtocolMessage.RedirectUri = appBaseUrl + "/";
+                            context.ProtocolMessage.PostLogoutRedirectUri = appBaseUrl;
+                            return Task.FromResult(0);
+                        },
+                      
                         AuthenticationFailed = (context) =>
                         {
-                            context.OwinContext.Response.Redirect("/Home/Error");
+                            System.Diagnostics.Trace.TraceError(context.Exception.ToString());
+                            string redirectPath = string.Format("/Error/?errorMessage={0}", context.Exception.Message);
+                            context.OwinContext.Response.Redirect(redirectPath);
+                           // context.OwinContext.Response.Redirect("/Error/Index");
                             context.HandleResponse(); // Suppress the exception
                             return Task.FromResult(0);
                         }

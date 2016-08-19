@@ -161,6 +161,17 @@ function Install-SharePointSyncConfiguration
 
     Write-Verbose "Publishing the Sync Rules Extension DLL to the Sychronization Service extensions folder"      
     Publish-SynchronizationAssembly -Path (Join-Path $Path SynchronizationRulesExtensions.cs) -Verbose
+
+    #TODO - fix this part of the function once we get an updated Set-MIISADMAConfiguration PowerShell cmdlet from MIM 
+    Write-Warning "======================================================================================="
+    Write-Warning "IMPORTANT: the Password must be set on the AD Connector before sychronization will work"
+    Write-Warning "           Use Start-SynchronizationServiceManager to open the Sync Manager tool, then"
+    Write-Warning "           ->Management Agents"
+    Write-Warning "           ->ADMA (double click)"
+    Write-Warning "           ->Connect to Active Directory Forest"
+    Write-Warning "           ->enter the password"
+    Write-Warning "           ->OK"
+    Write-Warning "======================================================================================="
 }##Closing: function Install-SharePointSyncConfiguration
 
 function Start-SharePointSync

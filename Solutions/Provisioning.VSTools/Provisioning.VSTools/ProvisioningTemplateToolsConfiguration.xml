@@ -1,16 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ProvisioningTemplateToolsConfiguration>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ProvisioningTemplateToolsConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ToolsEnabled>true</ToolsEnabled>
   <Deployment>
-    <TargetSite>http://jlldev.sharepoint.com/sites/ts</TargetSite>
-    <Authentication type="Office365">
-      <Office365>
-        <Username>tatjana.starovoitova@jlldev.com</Username>
-        <Password>...</Password>
-      </Office365>
-    </Authentication>
+    <TargetSite>https://tenantname.sharepoint.com/sites/sitename</TargetSite>
   </Deployment>
   <Templates>
-    <Template Path="PnPTemplate.xml" ResourcesFolder="PnPResources\" />
+    <Template
+      Path="pnpsitetemplate.xml"
+      ResourcesFolder="SPResources" />
   </Templates>
 </ProvisioningTemplateToolsConfiguration>

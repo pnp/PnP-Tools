@@ -90,6 +90,11 @@
 		transform: rotate(-45deg);
 	}
 
+	/* Other mobile and table styles  - not sure if this should apply for all screen sizes */
+	img {
+		max-width: 100%;
+	}
+	
 }
 
 
@@ -158,7 +163,11 @@
         display: block;
     }
 
-    #siteIcon, .ms-siteicon-img, .ms-siteicon-a, #s4-titlerow {
+    #siteIcon, .ms-siteicon-img, .ms-siteicon-a {
+        max-height: 75px;
+    }
+
+	#s4-titlerow {
         height: 75px;
     }
 

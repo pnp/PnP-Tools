@@ -42,7 +42,7 @@ namespace TIP.Dashboard.Controllers
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
-
+            var _headers = HttpContext.Request.Headers;
             return View();
         }
 

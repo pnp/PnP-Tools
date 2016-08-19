@@ -1,0 +1,24 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "hostingPlanName": {
+      "value": "hostingplanname"
+    },
+    "webSiteName": {
+      "value": "websitename"
+    },
+    "addClientId": {
+      "value": "your client id"
+    },
+    "aadClientSecret": {
+      "value": "your secret"
+    },
+    "aadTenantName": {
+      "value": "yourdomain.onmicrosoft.com"
+    },
+    "sqlserverAdminLogin": { "value": "dashboard" },
+    "sqlserverAdminLoginPassword": { "value": "p@ssw0rd1" },
+    "dashboarddbName": {"value": "dashboard"}
+  }
+}

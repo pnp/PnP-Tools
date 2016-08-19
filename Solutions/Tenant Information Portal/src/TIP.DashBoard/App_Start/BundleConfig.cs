@@ -68,9 +68,9 @@ namespace TIP.Dashboard
             bundles.Add(new ScriptBundle("~/bundles/appCommon").Include(
                     "~/Scripts/app/common/logger/logger.module.js",
                     "~/Scripts/app/common/logger/logger.js",
-                    "~/Scripts/app/common/exception/exception.module.js",
-                    "~/Scripts/app/common/exception/exception-handler.provider.js",
+                    "~/Scripts/app/common/exception/exception.module.js",                    
                     "~/Scripts/app/common/exception/exception.js",
+                    "~/Scripts/app/common/exception/exception-handler.provider.js",
                     "~/Scripts/app/common/spinners/spin.min.js",
                     "~/Scripts/app/common/spinners/angular-spinner.js",
                     "~/Scripts/app/common/excelExport/FileSaver.js",

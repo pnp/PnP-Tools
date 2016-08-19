@@ -209,6 +209,7 @@
     <Compile Include="Controllers\Api\MeController.cs" />
     <Compile Include="Controllers\Api\ServicePrincipalController.cs" />
     <Compile Include="Controllers\Api\TenantController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\UserProfileController.cs" />
@@ -1220,7 +1221,6 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
@@ -1242,6 +1242,8 @@
     <Content Include="Views\Reports\ExpiredApplications90.cshtml" />
     <Content Include="Scripts\plugins\angular\version.json" />
     <Content Include="Scripts\version.json" />
+    <Content Include="Views\Error\Index.cshtml" />
+    <Content Include="Views\Shared\_LayoutSideBar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1258,6 +1260,10 @@
     <ProjectReference Include="..\TIP.Common\TIP.Common.csproj">
       <Project>{090a2beb-c9f4-48d3-af63-7e436be03faa}</Project>
       <Name>TIP.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tip.MVC.Middleware\Tip.Mvc.Middleware.csproj">
+      <Project>{bf957296-1ba0-49b0-b6b9-54cc92eb9613}</Project>
+      <Name>Tip.Mvc.Middleware</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
