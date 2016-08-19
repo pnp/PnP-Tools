@@ -1235,6 +1235,7 @@ namespace SharePoint.SandBoxTool.Framework.TimerJobs
             }
             else
             {
+#if !ONPREMISES
                 if (AuthenticationType == AuthenticationType.Office365)
                 {
                     return GetAuthenticationManager(site).GetSharePointOnlineAuthenticatedContextTenant(site, username, password);
@@ -1243,6 +1244,16 @@ namespace SharePoint.SandBoxTool.Framework.TimerJobs
                 {
                     return GetAuthenticationManager(site).GetAppOnlyAuthenticatedContext(site, this.realm, this.clientId, this.clientSecret);
                 }
+#else
+                if (AuthenticationType == AuthenticationType.NetworkCredentials)
+                {
+                    return GetAuthenticationManager(site).GetNetworkCredentialAuthenticatedContext(site, username, password, domain);
+                }
+                else if (AuthenticationType == AuthenticationType.AppOnly)
+                {
+                    return GetAuthenticationManager(site).GetAppOnlyAuthenticatedContext(site, this.realm, this.clientId, this.clientSecret);
+                }
+#endif
             }
 
             return null;
@@ -1275,11 +1286,12 @@ namespace SharePoint.SandBoxTool.Framework.TimerJobs
                 {
                     ccEnumerate = GetAuthenticationManager(site).GetSharePointOnlineAuthenticatedContextTenant(GetTenantAdminSite(site), EnumerationUser, EnumerationPassword);
                 }
-#else
-                    ccEnumerate = GetAuthenticationManager(site).GetSharePointOnlineAuthenticatedContextTenant(GetTenantAdminSite(site), EnumerationUser, EnumerationPassword);
-#endif
                 Tenant tenant = new Tenant(ccEnumerate);
                 SiteEnumeration.Instance.ResolveSite(tenant, site, resolvedSites);
+#else
+                ccEnumerate = GetAuthenticationManager(site).GetNetworkCredentialAuthenticatedContext(GetTopLevelSite(site.Replace("*", "")), EnumerationUser, EnumerationPassword, EnumerationDomain);
+                SiteEnumeration.Instance.ResolveSite(ccEnumerate, site, resolvedSites);
+#endif
             }
         }
 
