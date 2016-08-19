@@ -31,7 +31,7 @@ The main purpose of this tool is to give you a detailed view on the sandbox solu
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [Sandbox tool for SharePoint Online](https://github.com/OfficeDev/PnP-Tools/blob/master/Solutions/SharePoint.SandBoxTool/Releases/SandboxTool%20For%20SharePoint%20Online.zip "SandboxTool for SharePoint Online")
+ - [Sandbox tool for SharePoint Online](https://github.com/OfficeDev/PnP-Tools/blob/master/Solutions/SharePoint.SandBoxTool/Releases/SandboxTool%20For%20SharePoint%20Online.zip?raw=true "SandboxTool for SharePoint Online")
  - Sandbox tool for SharePoint on-premises (coming soon!)
 
 Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder with the tool .exe file + supporting assemblies. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
