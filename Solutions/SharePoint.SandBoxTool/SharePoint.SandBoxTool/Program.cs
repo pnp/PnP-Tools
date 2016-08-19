@@ -17,7 +17,7 @@ namespace SharePoint.SandBoxTool
             {
                 Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
             }
-
+#if !ONPREMISES
             // perform additional validation
             if (!String.IsNullOrEmpty(options.ClientID))
             {
@@ -35,6 +35,7 @@ namespace SharePoint.SandBoxTool
                     Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
                 }
             }
+#endif
             if (!String.IsNullOrEmpty(options.User))
             {
                 if (String.IsNullOrEmpty(options.Password))
@@ -57,7 +58,9 @@ namespace SharePoint.SandBoxTool
             sbScanner.UseThreading = true;
             sbScanner.Mode = options.Mode;
             sbScanner.MaximumThreads = options.Threads;
+#if !ONPREMISES
             sbScanner.TenantAdminSite = options.TenantAdminSite;
+#endif
             sbScanner.OutputFolder = DateTime.Now.Ticks.ToString();
             sbScanner.Duplicates = options.Duplicates;
             sbScanner.Verbose = options.Verbose;
@@ -66,6 +69,7 @@ namespace SharePoint.SandBoxTool
             //sbScanner.UseThreading = false;
 
             // set scan creds
+#if !ONPREMISES
             if (options.UsesAppOnly())
             {
                 sbScanner.UseAppOnlyAuthentication(options.ClientID, options.ClientSecret);                
@@ -74,7 +78,11 @@ namespace SharePoint.SandBoxTool
             {
                 sbScanner.UseOffice365Authentication(options.User, options.Password);
             }
+#else
+            sbScanner.UseNetworkCredentialsAuthentication(options.User, options.Password, options.Domain);
+#endif
 
+#if !ONPREMISES
             // set scan urls
             if (!String.IsNullOrEmpty(options.Tenant))
             {
@@ -83,11 +91,14 @@ namespace SharePoint.SandBoxTool
             }
             else
             {
+#endif
                 foreach (var url in options.Urls)
                 {
                     sbScanner.AddSite(url);
                 }
+#if !ONPREMISES
             }
+#endif
             DateTime start = DateTime.Now;
             Console.WriteLine("=====================================================");
             Console.WriteLine("Scanning is starting...{0}", start.ToString());

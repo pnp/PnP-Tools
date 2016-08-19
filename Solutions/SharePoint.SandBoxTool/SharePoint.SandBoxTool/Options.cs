@@ -23,26 +23,38 @@ namespace SharePoint.SandBoxTool
         [Option('m', "mode", HelpText = "Execution mode. Choose scan for a basic scan, scananddownload for also downloading the sandbox solutions or scanandanalyze for downloading + analyzing the SB solutions", DefaultValue = Mode.scananddownload, Required = true)]
         public Mode Mode { get; set; }
 
+#if !ONPREMISES
         [Option('t', "tenant", HelpText = "Tenant name, e.g. contoso when your sites are under https://contoso.sharepoint.com/sites. This is the recommended model for SharePoint Online MT as this way all site collections will be scanned")]
         public string Tenant { get; set; }
-
         [OptionList('r', "urls", HelpText = "List of (wildcard) urls (e.g. https://contoso.sharepoint.com/*,https://contoso-my.sharepoint.com,https://contoso-my.sharepoint.com/personal/*) that you want to get scanned. When you specify the --tenant optoin then this parameter is ignored", Separator = ',')]
+#else
+        [OptionList('r', "urls", HelpText = "List of (wildcard) urls (e.g. https://team.contoso.com/*,https://mysites.contoso.com,https://mysites.contoso.com/personal/*) that you want to get scanned", Separator = ',')]
+#endif
+
         public IList<string> Urls { get; set; }
 
+#if !ONPREMISES
         [Option('c', "clientid", HelpText ="Client ID of the app-only principal used to scan your site collections", MutuallyExclusiveSet = "A")]
         public string ClientID { get; set; }
 
         [Option('s', "clientsecret", HelpText = "Client Secret of the app-only principal used to scan your site collections", MutuallyExclusiveSet = "B")]
         public string ClientSecret { get; set; }
-
+#endif
         [Option('u', "user", HelpText = "User id used to scan/enumerate your site collections", MutuallyExclusiveSet = "A")]
         public string User { get; set; }
+
+#if ONPREMISES
+        [Option('o', "domain", HelpText = "Domain of the user used to scan/enumerate your site collections", MutuallyExclusiveSet = "C")]
+        public string Domain { get; set; }
+#endif
 
         [Option('p', "password", HelpText = "Password of the user used to scan/enumerate your site collections", MutuallyExclusiveSet = "B")]
         public string Password { get; set; }
 
+#if !ONPREMISES
         [Option('a', "tenantadminsite", HelpText = "Url to your tenant admin site (e.g. https://contoso-admin.contoso.com): only needed when your not using SPO MT")]
         public string TenantAdminSite { get; set; }
+#endif
 
         [Option('e', "seperator", HelpText = "Separator used in output CSV files", DefaultValue = ",")]
         public string Separator { get; set; }
@@ -73,6 +85,7 @@ namespace SharePoint.SandBoxTool
             help.AddPreOptionsLine("See the PnP-Tools repo for more information at:");
             help.AddPreOptionsLine("https://github.com/OfficeDev/PnP-Tools/tree/master/Solutions/SharePoint.SandBoxTool");
             help.AddPreOptionsLine("");
+#if !ONPREMISES
             help.AddPreOptionsLine("Let the tool figure out your urls (works only for SPO MT):");
             help.AddPreOptionsLine("==========================================================");
             help.AddPreOptionsLine("Using app-only:");
@@ -92,11 +105,18 @@ namespace SharePoint.SandBoxTool
             help.AddPreOptionsLine("Using credentials:");
             help.AddPreOptionsLine("sandboxtool.exe -m <mode> -r <urls> -a <tenant admin site> -u <your user id> -p <your user password>");
             help.AddPreOptionsLine("e.g. sandboxtool.exe -m scananddownload -r https://team.contoso.com/*,https://mysites.contoso.com/* -a https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd");
+#else
+            help.AddPreOptionsLine("Usage for SharePoint on-premises (2013/2016):");
+            help.AddPreOptionsLine("==========================================================");
+            help.AddPreOptionsLine("Using credentials:");
+            help.AddPreOptionsLine("sandboxtool.exe -m <mode> -r <urls> -u <your user id> -p <your user password>");
+            help.AddPreOptionsLine("e.g. sandboxtool.exe -m scananddownload -r https://team.contoso.com/*,https://mysites.contoso.com/* -u contoso\admin -p pwd");
+#endif
             help.AddOptions(this);
             return help;
         }
 
-
+#if !ONPREMISES
         internal bool UsesAppOnly()
         {
             if (!String.IsNullOrEmpty(ClientID) && !String.IsNullOrEmpty(ClientSecret))
@@ -108,7 +128,7 @@ namespace SharePoint.SandBoxTool
                 return false;
             }
         }
-
+#endif
         internal bool UsesCredentials()
         {
             if (!String.IsNullOrEmpty(User) && !String.IsNullOrEmpty(Password))
