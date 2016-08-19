@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePoint.SandBoxTool", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePoint.SolutionAnalyzer", "SharePoint.SolutionAnalyzer\SharePoint.SolutionAnalyzer.csproj", "{76EB34CD-A12A-4421-B0F2-8AE5F577A17F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePoint.SolutionAnalyzer.Test", "SharePoint.SolutionAnalyzer.Test\SharePoint.SolutionAnalyzer.Test.csproj", "{87F94D69-9384-46F5-9CE7-C6AD478B1DA6}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,18 +41,6 @@ Global
 		{76EB34CD-A12A-4421-B0F2-8AE5F577A17F}.Release15|Any CPU.Build.0 = Release|Any CPU
 		{76EB34CD-A12A-4421-B0F2-8AE5F577A17F}.Release16|Any CPU.ActiveCfg = Release|Any CPU
 		{76EB34CD-A12A-4421-B0F2-8AE5F577A17F}.Release16|Any CPU.Build.0 = Release|Any CPU
-		{87F94D69-9384-46F5-9CE7-C6AD478B1DA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{87F94D69-9384-46F5-9CE7-C6AD478B1DA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{87F94D69-9384-46F5-9CE7-C6AD478B1DA6}.Debug15|Any CPU.ActiveCfg = Debug|Any CPU
-		{87F94D69-9384-46F5-9CE7-C6AD478B1DA6}.Debug15|Any CPU.Build.0 = Debug|Any CPU
-		{87F94D69-9384-46F5-9CE7-C6AD478B1DA6}.Debug16|Any CPU.ActiveCfg = Debug|Any CPU
-		{87F94D69-9384-46F5-9CE7-C6AD478B1DA6}.Debug16|Any CPU.Build.0 = Debug|Any CPU
-		{87F94D69-9384-46F5-9CE7-C6AD478B1DA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{87F94D69-9384-46F5-9CE7-C6AD478B1DA6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{87F94D69-9384-46F5-9CE7-C6AD478B1DA6}.Release15|Any CPU.ActiveCfg = Release|Any CPU
-		{87F94D69-9384-46F5-9CE7-C6AD478B1DA6}.Release15|Any CPU.Build.0 = Release|Any CPU
-		{87F94D69-9384-46F5-9CE7-C6AD478B1DA6}.Release16|Any CPU.ActiveCfg = Release|Any CPU
-		{87F94D69-9384-46F5-9CE7-C6AD478B1DA6}.Release16|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
