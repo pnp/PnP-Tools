@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Serialization;
 
 namespace SharePoint.SandBoxTool
 {
@@ -134,7 +135,7 @@ namespace SharePoint.SandBoxTool
                     if (Mode == Mode.scananddownload || Mode == Mode.scanandanalyze)
                     {
                         // Only download the solution when there's an assembly. By default we're only downloading and scanning each unique solution just once
-                        if (hasAssembly && (!SBProcessed.ContainsKey(result.SolutionHash) || Duplicates==true))
+                        if (hasAssembly && (!SBProcessed.ContainsKey(result.SolutionHash) || Duplicates == true))
                         {
                             // Add this solution hash to the dictionary
                             SBProcessed.TryAdd(result.SolutionHash, "");
@@ -172,6 +173,7 @@ namespace SharePoint.SandBoxTool
                                     analyzer.Init(this.Verbose);
                                     var res = analyzer.ProcessFileInfo(System.IO.Path.GetFullPath(wspPath));
 
+                                    result.IsEmptyAssembly = (res.Assemblies.Count == 1 && res.Assemblies[0].ReferencedAssemblies.Count <= 1 && res.Assemblies[0].Classes.Count == 0);
                                     result.IsInfoPath = res.InfoPathSolution;
                                     result.HasWebParts = (res.WebPartsCount > 0) || (res.UserControlsCount > 0) || res.Features.Where(f => f.WebParts.Any()).Count() > 0;
                                     result.HasWebTemplate = res.Features.Where(f => f.WebTemplateDetails.Any()).Count() > 0;
@@ -179,6 +181,35 @@ namespace SharePoint.SandBoxTool
                                     result.HasEventReceivers = res.EventHandlersCount > 0 || res.Features.Where(f => f.EventReceivers.Any()).Count() > 0;
                                     result.HasListDefinition = res.ListTemplatesCount > 0 || res.Features.Where(f => f.ListTemplates.Any()).Count() > 0;
                                     result.HasWorkflowAction = res.Features.Where(f => f.WorkflowActionDetails.Any()).Count() > 0;
+
+                                    if (res.InfoPathSolution)
+                                    {
+                                        result.IsEmptyInfoPathAssembly = IsEmptyInfoPathAssembly(res);
+                                    }
+
+                                    // Dump the analysis results
+                                    var serializer = new XmlSerializer(typeof(SolutionInformation));
+                                    using (var writer = new StreamWriter(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(wspPath), (System.IO.Path.GetFileNameWithoutExtension(wspPath) + ".xml"))))
+                                    {
+                                        serializer.Serialize(writer, res);
+                                    }
+
+                                    // Create new package without assembly
+                                    if (result.IsEmptyAssembly.Value || (result.IsEmptyInfoPathAssembly.HasValue && result.IsEmptyInfoPathAssembly.Value))
+                                    {
+                                        string tempFolder = null;
+                                        tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString().Replace("-", ""));
+                                        // unpack
+                                        analyzer.UnCab(System.IO.Path.GetFullPath(wspPath), tempFolder);
+                                        // delete all assemblies
+                                        var filesToDelete = Directory.GetFiles(tempFolder, "*.*", SearchOption.AllDirectories).Where(s => s.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase));
+                                        foreach (var file in filesToDelete)
+                                        {
+                                            System.IO.File.Delete(file);
+                                        }
+                                        // repack (also deletes the temp folder)
+                                        analyzer.ReCab(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(wspPath), (System.IO.Path.GetFileNameWithoutExtension(wspPath) + "_fixed.wsp")), tempFolder);
+                                    }
                                 }
                             }
                         }
@@ -203,6 +234,43 @@ namespace SharePoint.SandBoxTool
                 this.SBScanErrors.Push(error);
                 Console.WriteLine("Error for site {1}: {0}", ex.Message, e.Url);
             }
+        }
+
+        private bool IsEmptyInfoPathAssembly(SolutionInformation solutionInfo)
+        {
+            bool isEmpty = false;
+
+            if (solutionInfo.AssemblyCount == 1)
+            {
+                var assembly = solutionInfo.Assemblies[0];
+
+                if (assembly.Classes.Count == 1)
+                {
+                    var cl = assembly.Classes[0];
+
+                    if (cl.Methods.Count == 10)
+                    {
+
+                        if (cl.Methods.Where(p => p.Name.Equals("InternalStartup")).Any() &&
+                            cl.Methods.Where(p => p.Name.Equals(".ctor")).Any() &&
+                            cl.Methods.Where(p => p.Name.Equals("get_PrimaryCookie")).Any() &&
+                            cl.Methods.Where(p => p.Name.Equals("add_Startup")).Any() &&
+                            cl.Methods.Where(p => p.Name.Equals("remove_Startup")).Any() &&
+                            cl.Methods.Where(p => p.Name.Equals("add_Shutdown")).Any() &&
+                            cl.Methods.Where(p => p.Name.Equals("remove_Shutdown")).Any() &&
+                            cl.Methods.Where(p => p.Name.Equals("OnStartup")).Any() &&
+                            cl.Methods.Where(p => p.Name.Equals("FinishInitialization")).Any() &&
+                            cl.Methods.Where(p => p.Name.Equals("OnShutdown")).Any())
+                        {
+                            if(cl.Methods.Where(p => p.Name.Equals("InternalStartup")).FirstOrDefault().CodeSize == 2)
+                            {
+                                isEmpty = true;
+                            }
+                        }
+                    }
+                }
+            }
+            return isEmpty;
         }
 
     }

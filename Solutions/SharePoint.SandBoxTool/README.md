@@ -1,7 +1,7 @@
 # SharePoint Sandbox Solution scanner #
 
 ### Summary ###
-Using this command line utility you can scan, download and analyze the sandbox solutions in your SharePoint environment. This tool uses multi-threading to improve performance, uses app-only permissions to be able to access all sites and can deal with throttling in case that would happen.
+Using this command line utility you can scan, download, analyze and if possible fix the sandbox solutions in your SharePoint environment. This tool uses multi-threading to improve performance, uses app-only permissions to be able to access all sites and can deal with throttling in case that would happen.
 
 ### Applies to ###
 -  Office 365 Multi Tenant (MT)
@@ -116,7 +116,9 @@ All done. Took 00:00:44.1836871 for 187 sites
 After the run you'll find a new sub folder (e.g. 636072073126632445) which contains the following:
  - **sandboxreport.csv**: this file contains the output of the scan. Depending on the chosen scan mode you'll see more columns in this csv file. 
  - **error.csv**: if the scan tool encountered errors then these are logged in this file.
- - **Multiple folder with a guid as name**: if you've chosen the **scanandanalyze** or **scananddownload** mode then whenever we find an sandbox solution with an assembly it will be downloaded by the tool. The downloaded file is placed in a folder per site collection (we use site id as the folder name). If a site collection contains multiple sandbox solutions with an assembly then these are all added to the same site collection folder.
+ - **Multiple folder with a guid as name**: if you've chosen the **scanandanalyze** or **scananddownload** mode then whenever we find an sandbox solution with an assembly it will be downloaded by the tool. The downloaded file is placed in a folder per site collection (we use site id as the folder name). If a site collection contains multiple sandbox solutions with an assembly then these are all added to the same site collection folder. If you've chosen the **scanandanalyze** method then next to the downloaded sandbox solution you'll also see an XML file containing information about the analyzed sandbox solution. This information is useful for planning your remediation activities. And finally, but not least, you'll also can see a sandbox solution ending on **_fixed.wsp**: if the tool detected that the sandbox solution only contained an empty assembly it will recreate the solution file without assembly. 
+
+![Analysis results folder](http://i.imgur.com/QRVwFXN.png)
 
 ## Using the tool for SharePoint 2013 or SharePoint 2016 ##
 When using this tool for SharePoint 2013 or SharePoint 2016 you'll need to use regular credentials. In on-premises SharePoint you can easily grant an given account full control on all the site collections using web application policies.
@@ -153,7 +155,9 @@ Depending on the chosen scan mode you'll see the below columns in the report:
  - **SiteID**: the ID of the site collection
 
 **Mode: scanandanalyze**: the columns from above +
+ - **IsEmptyAssembly**: Does this sandbox solution contain an empty assembly
  - **IsInfoPath**: Does this sandbox solution belong to a published InfoPath form with code behind
+ - **IsEmptyInfoPathAssembly**: Does this InfoPath sandbox solution contain an empty assembly
  - **HasWebParts**: Does the sandbox solution contain web parts
  - **HasWebTemplate**: Does the sandbox solution contain web templates
  - **HasFeatureReceivers**: Does the sandbox solution have feature receivers

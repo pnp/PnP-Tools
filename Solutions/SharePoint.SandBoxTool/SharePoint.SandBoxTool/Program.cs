@@ -12,7 +12,10 @@ namespace SharePoint.SandBoxTool
         {
             // parse command line
             var options = new Options();
-            var parser = new Parser(settings => { settings.MutuallyExclusive = true; settings.HelpWriter = Parser.Default.Settings.HelpWriter;  });
+            var parser = new Parser(settings => { settings.MutuallyExclusive = true;
+                                                  settings.HelpWriter = Parser.Default.Settings.HelpWriter;
+                                                  settings.CaseSensitive = false; });
+            
             if (!parser.ParseArguments(args, options))
             {
                 Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
@@ -129,7 +132,7 @@ namespace SharePoint.SandBoxTool
             }
             else if (options.Mode == Mode.scanandanalyze)
             {
-                outputHeaders = new string[] { "SiteURL", "SiteOwner", "WSPName", "Author", "CreatedDate", "Activated", "HasAssemblies", "SolutionHash", "SiteID", "IsInfoPath", "HasWebParts", "HasWebTemplate", "HasFeatureReceivers", "HasEventReceivers", "HasListDefinition", "HasWorkflowAction" };
+                outputHeaders = new string[] { "SiteURL", "SiteOwner", "WSPName", "Author", "CreatedDate", "Activated", "HasAssemblies", "SolutionHash", "SiteID", "IsEmptyAssembly", "IsInfoPath", "IsEmptyInfoPathAssembly", "HasWebParts", "HasWebTemplate", "HasFeatureReceivers", "HasEventReceivers", "HasListDefinition", "HasWorkflowAction" };
             }
 
             System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, outputHeaders)));
@@ -148,8 +151,10 @@ namespace SharePoint.SandBoxTool
                 else if (options.Mode == Mode.scanandanalyze)
                 {
                     System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, item.SiteURL, item.SiteOwner, item.WSPName, item.Author, item.CreatedDate, item.Activated, 
-                                                                                                                     item.HasAssemblies, item.SolutionHash, item.SiteId, 
-                                                                                                                     item.IsInfoPath.HasValue ? item.IsInfoPath.Value.ToString() : "N/A", 
+                                                                                                                     item.HasAssemblies, item.SolutionHash, item.SiteId,
+                                                                                                                     item.IsEmptyAssembly.HasValue ? item.IsEmptyAssembly.Value.ToString() : "N/A",
+                                                                                                                     item.IsInfoPath.HasValue ? item.IsInfoPath.Value.ToString() : "N/A",
+                                                                                                                     item.IsEmptyInfoPathAssembly.HasValue ? item.IsEmptyInfoPathAssembly.Value.ToString() : "N/A",
                                                                                                                      item.HasWebParts.HasValue ? item.HasWebParts.Value.ToString() : "N/A", 
                                                                                                                      item.HasWebTemplate.HasValue ? item.HasWebTemplate.Value.ToString() : "N/A", 
                                                                                                                      item.HasFeatureReceivers.HasValue ? item.HasFeatureReceivers.Value.ToString() : "N/A", 

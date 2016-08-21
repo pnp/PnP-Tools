@@ -16,7 +16,9 @@ namespace SharePoint.SandBoxTool
         public bool HasAssemblies { get; set; }
         public string SolutionHash { get; set; }
         public string SiteId { get; set; }
+        public bool? IsEmptyAssembly { get; set; }
         public bool? IsInfoPath { get; set; }
+        public bool? IsEmptyInfoPathAssembly { get; set; }
         public bool? HasWebParts { get; set; }
         public bool? HasWebTemplate { get; set; }
         public bool? HasFeatureReceivers { get; set; }

@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 using System.Resources;
 using System.Linq;
 using Microsoft.Deployment.Compression.Cab;
+using Mono.Cecil;
 
 namespace SharePoint.SolutionAnalyzer
 {
@@ -34,7 +35,6 @@ namespace SharePoint.SolutionAnalyzer
         private int _numberOfSafeControlEntries;
         private bool _verbose;
 
-
         /// <summary>
         /// Look inside an assembly
         /// </summary>
@@ -46,158 +46,162 @@ namespace SharePoint.SolutionAnalyzer
 
                 FileInfo fi = new FileInfo(Path.Combine(folder, assemblyReference.Location));
                 if (_verbose) { Console.WriteLine("Processing assembly :{0}", fi.FullName); }
-
-                Assembly a = Assembly.LoadFile(Path.Combine(folder, assemblyReference.Location));
-
                 sb.AppendFormat("{0} size {1}\r\n", assemblyReference.Location, fi.Length);
                 _numberOfAssemblies = _numberOfAssemblies + 1;
+
+                Mono.Cecil.ModuleDefinition module = Mono.Cecil.ModuleDefinition.ReadModule(Path.Combine(folder, assemblyReference.Location));
 
                 AssemblyInfo assemblyInfo = new AssemblyInfo();
                 assemblyInfo.File = fi.Name;
                 assemblyInfo.Size = (int)fi.Length;
-                int pos = a.FullName.IndexOf("Version=");
+                int pos = module.FullyQualifiedName.IndexOf("Version=");
                 if (pos > 0)
                 {
-                    assemblyInfo.Version = a.FullName.Substring(pos + 8);
+                    assemblyInfo.Version = module.FullyQualifiedName.Substring(pos + 8);
                     pos = assemblyInfo.Version.IndexOf(",");
                     assemblyInfo.Version = assemblyInfo.Version.Substring(0, pos);
                 }
                 solutionInfo.Assemblies.Add(assemblyInfo);
 
-                if (assemblyReference.SafeControls != null)
+                // Check if this is an assembly of  Microsoft SharePoint
+                if (!module.Assembly.FullName.Contains("PublicKeyToken=71e9bce111e9429c"))
                 {
-                    sb.AppendFormat("\tSafeControlEntries: {0}\r\n", assemblyReference.SafeControls.GetLength(0));
-
-                    foreach (SafeControlDefinition scd in assemblyReference.SafeControls)
+                    if (assemblyReference.SafeControls != null)
                     {
-                        if (scd.SafeSpecified)
+                        sb.AppendFormat("\tSafeControlEntries: {0}\r\n", assemblyReference.SafeControls.GetLength(0));
+
+                        foreach (SafeControlDefinition scd in assemblyReference.SafeControls)
                         {
-                            string s =
-                                String.Format(
-                                    "\t\t<SafeControl Assembly=\"{0}\" Namespace=\"{1}\" TypeName=\"{2}\" Safe=\"{3}\" />\r\n",
-                                    scd.Assembly, scd.Namespace, scd.TypeName, scd.Safe);
-                            sb.Append(s);
-                            assemblyInfo.SafeConfigEntries.Add(s);
-                            solutionInfo.SafeControlEntriesCount = solutionInfo.SafeControlEntriesCount + 1;
+                            if (scd.SafeSpecified)
+                            {
+                                string s =
+                                    String.Format(
+                                        "\t\t<SafeControl Assembly=\"{0}\" Namespace=\"{1}\" TypeName=\"{2}\" Safe=\"{3}\" />\r\n",
+                                        scd.Assembly, scd.Namespace, scd.TypeName, scd.Safe);
+                                sb.Append(s);
+                                assemblyInfo.SafeConfigEntries.Add(s);
+                                solutionInfo.SafeControlEntriesCount = solutionInfo.SafeControlEntriesCount + 1;
+                            }
+                            else
+                            {
+                                string s =
+                                    String.Format(
+                                        "\t\t<SafeControl Assembly=\"{0}\" Namespace=\"{1}\" TypeName=\"{2}\" />\r\n",
+                                        scd.Assembly, scd.Namespace, scd.TypeName);
+                                sb.Append(s);
+                                assemblyInfo.SafeConfigEntries.Add(s);
+                            }
+                            _numberOfSafeControlEntries = _numberOfSafeControlEntries + 1;
                         }
-                        else
-                        {
-                            string s =
-                                String.Format(
-                                    "\t\t<SafeControl Assembly=\"{0}\" Namespace=\"{1}\" TypeName=\"{2}\" />\r\n",
-                                    scd.Assembly, scd.Namespace, scd.TypeName);
-                            sb.Append(s);
-                            assemblyInfo.SafeConfigEntries.Add(s);
-                        }
-                        _numberOfSafeControlEntries = _numberOfSafeControlEntries + 1;
                     }
-                }
 
 
-                if (assemblyReference.ClassResources != null)
-                {
-                    _numberOfClassResources += assemblyReference.ClassResources.GetLength(0);
-                    solutionInfo.ClassResourcesCount += assemblyReference.ClassResources.GetLength(0);
-                }
+                    if (assemblyReference.ClassResources != null)
+                    {
+                        _numberOfClassResources += assemblyReference.ClassResources.GetLength(0);
+                        solutionInfo.ClassResourcesCount += assemblyReference.ClassResources.GetLength(0);
+                    }
 
+                    var modules = module.ModuleReferences;
+                    sb.AppendFormat("\tModules: {0}\r\n", modules.Count + 1);
 
-                Module[] modules = a.GetModules();
-                sb.AppendFormat("\tModules: {0}\r\n", modules.Length);
-                foreach (Module m in modules)
-                {
-                    sb.AppendFormat("\t\t{0}\r\n", m.Name);
-                    assemblyInfo.Modules.Add(m.Name);
-                }
-                AssemblyName[] refs = a.GetReferencedAssemblies();
+                    sb.AppendFormat("\t\t{0}\r\n", module.Name);
+                    assemblyInfo.Modules.Add(module.Name);
+                    foreach (var m in module.ModuleReferences)
+                    {
+                        sb.AppendFormat("\t\t{0}\r\n", m.Name);
+                        assemblyInfo.Modules.Add(m.Name);
+                    }
+                    var refs = module.AssemblyReferences;
 
-                sb.AppendFormat("\tReferenced assemblies: {0}\r\n", refs.Length);
-                foreach (AssemblyName an in refs)
-                {
-                    sb.AppendFormat("\t\t{0}\r\n", an.Name);
-                    assemblyInfo.ReferencedAssemblies.Add(an.Name);
-                }
+                    sb.AppendFormat("\tReferenced assemblies: {0}\r\n", refs.Count);
+                    foreach (var an in refs)
+                    {
+                        sb.AppendFormat("\t\t{0}\r\n", an.Name);
+                        assemblyInfo.ReferencedAssemblies.Add(an.Name);
+                    }
 
+                    var types = module.Types;
+                    sb.AppendFormat("\tTypes: {0}\r\n", types.Count);
+                    foreach (var t in types)
+                    {
+                        try
+                        {
+                            // Skip the default module node
+                            if (t.FullName.Equals("<Module>", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                continue;
+                            }
 
-                // commented out for now
-                //Type[] types = a.GetTypes();
-                //sb.AppendFormat("\tTypes: {0}\r\n", types.Length);
-                //foreach (Type t in types)
-                //{
-                //    try
-                //    {
-                //        Class c = new Class();
-                //        c.Name = t.FullName;
-                //        if (t.BaseType != null)
-                //        {
-                //            c.InheritsFrom = t.BaseType.FullName;
-                //        }
+                            Class c = new Class();
+                            c.Name = t.FullName;
+                            if (t.BaseType != null)
+                            {
+                                c.InheritsFrom = t.BaseType.FullName;
+                            }
 
-                //        switch (c.InheritsFrom)
-                //        {
-                //            case "Microsoft.SharePoint.Administration.SPJobDefinition":
-                //                {
-                //                    solutionInfo.TimerJobs.Add(c.Name);
-                //                    break;
-                //                }
-                //            case "Microsoft.SharePoint.SPItemEventReceiver":
-                //                {
-                //                    solutionInfo.EventHandlers.Add(c.Name);
-                //                    break;
-                //                }
-                //            case "System.Web.UI.UserControl":
-                //                {
-                //                    solutionInfo.UserControls.Add(c.Name);
-                //                    break;
-                //                }
-                //        }
+                            switch (c.InheritsFrom)
+                            {
+                                case "Microsoft.SharePoint.Administration.SPJobDefinition":
+                                    {
+                                        solutionInfo.TimerJobs.Add(c.Name);
+                                        break;
+                                    }
+                                case "Microsoft.SharePoint.SPItemEventReceiver":
+                                    {
+                                        solutionInfo.EventHandlers.Add(c.Name);
+                                        break;
+                                    }
+                                case "System.Web.UI.UserControl":
+                                    {
+                                        solutionInfo.UserControls.Add(c.Name);
+                                        break;
+                                    }
+                            }
 
-                //        sb.AppendFormat("\t\t{0}\r\n", t.FullName);
+                            sb.AppendFormat("\t\t{0}\r\n", t.FullName);
 
-                //        MethodInfo[] methods =
-                //            t.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
-                //                         BindingFlags.DeclaredOnly);
-                //        sb.AppendFormat("\t\t Methods:{0}\r\n", methods.Length);
-                //        c.NrOfMethods = methods.Length;
-                //        if (_verbose)
-                //        {
-                //            foreach (MethodInfo m in methods)
-                //            {
-                //                c.Methods.Add(m.Name);
-                //                sb.AppendFormat("\t\t\t{0}\r\n", m.Name);
-                //            }
-                //        }
+                            var methods = t.Methods;
+                            sb.AppendFormat("\t\t Methods:{0}\r\n", methods.Count);
+                            c.NrOfMethods = methods.Count;
+                            if (_verbose)
+                            {
+                                foreach (var m in methods)
+                                {
+                                    c.Methods.Add(new MethodInformation() { Name = m.Name, CodeSize = m.Body.CodeSize });
+                                    sb.AppendFormat("\t\t\t{0}\r\n", m.Name);
+                                }
+                            }
 
-                //        PropertyInfo[] props =
-                //            t.GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
-                //                            BindingFlags.DeclaredOnly);
+                            var props = t.Properties;
 
-                //        sb.AppendFormat("\t\t Properties:{0}\r\n", props.Length);
-                //        c.NrOfProperties = props.Length;
-                //        if (_verbose)
-                //        {
-                //            foreach (PropertyInfo p in props)
-                //            {
-                //                sb.AppendFormat("\t\t\t{0}\r\n", p.Name);
-                //                c.Properties.Add(p.Name);
-                //            }
-                //        }
+                            sb.AppendFormat("\t\t Properties:{0}\r\n", props.Count);
+                            c.NrOfProperties = props.Count;
+                            if (_verbose)
+                            {
+                                foreach (var p in props)
+                                {
+                                    sb.AppendFormat("\t\t\t{0}\r\n", p.Name);
+                                    c.Properties.Add(p.Name);
+                                }
+                            }
 
-                //        assemblyInfo.Classes.Add(c);
+                            assemblyInfo.Classes.Add(c);
 
-                //    }
-                //    catch { }
+                        }
+                        catch { }
 
-                //}
+                    }
 
-                string[] resources = a.GetManifestResourceNames();
-                sb.AppendFormat("\tResources:{0}\r\n", resources.Length);
+                    var resources = module.Resources;
+                    sb.AppendFormat("\tResources:{0}\r\n", resources.Count);
 
-                assemblyInfo.NrOfResources = resources.Length;
-                foreach (string resource in resources)
-                {
-                    Stream s = a.GetManifestResourceStream(resource);
-                    sb.AppendFormat("\t\t\t{0} size {1}\r\n", resource, s.Length);
-                    assemblyInfo.Resources.Add(resource);
+                    assemblyInfo.NrOfResources = resources.Count;
+                    foreach (var resource in resources)
+                    {
+                        sb.AppendFormat("\t\t\t{0}", resource.Name);
+                        assemblyInfo.Resources.Add(resource.Name);
+                    }
                 }
             }
             catch (Exception ex)
@@ -1932,7 +1936,6 @@ namespace SharePoint.SolutionAnalyzer
             {
                 try
                 {
-                    //Note that loaded assemblies are not deleted
                     Directory.Delete(folderWeExtractedTo, true);
                 }
                 catch { }
@@ -1976,19 +1979,19 @@ namespace SharePoint.SolutionAnalyzer
         /// <summary>
         /// Unpack a cab file
         /// </summary>
-        private void UnCab(string xsnFile, string tempFolderToUse)
+        public void UnCab(string cabFile, string tempFolderToUse)
         {
             EnsureDirectoryExists(tempFolderToUse);
-            CabInfo cabToUnpack = new CabInfo(xsnFile);
+            CabInfo cabToUnpack = new CabInfo(cabFile);
             cabToUnpack.Unpack(tempFolderToUse);
         }
 
         /// <summary>
         /// Repack the cab file
         /// </summary>
-        private void ReCab(string xsnFile, string unCabFolder)
+        public void ReCab(string cabFile, string unCabFolder)
         {
-            CabInfo cabToPack = new CabInfo(xsnFile);
+            CabInfo cabToPack = new CabInfo(cabFile);
             cabToPack.Pack(unCabFolder, true, Microsoft.Deployment.Compression.CompressionLevel.Min, null);
 
             try

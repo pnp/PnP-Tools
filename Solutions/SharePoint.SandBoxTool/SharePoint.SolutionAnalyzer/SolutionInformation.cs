@@ -1480,6 +1480,45 @@ namespace SharePoint.SolutionAnalyzer
     [Serializable()]
     [DebuggerStepThrough()]
     [DesignerCategory("code")]
+    public partial class MethodInformation
+    {
+        private string name;
+
+        private int codeSize;
+
+        [XmlAttribute(Form = XmlSchemaForm.Unqualified)]
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+            set
+            {
+                this.name = value;
+            }
+        }
+
+        [XmlIgnore]
+        public int CodeSize
+        {
+            get
+            {
+                return this.codeSize;
+            }
+            set
+            {
+                this.codeSize = value;
+            }
+        }
+
+    }
+
+    /// <remarks/>
+    [GeneratedCode("xsd", "2.0.50727.1432")]
+    [Serializable()]
+    [DebuggerStepThrough()]
+    [DesignerCategory("code")]
     public partial class Class
     {
 
@@ -1489,7 +1528,7 @@ namespace SharePoint.SolutionAnalyzer
 
         private int nrOfMethods;
 
-        private List<string> methods;
+        private List<MethodInformation> methods;
 
         private int nrOfProperties;
 
@@ -1498,7 +1537,7 @@ namespace SharePoint.SolutionAnalyzer
         public Class()
         {
             properties = new List<string>(100);
-            methods = new List<string>(100);
+            methods = new List<MethodInformation>(100);
         }
 
         /// <remarks/>
@@ -1547,7 +1586,7 @@ namespace SharePoint.SolutionAnalyzer
         /// <remarks/>
         [XmlArray("Methods", Form = XmlSchemaForm.Unqualified)]
         [XmlArrayItem("Method", Form = XmlSchemaForm.Unqualified)]
-        public List<string> Methods
+        public List<MethodInformation> Methods
         {
             get
             {
