@@ -195,7 +195,7 @@ namespace SharePoint.SandBoxTool
                                     }
 
                                     // Create new package without assembly
-                                    if (result.IsEmptyAssembly.Value || (result.IsEmptyInfoPathAssembly.HasValue && result.IsEmptyInfoPathAssembly.Value))
+                                    if (result.IsEmptyAssembly.Value)
                                     {
                                         string tempFolder = null;
                                         tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString().Replace("-", ""));

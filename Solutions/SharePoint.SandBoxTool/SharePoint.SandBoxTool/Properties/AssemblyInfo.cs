@@ -4,11 +4,20 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SharePoint.SandBoxTool")]
+
+#if !ONPREMISES
+[assembly: AssemblyTitle("SharePoint PnP Sandbox Tool for SharePoint Online")]
+[assembly: AssemblyProduct("SharePoint PnP Sandbox Tool for SharePoint Online")]
+#elif SP2013
+[assembly: AssemblyTitle("SharePoint PnP Sandbox Tool for SharePoint 2013")]
+[assembly: AssemblyProduct("SharePoint PnP Sandbox Tool for SharePoint 2013")]
+#else
+[assembly: AssemblyTitle("SharePoint PnP Sandbox Tool for SharePoint 2016")]
+[assembly: AssemblyProduct("SharePoint PnP Sandbox Tool for SharePoint 2016")]
+#endif
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SharePoint PnP")]
-[assembly: AssemblyProduct("SharePoint.SandBoxTool")]
 [assembly: AssemblyCopyright("Copyright © 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
