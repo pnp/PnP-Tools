@@ -1,7 +1,7 @@
 # SharePoint Sandbox Solution scanner #
 
 ### Summary ###
-Using this command line utility you can scan, download, analyze and if possible fix the sandbox solutions in your SharePoint environment. This tool uses multi-threading to improve performance, uses app-only permissions to be able to access all sites and can deal with throttling in case that would happen.
+Using this command line utility you can scan, download, analyze and if possible fix the sandbox solutions in your SharePoint environment. This tool uses multi-threading to improve performance, uses app-only permissions to be able to access all sites and can deal with throttling in case that would happen. If you like watching a short video then check out [this session on the PnP YouTube channel](https://www.youtube.com/watch?v=pK4p2mGYXpU).
 
 ### Applies to ###
 -  Office 365 Multi Tenant (MT)
