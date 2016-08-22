@@ -63,7 +63,7 @@ PnPResponsiveApp.init = function () {
                 var currentScriptBaseUrl = currentScriptUrl.substring(0, currentScriptUrl.lastIndexOf("/") + 1);
 
                 addViewport();
-                loadCSS(currentScriptBaseUrl + 'pnp_responsive_ui.css');
+                loadCSS(currentScriptBaseUrl + 'SP-Responsive-UI.css');
             }
 
             PnPResponsiveApp.setUpToggling();

@@ -4,8 +4,8 @@
   <pnp:Templates ID="CONTAINER-PNP-RESPONSIVE-UI-INFRASTRUCTURE">
     <pnp:ProvisioningTemplate ID="PNP-RESPONSIVE-UI-INFRASTRUCTURE" Version="1">
       <pnp:Files>
-        <pnp:File Src="PnP-Responsive-UI.js" Folder="Style Library/SP.Responsive.UI" Overwrite="true" />
-        <pnp:File Src="pnp_responsive_ui.css" Folder="Style Library/SP.Responsive.UI" Overwrite="true" />
+        <pnp:File Src="SP-Responsive-UI.js" Folder="Style Library/SP.Responsive.UI" Overwrite="true" />
+        <pnp:File Src="SP-Responsive-UI.css" Folder="Style Library/SP.Responsive.UI" Overwrite="true" />
       </pnp:Files>
     </pnp:ProvisioningTemplate>
   </pnp:Templates>
