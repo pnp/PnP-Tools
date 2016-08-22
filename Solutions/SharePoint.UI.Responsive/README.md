@@ -61,7 +61,7 @@ script, which is included in the
 
 The *Enable-SPResponsiveUI* script accepts the following parameters:
 * **Web**: it is a mandatory parameter, which declares the URL of the Site Collection where the Responsive UI will be enabled. It has to be provided as a full URL, like for example: https://intranet.mydomain.com/sites/targetSite
-* **Credentials**: it is an optional parameter, which defines the user credentials that will be used to authenticate against both the target Site Collection and the infrastructure Site Collection, if any. Should be the credentials of a user, who is Site Collection Administrator for the target Site Collections. If you don't provide this parameter, the script will directly prompt you for credentials.
+* **Credentials**: it is an optional parameter, which defines the user credentials that will be used to authenticate against both the target Site Collection. Should be the credentials of a user, who is Site Collection Administrator for the target Site Collections. If you don't provide this parameter, the script will directly prompt you for credentials.
 
 Here you can see a couple of examples about how to invoke the *Enable-SPResponsiveUI* script:
 
@@ -120,15 +120,14 @@ If you decide to disable the Responsive UI, use the *Disable-SPOResponsiveUI* cm
 ###EXAMPLE
 ```PowerShell
 # connect to site (not needed if you just ran the enable script)...
-PS C:\> Connect-SPOnline -Web "https://intranet.mydomain.com/sites/targetSite"  
+PS C:\> Connect-SPOnline "https://intranet.mydomain.com/sites/targetSite"  
 # use the current web...
 PS C:\> Disable-SPOResponsiveUI  
 ```
 
 See the *Disable-SPOResponsiveUI* [cmdlet documentation](https://github.com/OfficeDev/PnP-PowerShell) for more information. 
 
-If you want to remove your custom CSS and JavaScript you can remove the files from the site collection or the
-infrastructural site collection (if used when installing) and then re-run the 
+If you want to remove your custom CSS and JavaScript you can remove the files from the site collection and then re-run the 
 *Enable-SPOResponsiveUI* cmdlet which will re-instate the PnP versions of the files.
 
 
