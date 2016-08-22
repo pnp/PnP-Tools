@@ -26,7 +26,7 @@ Version  | Date | Comments
 ----------
 
 # What will this tool do for you? #
-The main purpose of this tool is to give you a detailed view on the sandbox solutions in your environment. You'll not only be able to see which sites do have sandbox solutions, whether they've an assembly and are activated, but the tool also can download and analyze the solution for you giving you information about what's inside (is it an InfoPath solution, does it contain web parts, does it contain event receivers,...). This information will be helpful in finding the needed remediation guidance and it will help assessing the sandbox remediation needs. 
+The main purpose of this tool is to give you a detailed view on the sandbox solutions in your environment. You'll not only be able to see which sites do have sandbox solutions, whether they've an assembly and are activated, but the tool also can download and analyze the solution for you giving you information about what's inside (is it an InfoPath solution, does it contain web parts, does it contain event receivers,...). This information will be helpful in finding the needed transformation guidance and it will help assessing the sandbox remediation needs. If you want to learn more about how to transform sandbox solutions then please checkout the [sandbox solution transformation guidance on MSDN](https://msdn.microsoft.com/en-us/pnp_articles/sandbox-solution-transformation-guidance).
 
 # Quick start guide #
 ## Download the tool ##
@@ -35,7 +35,7 @@ You can download the tool from here:
  - [Sandbox tool for SharePoint 2016](https://github.com/OfficeDev/PnP-Tools/blob/master/Solutions/SharePoint.SandBoxTool/Releases/SandboxTool%20For%20SharePoint%202016.zip?raw=true "Sandbox tool for SharePoint 2016")
  - [Sandbox tool for SharePoint 2013](https://github.com/OfficeDev/PnP-Tools/blob/master/Solutions/SharePoint.SandBoxTool/Releases/SandboxTool%20For%20SharePoint%202013.zip?raw=true "Sandbox tool for SharePoint 2013")
 
-Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder with the tool .exe file + supporting assemblies. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
+Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder containing the tool **sandboxtool.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
 ## Using the tool for SharePoint Online ##
 Since this tool needs to be able to scan all site collections it's recommended to use an app-only principal with tenant scoped permissions for the scan. This approach will ensure the tool has access, if you use an account (e.g. your SharePoint tenant admin account) then the tool can only access the sites where this user also has access.
@@ -109,7 +109,7 @@ Scanning is done...now dump the results to a CSV file
 Outputting scan results to 636072073126632445\sandboxreport.csv
 Outputting errors to 636072073126632445\errors.csv
 =====================================================
-All done. Took 00:00:44.1836871 for 187 sites
+All done. Took 00:00:33.9736871 for 187 sites
 =====================================================
 ```
 
@@ -118,7 +118,7 @@ After the run you'll find a new sub folder (e.g. 636072073126632445) which conta
  - **error.csv**: if the scan tool encountered errors then these are logged in this file.
  - **Multiple folder with a guid as name**: if you've chosen the **scanandanalyze** or **scananddownload** mode then whenever we find an sandbox solution with an assembly it will be downloaded by the tool. The downloaded file is placed in a folder per site collection (we use site id as the folder name). If a site collection contains multiple sandbox solutions with an assembly then these are all added to the same site collection folder. If you've chosen the **scanandanalyze** method then next to the downloaded sandbox solution you'll also see an XML file containing information about the analyzed sandbox solution. This information is useful for planning your remediation activities. And finally, but not least, you'll also can see a sandbox solution ending on **_fixed.wsp**: if the tool detected that the sandbox solution only contained an empty assembly it will recreate the solution file without assembly. 
 
-![Analysis results folder](http://i.imgur.com/QRVwFXN.png)
+![Analysis results folder](http://i.imgur.com/iYtcxIM.png)
 
 ## Using the tool for SharePoint 2013 or SharePoint 2016 ##
 When using this tool for SharePoint 2013 or SharePoint 2016 you'll need to use regular credentials. In on-premises SharePoint you can easily grant an given account full control on all the site collections using web application policies.
