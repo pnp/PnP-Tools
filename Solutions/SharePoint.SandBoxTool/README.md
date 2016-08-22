@@ -124,7 +124,7 @@ After the run you'll find a new sub folder (e.g. 636072073126632445) which conta
 When using this tool for SharePoint 2013 or SharePoint 2016 you'll need to use regular credentials. In on-premises SharePoint you can easily grant an given account full control on all the site collections using web application policies.
 
 >Note:
-> - Being able to scan on-premises is important if you're currently migratint to SharePoint Online since in SharePoint Online you'll need to deal with your sandbox solutions.
+> - Being able to scan on-premises is important if you're currently migrating to SharePoint Online since in SharePoint Online you'll need to deal with your sandbox solutions.
 
 ### Scanning and analyzing your SharePoint 2013 or SharePoint 2016 environment ###
 Below option is the typical usage of the tool for most customers: you specify a mode, the sites to scan, your account, password and domain:
