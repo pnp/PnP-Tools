@@ -23,6 +23,7 @@ namespace SharePoint.SandBoxTool
         public string OutputFolder = "";
         public bool Duplicates = false;
         public bool Verbose = false;
+        public string Separator = ",";
 
         private static volatile bool firstSiteCollectionDone = false;
         private object scannedSitesLock = new object();
@@ -115,7 +116,14 @@ namespace SharePoint.SandBoxTool
                             }
                         }
 
-                        siteOwner = string.Join(";", admins.ToArray());
+                        if (this.Separator == ";")
+                        {
+                            siteOwner = string.Join(",", admins.ToArray());
+                        }
+                        else
+                        {
+                            siteOwner = string.Join(";", admins.ToArray());
+                        }
                     }
 
                     SBScanResult result = new SBScanResult()

@@ -239,7 +239,7 @@ sandboxtool -m scanandanalyze -r https://contoso.sharepoint.com/*,https://contos
 -a, --tenantadminsite  Url to your tenant admin site (e.g. https://contoso-admin.contoso.com): only needed when
                        your not using SPO MT
 
--e, --seperator        (Default: ,) Separator used in output CSV files
+-e, --separator        (Default: ,) Separator used in output CSV files
 
 -h, --threads          (Default: 10) Number of parallel threads, maximum = 100
 
@@ -268,7 +268,7 @@ sandboxtool -m scanandanalyze -r https://contoso.sharepoint.com/*,https://contos
 
 -p, --password      Password of the user used to scan/enumerate your site collections
 
--e, --seperator     (Default: ,) Separator used in output CSV files
+-e, --separator     (Default: ,) Separator used in output CSV files
 
 -h, --threads       (Default: 10) Number of parallel threads, maximum = 100
 

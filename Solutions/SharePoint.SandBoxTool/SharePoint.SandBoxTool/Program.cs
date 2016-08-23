@@ -67,6 +67,7 @@ namespace SharePoint.SandBoxTool
             sbScanner.OutputFolder = DateTime.Now.Ticks.ToString();
             sbScanner.Duplicates = options.Duplicates;
             sbScanner.Verbose = options.Verbose;
+            sbScanner.Separator = options.Separator;
 
             // temp debug
             //sbScanner.UseThreading = false;
