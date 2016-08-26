@@ -1,7 +1,7 @@
 # SharePoint Sandbox Solution scanner #
 
 ### Summary ###
-Using this command line utility you can scan, download, analyze and if possible fix the sandbox solutions in your SharePoint environment. This tool uses multi-threading to improve performance, uses app-only permissions to be able to access all sites and can deal with throttling in case that would happen.
+Using this command line utility you can scan, download, analyze and if possible fix the sandbox solutions in your SharePoint environment. This tool uses multi-threading to improve performance, uses app-only permissions to be able to access all sites and can deal with throttling in case that would happen. If you like watching a short video then check out [this session on the PnP YouTube channel](https://www.youtube.com/watch?v=pK4p2mGYXpU).
 
 ### Applies to ###
 -  Office 365 Multi Tenant (MT)
@@ -123,6 +123,9 @@ After the run you'll find a new sub folder (e.g. 636072073126632445) which conta
 ## Using the tool for SharePoint 2013 or SharePoint 2016 ##
 When using this tool for SharePoint 2013 or SharePoint 2016 you'll need to use regular credentials. In on-premises SharePoint you can easily grant an given account full control on all the site collections using web application policies.
 
+>Note:
+> - Being able to scan on-premises is important if you're currently migrating to SharePoint Online since in SharePoint Online you'll need to deal with your sandbox solutions.
+
 ### Scanning and analyzing your SharePoint 2013 or SharePoint 2016 environment ###
 Below option is the typical usage of the tool for most customers: you specify a mode, the sites to scan, your account, password and domain:
 
@@ -236,7 +239,7 @@ sandboxtool -m scanandanalyze -r https://contoso.sharepoint.com/*,https://contos
 -a, --tenantadminsite  Url to your tenant admin site (e.g. https://contoso-admin.contoso.com): only needed when
                        your not using SPO MT
 
--e, --seperator        (Default: ,) Separator used in output CSV files
+-e, --separator        (Default: ,) Separator used in output CSV files
 
 -h, --threads          (Default: 10) Number of parallel threads, maximum = 100
 
@@ -265,7 +268,7 @@ sandboxtool -m scanandanalyze -r https://contoso.sharepoint.com/*,https://contos
 
 -p, --password      Password of the user used to scan/enumerate your site collections
 
--e, --seperator     (Default: ,) Separator used in output CSV files
+-e, --separator     (Default: ,) Separator used in output CSV files
 
 -h, --threads       (Default: 10) Number of parallel threads, maximum = 100
 

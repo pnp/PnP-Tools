@@ -56,7 +56,7 @@ namespace SharePoint.SandBoxTool
         public string TenantAdminSite { get; set; }
 #endif
 
-        [Option('e', "seperator", HelpText = "Separator used in output CSV files", DefaultValue = ",")]
+        [Option('e', "separator", HelpText = "Separator used in output CSV files", DefaultValue = ",")]
         public string Separator { get; set; }
 
         [Option('h', "threads", HelpText = "Number of parallel threads, maximum = 100", DefaultValue = 10)]
