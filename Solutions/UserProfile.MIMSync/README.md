@@ -1,14 +1,13 @@
 # Readme file for UserProfile.MIMSync toolset #
 
 ### Summary ###
-This solution provides a set of powershell commandlets to set-up Microsoft Identity Manager sync engine with SharePoint and to kick off sync on-demand. Commandlets included in this tool should help two scenarios:
-1.  Customers setting up SharePoint 2016 on-prem farm from scratch can use the tool to set-up initial mapping for default user profile properties to corresponding properties in Active Directory. 
-2.  Customer upgrading from SharePoint 2010 or 2013 on-prem, where they used SharePoint's in-product sync solution for syncing data from Active Directory to user profile properties can use the tool to replicate the same mappings in a Microsoft Identity Manager based sync.
+This solution provides a set of powershell commandlets to set-up Microsoft Identity Manager sync engine with SharePoint and to kick off sync on-demand. Commandlets included in this tool should help in following scenario:
+- Customers setting up SharePoint 2016 on-prem farm from scratch can use the tool to set-up initial mapping for default user profile properties to corresponding properties in Active Directory. 
 
 Detailed step-wise documentation is provided in the repository.    
 
 ### Applies to ###
--  SharePoint 2016 on-premises - new deployments or upgrades from SharePoint 2010 or SharePoint 2013
+-  SharePoint 2016 on-premises - new deployments
 
 ### Prerequisites ###
 Documentation in the repository calls out prerequisites, such as:
