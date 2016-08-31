@@ -9,7 +9,7 @@ This solution shows how to use the PnP provisioning engine to deploy custom vers
 which are used to create the responsive site, 
 in order to make a custom responsive version of the out of the box UI of a classic Team Site (STS#0).
 
-The Responsive UI Package is described in a [blog article](https://dev.office.com/blogs/announcing-responsive-ui-package-for-sharepoint-on-premises-2013-2016),
+The Responsive UI Package is described in an Office Dev Center [blog article](https://dev.office.com/blogs/announcing-responsive-ui-package-for-sharepoint-on-premises-2013-2016),
 although this article and its associated video tutorial were written before the PowerShell cmdlet was created,
 so it uses script injection to enable the responsive UI.
 Moving forward we recommend using the PowerShell cmdlet which makes use of the PnP core library.
@@ -108,14 +108,15 @@ In order to customise the responsive UI you
 will need to modify either or both of the files SP-Responsive-UI.js and SP-Responsive-UI.css.
 The script will deploy these files after running the *Enable-SPOResponsiveUI* cmdlet.
 
-The SP-Responsive-UI.css file is a copy of the standard PnP responsive CSS file with a modified BODY tag which
-sets the background colour to yellow. This is so that you can verify that the custom template has been applied.
-You will want to remove that CSS statement when you do your own customisations.
+The SP-Responsive-UI-Custom.css file is a copy of the standard PnP responsive CSS file with a modified BODY tag which
+sets the background colour to yellow. You can use this file to replace SP-Responsive-UI.css before running the script 
+in order to to verify that the custom template has been applied.
+You will want to start with the standard SP-Responsive-UI.css when you do your own customisations.
 
 Note that SharePoint Online already has a responsive template, so if you use the default PnP responsive template,
 e.g. by using the Enable-SPOResponsiveUI cmdlet,
 you may not be able to detect any difference, even though the template has been successfully deployed. 
-Using the PowerShell script will enable the template and deploy the customised assets,
+Using the PowerShell script will enable the template and deploy the customised version of SP-Responsive-UI.css,
 and you should see the background is pale yellow after you run the script against a standard team site collection.
 
 <a name="disable"></a>
