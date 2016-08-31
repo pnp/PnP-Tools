@@ -9,6 +9,11 @@ This solution shows how to use the PnP provisioning engine to deploy custom vers
 which are used to create the responsive site, 
 in order to make a custom responsive version of the out of the box UI of a classic Team Site (STS#0).
 
+The Responsive UI Package is described in a [blog article](https://dev.office.com/blogs/announcing-responsive-ui-package-for-sharepoint-on-premises-2013-2016),
+although this article and its associated video tutorial were written before the PowerShell cmdlet was created,
+so it uses script injection to enable the responsive UI.
+Moving forward we recommend using the PowerShell cmdlet which makes use of the PnP core library.
+
 If you simply want to have an overview of this solution, you can read the
 <a href="#overview">following section</a>. 
 

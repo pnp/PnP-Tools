@@ -1,4 +1,8 @@
-﻿.mobile-only {
+﻿body {
+    background-color: #ff8; /* yellow background to show we are using custom version of SP-Responsive-UI.css */
+}
+
+.mobile-only {
     display: none;
 }
 
