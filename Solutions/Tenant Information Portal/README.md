@@ -114,3 +114,6 @@ To deploy the TIP solution to Azure Web Sites, you will create 1 web site with a
 - [Setup Low Trust for SharePoint on-premises] (https://github.com/OfficeDev/PnP-Tools/tree/master/Scripts/SharePoint.LowTrustACS.Configuration)
 - [Replace an expiring client secret in a SharePoint Add-in] (https://msdn.microsoft.com/en-us/library/office/dn726681.aspx)
 - [Authentication Scenarios for Azure AD] (https://azure.microsoft.com/en-us/documentation/articles/active-directory-authentication-scenarios/)
+
+
+<img src="https://telemetry.sharepointpnp.com/pnp-tools/solutions/Tenant-Information-Portal" /> 

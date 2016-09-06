@@ -121,3 +121,4 @@ Get-SPWebApplication | ForEach-Object {
 }
 ```
 
+<img src="https://telemetry.sharepointpnp.com/pnp-tools/scripts/SharePoint.LowTrustACS.Configuration" /> 

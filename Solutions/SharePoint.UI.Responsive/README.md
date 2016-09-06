@@ -153,3 +153,5 @@ It is interesting to notice that the deployment phase of the solution leverages 
 you can read the document <a href="https://github.com/OfficeDev/PnP-Guidance/blob/master/articles/Introducing-the-PnP-Provisioning-Engine.md">"Introducing the PnP Provisioning Engine"</a> 
 on GitHub, or you can watch the video
 <a href="https://channel9.msdn.com/blogs/OfficeDevPnP/Getting-Started-with-PnP-Provisioning-Engine">"Getting Started with PnP Provisioning Engine"</a> on Channel 9.
+
+<img src="https://telemetry.sharepointpnp.com/pnp-tools/solutions/SharePoint.UI.Responsive" /> 

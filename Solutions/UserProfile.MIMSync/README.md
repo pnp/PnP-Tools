@@ -37,4 +37,4 @@ Version  | Date | Comments
 - [Deploy a new Microsoft Identity Management (MIM) server for User Profile Sync in SharePoint 2016](https://technet.microsoft.com/en-us/library/mt637055.aspx)
 
 
-
+<img src="https://telemetry.sharepointpnp.com/pnp-tools/solutions/UserProfile.MIMSync" /> 

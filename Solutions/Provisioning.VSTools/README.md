@@ -135,3 +135,4 @@ Monitoring progress: VSTools adds it's own pane to the "Output" tool window (Vie
 - Right-click template xml file and select "Deploy with PnP Tools"
 - Wait until deployment completes. You can monitor progress in "Output window" -> "PnP deployment Tools" pane
 
+<img src="https://telemetry.sharepointpnp.com/pnp-tools/solutions/Provisioning.VSTools" /> 

@@ -278,6 +278,6 @@ sandboxtool -m scanandanalyze -r https://contoso.sharepoint.com/*,https://contos
 --help              Display this help screen.
 ```
 
-+<img src="https://telemetry.sharepointpnp.com/pnp-tools/solutions/sharepoint-sandboxtool" /> 
+<img src="https://telemetry.sharepointpnp.com/pnp-tools/solutions/sharepoint-sandboxtool" /> 
 
 
