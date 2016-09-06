@@ -77,12 +77,12 @@ namespace Provisioning.VSTools {
                 return ResourceManager.GetString("DefaultFileNamePnPTemplate", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
-        ///&lt;pnp:Provisioning xmlns:pnp=&quot;http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema&quot;
+        ///&lt;pnp:Provisioning xmlns:pnp=&quot;http://schemas.dev.office.com/PnP/2016/05/ProvisioningSchema&quot;
         ///                  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-        ///                  xsi:schemaLocation=&quot;http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema https://raw.githubusercontent.com/OfficeDev/PnP-Provisioning-Schema/master/OfficeDevPnP.ProvisioningSchema/ProvisioningSchema-2015-12.xsd&quot;&gt;
+        ///                  xsi:schemaLocation=&quot;http://schemas.dev.office.com/PnP/2016/05/ProvisioningSchema https://raw.githubusercontent.com/OfficeDev/PnP-Provisioning-Schema/master/OfficeDevPnP.ProvisioningSchema/ProvisioningSchema-2016-05.xsd&quot;&gt;
         ///  &lt;pnp:Preferences Generator=&quot;Provisioning.VSTools&quot; Author=&quot;yournamehere&quot; Version=&quot;1 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string defaultPnPTemplate {

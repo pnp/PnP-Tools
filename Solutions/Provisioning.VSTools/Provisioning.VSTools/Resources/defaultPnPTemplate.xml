@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema"
+<pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2016/05/ProvisioningSchema"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                  xsi:schemaLocation="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema https://raw.githubusercontent.com/OfficeDev/PnP-Provisioning-Schema/master/OfficeDevPnP.ProvisioningSchema/ProvisioningSchema-2015-12.xsd">
+                  xsi:schemaLocation="http://schemas.dev.office.com/PnP/2016/05/ProvisioningSchema https://raw.githubusercontent.com/OfficeDev/PnP-Provisioning-Schema/master/OfficeDevPnP.ProvisioningSchema/ProvisioningSchema-2016-05.xsd">
   <pnp:Preferences Generator="Provisioning.VSTools" Author="yournamehere" Version="1.0" />
   <pnp:Templates ID="CONTAINER-DefaultTemplate">
     <pnp:ProvisioningTemplate ID="DefaultTemplate" Version="1">
