@@ -117,8 +117,7 @@ sets the background colour to yellow. You can use this file to replace SP-Respon
 in order to to verify that the custom template has been applied.
 You will want to start with the standard SP-Responsive-UI.css when you do your own customisations.
 
->Important: Be careful, do not use the *InfrastructureSiteUrl* argument when using a customised CSS or JS file, because
-you would overwrite the tenant-wide shared responsive template, unless you really want to customise the whole tenant.
+>Important: Be careful, when you use the *InfrastructureSiteUrl* argument you cannot play with customised CSS/JS files.
 
 Note that SharePoint Online already has a responsive template, so if you use the default PnP responsive template,
 e.g. by using the Enable-SPOResponsiveUI cmdlet,
