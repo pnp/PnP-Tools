@@ -5,7 +5,8 @@ provides you the capability to enable a custom Responsive UI for a Site Collecti
 If you just want to enable the responsive UI with the default PnP responsive template you
 can simply use the PowerShell cmdlet directly.
 See the *Enable-SPOResponsiveUI* and *Disable-SPOResponsiveUI* [cmdlets documentation](https://github.com/OfficeDev/PnP-PowerShell) for more information. 
-This solution shows how to use the PnP provisioning engine to deploy custom versions of the CSS and JavaScript assets
+Altough you can use this solution to enable the default PnP responsive template, the goal of this solution is to show how 
+to use the PnP provisioning engine to deploy custom versions of the CSS and JavaScript assets
 which are used to create the responsive site, 
 in order to make a custom responsive version of the out of the box UI of a classic Team Site (STS#0).
 
@@ -43,36 +44,39 @@ find all the required files.
 
 <a name="requirements"></a>
 ## Setup software requirements
-This solution requires the OfficeDevPnP.PowerShell commands, which you can install
-from the following link (or the appropriate version if you are using SharePoint Online
- - see the <a href="https://github.com/OfficeDev/PnP-PowerShell#installation">OfficeDevPnP.PowerShell installation 
-instructions</a> for more information): 
+This solution requires the SharePointPnP.PowerShell commands, which you can install
+from one of the following link, depending on your target platform: 
+(see the <a href="https://github.com/OfficeDev/PnP-PowerShell#installation">SharePointPnP.PowerShell installation 
+instructions</a> for further details): 
 
-* <a href="http://aka.ms/officedevpnpcmdlets15">OfficeDevPnP.PowerShell v15 package</a>
+* <a href="https://github.com/OfficeDev/PnP-PowerShell/blob/master/Binaries/SharePointPnPPowerShell2013.msi">SharePointPnP.PowerShell  package for SharePoint 2013</a>
+* <a href="https://github.com/OfficeDev/PnP-PowerShell/blob/master/Binaries/SharePointPnPPowerShell2016.msi">SharePointPnP.PowerShell  package for SharePoint 2016</a>
+* <a href="https://github.com/OfficeDev/PnP-PowerShell/blob/master/Binaries/SharePointPnPPowerShellOnline.msi">SharePointPnP.PowerShell  package for SharePoint Online</a>
 
->**Note**: Because this solution targets SharePoint 2013/2016 on-premises, you should refer to
-the v15 of the OfficeDevPnP.PowerShell commands. Nevertheless, even the v16 version, which
-targets SharePoint Online, is viable to setup this solution. If you are running SharePoint 2013 environment, 
+>**Note**: Depending on your target platform (SharePoint 2013/2016 on-premises, or SharePoint Online) you should refer to
+the right build of the SharePointPnP.PowerShell commands. Nevertheless, even the SharePointPnPPowerShellOnline version, which
+targets SharePoint Online, is viable to setup this solution on-premises. If you are running SharePoint 2013 environment, 
 PowerShell CmdLets used by the automation scripts have dependency on April 2015 CU to be installed on server side. 
 Technically this is not required for the Responsive UI elements, but for the automation.
 
 
 <a name="execute"></a>
 ## Execute the *Enable-SPResponsiveUI* script
-Once you have installed the OfficeDevPnP.PowerShell commands, you can open a 
+Once you have installed the SharePointPnP.PowerShell commands, you can open a 
 PowerShell console, go to the path where you stored the files and execute the *Enable-SPResponsiveUI.ps1*
 script, which is included in the
-<a href="./Enable-SPResponsiveUI.ps1">Enable-SPResponsiveUI.ps1</a> script file of this solution.
+<a href="./Enable-SPResponsiveUI.ps1">Enable-SPResponsiveUI.ps1</a> file of this solution.
 
 The *Enable-SPResponsiveUI* script accepts the following parameters:
-* **Web**: it is a mandatory parameter, which declares the URL of the Site Collection where the Responsive UI will be enabled. It has to be provided as a full URL, like for example: https://intranet.mydomain.com/sites/targetSite
+* **TargetSiteurl**: it is a mandatory parameter, which declares the URL of the Site Collection where the Responsive UI will be enabled. It has to be provided as a full URL, like for example: https://intranet.mydomain.com/sites/targetSite or https://tenant.sharepoint.com/sites/siteCollection
+* **InfrastructureSiteUrl**: it is an optional parameter, which declares the URL of an infrastructural Site Collection, where will be uploaded/updated the JavaScript and CSS files backing the Responsive UI solution. If you don't provide a value for this parameter, the cmdlet will use the target Site Collection to host these files. It has to be provided as a full URL, like for example: https://intranet.mydomain.com/sites/infrastructureSite or https://tenant.sharepoint.com/sites/infrastructureSite
 * **Credentials**: it is an optional parameter, which defines the user credentials that will be used to authenticate against both the target Site Collection. Should be the credentials of a user, who is Site Collection Administrator for the target Site Collections. If you don't provide this parameter, the script will directly prompt you for credentials.
 
 Here you can see a couple of examples about how to invoke the *Enable-SPResponsiveUI* script:
 
 ###EXAMPLE 1
 ```PowerShell
-PS C:\> .\Enable-SPResponsiveUI.ps1 -Web "https://intranet.mydomain.com/sites/targetSite"
+PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteurl "https://intranet.mydomain.com/sites/targetSite"
 ```
 
 The example above enables the Responsive UI on the target Site Collection with URL https://intranet.mydomain.com/sites/targetSite and uses the same Site Collection for hosting the JavaScript and CSS files. 
@@ -81,18 +85,18 @@ The user's credentials are not provided, so the cmdlet will directly prompt the 
 ###EXAMPLE 2
 ```PowerShell
 PS C:\> $creds = Get-Credential
-PS C:\> .\Enable-SPResponsiveUI.ps1 -Web "https://intranet.mydomain.com/sites/targetSite" -Credentials $creds
+PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteurl "https://intranet.mydomain.com/sites/targetSite" -Credentials $creds
 ```
  
 The example above enables the Responsive UI on the target Site Collection with the user's credentials provided through the *$creds* variable.
 
-The PowerShell cmdlet *Enable-SPOResponsiveUI* takes an additional parameter -InfrastructureUrl 
-which allows you to specify where the CSS and JavaScript assets are stored to enable a single
-copy to be used across multiple site collections. We have not included this parameter in the
-script to reduce the risk of accidentally customising multiple site collections when you are working
-on a particular site collection. If you need to customise at this level we recommend that you
-run the *Enable-SPResponsiveUI* script against the infrastructure site collection, and then use the *Enable-SPOResponsiveUI* cmdlet directly in
-each site collection you wish to associate with the infrastructure site collection.
+###EXAMPLE 3
+```PowerShell
+PS C:\> $creds = Get-Credential
+PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteUrl "https://intranet.mydomain.com/sites/targetSite" -InfrastructureSiteUrl "https://intranet.mydomain.com/sites/infrastructureSite" -Credentials $creds
+```
+ 
+The example above enables the Responsive UI on the target Site Collection with URL https://intranet.mydomain.com/sites/targetSite and uses the Site Collection with URL https://intranet.mydomain.com/sites/infrastructureSite for hosting the JavaScript and CSS files. The user's credentials are  provided through the *$creds* variable.
 
 >**Important**: The Responsive UI can be experienced from a mobile device (tablet or smartphone)
 only by disabling the "Mobile Browser View" native feature of SharePoint.
@@ -112,6 +116,9 @@ The SP-Responsive-UI-Custom.css file is a copy of the standard PnP responsive CS
 sets the background colour to yellow. You can use this file to replace SP-Responsive-UI.css before running the script 
 in order to to verify that the custom template has been applied.
 You will want to start with the standard SP-Responsive-UI.css when you do your own customisations.
+
+>Important: Be careful, do not use the *InfrastructureSiteUrl* argument when using a customised CSS or JS file, because
+you would overwrite the tenant-wide shared responsive template, unless you really want to customise the whole tenant.
 
 Note that SharePoint Online already has a responsive template, so if you use the default PnP responsive template,
 e.g. by using the Enable-SPOResponsiveUI cmdlet,
@@ -141,7 +148,7 @@ If you want to remove your custom CSS and JavaScript you can remove the files fr
 # Solution Overview #
 The solution leverages the PnP PowerShell *Enable-SPOResponsiveUI* cmdlet to enable
 JavaScript embedding and CSS overriding to convert the out of 
-the box UI of any SharePoint 2013/2016 Team Site (STS#0) into a Responsive UI.
+the box UI of any SharePoint 2013/2016/Online Team Site (STS#0) into a Responsive UI.
 The PnP default Responsive UI supports three rendering models:
 * **Desktop**: screen width above 768px
 * **Tablet**: screen width between 481px and 768px
@@ -173,7 +180,7 @@ a Pull Request, or by submitting an Issue.
 When you enable the Responsive UI the solution embeds a custom JavaScript file 
 (<a href="./SP-Responsive-UI.js">SP-Responsive-UI.js</a>), which takes care of
 loading jQuery, and embedding a custom CSS file (<a href="./SP-Responsive-UI.css">SP-Responsive-UI.css</a>) that overrides 
-most of the native CSS styles of SharePoint 2013/2016, 
+most of the native CSS styles of SharePoint 2013/2016/Online, 
 in order to make it responsive. 
 Moreover, the embedded JS file also handles some inner logic, for example to replace TABLE/TR/TD with DIV elements in the Site Settings page, 
 or to replace the out of the box Global navigation bar and Current navigation bar with the common and well-known Bootstrap expansible menu. 
@@ -181,8 +188,7 @@ Overall the solution plays fairly with the content
 of the pages, mainly overriding native CSS styles and using JavaScript and DOM (Document Object Model) rebuilding only when it is really needed.
 
 The script runs the PowerShell cmdlet which uploads the default PnP JS and CSS files into the Style Library of that
-Site Collection in a sub-folder with the name "SP.Responsive.UI". The script then uses the 
-Apply-SPOProvisioningTemplate to upload the custom JS and CSS files.
+Site Collection in a sub-folder with the name "SP.Responsive.UI". The script then uses SharePoint PnP Core Library to upload the custom JS and CSS files.
 
 If you supply a sub-site URL instead of the URL of a site collection the script and cmdlet will still work,
 but the files will be provisioned at the site (web) level,
@@ -192,3 +198,5 @@ It is interesting to notice that the deployment phase of the solution leverages 
 you can read the document <a href="https://github.com/OfficeDev/PnP-Guidance/blob/master/articles/Introducing-the-PnP-Provisioning-Engine.md">"Introducing the PnP Provisioning Engine"</a> 
 on GitHub, or you can watch the video
 <a href="https://channel9.msdn.com/blogs/OfficeDevPnP/Getting-Started-with-PnP-Provisioning-Engine">"Getting Started with PnP Provisioning Engine"</a> on Channel 9.
+
+<img src="https://telemetry.sharepointpnp.com/pnp-tools/solutions/SharePoint.UI.Responsive" />

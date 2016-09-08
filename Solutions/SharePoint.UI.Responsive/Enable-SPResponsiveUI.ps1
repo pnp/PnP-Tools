@@ -1,20 +1,24 @@
 ﻿<#
 .SYNOPSIS
-Enables the Responsive UI on a target SharePoint 2013, SharePoint 2016 on-premises or SharePoint Online site collection.
+Enables the Responsive UI on a target SharePoint 2013 or SharePoint 2016 on-premises site collection.
 
 .EXAMPLE
-PS C:\> .\Enable-SPResponsiveUI.ps1 -Web "https://intranet.mydomain.com/sites/targetSite"
+PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteUrl "https://intranet.mydomain.com/sites/targetSite"
 
 .EXAMPLE
 PS C:\> $creds = Get-Credential
-PS C:\> .\Enable-SPResponsiveUI.ps1 -Web "https://intranet.mydomain.com/sites/targetSite" -Credentials $creds
+PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteUrl "https://intranet.mydomain.com/sites/targetSite" -InfrastructureSiteUrl "https://intranet.mydomain.com/sites/infrastructureSite" -Credentials $creds
 #>
 [CmdletBinding()]
 param
 (
     [Parameter(Mandatory = $true, HelpMessage="Enter the URL of the target site collection, e.g. 'https://intranet.mydomain.com/sites/targetSite'")]
     [String]
-    $Web,
+    $TargetSiteUrl,
+
+    [Parameter(Mandatory = $false, HelpMessage="Enter the URL of the infrastructural site collection, if any. It is an optional parameter. Values are like: 'https://intranet.mydomain.com/sites/infrastructureSite'")]
+    [String]
+    $InfrastructureSiteUrl,
 
     [Parameter(Mandatory = $false, HelpMessage="Optional administration credentials")]
     [PSCredential]
@@ -33,12 +37,24 @@ Write-Host
 
 try
 {
-    Write-Host -ForegroundColor Yellow "Connecting to target site URL: $Web"
-    Connect-SPOnline $Web -Credentials $Credentials
+    Write-Host -ForegroundColor Yellow "Connecting to target site URL: $TargetSiteUrl"
+    Connect-SPOnline $TargetSiteUrl -Credentials $Credentials
     Write-Host -ForegroundColor Yellow "Enabling responsive UI on target site"
-    Enable-SPOResponsiveUI 
-    Write-Host -ForegroundColor Yellow "Uploading custom responsive UI assets to target site"
-    Apply-SPOProvisioningTemplate -Path .\Responsive.UI.Infrastructure.xml -Handlers Files
+
+    # If the Infrastructure Site URL is provided, we use it
+    if ($InfrastructureSiteUrl -ne "") 
+    {
+        Write-Host -ForegroundColor Yellow "Infrastructure Site URL: $InfrastructureSiteUrl"
+        Enable-SPOResponsiveUI -InfrastructureSiteUrl $InfrastructureSiteUrl
+    }
+    else
+    {
+        Enable-SPOResponsiveUI
+
+        Write-Host -ForegroundColor Yellow "Uploading custom responsive UI assets to target site"
+        Apply-SPOProvisioningTemplate -Path .\Responsive.UI.Infrastructure.xml -Handlers Files
+    }
+
     Write-Host -ForegroundColor Green "Responsive UI application succeeded"
 }
 catch
