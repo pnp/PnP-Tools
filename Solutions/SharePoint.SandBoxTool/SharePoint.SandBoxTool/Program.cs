@@ -56,6 +56,12 @@ namespace SharePoint.SandBoxTool
                 }
             }
 
+            // Better support for running/testing the tool when SharePoint site certificate is not trusted on the box running the scan
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) =>
+            {
+                return true;
+            };
+
             // Instantiate scan job
             SBScanner sbScanner = new SBScanner();
             sbScanner.UseThreading = true;
