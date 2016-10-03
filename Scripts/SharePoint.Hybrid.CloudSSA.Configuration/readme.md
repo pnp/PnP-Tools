@@ -1,7 +1,7 @@
 # Cloud Search Service Application Configuration #
 
 ### Summary ###
-This script is designed specifically for use with FastTrack service offerings
+This script is designed for configuring a SharePoint Server farm with a hybrid Cloud Search Service Application
 
 It requires the following variables:
 
@@ -13,7 +13,7 @@ It requires the following variables:
 
 *SearchServer2 - this is the name of the second new server for Hybrid Search services.  The presence of this server is optional if the customer does not have a highly available SharePoint farm. This server must already be added to the farm and should not host any SharePoint roles other than what was created when the server was added.
 
-FastTrack recommends that two servers be used to ensure high availability of the service application.
+The authors recommend that two servers be used to ensure high availability of the service application.
     
 
 *work in progress*
