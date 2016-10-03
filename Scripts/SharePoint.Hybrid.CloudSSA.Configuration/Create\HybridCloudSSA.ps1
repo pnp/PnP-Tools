@@ -1,6 +1,6 @@
 ﻿<#
 
-This script is designed specifically for use with FastTrack service offerings
+This script is designed specifically to deploy a hybrid cloud Search Service Application to a SharePoint Server farm
 
 It requires the following variables:
 
@@ -10,9 +10,9 @@ It requires the following variables:
 
 *SearchServer1 - this is the name of the first new server for Hybrid Search services.  This server must already be added to the farm and should not host any SharePoint roles other than what was created when the server was added
 
-*SearchServer2 - this is the name of the second new server for Hybrid Search services.  The presence of this server is optional if the customer does not have a highly available SharePoint farm
-    FastTrack recommends that two servers be used
-    This server must already be added to the farm and should not host any SharePoint roles other than what was created when the server was added
+*SearchServer2 - this is the name of the second new server for Hybrid Search services.  The presence of this server is optional if the customer does not have a highly available SharePoint farm.  This server must already be added to the farm and should not host any SharePoint roles other than what was created when the server was added
+
+The Authors recommend that two servers be used for high availability of the search service application
 
 #> 
 
