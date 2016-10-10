@@ -25,12 +25,6 @@ param
     $Credentials
 )
 
-# If the Infrastructure Site URL is not provided, we will fallback to the Target Site URL
-if ($InfrastructureSiteUrl -eq "") 
-{
-    $InfrastructureSiteUrl = $TargetSiteUrl
-}
-
 if($Credentials -eq $null)
 {
 	$Credentials = Get-Credential -Message "Enter Admin Credentials"
@@ -39,17 +33,27 @@ if($Credentials -eq $null)
 Write-Host -ForegroundColor White "--------------------------------------------------------"
 Write-Host -ForegroundColor White "|               Enabling Responsive UI                 |"
 Write-Host -ForegroundColor White "--------------------------------------------------------"
-
-Write-Host -ForegroundColor Yellow "Target Site URL: $targetSiteUrl"
-Write-Host -ForegroundColor Yellow "Infrastructure Site URL: $InfrastructureSiteUrl"
+Write-Host
 
 try
 {
-    Connect-SPOnline $InfrastructureSiteUrl -Credentials $Credentials
-    Apply-SPOProvisioningTemplate -Path .\01-Responsive.UI.Infrastructure.xml -Handlers Files
-
+    Write-Host -ForegroundColor Yellow "Connecting to target site URL: $TargetSiteUrl"
     Connect-SPOnline $TargetSiteUrl -Credentials $Credentials
-    Apply-SPOProvisioningTemplate -Path .\02-Responsive.UI.Template.xml -Handlers CustomActions,Features -Parameters @{"InfrastructureSiteUrl"=$InfrastructureSiteUrl}
+    Write-Host -ForegroundColor Yellow "Enabling responsive UI on target site"
+
+    # If the Infrastructure Site URL is provided, we use it
+    if ($InfrastructureSiteUrl -ne "") 
+    {
+        Write-Host -ForegroundColor Yellow "Infrastructure Site URL: $InfrastructureSiteUrl"
+        Enable-SPOResponsiveUI -InfrastructureSiteUrl $InfrastructureSiteUrl
+    }
+    else
+    {
+        Enable-SPOResponsiveUI
+
+        Write-Host -ForegroundColor Yellow "Uploading custom responsive UI assets to target site"
+        Apply-SPOProvisioningTemplate -Path .\Responsive.UI.Infrastructure.xml -Handlers Files
+    }
 
     Write-Host -ForegroundColor Green "Responsive UI application succeeded"
 }

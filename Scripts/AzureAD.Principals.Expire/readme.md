@@ -44,3 +44,5 @@ Get-ExpiredServicePrincipals
 
 ## Resources ##
 Replace an expiring client secret in a SharePoint Add-in](https://msdn.microsoft.com/en-us/library/office/dn726681.aspx)
+
+<img  src="https://telemetry.sharepointpnp.com/pnp-tools/scripts/AzureAD.Principals.Expire" /> 

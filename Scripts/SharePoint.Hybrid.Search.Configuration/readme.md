@@ -35,3 +35,5 @@ Version  | Date | Comments
 
 ## Hybrid Configuration Wizard ##
 Located under the *Documents* folder. Contains similar information as the mentioned blog post.
+
+<img src="https://telemetry.sharepointpnp.com/pnp-tools/scripts/SharePoint.Hybrid.Search.Configuration" /> 

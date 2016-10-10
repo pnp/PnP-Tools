@@ -56,6 +56,12 @@ namespace SharePoint.SandBoxTool
                 }
             }
 
+            // Better support for running/testing the tool when SharePoint site certificate is not trusted on the box running the scan
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) =>
+            {
+                return true;
+            };
+
             // Instantiate scan job
             SBScanner sbScanner = new SBScanner();
             sbScanner.UseThreading = true;
@@ -123,17 +129,13 @@ namespace SharePoint.SandBoxTool
 
             string[] outputHeaders = null;
 
-            if (options.Mode == Mode.scan)
+            if (options.Mode == Mode.scan || options.Mode == Mode.scananddownload)
             {
-                outputHeaders = new string[] { "SiteURL", "SiteOwner", "WSPName", "Author", "CreatedDate", "Activated", "HasAssemblies", "SolutionHash" };
-            }
-            else if (options.Mode == Mode.scananddownload)
-            {
-                outputHeaders = new string[] { "SiteURL", "SiteOwner", "WSPName", "Author", "CreatedDate", "Activated", "HasAssemblies", "SolutionHash", "SiteID" };
+                outputHeaders = new string[] { "SiteURL", "SiteOwner", "WSPName", "Author", "CreatedDate", "Activated", "HasAssemblies", "SolutionHash", "SolutionID", "SiteID" };
             }
             else if (options.Mode == Mode.scanandanalyze)
             {
-                outputHeaders = new string[] { "SiteURL", "SiteOwner", "WSPName", "Author", "CreatedDate", "Activated", "HasAssemblies", "SolutionHash", "SiteID", "IsEmptyAssembly", "IsInfoPath", "IsEmptyInfoPathAssembly", "HasWebParts", "HasWebTemplate", "HasFeatureReceivers", "HasEventReceivers", "HasListDefinition", "HasWorkflowAction" };
+                outputHeaders = new string[] { "SiteURL", "SiteOwner", "WSPName", "Author", "CreatedDate", "Activated", "HasAssemblies", "SolutionHash", "SolutionID", "SiteID", "IsEmptyAssembly", "IsInfoPath", "IsEmptyInfoPathAssembly", "HasWebParts", "HasWebTemplate", "HasFeatureReceivers", "HasEventReceivers", "HasListDefinition", "HasWorkflowAction" };
             }
 
             System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, outputHeaders)));
@@ -141,18 +143,14 @@ namespace SharePoint.SandBoxTool
             SBScanResult item;
             while (sbScanner.SBScanResults.TryPop(out item))
             {
-                if (options.Mode == Mode.scan)
+                if (options.Mode == Mode.scan || options.Mode == Mode.scananddownload)
                 {
-                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, item.SiteURL, item.SiteOwner, item.WSPName, item.Author, item.CreatedDate, item.Activated, item.HasAssemblies, item.SolutionHash)));
-                }
-                else if (options.Mode == Mode.scananddownload)
-                {
-                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, item.SiteURL, item.SiteOwner, item.WSPName, item.Author, item.CreatedDate, item.Activated, item.HasAssemblies, item.SolutionHash, item.SiteId)));
+                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, item.SiteURL, item.SiteOwner, item.WSPName, item.Author, item.CreatedDate, item.Activated, item.HasAssemblies, item.SolutionHash, item.SolutionID, item.SiteId)));
                 }
                 else if (options.Mode == Mode.scanandanalyze)
                 {
                     System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, item.SiteURL, item.SiteOwner, item.WSPName, item.Author, item.CreatedDate, item.Activated, 
-                                                                                                                     item.HasAssemblies, item.SolutionHash, item.SiteId,
+                                                                                                                     item.HasAssemblies, item.SolutionHash, item.SolutionID, item.SiteId,
                                                                                                                      item.IsEmptyAssembly.HasValue ? item.IsEmptyAssembly.Value.ToString() : "N/A",
                                                                                                                      item.IsInfoPath.HasValue ? item.IsInfoPath.Value.ToString() : "N/A",
                                                                                                                      item.IsEmptyInfoPathAssembly.HasValue ? item.IsEmptyInfoPathAssembly.Value.ToString() : "N/A",

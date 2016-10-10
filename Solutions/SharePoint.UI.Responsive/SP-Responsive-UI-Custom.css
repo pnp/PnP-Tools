@@ -1,0 +1,451 @@
+﻿body {
+    background-color: #ff8; /* yellow background to show we are using custom version of SP-Responsive-UI.css */
+}
+
+.mobile-only {
+    display: none;
+}
+
+#sideNavBox, #contentRow, #siteIcon {
+    -webkit-transition: all 400ms ease;
+    -moz-transition: all 400ms ease;
+    -ms-transition: all 400ms ease;
+    -o-transition: all 400ms ease;
+    transition: all 400ms ease;
+}
+
+#contentBox {
+	min-width: auto;
+}
+
+/* Make sure dialog windows don't break */
+.ms-dialog #contentRow {
+    margin-left: 0;
+}
+
+.ms-dialog #contentBox {
+    margin-top: 0;
+}
+
+.ms-dialog #s4-bodyContainer {
+    min-width: 0;
+    font-size: 1em;
+}
+
+/* Tablet/smartphones common styles for collapsibles */
+@media only screen and (max-width : 768px) {
+    .mobile-only {
+        display: block;
+    }
+
+    .no-mobile {
+        display: none;
+    }
+	
+	/* Mobile and Table Burger styles */
+	.burger {
+		position: relative;
+		left: 0px;
+		top: 0px;
+		padding: 0px 7px;
+		display: inline-block;
+	}
+	.burger span,
+	.burger span:before,
+	.burger span:after {
+		display: block;
+		width: 100%;
+		height: 2px;
+		background: black;
+		-ms-transition: all 0.5s;
+		-webkit-transition: all 0.5s;
+		transition: all 0.5s;
+		-webkit-backface-visibility: hidden;
+		backface-visibility: hidden;
+	}
+	.burger span {
+		position: relative;
+		margin: 0 0 0 0;
+	}
+	.burger span:before,
+	.burger span:after {
+		position: absolute;
+		content: "";
+	}
+	.burger span:before {
+		top: -8px;
+	}
+	.burger span:after {
+		top: 8px;
+	}
+	.burger.selected span:before {
+		-ms-transform: translate(0px, 8px) rotate(90deg);
+		-webkit-transform: translate(0px, 8px) rotate(90deg);
+		transform: translate(0px, 8px) rotate(90deg);
+	}
+	.burger.selected span:after {
+		-ms-transform: translate(0px, -8px) rotate(90deg);
+		-webkit-transform: translate(0px, -8px) rotate(90deg);
+		transform: translate(0px, -8px) rotate(90deg);
+	}
+	.burger.selected span {
+		-ms-transform: rotate(-45deg);
+		-webkit-transform: rotate(-45deg);
+		transform: rotate(-45deg);
+	}
+
+	/* Other mobile and table styles  - not sure if this should apply for all screen sizes */
+	img {
+		max-width: 100%;
+	}
+	
+}
+
+
+
+/* Tablets */
+@media only screen and (min-width: 481px) and (max-width : 768px) {
+
+    /* Sidebar navigation toggling */
+    #titleAreaBox {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    #navbar-toggle {
+        margin: 0;
+        min-width: 0;
+        float: right;
+        position: absolute;
+        top: 0;
+        left: 0;
+		width: 21px;
+        height: 73px;
+        padding: 5px;
+    }
+
+    #contentRow {
+        /* Start out as collapsed */
+        margin-left: -200px;
+    }
+
+    .ms-dialog #contentRow {
+        /* Make sure this is not applied to dialog windows */
+        margin-left: 0;
+    }
+
+    body.shownav #contentRow {
+        margin-left: 0;
+        margin-right: -200px;
+    }
+
+    body.shownav #siteIcon {
+        min-width: 150px;
+        text-align: right;
+    }
+
+    .ms-navedit-editSpan {
+        margin-bottom: 25px;
+        display: block;
+    }
+
+    #DeltaTopNavigation {
+        display: none;
+    }
+
+    /* Stack title area */
+    div#titleAreaBox, div#titleAreaRow {
+        display: block;
+        margin: 0;
+    }
+
+    div#titleAreaBox {
+        margin-left: 10px;
+    }
+
+    div#titleAreaRow > div {
+        display: block;
+    }
+
+    #siteIcon, .ms-siteicon-img, .ms-siteicon-a {
+        max-height: 75px;
+    }
+
+	#s4-titlerow {
+        height: 75px;
+    }
+
+    div#DeltaPlaceHolderSearchArea {
+        float: left;
+    }
+
+    div#searchInputBox {
+        float: left;
+        margin-bottom: 0;
+    }
+
+    .ms-core-listMenu-horizontalBox ul, .ms-core-listMenu-horizontalBox li, .ms-core-listMenu-horizontalBox .ms-core-listMenu-item, .ms-core-listMenu-horizontalBox > ul > li > table {
+        display: block;
+    }
+
+    .ms-breadcrumb-box {
+        height: auto;
+    }
+
+    /* Main content panel */
+    table#layoutsTable, table#layoutsTable > tbody, table#layoutsTable > tbody > tr, table#layoutsTable > tbody > tr > td {
+        display: block;
+    }
+
+    table#layoutsTable > tbody > tr > td {
+        width: auto !important;
+        padding: 0;
+    }
+
+    table.ms-listviewtable {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td.ms-cellstyle /*td[role=gridcell]*/ {
+        padding: 2px;
+        vertical-align: top;
+    }
+
+    td[role=gridcell] .ms-noWrap {
+        white-space: normal;
+    }
+
+    td.ms-cellstyle .ms-list-itemLink {
+        height: auto;
+    }
+}
+
+/* Smartphones */
+@media screen and (max-width: 480px) {
+
+    div#s4-bodyContainer {
+        width: auto !important;
+        margin-left: 10px;
+        margin-right: 10px;
+        font-size: 1.1em;
+    }
+
+    /* Stack logo, top nav and search */
+    div#titleAreaBox, div#titleAreaRow {
+        display: block;
+        margin: 0;
+    }
+
+    div#titleAreaRow > div {
+        display: block;
+        float: none;
+        clear: both;
+        margin: 0;
+    }
+
+    div#titleAreaRow .ms-core-pageTitle {
+	overflow: hidden;
+	white-space: nowrap;
+    }
+
+    #DeltaTopNavigation {
+        display: none;
+    }
+
+    div#titleAreaRow > div#siteIcon {
+        margin-bottom: 25px;
+    }
+
+    .ms-siteicon-img {
+        max-width: 250px;
+        max-height: 100px;
+    }
+
+    div#s4-titlerow, .ms-breadcrumb-box {
+        height: auto;
+    }
+
+    div.ms-mpSearchBox {
+        float: none;
+        margin: 10px 0;
+        /*left: -10px;
+        position: relative;*/
+        width: auto;
+    }
+
+    div.ms-srch-sb > input {
+        width: 80%;
+    }
+
+    div#searchInputBox, div#searchInputBox div.ms-srch-sb {
+        float: none;
+        height: 22px;
+        display: block;
+    }
+
+    div#searchInputBox div.ms-srch-sb > a {
+        float: right;
+    }
+
+    /* Title breadcrumb */
+    #pageTitle #DeltaPlaceHolderPageTitleInTitleArea > span > span:not(:last-child-of-type) {
+	font-size: .4em;
+    }
+
+    #pageTitle #DeltaPlaceHolderPageTitleInTitleArea > span > span:last-child-of-type {
+	display: block;
+    }
+
+    #pageTitle #DeltaPlaceHolderPageTitleInTitleArea > span > span > span > span {
+        height: 12px !important;
+    }
+
+    #pageTitle #DeltaPlaceHolderPageDescription {
+	display: none;
+    }
+
+    /* Breadcrumb navigation in title area */
+    .ms-core-listMenu-horizontalBox ul, .ms-core-listMenu-horizontalBox li, .ms-core-listMenu-horizontalBox .ms-core-listMenu-item, .ms-core-listMenu-horizontalBox > ul > li > table {
+        display: block;
+    }
+
+    .ms-core-listMenu-horizontalBox > .ms-core-listMenu-root > .ms-listMenu-editLink {
+        margin-left: 0;
+    }
+
+    .ms-navedit-editSpan {
+        margin-bottom: 25px;
+        display: block;
+    }
+
+    /* Sidebar navigation toggling */
+    #navbar-toggle {
+        margin: 0;
+        min-width: 0;
+		width: 33px;
+		height: 33px;
+        float: right;
+        margin-top: 1.2em;
+		z-index: 100;
+		position: relative;
+		-webkit-box-shadow: -10px -2px 10px 10px #fff;
+		box-shadow: -10px -2px 10px 10px #fff;
+    }
+	
+	#sideNavBox {
+        float: none;
+        clear: both;
+        width: auto;
+        margin-bottom: 15px;
+        margin-right: 0;
+        margin-left: 0;
+        padding-left: 20px;
+
+        /* Start out as collapsed*/
+        max-height: 0;
+        overflow: hidden;
+    }
+
+    body.shownav div#sideNavBox {
+        max-height: 850px;
+        overflow: visible;
+    }
+
+    /* Main content panel */
+    #contentRow {
+        padding-top: 0;
+    }
+
+    #contentBox {
+        margin-top: 35px;
+        margin-right: 0;
+        margin-left: 0;
+        min-width: 0;
+    }
+
+    table#layoutsTable, table#layoutsTable > tbody, table#layoutsTable > tbody > tr, table#layoutsTable > tbody > tr > td {
+        display: block;
+    }
+
+    table#layoutsTable > tbody > tr > td {
+        width: auto !important;
+        padding: 0;
+    }
+
+    table.ms-listviewtable {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td.ms-cellstyle /*td[role=gridcell]*/ {
+        padding: 2px;
+        vertical-align: top;
+    }
+
+    td[role=gridcell] .ms-noWrap {
+        white-space: normal;
+    }
+
+    td.ms-cellstyle .ms-list-itemLink {
+        height: auto;
+    }
+
+    /* Fix excessive width of document list view */
+    .ms-webpartPage-root {
+	border-spacing: 0;
+    }
+
+    /* Remove text from icon+text action buttons for document list view */
+    .ms-viewlsts .ms-vl-sectionHeaderRow .ms-splinkbutton-text {
+	display: none;
+    }
+
+    .ms-viewlsts .ms-vl-sectionHeaderRow .ms-vl-settingsmarginleft {
+	margin-left: 5px;
+    }
+
+    /* Hide detail columns in document list view */
+    .ms-listviewtable thead tr th:nth-child(n+5), .ms-listviewtable tbody tr td:nth-child(n+5) {
+	display: none;
+    }
+
+    .ms-qcb-button {
+	padding-right: 5px;
+    }
+
+    div.ms-dragDropAttract-subtle {
+        min-width: auto;
+    }
+	
+	/* Newsfeed fixes for mobile less than 450px */
+    .ms-microfeed-fullMicrofeedDiv, .ms-microfeed-microblogpart, .ms-microfeed-attachmentPreviewDiv, .ms-microfeed-feedPart, .ms-microfeed-rootText {
+        min-width: 200px;
+    }
+   .ms-microfeed-replyArea {
+        min-width: 150px !important;
+        margin-left: 20px !important;
+    }
+	.ms-secondaryCommandLink {
+        word-break: break-all;
+    }
+}
+
+/* SETTINGS */
+.pnp-settingsdiv {
+    width: 250px;
+    display: inline-block;
+    vertical-align: top;
+    /* float: left; */
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+.pnp-settingsdiv:nth-child(last):after {
+    clear: both;
+}
+
+.pnp-settingsdiv img {
+    display: none;
+}
+

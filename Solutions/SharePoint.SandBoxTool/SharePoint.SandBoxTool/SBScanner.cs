@@ -136,6 +136,7 @@ namespace SharePoint.SandBoxTool
                         Activated = status,
                         HasAssemblies = hasAssembly,
                         SolutionHash = item["SolutionHash"].ToString(),
+                        SolutionID = item["SolutionId"].ToString(),
                         SiteId = e.WebClientContext.Site.Id.ToString(),
                     };
 

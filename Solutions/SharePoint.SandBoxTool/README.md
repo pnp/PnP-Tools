@@ -144,7 +144,7 @@ The output you'll see is similar than the output shown previously in the SharePo
 # Understanding the scan output (sandboxreport.csv file) #
 Depending on the chosen scan mode you'll see the below columns in the report:
 
-**Mode: scan**: 
+**Mode: scan or scananddownload**: 
  - **SiteURL**: Url of the scanned site collection
  - **SiteOwner**: If the scanned sandbox solution contains assemblies then we list the site owners as you might want to contact these owners
  - **WSPName**: Name of the sandbox solution 
@@ -153,8 +153,7 @@ Depending on the chosen scan mode you'll see the below columns in the report:
  - **Activated**: Is this sandbox solution activated
  - **HasAssemblies**: Does this sandbox solution have assemblies
  - **SolutionHash**: The hash that uniquely describes the sandbox solution
-
-**Mode: scananddownload**: the columns from above + 
+ - **SolutionID**: The ID of the sandbox solution
  - **SiteID**: the ID of the site collection
 
 **Mode: scanandanalyze**: the columns from above +
@@ -278,4 +277,7 @@ sandboxtool -m scanandanalyze -r https://contoso.sharepoint.com/*,https://contos
 
 --help              Display this help screen.
 ```
+
+<img src="https://telemetry.sharepointpnp.com/pnp-tools/solutions/sharepoint-sandboxtool" /> 
+
 

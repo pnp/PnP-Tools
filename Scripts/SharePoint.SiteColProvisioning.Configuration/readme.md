@@ -72,4 +72,4 @@ IISReset complete on this server, remember other servers in farm as well.
 ```
 To finalize this step you'll need to perform an IISReset on all the other servers in the farm.
 
-
+<img src="https://telemetry.sharepointpnp.com/pnp-tools/scripts/SharePoint.SiteColProvisioning.Configuration" /> 
