@@ -109,8 +109,8 @@ namespace SharePoint.SandBoxTool
             help.AddPreOptionsLine("Usage for SharePoint on-premises (2013/2016):");
             help.AddPreOptionsLine("==========================================================");
             help.AddPreOptionsLine("Using credentials:");
-            help.AddPreOptionsLine("sandboxtool.exe -m <mode> -r <urls> -u <your user id> -p <your user password>");
-            help.AddPreOptionsLine("e.g. sandboxtool.exe -m scananddownload -r https://team.contoso.com/*,https://mysites.contoso.com/* -u contoso\admin -p pwd");
+            help.AddPreOptionsLine("sandboxtool.exe -m <mode> -r <urls> -u <your user id> -p <your user password> -o <your AD domain>");
+            help.AddPreOptionsLine("e.g. sandboxtool.exe -m scananddownload -r https://team.contoso.com/*,https://mysites.contoso.com/* -u admin -p pwd -o contoso");
 #endif
             help.AddOptions(this);
             return help;
