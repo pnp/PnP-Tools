@@ -1,0 +1,69 @@
+﻿@model PnPAutomationUI.Models.UserSettings
+@using PnPAutomationUI.Utilities
+
+<link rel="stylesheet" href="~/Content/fabric.min.css" />
+<link rel="stylesheet" href="~/Content/fabric.components.min.css" />
+<link rel="stylesheet" href="~/Content/Configuration.css" />
+<script src="~/Scripts/Usersettings.js?rev=raj7"></script>
+<script>
+
+</script>
+@{
+    ViewBag.Title = "User Settings";
+}
+
+<div>
+    <div class="ms-font-su ms-fontColor-themePrimary ms-fontWeight-semibold" style="text-align: center">User settings</div>
+    <br />
+    @if (Model != null)
+    {
+        <div id="content" style="width: 70%; margin: auto" class="ms-Grid">
+            <div class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg6 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">User principal name:</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg6 ms-bgColor-neutralLighterAlt ms-font-s">@Model.UserPrinciplename</div>
+            </div>
+            <div class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg6 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Member status:</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg6 ms-bgColor-neutralLighterAlt ms-font-s">@Model.Memberstatus</div>
+            </div>
+            <div class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg12 ms-bgColor-neutralLighterAlt ms-font-s">
+                    @Html.HiddenFor(m => m.SendTestResults, new { Id = "hdnSendTestResults" })
+                    @Html.CheckBoxFor(m => m.SendTestResults, new { id = "chkSendDailysummary" })&nbsp;Send me a daily test summary
+                </div>
+            </div>
+            <div id="divSendDailySummary" class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg6 ms-bgColor-neutralLighterAlt ms-font-s" style="padding-top:16px">Receive test summary on this address:</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg6 ms-bgColor-neutralLighterAlt ms-font-s">
+                    @Html.HiddenFor(m => m.TestSummaryEmail, new { Id = "hdnEmail" })
+                    @Html.TextBoxFor(c => c.TestSummaryEmail, new RouteValueDictionary(new { id = "txtEmail", @style = "width:20%", @class = "ms-TextField-field" }).AddIf(!Model.SendTestResults, "disabled", "disabled"))
+                </div>
+                <br />
+                @if (Model.isEmailverified)
+                {
+                    <div style="text-align:center">
+                        @Html.ActionLink("Update", "UpdateSettings", "Usersettings", new { id = "Update", @class = "ms-Button", onclick = "update(this);" })
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align:center">
+                        @Html.ActionLink("Subscribe", "SaveSettings", "Usersettings", new { id = "Save", @class = "ms-Button", onclick = "save(this);" })
+                    </div>
+                }
+            </div>
+           
+        </div>
+        <div id="wait" style="display:none;width: 70%; margin: auto" class="ms-Grid">
+
+            <img src="~/Images/loading.png" />
+            <div>
+
+            </div>
+        </div>
+    }
+    else
+    {
+        <span class="ms-font-s-plus">No data found</span>
+    }
+</div>

@@ -1,0 +1,20 @@
+﻿.ms-Grid-col {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border: white 1px solid;
+    border-left: 0;
+    border-top: 0;
+}
+
+.toggleLink {
+    color: blue;
+    text-decoration: underline;
+}
+
+    .toggleLink:hover {
+        cursor: pointer;
+    }
+
+.elaboration {
+    display: none;
+}

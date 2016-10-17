@@ -1,0 +1,65 @@
+﻿@model PnPAutomationUI.Models.TestSummarySet
+
+@{
+    ViewBag.Title = "AllTests";
+}
+<div id="content">&nbsp;</div>
+<div class="ms-font-xxl ms-fontColor-themePrimary ms-fontWeight-semibold" style="text-align: center;">
+    Test run details - @Model.testConfigDetails.ConfiguratioName - @Model.testConfigDetails.Testdate
+</div>
+<br />
+<table class="ms-Grid" style="margin: auto;width:90%;">
+    <tr class="ms-Grid-row">
+        @*<td class="ms-Grid-col ms-u-sm1 ms-u-lg3"><a href="#failed">Failed Tests</a></td>
+        <td class="ms-Grid-col ms-u-sm1 ms-u-lg3"><a href="#skipped">Skipped Tests</a></td>
+        <td class="ms-Grid-col ms-u-sm1 ms-u-lg3"><a href="#notfound">Notfound Tests</a> </td>
+        <td class="ms-Grid-col ms-u-sm1 ms-u-lg3"><a href="#passed">Passed Tests</a> </td>*@
+        <td class="ms-Grid-col ms-u-sm12 ms-u-lg12">
+        <a href="#failed">Failed Tests</a> |
+        <a href="#skipped">Skipped Tests</a> |
+        <a href="#notfound">Notfound Tests</a> |
+        <a href="#passed">Passed Tests</a> </td>
+    </tr>
+</table>
+<div id="failed">
+    @Html.Partial("AllTestsFailed", Model.failedtests)
+</div>
+<div id="skipped">
+    @Html.Partial("AllTestsSkipped", Model.skippedtests)
+</div>
+<div id="notfound">
+    @Html.Partial("AllTestsNotfound", Model.notfoundtests)
+</div>
+<div id="passed">
+    @Html.Partial("AllTestsPassed", Model.passedtests)
+</div>
+
+<script type="text/javascript">
+    function getTestCases(ActionMethod, Id,outcome,branch,searchTestCaseString,pageNumber,isPrevSelected,isNextSelected, divElem)
+    {
+        $.get('/Testsummary/' + ActionMethod, { ID:Id, OutCome:outcome, branch:branch,searchTestcaseString:searchTestCaseString,page: pageNumber,isPrevSelected:isPrevSelected,isNextSelected:isNextSelected }, function (data) {
+            $(divElem).html(data);
+        });
+
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        var outcome= @Html.Raw(Json.Encode(ViewBag.Outcome));
+        if(outcome==0){
+            document.getElementById('passed').scrollIntoView(true);
+        }
+        else if(outcome==1){
+            document.getElementById('skipped').scrollIntoView(true);
+        }
+        else if(outcome==2){
+            document.getElementById('failed').scrollIntoView(true);
+        }
+        else if(outcome==3){
+            document.getElementById('notfound').scrollIntoView(true);
+        }
+    })
+    function gotoTest(divID){
+        document.getElementById(divID).scrollIntoView(true);
+    }
+</script>

@@ -1,0 +1,116 @@
+﻿@model IEnumerable<PnPAutomationUI.Models.TestSummary>
+
+<link rel="stylesheet" href="~/Content/fabric.min.css" />
+<link rel="stylesheet" href="~/Content/fabric.components.min.css" />
+<link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/TestSummary.css" rel="stylesheet" type="text/css" />
+
+<link href="~/Content/jquery-ui.css" rel="stylesheet" />
+<link href="~/Content/themes/base/theme.css" rel="stylesheet" />
+<br />
+<script type="text/javascript">
+    function searchFailedTestCases(thisElem) {
+        getTestCases("AllTestsFailed",@ViewBag.Id,2,"@ViewBag.Branch",$("#txtFailedSearch").val(),1,false,false,"#failed");
+    }
+</script>
+<div style="width:90%; margin: auto; text-align: center;" class="ms-font-xxl ms-fontColor-themePrimary ms-fontWeight-semibold">
+    Failed tests
+</div>
+<table style="width:90%; margin: auto;" class="ms-Grid">
+    <thead>
+        <tr class="ms-Grid-row ms-fontColor-white ms-font-m ms-bgColor-themeDarker">
+            <td class="ms-Grid-col ms-u-sm1 ms-u-lg1 ">Result</td>
+            <td class="ms-Grid-col ms-u-sm4 ms-u-lg5">
+                Test
+                @{
+                    if (@ViewBag.FailedTotalPages > 0 || !string.IsNullOrEmpty(ViewBag.TestCaseSeacrhString))
+                    {
+                        <span>
+                            &nbsp;&nbsp;
+                            <input style="width:20px;" type="text" class="ms-TextField-field" name="txtFailedSearch" id="txtFailedSearch" value="@ViewBag.TestCaseSeacrhString" />&nbsp;
+                            <a class="ms-Button" onclick="searchFailedTestCases(this)">Search</a>
+                        </span>
+                    }
+                }
+            </td>
+            <td class="ms-Grid-col ms-u-hiddenSm ms-u-sm3 ms-u-lg2">Duration</td>
+            <td class="ms-Grid-col ms-u-sm7 ms-u-lg4" style="max-width:20px">Error</td>
+        </tr>
+    </thead>
+    @if (Model != null && Model.Any())
+    {
+        bool isAlternateRowfailed = true;
+        foreach (var item in Model)
+        {
+            <tr class="ms-Grid-row ms-font-s @(isAlternateRowfailed ? "ms-bgColor-neutralLighterAlt" : "ms-bgColor-neutralLighter")">
+                <td class="ms-Grid-col ms-u-sm1 ms-u-lg1" style="word-wrap:break-word;text-align:center">
+                    <div class="ms-Icon @Common.GetStatusIconAllTests(item.Outcome)" title="@Common.GetStatusTooltopTextAllTests(item.Outcome)"></div>
+                </td>
+                <td class="ms-Grid-col ms-u-sm4 ms-u-lg5" style="text-overflow: ellipsis;word-wrap:break-word;max-width:20px;">
+                    <a href="~/Testcase/Details/@item.Id?branch=@item.Branch">@item.TestCasename</a>
+                </td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-sm3 ms-u-lg2" style="text-overflow: ellipsis;word-wrap:break-word;">@Common.GetDuaration(item.TestDuration)</td>
+                <td class="ms-Grid-col ms-u-lg4" style="word-wrap:break-word;max-width:20px;">@item.Error</td>
+            </tr>
+            isAlternateRowfailed = !isAlternateRowfailed;
+        }
+        <tr>
+            <td colspan="5">
+                <div style="text-align:right;">
+                    <a href="#content">Go to Top</a>
+                </div>
+            </td>
+        </tr>
+        <!– Page links below -–>
+        <tr>
+            <td colspan="5">
+                <div style="float: right; display: table-row">
+                    <div style="display: table-cell;vertical-align: top; padding: 10px; white-space:nowrap;padding-top:22px">
+                        Page @(ViewBag.FailedTotalPages < ViewBag.CurrentPage ? 0 : ViewBag.CurrentPage) of @ViewBag.FailedTotalPages
+                    </div>
+                    <div style="margin: 12px 0;padding: 0; display: table-cell;">
+                        <ul class="pagination" style="display:inline-block;margin: 12px 0;padding: 0;">
+                            @if (ViewBag.FailedTotalPages > 10)
+                            {
+                                //get page numbers for 1to 4
+                                for (int i = 1; i <= 4; i++)
+                                {
+                                    <li style="display: inline-block;" class="@((i == ViewBag.CurrentPage) ? "active" : "")" onclick="getTestCases('AllTestsFailed',@ViewBag.Id,2,'@ViewBag.Branch','@ViewBag.TestCaseSeacrhString', @i,false,false, '#failed')"><a>@i </a></li>
+                                }
+                                <li style="display: inline-block;" class="@(ViewBag.PrevSelected ? "active" : "")" onclick="getTestCases('AllTestsFailed',@ViewBag.Id,2,'@ViewBag.Branch','@ViewBag.TestCaseSeacrhString', @ViewBag.PrevPage,true,false, '#failed')"><a> < </a></li>
+                                <li style="display: inline-block;" class="@(ViewBag.NextSelected ? "active" : "")" onclick="getTestCases('AllTestsFailed',@ViewBag.Id,2,'@ViewBag.Branch','@ViewBag.TestCaseSeacrhString', @ViewBag.NextPage,false,true, '#failed')"><a> > </a></li>
+                                //get Last 3 indexes
+                                for (int i = ViewBag.FailedTotalPages - 3; i <= ViewBag.FailedTotalPages; i++)
+                                {
+                                    <li style="display: inline-block;" class="@(i == ViewBag.CurrentPage ? "active" : "")" onclick="getTestCases('AllTestsFailed',@ViewBag.Id,2,'@ViewBag.Branch','@ViewBag.TestCaseSeacrhString', @i,false,false, '#failed')"><a>@i </a></li>
+                                }
+                            }
+                            else
+                            {
+                                for (int i = 1; i <= ViewBag.FailedTotalPages; i++)
+                                {
+                                    <li style="display: inline-block;" class="@(i == ViewBag.CurrentPage ? "active" : "")" onclick="getTestCases('AllTestsFailed',@ViewBag.Id,2,'@ViewBag.Branch','@ViewBag.TestCaseSeacrhString', @i,false,false,'#failed')"><a>@i </a></li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    }
+    else
+    {
+        <tr>
+            <td colspan="5" style="text-align:center;">No data found</td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                <div style="text-align:right;">
+                    <a href="#content">Go to Top</a>
+                </div>
+            </td>
+        </tr>
+    }
+</table>
+
+

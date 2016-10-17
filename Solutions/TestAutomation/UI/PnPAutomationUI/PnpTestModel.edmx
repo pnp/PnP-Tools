@@ -1,0 +1,617 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="PnPModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="FileTrackingBaselineSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Build" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="FileHash" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ChangeDate" Type="datetime" Nullable="false" />
+          <Property Name="FileContents" Type="varbinary(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FileTrackingSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TestDate" Type="datetime" Nullable="false" />
+          <Property Name="Build" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="FileHash" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="FileChanged" Type="bit" Nullable="false" />
+          <Property Name="TestSiteUrl" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="TestUser" Type="nvarchar(max)" />
+          <Property Name="TestAppId" Type="nvarchar(max)" />
+          <Property Name="TestComputerName" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="TestAuthenticationSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="AppOnly" Type="bit" Nullable="false" />
+          <Property Name="AppId" Type="nvarchar(max)" />
+          <Property Name="AppSecret" Type="nvarchar(max)" />
+          <Property Name="User" Type="nvarchar(max)" />
+          <Property Name="Domain" Type="nvarchar(max)" />
+          <Property Name="Password" Type="nvarchar(max)" />
+          <Property Name="CredentialManagerLabel" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="TestConfigurationPropertySet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Value" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="TestConfigurationId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TestConfigurationSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="VSBuildConfiguration" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Branch" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="TenantUrl" Type="nvarchar(max)" />
+          <Property Name="TestSiteUrl" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="TestAuthentication_Id" Type="int" Nullable="false" />
+          <Property Name="AnonymousAccess" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TestResultMessageSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Category" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Text" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="TestResultId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TestResultSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TestCaseName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Outcome" Type="int" Nullable="false" />
+          <Property Name="Duration" Type="time" Precision="7" Nullable="false" />
+          <Property Name="ErrorMessage" Type="nvarchar(max)" />
+          <Property Name="ErrorStackTrace" Type="nvarchar(max)" />
+          <Property Name="StartTime" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="EndTime" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="ComputerName" Type="nvarchar(max)" />
+          <Property Name="TestRunId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TestRunSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TestConfigurationId" Type="int" Nullable="false" />
+          <Property Name="TestDate" Type="datetime" Nullable="false" />
+          <Property Name="TestTime" Type="time" Precision="7" />
+          <Property Name="Build" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="TestWasAborted" Type="bit" Nullable="false" />
+          <Property Name="TestWasCancelled" Type="bit" Nullable="false" />
+          <Property Name="TestsPassed" Type="int" />
+          <Property Name="TestsSkipped" Type="int" />
+          <Property Name="TestsFailed" Type="int" />
+          <Property Name="TestsNotFound" Type="int" />
+          <Property Name="MSBuildLog" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="UsersSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UPN" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="IsAdmin" Type="bit" Nullable="false" />
+          <Property Name="IsCoreMember" Type="bit" Nullable="false" />
+          <Property Name="SendTestResults" Type="bit" Nullable="false" />
+          <Property Name="Email" Type="nvarchar(max)" />
+          <Property Name="IsEmailVerified" Type="bit" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_TestConfigurationTestAuthentication">
+          <End Role="TestAuthenticationSet" Type="Self.TestAuthenticationSet" Multiplicity="1" />
+          <End Role="TestConfigurationSet" Type="Self.TestConfigurationSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestAuthenticationSet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestConfigurationSet">
+              <PropertyRef Name="TestAuthentication_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TestConfigurationTestConfigurationProperty">
+          <End Role="TestConfigurationSet" Type="Self.TestConfigurationSet" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TestConfigurationPropertySet" Type="Self.TestConfigurationPropertySet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestConfigurationSet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestConfigurationPropertySet">
+              <PropertyRef Name="TestConfigurationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TestConfigurationTestRun">
+          <End Role="TestConfigurationSet" Type="Self.TestConfigurationSet" Multiplicity="1" />
+          <End Role="TestRunSet" Type="Self.TestRunSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestConfigurationSet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestRunSet">
+              <PropertyRef Name="TestConfigurationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TestResultTestResultMessage">
+          <End Role="TestResultSet" Type="Self.TestResultSet" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TestResultMessageSet" Type="Self.TestResultMessageSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestResultSet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestResultMessageSet">
+              <PropertyRef Name="TestResultId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TestRunTestResult">
+          <End Role="TestRunSet" Type="Self.TestRunSet" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TestResultSet" Type="Self.TestResultSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestRunSet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestResultSet">
+              <PropertyRef Name="TestRunId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PnPModelStoreContainer">
+          <EntitySet Name="FileTrackingBaselineSet" EntityType="Self.FileTrackingBaselineSet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FileTrackingSet" EntityType="Self.FileTrackingSet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TestAuthenticationSet" EntityType="Self.TestAuthenticationSet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TestConfigurationPropertySet" EntityType="Self.TestConfigurationPropertySet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TestConfigurationSet" EntityType="Self.TestConfigurationSet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TestResultMessageSet" EntityType="Self.TestResultMessageSet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TestResultSet" EntityType="Self.TestResultSet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TestRunSet" EntityType="Self.TestRunSet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UsersSet" EntityType="Self.UsersSet" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_TestConfigurationTestAuthentication" Association="Self.FK_TestConfigurationTestAuthentication">
+            <End Role="TestAuthenticationSet" EntitySet="TestAuthenticationSet" />
+            <End Role="TestConfigurationSet" EntitySet="TestConfigurationSet" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TestConfigurationTestConfigurationProperty" Association="Self.FK_TestConfigurationTestConfigurationProperty">
+            <End Role="TestConfigurationSet" EntitySet="TestConfigurationSet" />
+            <End Role="TestConfigurationPropertySet" EntitySet="TestConfigurationPropertySet" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TestConfigurationTestRun" Association="Self.FK_TestConfigurationTestRun">
+            <End Role="TestConfigurationSet" EntitySet="TestConfigurationSet" />
+            <End Role="TestRunSet" EntitySet="TestRunSet" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TestResultTestResultMessage" Association="Self.FK_TestResultTestResultMessage">
+            <End Role="TestResultSet" EntitySet="TestResultSet" />
+            <End Role="TestResultMessageSet" EntitySet="TestResultMessageSet" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TestRunTestResult" Association="Self.FK_TestRunTestResult">
+            <End Role="TestRunSet" EntitySet="TestRunSet" />
+            <End Role="TestResultSet" EntitySet="TestResultSet" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PnPModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="FileTrackingBaselineSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FileName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Build" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FileHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ChangeDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="FileContents" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FileTrackingSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TestDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Build" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FileName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FileHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FileChanged" Type="Boolean" Nullable="false" />
+          <Property Name="TestSiteUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TestUser" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TestAppId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TestComputerName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="TestAuthenticationSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="AppOnly" Type="Boolean" Nullable="false" />
+          <Property Name="AppId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AppSecret" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="User" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Domain" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CredentialManagerLabel" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="TestConfigurationSets" Relationship="Self.FK_TestConfigurationTestAuthentication" FromRole="TestAuthenticationSet" ToRole="TestConfigurationSet" />
+        </EntityType>
+        <EntityType Name="TestConfigurationPropertySet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TestConfigurationId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TestConfigurationSet" Relationship="Self.FK_TestConfigurationTestConfigurationProperty" FromRole="TestConfigurationPropertySet" ToRole="TestConfigurationSet" />
+        </EntityType>
+        <EntityType Name="TestConfigurationSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="VSBuildConfiguration" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Branch" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="TenantUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TestSiteUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TestAuthentication_Id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TestAuthenticationSet" Relationship="Self.FK_TestConfigurationTestAuthentication" FromRole="TestConfigurationSet" ToRole="TestAuthenticationSet" />
+          <NavigationProperty Name="TestConfigurationPropertySets" Relationship="Self.FK_TestConfigurationTestConfigurationProperty" FromRole="TestConfigurationSet" ToRole="TestConfigurationPropertySet" />
+          <NavigationProperty Name="TestRunSets" Relationship="Self.FK_TestConfigurationTestRun" FromRole="TestConfigurationSet" ToRole="TestRunSet" />
+          <Property Name="AnonymousAccess" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TestResultMessageSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Category" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TestResultId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TestResultSet" Relationship="Self.FK_TestResultTestResultMessage" FromRole="TestResultMessageSet" ToRole="TestResultSet" />
+        </EntityType>
+        <EntityType Name="TestResultSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TestCaseName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Outcome" Type="Int32" Nullable="false" />
+          <Property Name="Duration" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="ErrorMessage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ErrorStackTrace" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="StartTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="EndTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ComputerName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TestRunId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TestResultMessageSets" Relationship="Self.FK_TestResultTestResultMessage" FromRole="TestResultSet" ToRole="TestResultMessageSet" />
+          <NavigationProperty Name="TestRunSet" Relationship="Self.FK_TestRunTestResult" FromRole="TestResultSet" ToRole="TestRunSet" />
+        </EntityType>
+        <EntityType Name="TestRunSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TestConfigurationId" Type="Int32" Nullable="false" />
+          <Property Name="TestDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TestTime" Type="Time" Precision="7" />
+          <Property Name="Build" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="TestWasAborted" Type="Boolean" Nullable="false" />
+          <Property Name="TestWasCancelled" Type="Boolean" Nullable="false" />
+          <Property Name="TestsPassed" Type="Int32" />
+          <Property Name="TestsSkipped" Type="Int32" />
+          <Property Name="TestsFailed" Type="Int32" />
+          <Property Name="TestsNotFound" Type="Int32" />
+          <Property Name="MSBuildLog" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="TestConfigurationSet" Relationship="Self.FK_TestConfigurationTestRun" FromRole="TestRunSet" ToRole="TestConfigurationSet" />
+          <NavigationProperty Name="TestResultSets" Relationship="Self.FK_TestRunTestResult" FromRole="TestRunSet" ToRole="TestResultSet" />
+        </EntityType>
+        <Association Name="FK_TestConfigurationTestAuthentication">
+          <End Role="TestAuthenticationSet" Type="Self.TestAuthenticationSet" Multiplicity="1" />
+          <End Role="TestConfigurationSet" Type="Self.TestConfigurationSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestAuthenticationSet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestConfigurationSet">
+              <PropertyRef Name="TestAuthentication_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TestConfigurationTestConfigurationProperty">
+          <End Role="TestConfigurationSet" Type="Self.TestConfigurationSet" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TestConfigurationPropertySet" Type="Self.TestConfigurationPropertySet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestConfigurationSet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestConfigurationPropertySet">
+              <PropertyRef Name="TestConfigurationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TestConfigurationTestRun">
+          <End Role="TestConfigurationSet" Type="Self.TestConfigurationSet" Multiplicity="1" />
+          <End Role="TestRunSet" Type="Self.TestRunSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestConfigurationSet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestRunSet">
+              <PropertyRef Name="TestConfigurationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TestResultTestResultMessage">
+          <End Role="TestResultSet" Type="Self.TestResultSet" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TestResultMessageSet" Type="Self.TestResultMessageSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestResultSet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestResultMessageSet">
+              <PropertyRef Name="TestResultId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TestRunTestResult">
+          <End Role="TestRunSet" Type="Self.TestRunSet" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TestResultSet" Type="Self.TestResultSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestRunSet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestResultSet">
+              <PropertyRef Name="TestRunId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PnPTestAutomationEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="FileTrackingBaselineSets" EntityType="Self.FileTrackingBaselineSet" />
+          <EntitySet Name="FileTrackingSets" EntityType="Self.FileTrackingSet" />
+          <EntitySet Name="TestAuthenticationSets" EntityType="Self.TestAuthenticationSet" />
+          <EntitySet Name="TestConfigurationPropertySets" EntityType="Self.TestConfigurationPropertySet" />
+          <EntitySet Name="TestConfigurationSets" EntityType="Self.TestConfigurationSet" />
+          <EntitySet Name="TestResultMessageSets" EntityType="Self.TestResultMessageSet" />
+          <EntitySet Name="TestResultSets" EntityType="Self.TestResultSet" />
+          <EntitySet Name="TestRunSets" EntityType="Self.TestRunSet" />
+          <AssociationSet Name="FK_TestConfigurationTestAuthentication" Association="Self.FK_TestConfigurationTestAuthentication">
+            <End Role="TestAuthenticationSet" EntitySet="TestAuthenticationSets" />
+            <End Role="TestConfigurationSet" EntitySet="TestConfigurationSets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TestConfigurationTestConfigurationProperty" Association="Self.FK_TestConfigurationTestConfigurationProperty">
+            <End Role="TestConfigurationSet" EntitySet="TestConfigurationSets" />
+            <End Role="TestConfigurationPropertySet" EntitySet="TestConfigurationPropertySets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TestConfigurationTestRun" Association="Self.FK_TestConfigurationTestRun">
+            <End Role="TestConfigurationSet" EntitySet="TestConfigurationSets" />
+            <End Role="TestRunSet" EntitySet="TestRunSets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TestResultTestResultMessage" Association="Self.FK_TestResultTestResultMessage">
+            <End Role="TestResultSet" EntitySet="TestResultSets" />
+            <End Role="TestResultMessageSet" EntitySet="TestResultMessageSets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TestRunTestResult" Association="Self.FK_TestRunTestResult">
+            <End Role="TestRunSet" EntitySet="TestRunSets" />
+            <End Role="TestResultSet" EntitySet="TestResultSets" />
+          </AssociationSet>
+          <EntitySet Name="UsersSets" EntityType="PnPModel.UsersSet" />
+        </EntityContainer>
+        <EntityType Name="UsersSet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UPN" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsAdmin" Type="Boolean" Nullable="false" />
+          <Property Name="IsCoreMember" Type="Boolean" Nullable="false" />
+          <Property Name="SendTestResults" Type="Boolean" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsEmailVerified" Type="Boolean" Nullable="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="PnPModelStoreContainer" CdmEntityContainer="PnPTestAutomationEntities">
+          <EntitySetMapping Name="FileTrackingBaselineSets">
+            <EntityTypeMapping TypeName="PnPModel.FileTrackingBaselineSet">
+              <MappingFragment StoreEntitySet="FileTrackingBaselineSet">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="Build" ColumnName="Build" />
+                <ScalarProperty Name="FileHash" ColumnName="FileHash" />
+                <ScalarProperty Name="ChangeDate" ColumnName="ChangeDate" />
+                <ScalarProperty Name="FileContents" ColumnName="FileContents" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FileTrackingSets">
+            <EntityTypeMapping TypeName="PnPModel.FileTrackingSet">
+              <MappingFragment StoreEntitySet="FileTrackingSet">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="TestDate" ColumnName="TestDate" />
+                <ScalarProperty Name="Build" ColumnName="Build" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="FileHash" ColumnName="FileHash" />
+                <ScalarProperty Name="FileChanged" ColumnName="FileChanged" />
+                <ScalarProperty Name="TestSiteUrl" ColumnName="TestSiteUrl" />
+                <ScalarProperty Name="TestUser" ColumnName="TestUser" />
+                <ScalarProperty Name="TestAppId" ColumnName="TestAppId" />
+                <ScalarProperty Name="TestComputerName" ColumnName="TestComputerName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TestAuthenticationSets">
+            <EntityTypeMapping TypeName="PnPModel.TestAuthenticationSet">
+              <MappingFragment StoreEntitySet="TestAuthenticationSet">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="AppOnly" ColumnName="AppOnly" />
+                <ScalarProperty Name="AppId" ColumnName="AppId" />
+                <ScalarProperty Name="AppSecret" ColumnName="AppSecret" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="Domain" ColumnName="Domain" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="CredentialManagerLabel" ColumnName="CredentialManagerLabel" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TestConfigurationPropertySets">
+            <EntityTypeMapping TypeName="PnPModel.TestConfigurationPropertySet">
+              <MappingFragment StoreEntitySet="TestConfigurationPropertySet">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="TestConfigurationId" ColumnName="TestConfigurationId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TestConfigurationSets">
+            <EntityTypeMapping TypeName="PnPModel.TestConfigurationSet">
+              <MappingFragment StoreEntitySet="TestConfigurationSet">
+                <ScalarProperty Name="AnonymousAccess" ColumnName="AnonymousAccess" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="VSBuildConfiguration" ColumnName="VSBuildConfiguration" />
+                <ScalarProperty Name="Branch" ColumnName="Branch" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="TenantUrl" ColumnName="TenantUrl" />
+                <ScalarProperty Name="TestSiteUrl" ColumnName="TestSiteUrl" />
+                <ScalarProperty Name="TestAuthentication_Id" ColumnName="TestAuthentication_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TestResultMessageSets">
+            <EntityTypeMapping TypeName="PnPModel.TestResultMessageSet">
+              <MappingFragment StoreEntitySet="TestResultMessageSet">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="TestResultId" ColumnName="TestResultId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TestResultSets">
+            <EntityTypeMapping TypeName="PnPModel.TestResultSet">
+              <MappingFragment StoreEntitySet="TestResultSet">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="TestCaseName" ColumnName="TestCaseName" />
+                <ScalarProperty Name="Outcome" ColumnName="Outcome" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="ErrorMessage" ColumnName="ErrorMessage" />
+                <ScalarProperty Name="ErrorStackTrace" ColumnName="ErrorStackTrace" />
+                <ScalarProperty Name="StartTime" ColumnName="StartTime" />
+                <ScalarProperty Name="EndTime" ColumnName="EndTime" />
+                <ScalarProperty Name="ComputerName" ColumnName="ComputerName" />
+                <ScalarProperty Name="TestRunId" ColumnName="TestRunId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TestRunSets">
+            <EntityTypeMapping TypeName="PnPModel.TestRunSet">
+              <MappingFragment StoreEntitySet="TestRunSet">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="TestConfigurationId" ColumnName="TestConfigurationId" />
+                <ScalarProperty Name="TestDate" ColumnName="TestDate" />
+                <ScalarProperty Name="TestTime" ColumnName="TestTime" />
+                <ScalarProperty Name="Build" ColumnName="Build" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="TestWasAborted" ColumnName="TestWasAborted" />
+                <ScalarProperty Name="TestWasCancelled" ColumnName="TestWasCancelled" />
+                <ScalarProperty Name="TestsPassed" ColumnName="TestsPassed" />
+                <ScalarProperty Name="TestsSkipped" ColumnName="TestsSkipped" />
+                <ScalarProperty Name="TestsFailed" ColumnName="TestsFailed" />
+                <ScalarProperty Name="TestsNotFound" ColumnName="TestsNotFound" />
+                <ScalarProperty Name="MSBuildLog" ColumnName="MSBuildLog" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UsersSets">
+            <EntityTypeMapping TypeName="PnPModel.UsersSet">
+              <MappingFragment StoreEntitySet="UsersSet">
+                <ScalarProperty Name="IsEmailVerified" ColumnName="IsEmailVerified" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="SendTestResults" ColumnName="SendTestResults" />
+                <ScalarProperty Name="IsCoreMember" ColumnName="IsCoreMember" />
+                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="UPN" ColumnName="UPN" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

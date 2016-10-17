@@ -1,0 +1,198 @@
+﻿.ms-Grid-col {
+    float: none;
+}
+
+.ms-bgColor-themeDarker {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+@media (max-width: 599px) {
+    td {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }    
+}
+
+
+html, body {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.tableAlignment {
+    /*color: #000000;*/
+    /*font: normal 11px arial, sans-serif;*/
+    /*border:0.5px white;*/
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin:auto;
+}
+
+table.tableAlignment, table tr.tableAlignment, table td.tableAlignment {
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+table.tableAlignment td {
+    /*padding: 7px;*/
+    border:white 1px solid;
+}
+
+.header {
+    /*padding-top: 10px;
+    padding-bottom: 10px;*/
+    text-align: center;
+    color: red;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 54px;
+}
+
+/*#region 01-All Details */
+.tblHeader {
+    padding: 10px;
+    text-align: left;
+    color: black;
+    background-color: #A6A6A6;
+    /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+    font-size: 13px;
+}
+
+.tblRow {
+    padding: 6px;
+    text-align: left;
+    color: black;
+    background-color: #FAF6F6;
+    /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+    font-size: 11px;
+}
+
+.tblAlternativeRow {
+    padding: 6px;
+    text-align: left;
+    color: black;
+    background-color: #ECE8E7;
+    /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+    font-size: 11px;
+}
+
+/*#endregion */
+
+/*#region 02-Configuration/03-Detailed */
+
+.colHeader {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 5px;
+    text-align: left;
+    color: black;
+    background-color: #E4E4E4;    
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.colText {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 5px;
+    text-align: left;
+    color: black;
+    background-color: #EFEEEE;
+    font-size: 11px;
+}
+
+body {
+    /*padding-top: 50px;*/
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+
+@media (max-width: 479px) {
+    .container body-content {
+        margin-left: 5px;
+    }
+}
+
+@media (min-width: 480px) {
+    .body-content {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .container {
+        margin-left: 145px;
+    }
+}
+
+h1 {
+    display: inline;
+    vertical-align: middle;
+}
+
+img.siteIcon {
+    display: inline;
+    margin-left: 40px;
+    margin-right: 20px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+a:hover {
+    color: #333 !important;
+}
+
+.scrollableContent {
+    overflow: auto;
+}
+
+.waitWorking {
+    width: 350px; 
+    margin-top: 50px; 
+    margin-left:150px; 
+    margin-bottom: 50px;
+    vertical-align: middle;
+}
+
+.settingsValue {
+    margin-top: 6px;
+}
+
+.informationText {
+    margin-bottom: 50px;
+}
+
+.noOverflow {
+    overflow: hidden;
+}
+
+.gridHeader {
+    font-weight: bold;
+}
+
+.highlight:hover  
+{ 
+    background:#e6f2fb;
+}
+/*#endregion */
+

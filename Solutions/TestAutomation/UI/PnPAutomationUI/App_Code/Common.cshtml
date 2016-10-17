@@ -1,0 +1,47 @@
+﻿@helper GetStatusIconAllTests(int status)
+{
+string[] statusIcons = { "ms-Icon--check ms-fontColor-green", "ms-Icon--circleEmpty ms-fontColor-yellow", "ms-Icon--x ms-fontColor-red", "ms-Icon--info" };
+    @String.Format("{0}", statusIcons[status]);
+}
+@helper GetStatusTooltopTextAllTests(int status)
+{
+string[] statusIconTooltipText = { "Test run completed successfully", "Test case was skipped", "Test case failed", "" };
+    @String.Format("{0}", statusIconTooltipText[status]);
+}
+@helper GetDuaration(Nullable<System.TimeSpan> duration)
+{
+if (duration.HasValue && duration != null)
+{
+        @String.Format("{0}", (Convert.ToString(duration) != "00:00:00" ? Convert.ToString(duration).Remove(Convert.ToString(duration).IndexOf('.')) : "N/A"));
+    }
+    else
+    {
+        @String.Format("{0}", "N/A");
+    }
+}
+@helper GetStatusIcon(int status)
+{
+string[] statusIcons = { "ms-Icon--info", "ms-Icon--gear", "ms-Icon--check ms-fontColor-green", "ms-Icon--x ms-fontColor-red" };
+    @String.Format("{0}", statusIcons[status]);
+}
+@helper GetStatusTooltopText(int status)
+{
+string[] statusIconTooltipText = { "Test run in progress", "Test run in progress", "Test run completed successfully", "Test run was terminated" };
+    @String.Format("{0}", statusIconTooltipText[status]);
+}
+@helper getRunat(Nullable<DateTimeOffset> time)
+{
+string runat = string.Empty;
+if (time.HasValue && time != null)
+{
+    if (Convert.ToString(time).Contains('+'))
+    {
+        runat = Convert.ToString(time).Remove(Convert.ToString(time).IndexOf('+'));
+    }
+    @String.Format("{0}", Convert.ToString(runat));
+}
+else
+{
+        @String.Format("{0}", Convert.ToString(runat));
+    }
+}

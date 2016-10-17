@@ -1,0 +1,85 @@
+﻿@model PnPAutomationUI.Models.Configuration
+<link rel="stylesheet" href="~/Content/fabric.min.css" />
+<link rel="stylesheet" href="~/Content/fabric.components.min.css" />
+<link rel="stylesheet" href="~/Content/Configuration.css" />
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/Configuration.js"></script>
+<div>
+    <div class="ms-font-su ms-fontColor-themePrimary ms-fontWeight-semibold" style="text-align: center;">Configuration overview</div>
+    @if (Model != null)
+    {
+        <div style="width: 70%; margin: auto" class="ms-Grid">
+            <br />
+            <div class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Name:</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s">@Model.ConfiguratioName</div>
+            </div>
+            <div class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Description:</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s">@Model.Description</div>
+            </div>
+            <div class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">VS Build Configuration:</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s">@Model.VSBuildConfiguration</div>
+            </div>
+            <div class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Github branch:</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s">@Model.GithubBranch</div>
+            </div>
+            <div class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg1 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Type:</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg2 ms-bgColor-neutralLighterAlt ms-font-s">@Model.AppType</div>
+                @if (Model.IdentityUserNameDisplayText == "Credential Manager")
+                {
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">@Model.IdentityUserNameDisplayText:</div>
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg6 ms-bgColor-neutralLighterAlt ms-font-s" style="word-wrap: break-word;">@Model.IdentityUserNameValue</div>
+                }
+                else
+                {
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg2 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">@Model.IdentityUserNameDisplayText:</div>
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s" style="word-wrap: break-word;">@Model.IdentityUserNameValue</div>
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg2 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">@Model.IdentityPassWordDisplayText:</div>
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg2 ms-bgColor-neutralLighterAlt ms-font-s" style="word-wrap: break-word;">@Model.IdentityPassWordValue</div>
+                }
+            </div>
+            <div class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">PlatForm:</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s">@Model.Platform</div>
+            </div>
+            <div class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Test site collection url:</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s">
+                    <a href="@Model.Testsitecollection">@Model.Testsitecollection</a>
+                </div>
+            </div>
+            <div class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Tenant Admin site collection url:</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s"><a href="@Model.Tenantadminsitecollection">@Model.Tenantadminsitecollection</a></div>
+            </div>
+
+            <div class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm12 ms-u-lg12 ms-bgColor-neutralLighterAlt ms-font-m">Custom properties:</div>
+            </div>
+            <div class="ms-Grid-row">
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Property</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg9 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Value</div>
+            </div>
+            @foreach (var item in Model.ConfigCustomProperties)
+            {
+                <div class="ms-Grid-row">
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">@item.Name</div>
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s" style="word-wrap: break-word;">@item.Value</div>
+                </div>
+            }
+
+        </div>
+    }
+    else
+    {
+        <div style="width: 70%; margin: auto" class="ms-Grid ms-font-s-plus">
+            No data found
+        </div>
+    }
+</div>
+

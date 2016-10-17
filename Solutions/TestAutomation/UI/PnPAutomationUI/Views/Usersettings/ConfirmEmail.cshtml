@@ -1,0 +1,29 @@
+﻿@model PnPAutomationUI.Models.EmailConfirmation
+
+<link rel="stylesheet" href="~/Content/fabric.min.css" />
+<link rel="stylesheet" href="~/Content/fabric.components.min.css" />
+<link rel="stylesheet" href="~/Content/Configuration.css" />
+<script src="~/Scripts/Usersettings.js"></script>
+@{
+    ViewBag.Title = "Email Confirmation";
+}
+
+<div>
+    <div class="ms-font-su ms-fontColor-themePrimary ms-fontWeight-semibold" style="text-align: center">Subscription Settings</div>
+    <br />
+    @{ string confirmationMessage = string.Empty;}
+    @if (Model.IsEmailVerified)
+    {
+        confirmationMessage = "Your email " + Model.Email + " is sucessfully subscribed to PnP daily test results report";
+    }
+    else
+    {
+        confirmationMessage = "Sorry, we are unable to verify/confirm your email " + Model.Email ;
+    }
+    <div style="width: 70%; margin: auto" class="ms-Grid">
+        <div class="ms-Grid-row">
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg12 ms-font-m">@confirmationMessage</div>
+        </div>
+
+    </div>
+</div>
