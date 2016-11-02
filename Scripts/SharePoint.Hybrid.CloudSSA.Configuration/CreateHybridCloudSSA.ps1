@@ -161,3 +161,14 @@ $SearchServiceInstanceServer1 = Get-SPEnterpriseSearchServiceInstance $SearchSer
  }
   
 $NewSearchTopology.Activate()
+
+#=================================================
+
+
+$ssa = Get-SPEnterpriseSearchServiceApplication | ?{$_.CloudIndex -eq $true}
+
+Get-SPEnterpriseSearchTopology -Active -SearchApplication $ssa
+
+Get-SPEnterpriseSearchStatus -SearchApplication $ssa -Text |ft Name, state,Partition,Host -AutoSize
+
+$ssa.CloudIndex 
