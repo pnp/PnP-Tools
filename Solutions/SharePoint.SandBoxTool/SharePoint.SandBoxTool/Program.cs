@@ -88,6 +88,8 @@ namespace SharePoint.SandBoxTool
             {
                 sbScanner.UseOffice365Authentication(options.User, options.Password);
             }
+
+            sbScanner.ExcludeOD4B = options.ExcludeOD4B;
 #else
             sbScanner.UseNetworkCredentialsAuthentication(options.User, options.Password, options.Domain);
 #endif

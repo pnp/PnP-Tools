@@ -26,11 +26,19 @@ namespace Microsoft.SharePoint.Client
         {
             var sites = new List<SiteEntity>();
 
-            // O365 Tenant Site Collection limit is 500.000 (https://support.office.com/en-us/article/SharePoint-Online-software-boundaries-and-limits-8f34ff47-b749-408b-abc0-b605e1f6d498?CTT=1&CorrelationId=1928c530-fc12-4134-ada5-8ed2c2ec01fc&ui=en-US&rs=en-US&ad=US), 
-            // but let's limit to 100.000. Note that GetSiteProperties returns 300 per request.
-            for (int i = startIndex; i < endIndex; i += 300)
+            SPOSitePropertiesEnumerable props = null;
+
+            while (props == null || props.NextStartIndexFromSharePoint != null)
             {
-                var props = tenant.GetSiteProperties(i, includeDetail);
+                SPOSitePropertiesEnumerableFilter filter = new SPOSitePropertiesEnumerableFilter()
+                {
+                    IncludePersonalSite = PersonalSiteFilter.Include,
+                    StartIndex = props == null ? null : props.NextStartIndexFromSharePoint,
+                    IncludeDetail = includeDetail
+                };
+
+                props = tenant.GetSitePropertiesFromSharePoint(props == null?null:props.NextStartIndexFromSharePoint, includeDetail);
+                //props = tenant.GetSitePropertiesFromSharePointByFilters(filter);
                 tenant.Context.Load(props);
                 tenant.Context.ExecuteQueryRetry();
 
@@ -53,102 +61,13 @@ namespace Microsoft.SharePoint.Client
                     siteEntity.WebsCount = prop.WebsCount;
                     sites.Add(siteEntity);
                 }
-
-                if (props.Count < 300) break; //exit for loop if there are no more site collections
             }
 
             return sites;
         }
-
-        ///// <summary>
-        ///// Get OneDrive site collections by iterating through all user profiles.
-        ///// </summary>
-        ///// <param name="tenant"></param>
-        ///// <returns>List of <see cref="SiteEntity"/> objects containing site collection info.</returns>
-        //public static IList<SiteEntity> GetOneDriveSiteCollections(this Tenant tenant)
-        //{
-        //    var sites = new List<SiteEntity>();
-        //    var svcClient = GetUserProfileServiceClient(tenant);
-
-        //    // get all user profiles
-        //    var userProfileResult = svcClient.GetUserProfileByIndex(-1);
-        //    var profileCount = svcClient.GetUserProfileCount();
-
-        //    while (int.Parse(userProfileResult.NextValue) != -1)
-        //    {
-        //        var personalSpaceProperty = userProfileResult.UserProfile.FirstOrDefault(p => p.Name == "PersonalSpace");
-
-        //        if (personalSpaceProperty != null)
-        //        {
-        //            if (personalSpaceProperty.Values.Any())
-        //            {
-        //                var usernameProperty = userProfileResult.UserProfile.FirstOrDefault(p => p.Name == "UserName");
-        //                var nameProperty = userProfileResult.UserProfile.FirstOrDefault(p => p.Name == "PreferredName");
-        //                var url = personalSpaceProperty.Values[0].Value as string;
-        //                var name = nameProperty.Values[0].Value as string;
-        //                SiteEntity siteEntity = new SiteEntity();
-        //                siteEntity.Url = url;
-        //                siteEntity.Title = name;
-        //                siteEntity.SiteOwnerLogin = usernameProperty.Values[0].Value as string;
-        //                sites.Add(siteEntity);
-        //            }
-        //        }
-
-        //        userProfileResult = svcClient.GetUserProfileByIndex(int.Parse(userProfileResult.NextValue));
-        //    }
-
-        //    return sites;
-        //}
-
-        ///// <summary>
-        ///// Gets the UserProfileService proxy to enable calls to the UPA web service.
-        ///// </summary>
-        ///// <param name="tenant"></param>
-        ///// <returns>UserProfileService web service client</returns>
-        //public static UserProfileService GetUserProfileServiceClient(this Tenant tenant)
-        //{
-        //    var client = new UserProfileService();
-
-        //    client.Url = tenant.Context.Url + "/_vti_bin/UserProfileService.asmx";
-        //    client.UseDefaultCredentials = false;
-        //    client.Credentials = tenant.Context.Credentials;
-
-        //    if (tenant.Context.Credentials is SharePointOnlineCredentials)
-        //    {
-        //        var creds = (SharePointOnlineCredentials)tenant.Context.Credentials;
-        //        var authCookie = creds.GetAuthenticationCookie(new Uri(tenant.Context.Url));
-        //        var cookieContainer = new CookieContainer();
-
-        //        cookieContainer.SetCookies(new Uri(tenant.Context.Url), authCookie);
-        //        client.CookieContainer = cookieContainer;
-        //    }
-        //    return client;
-        //}
         #endregion
 
         #region Private helper methods
-        //private static void WaitForIsComplete(Tenant tenant, SpoOperation op)
-        //{
-        //    while (!op.IsComplete)
-        //    {
-        //        Thread.Sleep(op.PollingInterval);
-        //        op.RefreshLoad();
-        //        if (!op.IsComplete)
-        //        {
-        //            try
-        //            {
-        //                tenant.Context.ExecuteQueryRetry();
-        //            }
-        //            catch (WebException webEx)
-        //            {
-        //                // Context connection gets closed after action completed.
-        //                // Calling ExecuteQuery again returns an error which can be ignored
-        //                Log.Warning(CoreResources.TenantExtensions_ClosedContextWarning, webEx.Message);
-        //            }
-        //        }
-        //    }
-        //}
-
         private static bool IsCannotGetSiteException(Exception ex)
         {
             if (ex is ServerException)
