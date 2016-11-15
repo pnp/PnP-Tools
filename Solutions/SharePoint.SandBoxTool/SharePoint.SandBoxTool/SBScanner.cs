@@ -135,8 +135,8 @@ namespace SharePoint.SandBoxTool
                         CreatedDate = Convert.ToDateTime(item["Created"]),
                         Activated = status,
                         HasAssemblies = hasAssembly,
-                        SolutionHash = item["SolutionHash"].ToString(),
-                        SolutionID = item["SolutionId"].ToString(),
+                        SolutionHash = item["SolutionHash"] != null ? item["SolutionHash"].ToString() : "",
+                        SolutionID = item["SolutionId"] != null ? item["SolutionId"].ToString() : "",
                         SiteId = e.WebClientContext.Site.Id.ToString(),
                     };
 
