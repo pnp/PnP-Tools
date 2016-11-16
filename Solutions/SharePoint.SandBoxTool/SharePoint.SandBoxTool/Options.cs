@@ -54,6 +54,9 @@ namespace SharePoint.SandBoxTool
 #if !ONPREMISES
         [Option('a', "tenantadminsite", HelpText = "Url to your tenant admin site (e.g. https://contoso-admin.contoso.com): only needed when your not using SPO MT")]
         public string TenantAdminSite { get; set; }
+
+        [Option('x', "excludeOD4B", HelpText = "Exclude OD4B sites from the scan", DefaultValue = false)]
+        public bool ExcludeOD4B { get; set; }
 #endif
 
         [Option('e', "separator", HelpText = "Separator used in output CSV files", DefaultValue = ",")]

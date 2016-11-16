@@ -1,0 +1,131 @@
+﻿@model PnPAutomationUI.Models.AllRunsSet
+
+@{
+    ViewBag.Title = "AllRuns";
+}
+
+<link rel="stylesheet" href="~/Content/fabric.min.css" />
+<link rel="stylesheet" href="~/Content/fabric.components.min.css" />
+<link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/jquery-ui.css" rel="stylesheet" />
+<link href="~/Content/themes/base/theme.css" rel="stylesheet" />
+<link href="~/Content/Allruns.css" rel="stylesheet" />
+<script src="~/scripts/jquery-ui-1.11.4.js"></script>
+<script src="~/scripts/AllRuns.js"></script>
+<div style="width:90%; margin: auto;">
+    <div class="ms-font-su ms-fontColor-themePrimary ms-fontWeight-semibold" style="text-align: center">Test Runs</div>
+    <br />
+    @Html.Label("Configuration:")
+    @Html.ListBoxFor(x => x.SelectedConfigurations, new MultiSelectList(Model.TestConfigurations, "ID", "Name"), new { @multiple = "multiple",@style = "width:25%;vertical-align: bottom;", @class = "ms-TextField-field", id = "Configurations" } )
+    &nbsp;&nbsp;@Html.LabelFor(c => c.FromDate)<b>:</b>
+    @Html.TextBoxFor(c => c.FromDate, new { @style = "width:20%", @readonly = true, @class = "ms-TextField-field", id = "txtFromDate", Value = Model.FromDate.ToString("MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture) })
+    &nbsp;&nbsp; @Html.LabelFor(c => c.ToDate)<b>:</b>
+    @Html.TextBoxFor(c => c.ToDate, new { @style = "width:20%", @readonly = true, @class = "ms-TextField-field", id = "txtToDate", Value = Model.ToDate.ToString("MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture) })
+    &nbsp;&nbsp;&nbsp;&nbsp; @Html.ActionLink("Search", "AllRuns", "TestRuns", new { @class = "ms-Button", onclick = "updatePageLinkHref(this);" })
+</div>
+<br />
+@if (Model.pnptestresults != null && Model.pnptestresults.Any())
+{
+    <table style="width:90%; margin: auto;" class="ms-Grid">
+        <thead>
+            <tr class="ms-Grid-row ms-fontColor-white ms-font-m ms-bgColor-themeDarker">
+                <td class="ms-Grid-col" style="padding: 7px;">Status</td>
+                <td class="ms-Grid-col ms-u-sm1 ms-u-md1 ms-u-lg1">Configuration</td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-md1 ms-u-lg1">Authentication</td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-md1 ms-u-lg1">Environment</td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-md1 ms-u-lg1">TestDate</td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-md1 ms-u-lg1">Duration</td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-md1 ms-u-lg1">Tests</td>
+                <td class="ms-Grid-col ms-u-sm1 ms-u-md1 ms-u-lg1">Passed</td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-md1 ms-u-lg1">Skipped</td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-md1 ms-u-lg1">Failed</td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-md1 ms-u-lg1">Log</td>
+            </tr>
+        </thead>
+
+        @{ bool isAlternateRow = true;}
+
+        @foreach (var item in Model.pnptestresults)
+        {
+            <tr class="ms-Grid-row ms-font-s @(isAlternateRow?"ms-bgColor-neutralLighterAlt":"ms-bgColor-neutralLighter")">
+                <td class="ms-Grid-col">
+                    <div class="ms-Icon @Common.GetStatusIcon(item.Status)" title="@Common.GetStatusTooltopText(item.Status)"></div>
+                </td>
+                <td class="ms-Grid-col">
+                    <a href="~/Configuration/Overview/@item.TestRunSetId">@Html.DisplayFor(modelItem => item.ConfiguratioName)</a>
+                </td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-sm1 ms-u-md2 ms-u-lg1">@item.AppOnly</td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-sm1 ms-u-md2 ms-u-lg1">@item.Environment</td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-sm1 ms-u-md2 ms-u-lg1">
+                    @item.Testdate
+                </td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-hiddenSm ms-u-md2 ms-u-lg1">
+                    @item.TestDuration
+                </td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-md2 ms-u-lg1">
+                    <a href="~/TestDetails/OverView/@item.TestRunSetId">@item.Tests</a>
+                </td>
+                <td class="ms-Grid-col ms-u-sm1 ms-u-md2 ms-u-lg1">
+                    <a href="~/Testsummary/AllTests/@item.TestRunSetId?outcome=0&branch=@item.GithubBranch">@item.Passed</a>
+                </td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-hiddenSm ms-u-md2 ms-u-lg1">
+                    <a href="~/Testsummary/AllTests/@item.TestRunSetId?outcome=1&branch=@item.GithubBranch">@item.Skipped</a>
+
+                </td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-md2 ms-u-lg1">
+                    <a href="~/Testsummary/AllTests/@item.TestRunSetId?outcome=2&branch=@item.GithubBranch">@item.Failed</a>
+
+                </td>
+                <td class="ms-Grid-col ms-u-hiddenSm ms-u-md2 ms-u-lg1">
+                    @if (item.Log)
+                    {
+                        <a href="~/TestRuns/PrintLog/@item.TestRunSetId">Log</a>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </td>
+            </tr>
+
+            isAlternateRow = !isAlternateRow;
+        }
+    </table>
+    <!– Page links below -–>
+            <div style="width:90%; margin:auto; text-align:right">
+                <ul class="pagination" style="display:inline-block;margin: 12px 0;padding: 0;">
+                    <div style="display:inline-block;padding-bottom:24px;vertical-align:middle;">
+                        Page @(ViewBag.TotalPages < ViewBag.CurrentPage ? 0 : ViewBag.CurrentPage) of @ViewBag.TotalPages &nbsp;&nbsp;&nbsp;
+                    </div>
+                    @if (ViewBag.TotalPages > 10)
+                    {
+                        //get page numbers for 1to 4
+                        for (int i = 1; i <= 4; i++)
+                        {
+                            <li style="display: inline-block;" class="@(i == ViewBag.CurrentPage ? "active" : "")">@Html.ActionLink(@i.ToString(), "AllRuns", "TestRuns", new { page = @i }, new { onclick = "updatePageLinkHref(this);" })</li>
+                        }
+                        <li style="display: inline-block;" class="@(ViewBag.PrevSelected ? "active" : "")">@Html.ActionLink("<", "AllRuns", "TestRuns", new { page = ViewBag.PrevPage, isPrevSelected = true }, new { onclick = "updatePageLinkHref(this);" })</li>
+                        <li style="display: inline-block;" class="@(ViewBag.NextSelected ? "active" : "")">@Html.ActionLink(">", "AllRuns", "TestRuns", new { page = ViewBag.NextPage, isNextSelected = true }, new { onclick = "updatePageLinkHref(this);" })</li>
+                        //get Last 3 indexes
+                        for (int i = ViewBag.TotalPages - 3; i <= ViewBag.TotalPages; i++)
+                        {
+                            <li style="display: inline-block;" class="@(i == ViewBag.CurrentPage ? "active" : "")">@Html.ActionLink(@i.ToString(), "AllRuns", "TestRuns", new { page = @i }, new { onclick = "updatePageLinkHref(this);" })</li>
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 1; i <= ViewBag.TotalPages; i++)
+                        {
+                            <li style="display: inline-block;" class="@(i == ViewBag.CurrentPage ? "active" : "")">@Html.ActionLink(@i.ToString(), "AllRuns", "TestRuns", new { page = @i }, new { onclick = "updatePageLinkHref(this);" })</li>
+                        }
+                    }
+
+                </ul>
+            </div>
+            }
+            else
+            {
+                <div style="width:90%; padding-left: 50px;">
+                    No records found
+                </div>
+            }

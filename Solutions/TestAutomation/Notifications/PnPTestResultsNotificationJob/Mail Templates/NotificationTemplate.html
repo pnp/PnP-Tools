@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style type="text/css">
+        .ms-Grid {
+            font-size: 12px;
+            padding: 3px;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+            .ms-Grid td {
+                border: 1px solid #D1D1D1;
+                padding: 0 10px;
+            }
+
+            .ms-Grid th {
+                border: 1px solid #424242;
+                color: #FFFFFF;
+                text-align: left;
+                padding: 0 10px;
+            }
+
+        .ms-Grid-col {
+            position: relative;
+            min-height: 1px;
+            padding-left: 8px;
+            padding-right: 8px;
+            box-sizing: border-box;
+            float: left;
+            font-family: "Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif;
+        }
+
+        .ms-Grid-row {
+            margin: 0 -8px;
+            box-sizing: border-box;
+            zoom: 1;
+            color: white;
+        }
+
+        .ms-Grid-row-ms-bgColor-themeDarker {
+            margin: 0 -8px;
+            box-sizing: border-box;
+            zoom: 1;
+            color: #fff;
+            background-color: #004578;
+            font-family: "Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+        }
+
+        .ms-Grid-row-ms-bgColor-neutralLighterAlt {
+            margin: 0 -8px;
+            box-sizing: border-box;
+            zoom: 1;
+            color: #333;
+            background-color: rgb(248, 248, 248);
+            font-family: "Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+        }
+
+        .ms-Grid-row-ms-bgColor-neutralLighter {
+            margin: 0 -8px;
+            box-sizing: border-box;
+            zoom: 1;
+            color: #333;
+            background-color: rgb(244, 244, 244);
+            font-family: "Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+        }
+
+        table.ms-Grid {
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+            table.ms-Grid td {
+                border: white 1px solid;
+                border-left: 0;
+                border-top: 0;
+            }
+
+        .templateHeader {
+            margin: 0 -8px;
+            box-sizing: border-box;
+            zoom: 1;
+            color: #0078d7;
+            font-family: "Segoe UI Regular WestEuropean","Segoe UI",Tahoma,Arial,sans-serif;
+            font-weight: 400;
+            font-size: 14pt;
+        }
+    </style>
+</head>
+<body>
+    <div class="templateHeader">
+        Test runs
+    </div>
+    <br />
+    <table style="width:90%; margin: auto;" class="ms-Grid">
+        <thead>
+            <tr class="ms-Grid-row-ms-bgColor-themeDarker">
+                <td class="ms-Grid-col">Status</td>
+                <td class="ms-Grid-col">Configuration</td>
+                <td class="ms-Grid-col">Authentication</td>
+                <td class="ms-Grid-col">Environment</td>
+                <td class="ms-Grid-col">TestDate</td>
+                <td class="ms-Grid-col">Duration</td>
+                <td class="ms-Grid-col">Tests</td>
+                <td class="ms-Grid-col">Passed</td>
+                <td class="ms-Grid-col">Skipped</td>
+                <td class="ms-Grid-col">Failed</td>
+                <td class="ms-Grid-col">Log</td>
+            </tr>
+        </thead>
+        {tablebody}
+    </table>
+    <br /><br />
+    <div class="templateHeader">
+        Failed test cases
+    </div><br />
+    <table style="width:90%; margin: auto;display:{summarystyle}" class="ms-Grid">
+        <thead>
+            <tr class="ms-Grid-row-ms-bgColor-themeDarker">
+                <td class="ms-Grid-col">Result</td>
+                <td class="ms-Grid-col">Configuration</td>
+                <td class="ms-Grid-col">TestDate</td>
+                <td class="ms-Grid-col">Test</td>
+                <td class="ms-Grid-col">Duration</td>
+                <td class="ms-Grid-col">Error</td>
+            </tr>
+        </thead>
+        {testresultssummarytablebody}
+    </table>
+    <br />
+    <div>
+        Please click  <a href="{unsubribelink}">here</a> to unsubscribe from PnP Test results summary.
+    </div>
+</body>
+</html>

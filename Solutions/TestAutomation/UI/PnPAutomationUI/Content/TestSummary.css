@@ -1,0 +1,22 @@
+﻿
+.ms-Grid-col {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border: white 1px solid;
+    border-left: 0;
+    border-top: 0;
+}
+
+table.ms-Grid {
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+table.ms-Grid td {
+    border: white 1px solid;
+    border-left: 0;
+    border-top: 0;
+}

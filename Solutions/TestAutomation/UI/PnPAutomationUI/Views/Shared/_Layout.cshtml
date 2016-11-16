@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - SharePoint PnP Test Automation</title>
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="~/Content/fabric.min.css" />
+    <link rel="stylesheet" href="~/Content/fabric.components.min.css" />
+</head>
+<body>
+
+    @Html.Partial("~/Views/Shared/_Office365SuiteBar.cshtml")
+    @Html.Partial("~/Views/Shared/_Office365NavBar.cshtml")
+
+    @*<div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("PnPAutomationUI", "AllRuns", "TestRuns", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container body-content">
+        @RenderBody()
+    </div>*@
+
+    <div class="scrollableContent">
+
+        <div id="mainContent">
+
+            <div class="container body-content">
+
+                @RenderBody()
+
+                <hr />
+                @*<footer>
+                    <p>&copy; @DateTime.Now.Year - <a href="https://github.com/OfficeDev/PnP" title="SharePoint Development Patterns and Practices">SharePoint Development Patterns and Practices</a></p>
+                </footer>*@
+            </div>
+        </div>
+
+    </div>
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

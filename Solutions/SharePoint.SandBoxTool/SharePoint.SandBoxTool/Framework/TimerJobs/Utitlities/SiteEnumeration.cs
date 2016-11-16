@@ -49,7 +49,7 @@ namespace SharePoint.SandBoxTool.Framework.TimerJobs.Utilities
         /// <param name="tenant">Tenant object to use for resolving the regular sites</param>
         /// <param name="siteWildCard">The widcard site Url (e.g. https://tenant.sharepoint.com/sites/*) </param>
         /// <param name="resolvedSites">List of site collections matching the passed wildcard site Url</param>
-        internal void ResolveSite(Tenant tenant, string siteWildCard, List<string> resolvedSites)
+        internal void ResolveSite(Tenant tenant, string siteWildCard, List<string> resolvedSites, bool excludeOD4B)
         {
 #if !ONPREMISES
             //strip the wildcard
@@ -59,7 +59,7 @@ namespace SharePoint.SandBoxTool.Framework.TimerJobs.Utilities
             if (this.sites == null)
             {
                 // Loads all regular Office 365 site collections via the tenant admin API and uses search to resolve the Onedrive site collections
-                FillSitesViaTenantAPIAndSearch(tenant);
+                FillSitesViaTenantAPIAndSearch(tenant, excludeOD4B);
             }
 
             //iterate the found site collections and add the sites that match to the site wildcard
@@ -106,7 +106,7 @@ namespace SharePoint.SandBoxTool.Framework.TimerJobs.Utilities
         /// Fill site list via tenant API for "regular" site collections. Search API is used for OneDrive for Business site collections
         /// </summary>
         /// <param name="tenant">Tenant object to operate against</param>
-        private void FillSitesViaTenantAPIAndSearch(Tenant tenant)
+        private void FillSitesViaTenantAPIAndSearch(Tenant tenant, bool excludeOD4B)
         {
 #if !ONPREMISES
             // Use tenant API to get the regular sites
@@ -129,8 +129,11 @@ namespace SharePoint.SandBoxTool.Framework.TimerJobs.Utilities
                 this.sites.Add(prop.Url.ToLower());
             }
 
-            // Use search api to get the OneDrive sites
-            this.sites.AddRange(SiteSearch(tenant.Context, "contentclass:\"STS_Site\" AND WebTemplate:SPSPERS"));
+            if (!excludeOD4B)
+            {
+                // Use search api to get the OneDrive sites
+                this.sites.AddRange(SiteSearch(tenant.Context, "contentclass:\"STS_Site\" AND WebTemplate:SPSPERS"));
+            }
 #endif
         }
 

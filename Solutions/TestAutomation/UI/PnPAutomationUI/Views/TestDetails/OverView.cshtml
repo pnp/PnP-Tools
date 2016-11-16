@@ -1,0 +1,146 @@
+﻿@model PnPAutomationUI.Models.TestDetailsSet
+
+<link rel="stylesheet" href="~/Content/fabric.min.css" />
+<link rel="stylesheet" href="~/Content/fabric.components.min.css" />
+<link rel="stylesheet" href="~/Content/Testdetails.css" />
+<script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['line']}]}">
+</script>
+<script type="text/javascript" src="~/scripts/loader.js"></script>
+<script src="~/Scripts/jquery-1.12.0.min.js"></script>
+<script src="~/Scripts/jquery-migrate-1.2.1.min.js"></script>
+<script src="~/Scripts/Testdetails.js"></script>
+@if (Model.detailedReport != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {            
+            document.getElementById('wait').style.display = 'block';
+            updateFlex();
+            google.charts.load('current', { 'packages': ['line'] });
+            google.charts.setOnLoadCallback(drawChart(@Html.Raw(Json.Encode(Model.detailedConfigurationReport)),'@Model.rootSiteURL','@Model.detailedReport.GithubBranch'));
+            checkLineChartContent();
+        });
+        function checkLineChartContent() {
+            var lineDiv = document.getElementById('line_top_x').outerHTML;
+            if (lineDiv.indexOf('rect') > -1) {
+                document.getElementById('wait').style.display = 'none';
+            }
+            else {
+                document.getElementById('wait').style.display = 'block';
+                setTimeout(checkLineChartContent, 10);
+            }
+
+        }
+    </script>
+}
+<div class="ms-font-su ms-fontColor-themePrimary ms-fontWeight-semibold" style="text-align: center">Test run overview</div>
+@if (Model.detailedReport != null)
+{
+    <div style="width: 70%; margin: auto" class="ms-Grid">
+        <br />
+        <div class="ms-Grid-row">
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Configuration:</div>
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">
+                <a href="~/Configuration/OverView/@Model.detailedReport.TestRunId"><span style="color: #0000FF">@Model.detailedReport.ConfiguratioName</span></a>
+            </div>
+
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Computer:</div>
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">@Model.detailedReport.Computer</div>
+        </div>
+        <div class="ms-Grid-row">
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Description:</div>
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s">@Model.detailedReport.Description</div>
+        </div>
+        <div class="ms-Grid-row">
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">VS configuration:</div>
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">@Model.detailedReport.VSBuildConfiguration</div>
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Github branch:  </div>
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">@Model.detailedReport.GithubBranch</div>
+        </div>
+
+        <div class="ms-Grid-row">
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Platform:</div>
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">@Model.detailedReport.Platform</div>
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Build:</div>
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">@Model.detailedReport.Build</div>
+        </div>
+
+        <div class="ms-Grid-row">
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Test date:</div>
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">@Model.detailedReport.Testdate</div>
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Test duration:</div>
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">@Common.GetDuaration(Model.detailedReport.TestDuration)</div>
+        </div>
+        <!--Hide For Small-->
+        <div class="ms-Grid-row ms-u-hiddenMdDown">
+            <div class="ms-Grid-col ms-u-sm2 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Status</div>
+            <div class="ms-Grid-col ms-u-sm1 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Total</div>
+            <div class="ms-Grid-col ms-u-sm2 ms-u-lg2 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Passed</div>
+            <div class="ms-Grid-col ms-u-sm2 ms-u-lg2 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Skipped</div>
+            <div class="ms-Grid-col ms-u-sm1 ms-u-lg2 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Failed</div>
+        </div>
+        <!--Hide For Small-->
+        <div class="ms-Grid-row ms-u-hiddenMdDown">
+            <div class="ms-Grid-col ms-u-sm2 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">
+                <div class="ms-Icon @Common.GetStatusIcon(Model.detailedReport.Status)" title="@Common.GetStatusTooltopText(Model.detailedReport.Status)"></div>
+            </div>
+            <div class="ms-Grid-col ms-u-sm1 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">@Model.detailedReport.Tests</div>
+            <div class="ms-Grid-col ms-u-sm2 ms-u-lg2 ms-bgColor-neutralLighterAlt ms-font-s">
+                <a href="~/Testsummary/AllTests/@Model.detailedReport.TestRunId?outcome=0&branch=@Model.detailedReport.GithubBranch"><span style="color: #0000FF">@Model.detailedReport.Passed</span></a>
+            </div>
+            <div class="ms-Grid-col ms-u-sm2 ms-u-lg2 ms-bgColor-neutralLighterAlt ms-font-s">
+                <a href="~/Testsummary/AllTests/@Model.detailedReport.TestRunId?outcome=1&branch=@Model.detailedReport.GithubBranch"><span style="color: #0000FF">@Model.detailedReport.Skipped</span></a>
+            </div>
+            <div class="ms-Grid-col ms-u-sm1 ms-u-lg2 ms-bgColor-neutralLighterAlt ms-font-s">
+                <a href="~/Testsummary/AllTests/@Model.detailedReport.TestRunId?outcome=2&branch=@Model.detailedReport.GithubBranch"><span style="color: #0000FF">@Model.detailedReport.Failed</span></a>
+            </div>
+        </div>
+        <!--Small Size div will hide for meduim and large size -->
+        <div class="ms-Grid-row ms-u-hiddenLgUp">
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg1 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Status</div>
+            <div class="ms-Grid-col ms-u-sm6 ms-u-lg1 ms-bgColor-neutralLighterAlt ms-font-s">
+                <div class="ms-Icon @Common.GetStatusIcon(Model.detailedReport.Status)" title="@Common.GetStatusTooltopText(Model.detailedReport.Status)"></div>
+            </div>
+        </div>
+        <!--Small Size div will hide for meduim and large size -->
+        <div class="ms-Grid-row ms-u-hiddenLgUp">
+            <div class="ms-Grid-col ms-u-sm3 ms-u-lg2 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Total</div>
+            <div class="ms-Grid-col ms-u-sm3 ms-u-lg2 ms-bgColor-neutralLighterAlt ms-font-s">@Model.detailedReport.Tests</div>
+            <div class="ms-Grid-col ms-u-sm3 ms-u-lg2 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Passed</div>
+            <div class="ms-Grid-col ms-u-sm3 ms-u-lg2 ms-bgColor-neutralLighterAlt ms-font-s">
+                <a href="~/Testsummary/AllTests/@Model.detailedReport.TestRunId?outcome=0"><span style="color: #0000FF">@Model.detailedReport.Passed</span></a>
+            </div>
+        </div>
+        <!--Small Size div will hide for meduim and large size -->
+        <div class="ms-Grid-row ms-u-hiddenLgUp">
+            <div class="ms-Grid-col ms-u-sm3 ms-u-lg2 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Skipped</div>
+            <div class="ms-Grid-col ms-u-sm3 ms-u-lg2 ms-bgColor-neutralLighterAlt ms-font-s">
+                <a href="~/Testsummary/AllTests/@Model.detailedReport.TestRunId?outcome=1"><span style="color: #0000FF">@Model.detailedReport.Skipped</span></a>
+            </div>
+            <div class="ms-Grid-col ms-u-sm3 ms-u-lg1 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Failed</div>
+            <div class="ms-Grid-col ms-u-sm3 ms-u-lg1 ms-bgColor-neutralLighterAlt ms-font-s">
+                <a href="~/Testsummary/AllTests/@Model.detailedReport.TestRunId?outcome=2"><span style="color: #0000FF">@Model.detailedReport.Failed</span></a>
+            </div>
+        </div>
+    </div>
+    <div style="width: 70%; margin: auto" class="ms-Grid">
+        <br />
+        <span class="ms-font-m" style="font-weight: bold;">Test statistics</span>
+    </div>
+    <div id="wait" style="display:none;width: 70%; margin: auto">
+        <img src="~/Images/loading.png" />
+    </div>
+    <div style="width: 70%; margin: auto">
+        <div style="width: 100%;">
+            <br />
+            <div style="text-align: center">
+                <div id="line_top_x" style="width: 100%"></div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div style="width: 70%; margin: auto" class="ms-Grid ms-font-s-plus">
+        Not data found
+    </div>
+}

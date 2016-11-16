@@ -184,6 +184,9 @@ sandboxtool -m scanandanalyze -r https://team.contoso.com/*,https://mysites.cont
             -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 ```
 
+>**Note**
+> If you're not interested in also scanning your OD4B sites then you can add the **-x parameter** which will prevent the sandbox scanner from enumerating all OD4B sites
+
 ## I don't want to use app-only ##
 The best option is to use app-only since that will ensure that the tool can read all site collections but you can also run the tool using credentials.
 
@@ -237,6 +240,8 @@ sandboxtool -m scanandanalyze -r https://contoso.sharepoint.com/*,https://contos
 
 -a, --tenantadminsite  Url to your tenant admin site (e.g. https://contoso-admin.contoso.com): only needed when
                        your not using SPO MT
+
+-x, --excludeOD4B      (Default: False) Exclude OD4B sites from the scan
 
 -e, --separator        (Default: ,) Separator used in output CSV files
 

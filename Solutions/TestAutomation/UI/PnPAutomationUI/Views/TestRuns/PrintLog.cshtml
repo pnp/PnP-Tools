@@ -1,0 +1,51 @@
+﻿@model PnPAutomationUI.Models.GenerateLog
+
+<link rel="stylesheet" href="~/Content/fabric.min.css" />
+<link rel="stylesheet" href="~/Content/fabric.components.min.css" />
+@{
+    ViewBag.Title = "Test run log";
+}
+<script type="text/javascript">
+    function download() {
+        var fileName = 'log.txt';
+        var text = document.getElementById("Log").innerHTML;
+        text = text.replace(/\n/g, "\r\n");
+
+        // Internet Explorer 6-11 & // Edge 20+  !isIE && window.StyleMedia==Edge
+        var isIE = document.documentMode;
+        if (isIE || (!isIE && window.StyleMedia)) {
+            var blobObject = new Blob([text], { type: 'text/plain' });
+            window.navigator.msSaveOrOpenBlob(blobObject, fileName);
+        }
+        // Chrome 1+
+        if (window.chrome && window.chrome.webstore) {
+            text = encodeURIComponent(text);
+            var a = document.body.appendChild(
+               document.createElement("a")
+            );
+            a.download = fileName;
+            a.href = "data:text/plain;charset=utf-8," + text;
+            a.click();
+        }
+    }
+
+</script>
+<div>
+    <div class="ms-font-su ms-fontColor-themePrimary ms-fontWeight-semibold" style="text-align: center">Test run log</div>
+    <br />
+    <div style="text-align:right">
+        <button class="download" onclick="download()">Download To File</button>
+        <br />
+    </div>
+    @if (Model != null)
+    {
+        <div id="Log" class="ms-Grid-col ms-font-s-plus" style="white-space: pre-line">
+            @Model.Log
+        </div>
+    }
+    else
+    {
+        <span class="ms-font-s-plus">No data found</span>
+    }
+</div>
+

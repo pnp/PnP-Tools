@@ -1,0 +1,27 @@
+﻿@model PnPAutomationUI.Models.EmailConfirmation
+
+@{
+    ViewBag.Title = "Update Settings";
+}
+
+@{
+    string ConfirmationMessage = string.Empty;
+
+}
+@if (Model.IsSettingsUpdated)
+{
+    ConfirmationMessage = "Updated subscription details successfully";
+}
+else if (Model.IsEmailSent)
+{
+    ConfirmationMessage = "Updated subscription details successfully. <br />We need to confirm your email address. To complete the subscription process. Please click the link in the email we just sent you";
+}
+
+<div class="ms-font-su ms-fontColor-themePrimary ms-fontWeight-semibold" style="text-align: center">Subscription Settings</div><br />
+<div style="width: 70%; margin: auto" class="ms-Grid">
+    <div class="ms-Grid-row">
+        <pre class="ms-Grid-col ms-u-sm8 ms-u-lg12 ms-bgColor-neutralLighterAlt ms-font-s" style="word-wrap: break-word;">
+                @Html.Raw(@ConfirmationMessage)
+         </pre>
+    </div>
+</div>

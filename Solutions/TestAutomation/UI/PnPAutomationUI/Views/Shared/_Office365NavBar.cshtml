@@ -1,0 +1,20 @@
+﻿<div class="ms-NavBar">
+    <div class="ms-NavBar-openMenu js-openMenu">
+        <i class="ms-Icon ms-Icon--menu"></i>
+    </div>
+    <ul class="ms-NavBar-items">
+        
+        <li class="ms-NavBar-item"><a class="ms-NavBar-link" href="/TestRuns/AllRuns"><i class="ms-Icon ms-Icon--home"></i> Home</a></li>
+        <li class="ms-NavBar-item"><a class="ms-NavBar-link" href="/Usersettings/Index"><i class="ms-Icon ms-Icon--gear"></i> Settings</a></li>
+
+        @if (Request.IsAuthenticated)
+        {
+            <li class="ms-NavBar-item ms-NavBar-item--right"><a class="ms-NavBar-link" href="/Account/SignOut"><i class="ms-Icon ms-Icon--key"></i>Logout</a></li>
+            <li class="ms-NavBar-item ms-NavBar-item--right">@String.Format("Hello {0}!", User.Identity.Name)</li>
+        }
+        else
+        {
+            <li class="ms-NavBar-item ms-NavBar-item--right"><a class="ms-NavBar-link" href="/Account/SignIn"><i class="ms-Icon ms-Icon--gear"></i>Sign in</a></li>
+        }
+    </ul>
+</div>
