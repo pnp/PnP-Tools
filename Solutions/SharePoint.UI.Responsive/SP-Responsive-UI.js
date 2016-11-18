@@ -58,7 +58,7 @@
 
                 // embedding and loading of all necessary CSS files and JS libraries
                 var currentScriptUrl = $('#PnPResponsiveUI').attr('src');
-                if (currentScriptUrl != "undefined") {
+                if (typeof currentScriptUrl != "undefined") {
                     var currentScriptBaseUrl = currentScriptUrl.substring(0, currentScriptUrl.lastIndexOf("/") + 1);
 
                     addViewport();
