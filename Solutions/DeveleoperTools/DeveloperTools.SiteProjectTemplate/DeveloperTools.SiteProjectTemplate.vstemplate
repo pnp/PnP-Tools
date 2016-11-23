@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>SharePoint PnP Site Template</Name>
+    <Description>SharePoint PnP Provisioning Site Template</Description>
+    <Icon>DeveloperTools.SiteProjectTemplate.ico</Icon>
+    <ProjectType>CSharp</ProjectType>
+    <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
+    <SortOrder>1000</SortOrder>
+    <TemplateID>f7fccf2b-e37c-4883-9826-2501b64d139a</TemplateID>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>SiteTemplate</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="ProjectTemplate.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">SiteTemplate.xml</ProjectItem>
+			<ProjectItem ReplaceParameters="true" OpenInEditor="false">pnptemplate.config</ProjectItem>
+			<Folder Name="Schemas">
+	  		<ProjectItem ReplaceParameters="true" OpenInEditor="false">ProvisioningSchema-2015-03.xsd</ProjectItem>
+				<ProjectItem ReplaceParameters="true" OpenInEditor="false">ProvisioningSchema-2015-05.xsd</ProjectItem>
+  			<ProjectItem ReplaceParameters="true" OpenInEditor="false">ProvisioningSchema-2015-08.xsd</ProjectItem>
+	  		<ProjectItem ReplaceParameters="true" OpenInEditor="false">ProvisioningSchema-2015-12.xsd</ProjectItem>
+		  	<ProjectItem ReplaceParameters="true" OpenInEditor="false">ProvisioningSchema-2016-05.xsd</ProjectItem>
+			</Folder>
+		</Project>
+  </TemplateContent>
+</VSTemplate>

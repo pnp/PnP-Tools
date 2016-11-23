@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<UsingTask AssemblyFile="SharePointPnP.DeveloperTools.MSBuild.Tasks.dll" TaskName="SharePointPnP.DeveloperTools.MSBuild.Tasks.BuildOpenXmlPackage" />
+	<PropertyGroup>
+		<CfgPropertyPagesGuidsAddCSharp>{109F4BC1-4DE4-4DCA-A0B1-EF18B8AF9742}</CfgPropertyPagesGuidsAddCSharp>
+	</PropertyGroup>
+	<Target Name="AfterBuild">
+		<BuildOpenXmlPackage ProjectDir="$(ProjectDir)" OutDir="$(OutDir)" ProjectName="$(ProjectName)" />
+	</Target>
+</Project>
