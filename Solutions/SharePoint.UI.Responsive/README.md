@@ -1,10 +1,10 @@
 # SharePoint 2013/2016/Online Responsive UI #
 This solution demonstrates how to enable the PnP Responsive UI in Microsoft SharePoint 2013/2016 on-premises or SharePoint Online using the 
-PowerShell cmdlet *Enable-SPOResponsiveUI*, and also
+PowerShell cmdlet *Enable-PnPResponsiveUI*, and also
 provides you the capability to enable a custom Responsive UI for a Site Collection.
 If you just want to enable the responsive UI with the default PnP responsive template you
 can simply use the PowerShell cmdlet directly.
-See the *Enable-SPOResponsiveUI* and *Disable-SPOResponsiveUI* [cmdlets documentation](https://github.com/OfficeDev/PnP-PowerShell) for more information. 
+See the *Enable-PnPResponsiveUI* and *Disable-PnPResponsiveUI* [cmdlets documentation](https://github.com/OfficeDev/PnP-PowerShell) for more information. 
 Altough you can use this solution to enable the default PnP responsive template, the goal of this solution is to show how 
 to use the PnP provisioning engine to deploy custom versions of the CSS and JavaScript assets
 which are used to create the responsive site, 
@@ -110,7 +110,7 @@ for those sub sites, as well.
 # Customise the Responsive UI #
 In order to customise the responsive UI you 
 will need to modify either or both of the files SP-Responsive-UI.js and SP-Responsive-UI.css.
-The script will deploy these files after running the *Enable-SPOResponsiveUI* cmdlet.
+The script will deploy these files after running the *Enable-PnPResponsiveUI* cmdlet.
 
 The SP-Responsive-UI-Custom.css file is a copy of the standard PnP responsive CSS file with a modified BODY tag which
 sets the background colour to yellow. You can use this file to replace SP-Responsive-UI.css before running the script 
@@ -120,32 +120,32 @@ You will want to start with the standard SP-Responsive-UI.css when you do your o
 >Important: Be careful, when you use the *InfrastructureSiteUrl* argument you cannot play with customised CSS/JS files.
 
 Note that SharePoint Online already has a responsive template, so if you use the default PnP responsive template,
-e.g. by using the Enable-SPOResponsiveUI cmdlet,
+e.g. by using the Enable-PnPResponsiveUI cmdlet,
 you may not be able to detect any difference, even though the template has been successfully deployed. 
 Using the PowerShell script will enable the template and deploy the customised version of SP-Responsive-UI.css,
 and you should see the background is pale yellow after you run the script against a standard team site collection.
 
 <a name="disable"></a>
 # Disable the Responsive UI #
-If you decide to disable the Responsive UI, use the *Disable-SPOResponsiveUI* cmdlet.
+If you decide to disable the Responsive UI, use the *Disable-PnPResponsiveUI* cmdlet.
 
 ###EXAMPLE
 ```PowerShell
 # connect to site (not needed if you just ran the enable script)...
-PS C:\> Connect-SPOnline "https://intranet.mydomain.com/sites/targetSite"  
+PS C:\> Connect-PnPOnline "https://intranet.mydomain.com/sites/targetSite"  
 # use the current web...
-PS C:\> Disable-SPOResponsiveUI  
+PS C:\> Disable-PnPResponsiveUI  
 ```
 
-See the *Disable-SPOResponsiveUI* [cmdlet documentation](https://github.com/OfficeDev/PnP-PowerShell) for more information. 
+See the *Disable-PnPResponsiveUI* [cmdlet documentation](https://github.com/OfficeDev/PnP-PowerShell) for more information. 
 
 If you want to remove your custom CSS and JavaScript you can remove the files from the site collection and then re-run the 
-*Enable-SPOResponsiveUI* cmdlet which will re-instate the PnP versions of the files.
+*Enable-PnPResponsiveUI* cmdlet which will re-instate the PnP versions of the files.
 
 
 <a name="overview"></a>
 # Solution Overview #
-The solution leverages the PnP PowerShell *Enable-SPOResponsiveUI* cmdlet to enable
+The solution leverages the PnP PowerShell *Enable-PnPResponsiveUI* cmdlet to enable
 JavaScript embedding and CSS overriding to convert the out of 
 the box UI of any SharePoint 2013/2016/Online Team Site (STS#0) into a Responsive UI.
 The PnP default Responsive UI supports three rendering models:
