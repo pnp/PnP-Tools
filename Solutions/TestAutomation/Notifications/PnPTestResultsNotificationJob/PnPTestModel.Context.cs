@@ -34,5 +34,6 @@ namespace PnPTestResultsNotificationJob
         public virtual DbSet<TestResultSet> TestResultSets { get; set; }
         public virtual DbSet<TestRunSet> TestRunSets { get; set; }
         public virtual DbSet<UsersSet> UsersSets { get; set; }
+        public virtual DbSet<TestCategorySet> TestCategorySets { get; set; }
     }
 }

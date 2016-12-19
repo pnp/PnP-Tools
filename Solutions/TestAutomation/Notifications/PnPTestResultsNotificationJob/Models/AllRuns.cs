@@ -25,6 +25,7 @@ namespace PnPTestResultsNotificationJob.Models
         public int Count { get; set; }
 
         public int CId { get; set; }
+        public string CategoryName { get; set; }
     }
     public enum EnvironmentType
     {

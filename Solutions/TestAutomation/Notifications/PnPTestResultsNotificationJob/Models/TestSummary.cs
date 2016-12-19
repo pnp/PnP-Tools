@@ -18,6 +18,7 @@ namespace PnPTestResultsNotificationJob.Models
         public int Id { get; set; }
         public string Branch { get; set; }
         public int TestRunId { get; set; }
+        public string CategoryName { get; set; }
     }
     public class TestSummarySet
     {

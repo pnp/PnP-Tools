@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="PnPModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="PnPModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="FileTrackingBaselineSet">
           <Key>
             <PropertyRef Name="Id" />
@@ -47,6 +47,13 @@
           <Property Name="Password" Type="nvarchar(max)" />
           <Property Name="CredentialManagerLabel" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="TestCategorySet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
         <EntityType Name="TestConfigurationPropertySet">
           <Key>
             <PropertyRef Name="Id" />
@@ -70,6 +77,7 @@
           <Property Name="TestSiteUrl" Type="nvarchar(max)" Nullable="false" />
           <Property Name="TestAuthentication_Id" Type="int" Nullable="false" />
           <Property Name="AnonymousAccess" Type="bit" Nullable="false" />
+          <Property Name="TestCategory_Id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="TestResultMessageSet">
           <Key>
@@ -113,17 +121,9 @@
           <Property Name="TestsNotFound" Type="int" />
           <Property Name="MSBuildLog" Type="nvarchar(max)" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'PnP.dbo.UsersSet' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="UsersSet">
           <Key>
             <PropertyRef Name="Id" />
-            <PropertyRef Name="UPN" />
-            <PropertyRef Name="Name" />
-            <PropertyRef Name="IsAdmin" />
-            <PropertyRef Name="IsCoreMember" />
-            <PropertyRef Name="SendTestResults" />
-            <PropertyRef Name="IsEmailVerified" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="UPN" Type="nvarchar(max)" Nullable="false" />
@@ -134,6 +134,18 @@ warning 6002: The table/view 'PnP.dbo.UsersSet' does not have a primary key defi
           <Property Name="Email" Type="nvarchar(max)" />
           <Property Name="IsEmailVerified" Type="bit" Nullable="false" />
         </EntityType>
+        <Association Name="FK_TestCategoryTestConfiguration">
+          <End Role="TestCategorySet" Type="Self.TestCategorySet" Multiplicity="1" />
+          <End Role="TestConfigurationSet" Type="Self.TestConfigurationSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestCategorySet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestConfigurationSet">
+              <PropertyRef Name="TestCategory_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_TestConfigurationTestAuthentication">
           <End Role="TestAuthenticationSet" Type="Self.TestAuthenticationSet" Multiplicity="1" />
           <End Role="TestConfigurationSet" Type="Self.TestConfigurationSet" Multiplicity="*" />
@@ -204,23 +216,17 @@ warning 6002: The table/view 'PnP.dbo.UsersSet' does not have a primary key defi
           <EntitySet Name="FileTrackingBaselineSet" EntityType="Self.FileTrackingBaselineSet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FileTrackingSet" EntityType="Self.FileTrackingSet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TestAuthenticationSet" EntityType="Self.TestAuthenticationSet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TestCategorySet" EntityType="Self.TestCategorySet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TestConfigurationPropertySet" EntityType="Self.TestConfigurationPropertySet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TestConfigurationSet" EntityType="Self.TestConfigurationSet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TestResultMessageSet" EntityType="Self.TestResultMessageSet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TestResultSet" EntityType="Self.TestResultSet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TestRunSet" EntityType="Self.TestRunSet" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="UsersSet" EntityType="Self.UsersSet" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [UsersSet].[Id] AS [Id], 
-    [UsersSet].[UPN] AS [UPN], 
-    [UsersSet].[Name] AS [Name], 
-    [UsersSet].[IsAdmin] AS [IsAdmin], 
-    [UsersSet].[IsCoreMember] AS [IsCoreMember], 
-    [UsersSet].[SendTestResults] AS [SendTestResults], 
-    [UsersSet].[Email] AS [Email], 
-    [UsersSet].[IsEmailVerified] AS [IsEmailVerified]
-    FROM [dbo].[UsersSet] AS [UsersSet]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="UsersSet" EntityType="Self.UsersSet" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_TestCategoryTestConfiguration" Association="Self.FK_TestCategoryTestConfiguration">
+            <End Role="TestCategorySet" EntitySet="TestCategorySet" />
+            <End Role="TestConfigurationSet" EntitySet="TestConfigurationSet" />
+          </AssociationSet>
           <AssociationSet Name="FK_TestConfigurationTestAuthentication" Association="Self.FK_TestConfigurationTestAuthentication">
             <End Role="TestAuthenticationSet" EntitySet="TestAuthenticationSet" />
             <End Role="TestConfigurationSet" EntitySet="TestConfigurationSet" />
@@ -242,8 +248,7 @@ warning 6002: The table/view 'PnP.dbo.UsersSet' does not have a primary key defi
             <End Role="TestResultSet" EntitySet="TestResultSet" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="PnPModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -317,6 +322,8 @@ warning 6002: The table/view 'PnP.dbo.UsersSet' does not have a primary key defi
           <NavigationProperty Name="TestAuthenticationSet" Relationship="Self.FK_TestConfigurationTestAuthentication" FromRole="TestConfigurationSet" ToRole="TestAuthenticationSet" />
           <NavigationProperty Name="TestConfigurationPropertySets" Relationship="Self.FK_TestConfigurationTestConfigurationProperty" FromRole="TestConfigurationSet" ToRole="TestConfigurationPropertySet" />
           <NavigationProperty Name="TestRunSets" Relationship="Self.FK_TestConfigurationTestRun" FromRole="TestConfigurationSet" ToRole="TestRunSet" />
+          <Property Name="TestCategory_Id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TestCategorySet" Relationship="PnPModel.FK_TestCategoryTestConfiguration" FromRole="TestConfigurationSet" ToRole="TestCategorySet" />
         </EntityType>
         <EntityType Name="TestResultMessageSet">
           <Key>
@@ -368,12 +375,6 @@ warning 6002: The table/view 'PnP.dbo.UsersSet' does not have a primary key defi
         <EntityType Name="UsersSet">
           <Key>
             <PropertyRef Name="Id" />
-            <PropertyRef Name="UPN" />
-            <PropertyRef Name="Name" />
-            <PropertyRef Name="IsAdmin" />
-            <PropertyRef Name="IsCoreMember" />
-            <PropertyRef Name="SendTestResults" />
-            <PropertyRef Name="IsEmailVerified" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="UPN" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
@@ -480,7 +481,32 @@ warning 6002: The table/view 'PnP.dbo.UsersSet' does not have a primary key defi
             <End Role="TestRunSet" EntitySet="TestRunSets" />
             <End Role="TestResultSet" EntitySet="TestResultSets" />
           </AssociationSet>
+          <EntitySet Name="TestCategorySets" EntityType="PnPModel.TestCategorySet" />
+          <AssociationSet Name="FK_TestCategoryTestConfiguration" Association="PnPModel.FK_TestCategoryTestConfiguration">
+            <End Role="TestCategorySet" EntitySet="TestCategorySets" />
+            <End Role="TestConfigurationSet" EntitySet="TestConfigurationSets" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="TestCategorySet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="TestConfigurationSets" Relationship="PnPModel.FK_TestCategoryTestConfiguration" FromRole="TestCategorySet" ToRole="TestConfigurationSet" />
+        </EntityType>
+        <Association Name="FK_TestCategoryTestConfiguration">
+          <End Type="PnPModel.TestCategorySet" Role="TestCategorySet" Multiplicity="1" />
+          <End Type="PnPModel.TestConfigurationSet" Role="TestConfigurationSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestCategorySet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestConfigurationSet">
+              <PropertyRef Name="TestCategory_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -545,6 +571,7 @@ warning 6002: The table/view 'PnP.dbo.UsersSet' does not have a primary key defi
           <EntitySetMapping Name="TestConfigurationSets">
             <EntityTypeMapping TypeName="PnPModel.TestConfigurationSet">
               <MappingFragment StoreEntitySet="TestConfigurationSet">
+                <ScalarProperty Name="TestCategory_Id" ColumnName="TestCategory_Id" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
@@ -614,6 +641,14 @@ warning 6002: The table/view 'PnP.dbo.UsersSet' does not have a primary key defi
                 <ScalarProperty Name="SendTestResults" ColumnName="SendTestResults" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="IsEmailVerified" ColumnName="IsEmailVerified" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TestCategorySets">
+            <EntityTypeMapping TypeName="PnPModel.TestCategorySet">
+              <MappingFragment StoreEntitySet="TestCategorySet">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

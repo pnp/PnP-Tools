@@ -27,7 +27,9 @@ namespace PnPTestResultsNotificationJob
                                         configset.Id,
                                         configset.AnonymousAccess,
                                         configset.Branch,
-                                        configset.Name
+                                        configset.Name,
+                                        configset.TestCategory_Id
+
                                     };
 
                 if (!isAdmin)
@@ -39,6 +41,7 @@ namespace PnPTestResultsNotificationJob
                 var data = (from testrunset in filteredTestRunSets
                             join testresultset in dc.TestResultSets on testrunset.Id equals testresultset.TestRunId
                             join configset in configDetails on testrunset.TestConfigurationId equals configset.Id
+                            join categorySet in dc.TestCategorySets on configset.TestCategory_Id equals categorySet.Id
                             where testresultset.Outcome == outcome
                             select new
                             {
@@ -50,6 +53,7 @@ namespace PnPTestResultsNotificationJob
                                 Id = testresultset.Id,
                                 Branch = configset.Branch,
                                 Configuration = configset.Name,
+                                CategoryName = categorySet.Name,
                                 Testdate = testrunset.TestDate,
                                 TestRunId = testrunset.Id
                             }).ToList();
@@ -67,6 +71,7 @@ namespace PnPTestResultsNotificationJob
                                        Id = testresult.Id,
                                        Branch = testresult.Branch,
                                        Configuration = testresult.Configuration,
+                                       CategoryName = testresult.CategoryName,
                                        Testdate = testresult.Testdate,
                                        TestRunId = testresult.TestRunId
                                    }).OrderByDescending(t => t.Id).ToList();

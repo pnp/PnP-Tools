@@ -110,8 +110,10 @@ namespace PnPTestResultsNotificationJob
                                         testSummary.Error,
                                         testSummary.Branch,
                                         alternateRowCss,
-                                        testSummary.Configuration,
-                                        GetTestDate(testSummary.Testdate));
+                                        testSummary.Configuration,                                       
+                                        GetTestDate(testSummary.Testdate),
+                                        testSummary.CategoryName);
+
         }
 
         public static string FillTestRunsTemplate(bool isAlternateRow, AllRuns testResult, string rowTemplate)
@@ -138,6 +140,7 @@ namespace PnPTestResultsNotificationJob
 
             return String.Format(rowTemplate, rootUrl, testResult.TestRunSetId, statusIcons[testResult.Status],
                                  testResult.ConfiguratioName,
+                                 testResult.CategoryName,
                                  testResult.AppOnly,
                                  testResult.Environment,
                                  GetTestDate(testResult.Testdate),

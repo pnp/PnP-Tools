@@ -28,6 +28,7 @@ namespace PnPTestResultsNotificationJob
                                         configset.Name,
                                         configset.Type,
                                         configset.AnonymousAccess,
+                                        configset.TestCategory_Id,
                                         configset.TestAuthentication_Id,
                                         configset.Branch
                                     };
@@ -38,6 +39,7 @@ namespace PnPTestResultsNotificationJob
                 }
 
                 var testResults = (from configset in configDetails
+                                   join categorySet in dc.TestCategorySets on configset.TestCategory_Id equals categorySet.Id
                                    join authenticationset in dc.TestAuthenticationSets on configset.TestAuthentication_Id equals authenticationset.Id
                                    join testrunsets in dc.TestRunSets on configset.Id equals testrunsets.TestConfigurationId
                                    //where testrunsets.TestDate >= fromDate && testrunsets.Status >= 2
@@ -56,6 +58,7 @@ namespace PnPTestResultsNotificationJob
                                        TestRunSetId = testrunsets.Id,
                                        CId = testrunsets.TestConfigurationId,
                                        cName = configset.Name,
+                                       CategoryName = categorySet.Name,
                                        appOnly = authenticationset.AppOnly,
                                        cType = configset.Type,
                                        GithubBranch = configset.Branch
@@ -67,6 +70,7 @@ namespace PnPTestResultsNotificationJob
                                                     Status = testrunsets.Status,
                                                     ConfiguratioName = testrunsets.cName,
                                                     GithubBranch = testrunsets.GithubBranch,
+                                                    CategoryName = testrunsets.CategoryName,
                                                     AppOnly = Enum.GetName(typeof(AppOnly), testrunsets.appOnly),
                                                     Environment = Enum.GetName(typeof(EnvironmentType), testrunsets.cType),
                                                     Testdate = testrunsets.Testdate,

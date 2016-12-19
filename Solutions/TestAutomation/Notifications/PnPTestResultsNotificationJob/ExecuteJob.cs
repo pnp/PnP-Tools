@@ -38,7 +38,7 @@ namespace PnPTestResultsNotificationJob
                     }
                 }
             }
-            
+
             #region Send emails to subscribed users
             bool isAdmin = true;
             DateTime currentTime = DateTime.Now;
