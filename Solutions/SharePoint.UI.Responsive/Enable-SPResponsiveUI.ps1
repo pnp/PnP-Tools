@@ -38,21 +38,21 @@ Write-Host
 try
 {
     Write-Host -ForegroundColor Yellow "Connecting to target site URL: $TargetSiteUrl"
-    Connect-SPOnline $TargetSiteUrl -Credentials $Credentials
+    Connect-PnPOnline $TargetSiteUrl -Credentials $Credentials
     Write-Host -ForegroundColor Yellow "Enabling responsive UI on target site"
 
     # If the Infrastructure Site URL is provided, we use it
     if ($InfrastructureSiteUrl -ne "") 
     {
         Write-Host -ForegroundColor Yellow "Infrastructure Site URL: $InfrastructureSiteUrl"
-        Enable-SPOResponsiveUI -InfrastructureSiteUrl $InfrastructureSiteUrl
+        Enable-PnPResponsiveUI -InfrastructureSiteUrl $InfrastructureSiteUrl
     }
     else
     {
-        Enable-SPOResponsiveUI
+        Enable-PnPResponsiveUI
 
         Write-Host -ForegroundColor Yellow "Uploading custom responsive UI assets to target site"
-        Apply-SPOProvisioningTemplate -Path .\Responsive.UI.Infrastructure.xml -Handlers Files
+        Apply-PnPProvisioningTemplate -Path .\Responsive.UI.Infrastructure.xml -Handlers Files
     }
 
     Write-Host -ForegroundColor Green "Responsive UI application succeeded"
