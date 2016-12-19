@@ -8,6 +8,7 @@ namespace PnPAutomationUI.Models
     public class Configuration
     {
         public string ConfiguratioName { get; set; }
+        public string CategoryName { get; set; }
         public string Description { get; set; }
         public string VSBuildConfiguration { get; set; }
         public string GithubBranch { get; set; }

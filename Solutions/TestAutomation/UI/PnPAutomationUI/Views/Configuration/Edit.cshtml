@@ -41,7 +41,7 @@
             <div class="ms-Grid-row">
                 <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Description:</div>
                 <div class="ms-Grid-col ms-u-sm6 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s txtLargeWidth">
-                    @Html.EditorFor(model => model.Description,new {@class= "txtLargeWidth", @Style= "max-width: 900px;width: 550px;box-sizing : unset" })
+                    @Html.EditorFor(model => model.Description, new { @class = "txtLargeWidth", @Style = "max-width: 900px;width: 550px;box-sizing : unset" })
                 </div>
             </div>
             <div class="ms-Grid-row">
@@ -57,8 +57,10 @@
                 </div>
             </div>
             <div class="ms-Grid-row">
-                <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Type:</div>
-                <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s">@Model.AppType</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Type:</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">@Model.AppType</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Category:</div>
+                <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">@Model.CategoryName</div>
             </div>
             @if (Model.IdentityUserNameDisplayText == "Credential Manager")
             {
@@ -127,7 +129,7 @@
             </div>
 
             @for (int i = 0; i < Model.ConfigCustomProperties.Count; i++)
-                    {
+            {
                 <div class="ms-Grid-row">
                     @Html.HiddenFor(model => model.ConfigCustomProperties[i].ID)
                     <div class="ms-Grid-col ms-u-sm6 ms-u-lg3 ms-bgColor-neutralLighterAlt ms-font-s">@Html.TextBoxFor(model => model.ConfigCustomProperties[i].Name)</div>

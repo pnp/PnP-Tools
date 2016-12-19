@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="f03411c044c34a7eb2b4dc1c90b46c0c" Name="Diagram1">
+      <Diagram DiagramId="f03411c044c34a7eb2b4dc1c90b46c0c" Name="Diagram1" ZoomLevel="74">
         <EntityTypeShape EntityType="PnPModel.FileTrackingBaselineSet" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PnPModel.FileTrackingSet" Width="1.5" PointX="0.75" PointY="7.75" IsExpanded="true" />
         <EntityTypeShape EntityType="PnPModel.TestAuthenticationSet" Width="1.5" PointX="0.75" PointY="2.75" IsExpanded="true" />
@@ -19,6 +19,8 @@
         <AssociationConnector Association="PnPModel.FK_TestResultTestResultMessage" ManuallyRouted="false" />
         <AssociationConnector Association="PnPModel.FK_TestRunTestResult" ManuallyRouted="false" />
         <EntityTypeShape EntityType="PnPModel.UsersSet" Width="1.5" PointX="3.375" PointY="8.75" />
+        <EntityTypeShape EntityType="PnPModel.TestCategorySet" Width="1.5" PointX="5.375" PointY="8.875" />
+        <AssociationConnector Association="PnPModel.FK_TestCategoryTestConfiguration" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

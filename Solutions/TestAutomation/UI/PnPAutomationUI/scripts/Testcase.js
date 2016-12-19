@@ -8,4 +8,11 @@
     else {
         $(".ms-Grid-row").css('display', 'flex');
     }
+}
+);
+
+$(function () {
+    $("#ErrorMessageResizable").resizable();
+    $("#StacktraceResizable").resizable();
+    $("#ConsoleResizable").resizable();
 });

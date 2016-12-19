@@ -31,11 +31,13 @@ namespace PnPAutomationUI
         public string TestSiteUrl { get; set; }
         public int TestAuthentication_Id { get; set; }
         public bool AnonymousAccess { get; set; }
+        public int TestCategory_Id { get; set; }
     
         public virtual TestAuthenticationSet TestAuthenticationSet { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TestConfigurationPropertySet> TestConfigurationPropertySets { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TestRunSet> TestRunSets { get; set; }
+        public virtual TestCategorySet TestCategorySet { get; set; }
     }
 }

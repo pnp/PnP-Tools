@@ -44,6 +44,7 @@ namespace PnPAutomationUI.Controllers
             using (PnPTestAutomationEntities dc = new PnPTestAutomationEntities())
             {
                 IEnumerable<Configuration> configurationDetails = from configset in dc.TestConfigurationSets
+                                                                  join categorySet in dc.TestCategorySets on configset.TestCategory_Id equals categorySet.Id
                                                                   join testrunsets in dc.TestRunSets on configset.Id equals testrunsets.TestConfigurationId
                                                                   join testauthenticationset in dc.TestAuthenticationSets on configset.TestAuthentication_Id equals testauthenticationset.Id
                                                                   where testrunsets.Id == TestRunID
@@ -51,6 +52,7 @@ namespace PnPAutomationUI.Controllers
                                                                   {
                                                                       ConfigurationId = configset.Id,
                                                                       ConfiguratioName = configset.Name,
+                                                                      CategoryName = categorySet.Name,
                                                                       Description = configset.Description,
                                                                       AnonymousAccess = configset.AnonymousAccess,
                                                                       VSBuildConfiguration = configset.VSBuildConfiguration,

@@ -6,16 +6,18 @@
 
 <link rel="stylesheet" href="~/Content/fabric.min.css" />
 <link rel="stylesheet" href="~/Content/fabric.components.min.css" />
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="~/Scripts/Testcase.js"></script>
 <link rel="stylesheet" href="~/Content/Testcase.css" />
 <script type="text/javascript" src="~/scripts/TestAutomationUI.js"></script>
 <script src="~/scripts/jquery-1.12.0.min.js"></script>
 <script src="~/scripts/jquery-migrate-1.2.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <div class="ms-font-su ms-fontColor-themePrimary ms-fontWeight-semibold" style="text-align: center">Test case details</div>
 <div>
     @if (Model != null)
     {
-        <div style="width: 70%; margin: auto" class="ms-Grid">
+        <div style="width: 90%; margin: auto" class="ms-Grid">
             <div class="ms-Grid-row">
                 <div class="ms-Grid-col ms-u-sm4 ms-u-lg2 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Test name:</div>
                 <div class="ms-Grid-col ms-u-sm8 ms-u-lg10 ms-bgColor-neutralLight ms-font-s" style="word-wrap: break-word;">@Model.TestCasename</div>
@@ -37,7 +39,7 @@
             </div>
             <div class="ms-Grid-row">
                 <div class="ms-Grid-col ms-u-sm4 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Error message:</div>
-                <div class="ms-Grid-col ms-u-sm8 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s" style="word-wrap: break-word;">
+                <div class="ms-Grid-col ms-u-sm8 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s ui-widget-content" id="ErrorMessageResizable">
                     @if (!string.IsNullOrEmpty(Model.Error) && Model.Error != null)
                 {
                         <span>@Model.Error</span>
@@ -50,9 +52,10 @@
             </div>
             <div class="ms-Grid-row">
                 <div class="ms-Grid-col ms-u-sm4 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Stacktrace:</div>
-                <div class="ms-Grid-col ms-u-sm8 ms-u-lg9 ms-bgColor-neutralLight ms-font-s" style="word-wrap: break-word;">
+                @*<div class="ms-Grid-col ms-u-sm8 ms-u-lg9 ms-bgColor-neutralLight ms-font-s" style="word-wrap: break-word;">*@
+                <div class="ms-Grid-col ms-u-sm8 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s ui-widget-content" id="StacktraceResizable">
                     @if (Model.StackTrace != null && !string.IsNullOrEmpty(Model.StackTrace))
-                {
+                    {
                         <span>at @Model.StackTrace</span>
                     }
                     else
@@ -63,15 +66,16 @@
             </div>
             <div class="ms-Grid-row">
                 <pre class="ms-Grid-col ms-u-sm4 ms-u-lg3 ms-fontColor-white ms-font-m ms-bgColor-themeDarker">Console output:</pre>
-                <pre class="ms-Grid-col ms-u-sm8 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s" style="word-wrap: break-word;">
-                @Model.ConsoleOutPut
-                </pre>
+                @*<pre class="ms-Grid-col ms-u-sm8 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s" style="word-wrap: break-word;">*@
+                <pre class="ms-Grid-col ms-u-sm8 ms-u-lg9 ms-bgColor-neutralLighterAlt ms-font-s ui-widget-content" id="ConsoleResizable">
+    @Model.ConsoleOutPut
+    </pre>
             </div>
         </div>
     }
     else
     {
-        <div style="width: 70%; margin: auto" class="ms-Grid">
+        <div style="width: 90%; margin: auto" class="ms-Grid">
             No data found
         </div>
     }

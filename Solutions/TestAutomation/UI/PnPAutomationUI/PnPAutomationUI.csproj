@@ -264,6 +264,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="App_Code\Common.cshtml" />
+    <Content Include="Content\bootstrap-multiselect.less" />
     <None Include="scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="scripts\bootstrap-multiselect.js" />
     <Content Include="scripts\jquery.unobtrusive-ajax.js" />
@@ -319,6 +320,7 @@
     <Compile Include="Helpers\AuthorizationManager.cs" />
     <Compile Include="Helpers\SystemWebCookieManager.cs" />
     <Compile Include="Models\AllRuns.cs" />
+    <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Configuration.cs" />
     <Compile Include="Models\GenerateLog.cs" />
     <Compile Include="Models\Testcase.cs" />
@@ -344,6 +346,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="TestAuthenticationSet.cs">
+      <DependentUpon>PnpTestModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TestCategorySet.cs">
       <DependentUpon>PnpTestModel.tt</DependentUpon>
     </Compile>
     <Compile Include="TestConfigurationPropertySet.cs">

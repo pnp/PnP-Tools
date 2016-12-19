@@ -47,6 +47,13 @@
           <Property Name="Password" Type="nvarchar(max)" />
           <Property Name="CredentialManagerLabel" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="TestCategorySet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
         <EntityType Name="TestConfigurationPropertySet">
           <Key>
             <PropertyRef Name="Id" />
@@ -70,6 +77,7 @@
           <Property Name="TestSiteUrl" Type="nvarchar(max)" Nullable="false" />
           <Property Name="TestAuthentication_Id" Type="int" Nullable="false" />
           <Property Name="AnonymousAccess" Type="bit" Nullable="false" />
+          <Property Name="TestCategory_Id" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="TestResultMessageSet">
           <Key>
@@ -126,6 +134,18 @@
           <Property Name="Email" Type="nvarchar(max)" />
           <Property Name="IsEmailVerified" Type="bit" Nullable="false" />
         </EntityType>
+        <Association Name="FK_TestCategoryTestConfiguration">
+          <End Role="TestCategorySet" Type="Self.TestCategorySet" Multiplicity="1" />
+          <End Role="TestConfigurationSet" Type="Self.TestConfigurationSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestCategorySet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestConfigurationSet">
+              <PropertyRef Name="TestCategory_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_TestConfigurationTestAuthentication">
           <End Role="TestAuthenticationSet" Type="Self.TestAuthenticationSet" Multiplicity="1" />
           <End Role="TestConfigurationSet" Type="Self.TestConfigurationSet" Multiplicity="*" />
@@ -196,12 +216,17 @@
           <EntitySet Name="FileTrackingBaselineSet" EntityType="Self.FileTrackingBaselineSet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FileTrackingSet" EntityType="Self.FileTrackingSet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TestAuthenticationSet" EntityType="Self.TestAuthenticationSet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TestCategorySet" EntityType="Self.TestCategorySet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TestConfigurationPropertySet" EntityType="Self.TestConfigurationPropertySet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TestConfigurationSet" EntityType="Self.TestConfigurationSet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TestResultMessageSet" EntityType="Self.TestResultMessageSet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TestResultSet" EntityType="Self.TestResultSet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TestRunSet" EntityType="Self.TestRunSet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UsersSet" EntityType="Self.UsersSet" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_TestCategoryTestConfiguration" Association="Self.FK_TestCategoryTestConfiguration">
+            <End Role="TestCategorySet" EntitySet="TestCategorySet" />
+            <End Role="TestConfigurationSet" EntitySet="TestConfigurationSet" />
+          </AssociationSet>
           <AssociationSet Name="FK_TestConfigurationTestAuthentication" Association="Self.FK_TestConfigurationTestAuthentication">
             <End Role="TestAuthenticationSet" EntitySet="TestAuthenticationSet" />
             <End Role="TestConfigurationSet" EntitySet="TestConfigurationSet" />
@@ -297,6 +322,8 @@
           <NavigationProperty Name="TestConfigurationPropertySets" Relationship="Self.FK_TestConfigurationTestConfigurationProperty" FromRole="TestConfigurationSet" ToRole="TestConfigurationPropertySet" />
           <NavigationProperty Name="TestRunSets" Relationship="Self.FK_TestConfigurationTestRun" FromRole="TestConfigurationSet" ToRole="TestRunSet" />
           <Property Name="AnonymousAccess" Type="Boolean" Nullable="false" />
+          <Property Name="TestCategory_Id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TestCategorySet" Relationship="PnPModel.FK_TestCategoryTestConfiguration" FromRole="TestConfigurationSet" ToRole="TestCategorySet" />
         </EntityType>
         <EntityType Name="TestResultMessageSet">
           <Key>
@@ -441,6 +468,11 @@
             <End Role="TestResultSet" EntitySet="TestResultSets" />
           </AssociationSet>
           <EntitySet Name="UsersSets" EntityType="PnPModel.UsersSet" />
+          <EntitySet Name="TestCategorySets" EntityType="PnPModel.TestCategorySet" />
+          <AssociationSet Name="FK_TestCategoryTestConfiguration" Association="PnPModel.FK_TestCategoryTestConfiguration">
+            <End Role="TestCategorySet" EntitySet="TestCategorySets" />
+            <End Role="TestConfigurationSet" EntitySet="TestConfigurationSets" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="UsersSet">
           <Key>
@@ -455,6 +487,26 @@
           <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IsEmailVerified" Type="Boolean" Nullable="false" />
         </EntityType>
+        <EntityType Name="TestCategorySet">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="TestConfigurationSets" Relationship="PnPModel.FK_TestCategoryTestConfiguration" FromRole="TestCategorySet" ToRole="TestConfigurationSet" />
+        </EntityType>
+        <Association Name="FK_TestCategoryTestConfiguration">
+          <End Type="PnPModel.TestCategorySet" Role="TestCategorySet" Multiplicity="1" />
+          <End Type="PnPModel.TestConfigurationSet" Role="TestConfigurationSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TestCategorySet">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TestConfigurationSet">
+              <PropertyRef Name="TestCategory_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -519,6 +571,7 @@
           <EntitySetMapping Name="TestConfigurationSets">
             <EntityTypeMapping TypeName="PnPModel.TestConfigurationSet">
               <MappingFragment StoreEntitySet="TestConfigurationSet">
+                <ScalarProperty Name="TestCategory_Id" ColumnName="TestCategory_Id" />
                 <ScalarProperty Name="AnonymousAccess" ColumnName="AnonymousAccess" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -587,6 +640,14 @@
                 <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="UPN" ColumnName="UPN" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TestCategorySets">
+            <EntityTypeMapping TypeName="PnPModel.TestCategorySet">
+              <MappingFragment StoreEntitySet="TestCategorySet">
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

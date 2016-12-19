@@ -24,6 +24,7 @@ namespace PnPAutomationUI.Models
         public int Count { get; set; }
 
         public int CId { get; set; }
+        public string CategoryName { get; set; }
     }
     public enum EnvironmentType
     {
@@ -49,5 +50,9 @@ namespace PnPAutomationUI.Models
         public int TestResultsCount { get; set; }
         public IList<ConfigurationList> TestConfigurations { get; set; }
         public int[] SelectedConfigurations { get; set; }
+
+        public IList<CategoryList> TestCategory { get; set; }
+        public int[] SelectedCategory { get; set; }
+
     }
 }

@@ -175,13 +175,12 @@
     function Multiselect(select, options) {
 
         this.$select = $(select);
+        this.options = this.mergeOptions($.extend({}, options, this.$select.data()));
 
         // Placeholder via data attributes
         if (this.$select.attr("data-placeholder")) {
-            options.nonSelectedText = this.$select.data("placeholder");
+            this.options.nonSelectedText = this.$select.data("placeholder");
         }
-
-        this.options = this.mergeOptions($.extend({}, options, this.$select.data()));
 
         // Initialization.
         // We have to clone to create a new reference.
@@ -216,11 +215,12 @@
             this.updateOptGroups();
         }
 
+        this.options.wasDisabled = this.$select.prop('disabled');
         if (this.options.disableIfEmpty && $('option', this.$select).length <= 0) {
             this.disable();
         }
 
-        this.$select.wrap('<span class="hide-native-select">').after(this.$container);
+        this.$select.wrap('<span class="multiselect-native-select" />').after(this.$container);
         this.options.onInitialized(this.$select, this.$container);
     }
 
@@ -585,10 +585,10 @@
                 if (isSelectAllOption) {
 
                     if (checked) {
-                        this.selectAll(this.options.selectAllJustVisible);
+                        this.selectAll(this.options.selectAllJustVisible, true);
                     }
                     else {
-                        this.deselectAll(this.options.selectAllJustVisible);
+                        this.deselectAll(this.options.selectAllJustVisible, true);
                     }
                 }
                 else {
@@ -765,6 +765,15 @@
 
                     var values = [];
                     var $options = [];
+
+                    if (this.options.selectedClass) {
+                        if (checked) {
+                            $li.addClass(this.options.selectedClass);
+                        }
+                        else {
+                            $li.removeClass(this.options.selectedClass);
+                        }
+                    }
 
                     $.each($inputs, $.proxy(function(index, input) {
                         var value = $(input).val();
@@ -1126,6 +1135,10 @@
         destroy: function() {
             this.$container.remove();
             this.$select.show();
+
+            // reset original state
+            this.$select.prop('disabled', this.options.wasDisabled);
+
             this.$select.data('multiselect', null);
         },
 
@@ -1333,7 +1346,7 @@
                 }, this));
             }
 
-            $('li input[value="' + this.options.selectAllValue + '"]').prop('checked', true);
+            $('li input[value="' + this.options.selectAllValue + '"]', this.$ul).prop('checked', true);
 
             if (this.options.enableClickableOptGroups && this.options.multiple) {
                 this.updateOptGroups();
@@ -1378,7 +1391,7 @@
                 }, this));
             }
 
-            $('li input[value="' + this.options.selectAllValue + '"]').prop('checked', false);
+            $('li input[value="' + this.options.selectAllValue + '"]', this.$ul).prop('checked', false);
 
             if (this.options.enableClickableOptGroups && this.options.multiple) {
                 this.updateOptGroups();
@@ -1536,6 +1549,7 @@
          */
         updateOptGroups: function() {
             var $groups = $('li.multiselect-group', this.$ul)
+            var selectedClass = this.options.selectedClass;
 
             $groups.each(function() {
                 var $options = $(this).nextUntil('li.multiselect-group')
@@ -1550,6 +1564,15 @@
                         checked = false;
                     }
                 });
+
+                if (selectedClass) {
+                    if (checked) {
+                        $(this).addClass(selectedClass);
+                    }
+                    else {
+                        $(this).removeClass(selectedClass);
+                    }
+                }
 
                 $('input', this).prop('checked', checked);
             });
@@ -1569,16 +1592,10 @@
                 if (checkedBoxesLength > 0 && checkedBoxesLength === allBoxesLength) {
                     selectAllInput.prop("checked", true);
                     selectAllLi.addClass(this.options.selectedClass);
-                    this.options.onSelectAll();
                 }
                 else {
                     selectAllInput.prop("checked", false);
                     selectAllLi.removeClass(this.options.selectedClass);
-                    if (checkedBoxesLength === 0) {
-                        if (!notTriggerOnSelectAll) {
-                            this.options.onDeselectAll();
-                        }
-                    }
                 }
             }
         },
@@ -1637,7 +1654,7 @@
          */
         getInputByValue: function (value) {
 
-            var checkboxes = $('li input', this.$ul);
+            var checkboxes = $('li input:not(.multiselect-search)', this.$ul);
             var valueToCompare = value.toString();
 
             for (var i = 0; i < checkboxes.length; i = i + 1) {
