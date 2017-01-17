@@ -1,4 +1,6 @@
- Add-PsSnapin Microsoft.SharePoint.PowerShell -Ea Continue
+ if ((Get-PSSnapin -Name "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue) -eq $null) {            
+ Add-PSSnapin -Name "Microsoft.SharePoint.PowerShell"        } 
+cls
 　
 function Find-AppInstances{
 
