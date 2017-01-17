@@ -1,3 +1,16 @@
+ # SUMMARY
+ 
+ # Script fixes the scenario where a hybrid workload has been onboarded to a farm and the result is broken PHAs.
+ 
+ # USAGE
+ 
+ # Execute the script as a farm admin account
+ 
+ # OUTPUT
+ 
+ # Reports PHAs that need to be fixed and the location where they are fixed.
+ 
+ 
  if ((Get-PSSnapin -Name "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue) -eq $null) {            
  Add-PSSnapin -Name "Microsoft.SharePoint.PowerShell"        } 
 cls
