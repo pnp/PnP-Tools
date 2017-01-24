@@ -74,6 +74,24 @@ Before you can load and execute the needed module in step 3 you'll need to first
 Once that's done you'll need to copy the `Connect-SPFarmToAAD.psm1` PowerShell module from the scripts folder to a folder or file share on the file system. 
 
 ## Step 3: Apply the new signing certificate and setup the low trust association
+
+### What if you're connecting to an Office 365 tenant which lives in the Germany or China environment?
+If your Office 365 tenant is hosted in either the Germany or China Office 365 environment then you'll need to adjust the `Connect-SPFarmToAAD.psm1` script as outlined below:
+
+```PowerShell
+...
+
+    # Use following values for AAD_METADATAEP_FSTRING depending on the environment where your Office 365 tenant is hosted
+    # Default: https://accounts.accesscontrol.windows.net/{0}/metadata/json/1
+    # Germany: https://login.microsoftonline.de/{0}/metadata/json/1
+    # China: https://accounts.accesscontrol.chinacloudapi.cn/{0}/metadata/json/1
+
+    New-Variable -Option Constant -Name AAD_METADATAEP_FSTRING -Value 'https://accounts.accesscontrol.windows.net/{0}/metadata/json/1'
+...
+```
+
+
+### Setup the low trust association
 Start this step by running the `LowTrustConfigurationSession.ps1` script and provide as input:
 - **PFXFile**: the location to the PFX file created in step 1
 - **PFXPassword**: the password of the PFX file created in step 1

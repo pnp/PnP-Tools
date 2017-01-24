@@ -29,6 +29,12 @@ param(
     New-Variable -Option Constant -Name ACS_APPPROXY_NAME -Value ACS
     New-Variable -Option Constant -Name SPO_MANAGEMENT_APPPROXY_NAME -Value 'SPO Add-in Management Proxy'
     New-Variable -Option Constant -Name ACS_STS_NAME -Value ACS-STS
+
+    # Use following values for AAD_METADATAEP_FSTRING depending on the environment where your Office 365 tenant is hosted
+    # Default: https://accounts.accesscontrol.windows.net/{0}/metadata/json/1
+    # Germany: https://login.microsoftonline.de/{0}/metadata/json/1
+    # China: https://accounts.accesscontrol.chinacloudapi.cn/{0}/metadata/json/1
+
     New-Variable -Option Constant -Name AAD_METADATAEP_FSTRING -Value 'https://accounts.accesscontrol.windows.net/{0}/metadata/json/1'
     New-Variable -Option Constant -Name SP_METADATAEP_FSTRING -Value '{0}/_layouts/15/metadata/json/1'
     #Get the default SPWeb from the on-premises farm if no $SharePointWeb parameter is specified.
