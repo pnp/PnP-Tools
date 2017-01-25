@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2016/05/ProvisioningSchema">
+	<pnp:Preferences Generator="SharePointPnP Developer Tools" />
+	<pnp:Templates ID="CONTAINER-TEMPLATE-$safeprojectname$">
+		<pnp:ProvisioningTemplate ID="TEMPLATE-$safeprojectname$" Version="1.0">
+		</pnp:ProvisioningTemplate>
+	</pnp:Templates>
+</pnp:Provisioning>
