@@ -4,11 +4,15 @@ using OfficeDevPnP.Core.Framework.Provisioning.Connectors;
 using OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml;
 using Microsoft.Build.Utilities;
 using SharePointPnP.DeveloperTools.Common.Configuration;
+using Microsoft.Build.Framework;
 
 namespace SharePointPnP.DeveloperTools.MSBuild.Tasks
 {
 	public class BuildOpenXmlPackage : Task
 	{
+		[Required]
+		public ITaskItem[] SiteTemplates { get; set; }
+
 		private const string templateFileName = "sitetemplate.xml";
 		public string ProjectDir { get; set; }
 

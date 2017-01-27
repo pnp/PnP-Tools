@@ -103,9 +103,9 @@ namespace SharePointPnP.DeveloperTools.VisualStudio
 
 		private void RestoreTargetPlatfrom()
 		{
-			chkSupportSPO.Checked = config.TargetPlatform.Has(TargetPlatform.SPO);
-			chkSupportSP13.Checked = config.TargetPlatform.Has(TargetPlatform.SP13);
-			chkSupportSP16.Checked = config.TargetPlatform.Has(TargetPlatform.SP16);
+			chkSupportSPO.Checked = config.TargetPlatform.HasFlag(TargetPlatform.SPO);
+			chkSupportSP13.Checked = config.TargetPlatform.HasFlag(TargetPlatform.SP13);
+			chkSupportSP16.Checked = config.TargetPlatform.HasFlag(TargetPlatform.SP16);
 		}
 
 		protected override void PostInitPage()
