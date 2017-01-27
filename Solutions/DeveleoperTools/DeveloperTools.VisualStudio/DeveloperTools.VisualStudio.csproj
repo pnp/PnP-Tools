@@ -57,6 +57,7 @@
     <Compile Include="Extenders\SiteTemplatePropertiesExtender.cs" />
     <Compile Include="Helpers\TypeHelper.cs" />
     <Compile Include="Helpers\VsHelper.cs" />
+    <Compile Include="Helpers\XmlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyPage\TemplatePropertyPageControl.cs">
       <SubType>UserControl</SubType>
@@ -186,6 +187,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="VSLangProj, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
