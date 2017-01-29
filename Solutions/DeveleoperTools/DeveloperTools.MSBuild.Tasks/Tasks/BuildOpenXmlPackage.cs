@@ -6,6 +6,8 @@ using Microsoft.Build.Utilities;
 using SharePointPnP.DeveloperTools.Common.Configuration;
 using Microsoft.Build.Framework;
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace SharePointPnP.DeveloperTools.MSBuild.Tasks
 {
@@ -48,7 +50,7 @@ namespace SharePointPnP.DeveloperTools.MSBuild.Tasks
 				var packageName = ProjectName + ".pnp";
 				var packedTemplateName = Path.GetFileNameWithoutExtension(filename) + ".xml";
 
-				LogMessage($"Pack started file={filename}, package={packageName}");
+				LogMessage($"Packing template={filename}, package={packageName}");
 
 				XMLFileSystemTemplateProvider provider = new XMLFileSystemTemplateProvider(ProjectDir, "");
 				var fsConnector = provider.Connector;
@@ -61,13 +63,27 @@ namespace SharePointPnP.DeveloperTools.MSBuild.Tasks
 				OpenXMLConnector openXml = new OpenXMLConnector(outFile, fsConnector, config.Author);
 
 				//write files
-				foreach (var file in template.Files)
+				var files = template.Files != null ? template.Files.Select(f => f.Src.ToLower()).ToList() : new List<string>();
+				if(TemplateFiles?.Length > 0)
 				{
-					var fileName = Path.GetFileName(file.Src);
-					var container = Path.GetDirectoryName(file.Src);
+					files = files.Union(TemplateFiles.Select(t => t.GetMetadata("Identity")?.ToLower())).ToList();
+				}
+
+				foreach (var file in files)
+				{
+					LogMessage($"Packing file={file}, package={packageName}");
+					var fileName = Path.GetFileName(file);
+					var container = Path.GetDirectoryName(file);
 					using (var stream = fsConnector.GetFileStream(fileName, container))
 					{
-						openXml.SaveFileStream(fileName, container, stream);
+						if(stream != null)
+						{
+							openXml.SaveFileStream(fileName, container, stream);
+						}
+						else
+						{
+							throw new FileNotFoundException($"Not found: {Path.Combine(ProjectDir, file)}");
+						}
 					}
 				}
 
@@ -78,10 +94,11 @@ namespace SharePointPnP.DeveloperTools.MSBuild.Tasks
 				}
 
 				openXml.Commit();
+				LogMessage($"Packed successfully.");
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
-				//TODO trace
+				LogError(e);
 				res = false;
 			}
 			return res;
@@ -96,8 +113,11 @@ namespace SharePointPnP.DeveloperTools.MSBuild.Tasks
 
 		private void LogMessage(string msg)
 		{
-			var args = new Microsoft.Build.Framework.BuildMessageEventArgs(msg, string.Empty, "PnPProvisioningTemplate", Microsoft.Build.Framework.MessageImportance.Normal);
-			BuildEngine.LogMessageEvent(args);
+			Log.LogMessage(MessageImportance.High, msg);
+		}
+		private void LogError(Exception e)
+		{
+			Log.LogErrorFromException(e);
 		}
 	}
 }
