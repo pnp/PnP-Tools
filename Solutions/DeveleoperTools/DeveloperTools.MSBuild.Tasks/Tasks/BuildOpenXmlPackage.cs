@@ -14,13 +14,14 @@ namespace SharePointPnP.DeveloperTools.MSBuild.Tasks
 		[Required]
 		public ITaskItem[] ProvisioningTemplates { get; set; }
 
+		[Required]
+		public ITaskItem[] TemplateFiles { get; set; }
+
 		public string ProjectDir { get; set; }
 
 		public string ProjectName { get; set; }
 
 		public string OutDir { get; set; }
-
-		public string Author { get; set; }
 
 		public override bool Execute()
 		{
@@ -53,8 +54,11 @@ namespace SharePointPnP.DeveloperTools.MSBuild.Tasks
 				var fsConnector = provider.Connector;
 				var template = provider.GetTemplate(idenity);
 
+				var configManager = new ConfigurationManager();
+				var config = configManager.GetProjectConfiguration(ProjectDir);
+
 				var outFile = Path.Combine(ProjectDir, OutDir, packageName);
-				OpenXMLConnector openXml = new OpenXMLConnector(outFile, fsConnector, Author);
+				OpenXMLConnector openXml = new OpenXMLConnector(outFile, fsConnector, config.Author);
 
 				//write files
 				foreach (var file in template.Files)

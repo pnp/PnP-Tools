@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ConfigurationManager.cs" />
-    <Compile Include="Configuration\TemplateConfiguration.cs" />
+    <Compile Include="Configuration\ProjectConfiguration.cs" />
     <Compile Include="Helpers\XmlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
