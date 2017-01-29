@@ -5,64 +5,81 @@ using OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml;
 using Microsoft.Build.Utilities;
 using SharePointPnP.DeveloperTools.Common.Configuration;
 using Microsoft.Build.Framework;
+using System;
 
 namespace SharePointPnP.DeveloperTools.MSBuild.Tasks
 {
 	public class BuildOpenXmlPackage : Task
 	{
 		[Required]
-		public ITaskItem[] SiteTemplates { get; set; }
+		public ITaskItem[] ProvisioningTemplates { get; set; }
 
-		private const string templateFileName = "sitetemplate.xml";
 		public string ProjectDir { get; set; }
 
 		public string ProjectName { get; set; }
 
 		public string OutDir { get; set; }
 
+		public string Author { get; set; }
+
 		public override bool Execute()
 		{
 			var res = true;
-			var packageName = ProjectName + ".pnp";
-			var packedTemplateName = ProjectName + ".xml";
-
-			var configManager = new ConfigurationManager();
-			var config = configManager.GetTemplateConfiguration(ProjectDir);
-			LogMessage($"Pack started DiplayName={config.DisplayName}, ImagePreviewUrl={config.ImagePreviewUrl}");
-
-			XMLFileSystemTemplateProvider provider = new XMLFileSystemTemplateProvider(ProjectDir, "");
-			var fsConnector = provider.Connector;
-			var template = provider.GetTemplate(templateFileName);
-
-			//set template properties
-			template.DisplayName = config.DisplayName;
-			template.ImagePreviewUrl = config.ImagePreviewUrl;
-			template.Properties["PnP_Supports_SP2013_Platform"] = config.TargetPlatform.HasFlag(TargetPlatform.SP13).ToString();
-			template.Properties["PnP_Supports_SP2016_Platform"] = config.TargetPlatform.HasFlag(TargetPlatform.SP16).ToString();
-			template.Properties["PnP_Supports_SPO_Platform"] = config.TargetPlatform.HasFlag(TargetPlatform.SPO).ToString();
-
-			string outFile = Path.Combine(ProjectDir, OutDir, packageName);
-			OpenXMLConnector openXml = new OpenXMLConnector(outFile, fsConnector, config.Author);
-
-			//write files
-			foreach(var file in template.Files)
+			foreach(var item in ProvisioningTemplates)
 			{
-				var fileName = Path.GetFileName(file.Src);
-				var container = Path.GetDirectoryName(file.Src);
-				using(var stream = fsConnector.GetFileStream(fileName, container))
+				res = BuildPackage(item);
+				if(!res)
 				{
-					openXml.SaveFileStream(fileName, container, stream);
+					break;
 				}
 			}
+			return res;
+		}
 
-			var xml = template.ToXML();
-			using (var stream = GetStream(xml))
+		private bool BuildPackage(ITaskItem item)
+		{
+			var res = true;
+
+			try
 			{
-				openXml.SaveFileStream(packedTemplateName, stream);
+				var idenity = item.GetMetadata("Identity");
+				var filename = Path.GetFileName(idenity);
+				var packageName = ProjectName + ".pnp";
+				var packedTemplateName = Path.GetFileNameWithoutExtension(filename) + ".xml";
+
+				LogMessage($"Pack started file={filename}, package={packageName}");
+
+				XMLFileSystemTemplateProvider provider = new XMLFileSystemTemplateProvider(ProjectDir, "");
+				var fsConnector = provider.Connector;
+				var template = provider.GetTemplate(idenity);
+
+				var outFile = Path.Combine(ProjectDir, OutDir, packageName);
+				OpenXMLConnector openXml = new OpenXMLConnector(outFile, fsConnector, Author);
+
+				//write files
+				foreach (var file in template.Files)
+				{
+					var fileName = Path.GetFileName(file.Src);
+					var container = Path.GetDirectoryName(file.Src);
+					using (var stream = fsConnector.GetFileStream(fileName, container))
+					{
+						openXml.SaveFileStream(fileName, container, stream);
+					}
+				}
+
+				var xml = template.ToXML();
+				using (var stream = GetStream(xml))
+				{
+					openXml.SaveFileStream(packedTemplateName, stream);
+				}
+
+				openXml.Commit();
 			}
-
-			openXml.Commit();
-
+			catch(Exception e)
+			{
+				//TODO trace
+				res = false;
+			}
 			return res;
 		}
 

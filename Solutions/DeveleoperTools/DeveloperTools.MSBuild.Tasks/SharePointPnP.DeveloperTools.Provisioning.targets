@@ -5,9 +5,9 @@
 		<CfgPropertyPagesGuidsAddCSharp>{109F4BC1-4DE4-4DCA-A0B1-EF18B8AF9742}</CfgPropertyPagesGuidsAddCSharp>
 	</PropertyGroup>
 	<Target Name="AfterBuild">
-		<BuildOpenXmlPackage ProjectDir="$(ProjectDir)" OutDir="$(OutDir)" ProjectName="$(ProjectName)" SiteTemplates="@(PnPSiteTemplate)" />
+		<BuildOpenXmlPackage ProjectDir="$(ProjectDir)" OutDir="$(OutDir)" ProjectName="$(ProjectName)" ProvisioningTemplates="@(PnPTemplate)" />
 	</Target>
 	<ItemGroup>
-		<AvailableItemName Include="PnPSiteTemplate" />
+		<AvailableItemName Include="PnPTemplate" />
 	</ItemGroup>
 </Project>

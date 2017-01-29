@@ -1,27 +1,21 @@
 ﻿using EnvDTE;
 using SharePointPnP.DeveloperTools.VisualStudio.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VSLangProj80;
 
 namespace SharePointPnP.DeveloperTools.VisualStudio.Extenders
 {
-	public class SiteTemplateExtenderProvider : IExtenderProvider
+	public class ProvisioingTemplateExtenderProvider : IExtenderProvider
 	{
-		private const string SiteTemplateItemType = "PnPSiteTemplate";
+		private const string ProvisioningTemplateItemType = "PnPTemplate";
 
-		private ISiteTemplateExtender extender;
+		private IProvisioingTemplateExtender extender;
 		public object GetExtender(string extenderCatid, string extenderName,
 			 object extendeeObject, IExtenderSite extenderSite,
 			int cookie)
 		{
 			return extender = CanExtend(extenderCatid, extenderName, extendeeObject) ?
-				new SiteTemplatePropertiesExtender(extenderSite, cookie, extendeeObject) : null;
+				new ProvisioingTemplateExtender(extenderSite, cookie, extendeeObject) : null;
 		}
 
 		public bool CanExtend(string extenderCatid, string extenderName, object extendeeObject)
@@ -30,7 +24,7 @@ namespace SharePointPnP.DeveloperTools.VisualStudio.Extenders
 			try
 			{
 				var itemType = extendeeObject.GetPropertyValue<string>("ItemType");
-				if (itemType == SiteTemplateItemType)
+				if (itemType == ProvisioningTemplateItemType)
 				{
 					var fullPath = extendeeObject.GetPropertyValue<string>("FullPath");
 					if (!string.IsNullOrEmpty(fullPath))

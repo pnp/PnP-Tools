@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SharePointPnP.DeveloperTools.VisualStudio.Extenders
 {
 	[ComVisible(true)] // Important!
-	public interface ISiteTemplateExtender
+	public interface IProvisioingTemplateExtender
 	{
 		string DisplayName { get; set; }
 		string ImagePreviewUrl { get; set; }

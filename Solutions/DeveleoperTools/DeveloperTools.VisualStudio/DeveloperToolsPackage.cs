@@ -50,7 +50,7 @@ namespace SharePointPnP.DeveloperTools.VisualStudio
 		public const string PackageGuidString = "26b3046c-9862-476b-96a9-f31d7d5f2a6a";
 		private DTE Host;
 		private ObjectExtenders extensionManager;
-		private SiteTemplateExtenderProvider extenderProvider;
+		private ProvisioingTemplateExtenderProvider extenderProvider;
 		private int extenderProviderCookie;
 
 		/// <summary>
@@ -74,7 +74,7 @@ namespace SharePointPnP.DeveloperTools.VisualStudio
 		{
 
 			Host = (DTE)Microsoft.VisualStudio.Shell.Package.GetGlobalService(typeof(SDTE));
-			extenderProvider = new SiteTemplateExtenderProvider();
+			extenderProvider = new ProvisioingTemplateExtenderProvider();
 
 			extenderProviderCookie = Host.ObjectExtenders.RegisterExtenderProvider(VSConstants.CATID.CSharpFileProperties_string,
 				"MyExtenderProvider", extenderProvider);
