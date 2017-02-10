@@ -44,7 +44,7 @@
 		<Reference Include="System.Xml"/>
 	</ItemGroup>
 	<ItemGroup>
-		<Content Include="sitetemplate.xml" />
+		<PnPTemplate Include="sitetemplate.xml" />
 		<None Include="pnptemplate.config" />
 		<None Include="Schemas\ProvisioningSchema-2015-03.xsd">
 			<SubType>Designer</SubType>

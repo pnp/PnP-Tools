@@ -18,7 +18,7 @@ namespace SharePointPnP.DeveloperTools.VisualStudio
 	public partial class TemplatePropertyPageControl : PropPageUserControlBase
 	{
 		private ConfigurationManager configManager = null;
-		private TemplateConfiguration config = null;
+		private ProjectConfiguration config = null;
 		private PropertyControlData[] _controlData = null;
 		private Dictionary<string, UserPropertyDescriptor> _properties = new Dictionary<string, UserPropertyDescriptor>();
 
@@ -37,37 +37,21 @@ namespace SharePointPnP.DeveloperTools.VisualStudio
 			var props = new UserPropertyDescriptor[]
 			{
 				new UserPropertyDescriptor(
-					"PnPTemplateDisplayName", 
+					"PnPProvisionSiteUrl", 
 					typeof(string), 
-					50001, 
-					textDisplayName, 
-					() => { config.DisplayName = textDisplayName.Text; }, 
-					() => { return config.DisplayName; },
-					() => { return config.DisplayName != textDisplayName.Text; }),
-				new UserPropertyDescriptor(
-					"PnPImagePreviewUrl", 
-					typeof(string), 
-					50002,
-					textImagePreviewUrl, 
-					() => { config.ImagePreviewUrl = textImagePreviewUrl.Text; }, 
-					() => { return config.ImagePreviewUrl; },
-					() => { return config.ImagePreviewUrl != textImagePreviewUrl.Text; }),
+					50001,
+					textProvisionSiteUrl, 
+					() => { config.ProvisionSiteUrl = textProvisionSiteUrl.Text; }, 
+					() => { return config.ProvisionSiteUrl; },
+					() => { return config.ProvisionSiteUrl != textProvisionSiteUrl.Text; }),
 				new UserPropertyDescriptor(
 					"PnPTemplateAuthor",
 					typeof(string),
-					50004,
+					50002,
 					textAuthor,
 					() => { config.Author = textAuthor.Text; },
 					() => { return config.Author; },
 					() => { return config.Author != textAuthor.Text; }),
-				new UserPropertyDescriptor(
-					"PnPTargetPlatform",
-					typeof(TargetPlatform),
-					50003,
-					chkSupportSPO,
-					() => { config.TargetPlatform = GetPnPTargetPlatform(); },
-					() => { return config.TargetPlatform; },
-					() => { return config.TargetPlatform != GetPnPTargetPlatform(); }),
 			};
 
 			var controls = new List<PropertyControlData>();
@@ -80,46 +64,15 @@ namespace SharePointPnP.DeveloperTools.VisualStudio
 
 			configManager = new ConfigurationManager();
 			var path = VsHelper.GetActiveProjectDirectory();
-			config = configManager.GetTemplateConfiguration(path);
-		}
-
-		private TargetPlatform GetPnPTargetPlatform()
-		{
-			TargetPlatform res = 0;
-			if(chkSupportSPO.Checked)
-			{
-				res |= TargetPlatform.SPO;
-			}
-			if (chkSupportSP13.Checked)
-			{
-				res |= TargetPlatform.SP13;
-			}
-			if (chkSupportSP16.Checked)
-			{
-				res |= TargetPlatform.SP16;
-			}
-			return res;
-		}
-
-		private void RestoreTargetPlatfrom()
-		{
-			chkSupportSPO.Checked = config.TargetPlatform.Has(TargetPlatform.SPO);
-			chkSupportSP13.Checked = config.TargetPlatform.Has(TargetPlatform.SP13);
-			chkSupportSP16.Checked = config.TargetPlatform.Has(TargetPlatform.SP16);
+			config = configManager.GetProjectConfiguration(path);
 		}
 
 		protected override void PostInitPage()
 		{
 			base.PostInitPage();
 
-			RestoreTargetPlatfrom();
-
-			textDisplayName.TextChanged += new EventHandler(ControlStateChanged);
-			textImagePreviewUrl.TextChanged += new EventHandler(ControlStateChanged);
+			textProvisionSiteUrl.TextChanged += new EventHandler(ControlStateChanged);
 			textAuthor.TextChanged += new EventHandler(ControlStateChanged);
-			chkSupportSPO.CheckedChanged += new EventHandler(ControlStateChanged);
-			chkSupportSP13.CheckedChanged += new EventHandler(ControlStateChanged);
-			chkSupportSP16.CheckedChanged += new EventHandler(ControlStateChanged);
 		}
 
 		public override PropertyDescriptor GetUserDefinedPropertyDescriptor(string propertyName)
@@ -149,12 +102,22 @@ namespace SharePointPnP.DeveloperTools.VisualStudio
 				prop.Setter();
 			}
 			var path = VsHelper.GetActiveProjectDirectory();
-			configManager.SetTemplateConfiguration(path, config);
+			configManager.SetProjectConfiguration(path, config);
 		}
 
 		private void ControlStateChanged(object sender, EventArgs e)
 		{
 			IsDirty = _properties.Values.Any(p => p.IsDirty);
+		}
+
+		private void lblImagePreviewUrl_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void textImagePreviewUrl_TextChanged(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

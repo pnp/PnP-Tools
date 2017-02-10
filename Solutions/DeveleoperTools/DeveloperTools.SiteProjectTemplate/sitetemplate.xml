@@ -2,7 +2,12 @@
 <pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2016/05/ProvisioningSchema">
 	<pnp:Preferences Generator="SharePointPnP Developer Tools" />
 	<pnp:Templates ID="CONTAINER-TEMPLATE-$safeprojectname$">
-		<pnp:ProvisioningTemplate ID="TEMPLATE-$safeprojectname$" Version="1.0">
+		<pnp:ProvisioningTemplate ID="TEMPLATE-$safeprojectname$" Version="1.0" DisplayName="My Template">
+			<pnp:Properties>
+				<pnp:Property Value="True" Key="PnP_Supports_SPO_Platform"/>
+				<pnp:Property Value="False" Key="PnP_Supports_SP2016_Platform"/>
+				<pnp:Property Value="False" Key="PnP_Supports_SP2013_Platform"/>
+			</pnp:Properties>
 		</pnp:ProvisioningTemplate>
 	</pnp:Templates>
 </pnp:Provisioning>

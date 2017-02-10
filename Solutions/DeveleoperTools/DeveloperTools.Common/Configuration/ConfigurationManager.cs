@@ -7,20 +7,19 @@ namespace SharePointPnP.DeveloperTools.Common.Configuration
 	{
 		private const string templateConfigFileName = "pnptemplate.config";
 
-		public TemplateConfiguration GetTemplateConfiguration(string path)
+		public ProjectConfiguration GetProjectConfiguration(string path)
 		{
-			var res = LoadConfigurationFromFile<TemplateConfiguration>(path);
+			var res = LoadConfigurationFromFile<ProjectConfiguration>(path);
 			if(res == null)
 			{
 				//get default config
-				res = new TemplateConfiguration();
-				res.DisplayName = "My Provisioning Template";
-				res.ImagePreviewUrl = "https://raw.githubusercontent.com/OfficeDev/PnP-Provisioning-Templates/master/RootFolder/<TemplateCategory>/<TemplateFolder>/TemplatePreview.png";
+				res = new ProjectConfiguration();
+				res.ProvisionSiteUrl = "http://portal";
 			}
 			return res;
 		}
 
-		public void SetTemplateConfiguration(string path, TemplateConfiguration config)
+		public void SetProjectConfiguration(string path, ProjectConfiguration config)
 		{
 			SaveConfigurationToFile(path, config);
 		}
