@@ -1,4 +1,4 @@
-﻿
+
 $namespace = @{dsml="http://www.dsml.org/DSML"; 'ms-dsml'="http://www.microsoft.com/MMS/DSML"}
 
 function Install-SharePointSyncConfiguration
@@ -215,10 +215,10 @@ if ($Delta)
     if($AdditionalManagementAgents -ne $null -and $AdditionalManagementAgents.Count -gt 0)
     {
         foreach($managementAgent in $AdditionalManagementAgents)
-	{
-	    Start-ManagementAgent -Name $managementAgent -RunProfile DELTAIMPORT
-	    Start-ManagementAgent -Name $managementAgent -RunProfile DELTASYNC
-	}
+	    {
+	        Start-ManagementAgent -Name $managementAgent -RunProfile DELTAIMPORT
+	        Start-ManagementAgent -Name $managementAgent -RunProfile DELTASYNC
+	    }
     }
 
     Start-ManagementAgent -Name SPMA -RunProfile DELTAIMPORT
@@ -232,10 +232,10 @@ else
     if($AdditionalManagementAgents -ne $null -and $AdditionalManagementAgents.Count -gt 0)
     {
         foreach($managementAgent in $AdditionalManagementAgents)
-	{
-	    Start-ManagementAgent -Name $managementAgent -RunProfile DELTAIMPORT
-	    Start-ManagementAgent -Name $managementAgent -RunProfile DELTASYNC
-	}
+	    {
+	        Start-ManagementAgent -Name $managementAgent -RunProfile FULLIMPORT
+	        Start-ManagementAgent -Name $managementAgent -RunProfile FULLSYNC
+	    }
     }
 
     Start-ManagementAgent -Name SPMA -RunProfile FULLIMPORT
@@ -254,16 +254,19 @@ if ($PSCmdlet.ShouldProcess('SharePoint',$confirmMessage))
 {
     ### Run the Export to SharePoint and Confirming Import; Export to Active Directory
     Start-ManagementAgent -Name SPMA -RunProfile EXPORT
-    Start-ManagementAgent -Name SPMA -RunProfile DELTAIMPORT
-    Start-ManagementAgent -Name SPMA -RunProfile DELTASYNC
-    Start-ManagementAgent -Name ADMA -RunProfile EXPORT
-    
+
     if($AdditionalManagementAgents -ne $null -and $AdditionalManagementAgents.Count -gt 0)
     {
         foreach($managementAgent in $AdditionalManagementAgents)
-	{
-	    Start-ManagementAgent -Name $managementAgent -RunProfile EXPORT
-	}
+	    {
+            Start-ManagementAgent -Name $managementAgent -RunProfile EXPORT
+            Start-ManagementAgent -Name $managementAgent -RunProfile DELTAIMPORT
+            Start-ManagementAgent -Name $managementAgent -RunProfile DELTASYNC
+	    }
+    
+    Start-ManagementAgent -Name SPMA -RunProfile DELTAIMPORT
+    Start-ManagementAgent -Name SPMA -RunProfile DELTASYNC
+    Start-ManagementAgent -Name ADMA -RunProfile EXPORT
     }
 }
 
