@@ -58,7 +58,7 @@ Next step is granting permissions to the newly created principal. Since we're gr
 
 ![Grant permissions to app-only principal](http://i.imgur.com/cMbU9xX.png)
 
-In order to grant permissions you'll need to provide the permission XML that describes the needed permissions. Since the sandbox solution scanner needs to be able to access all sites + also uses search with app-only it **requires** below permissions:
+In order to grant permissions you'll need to provide the permission XML that describes the needed permissions. Since the UI experience scanner needs to be able to access all sites + also uses search with app-only it **requires** below permissions:
 
 ```xml
 <AppPermissionRequests AllowAppOnlyPolicy="true">
