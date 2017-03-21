@@ -74,5 +74,9 @@ for ($i = 0; $i -lt $AppCount; $i++)
 
 } 
 }
-
+Else
+{
+    Write-Output ""
+    Write-Output "No Provider Hosted App Instances Discovered: Remediation not required"
+  }
 
