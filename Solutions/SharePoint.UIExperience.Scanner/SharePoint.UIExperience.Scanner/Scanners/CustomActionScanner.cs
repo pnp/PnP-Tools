@@ -54,6 +54,9 @@ namespace SharePoint.UIExperience.Scanner.Scanners
 
         private void AddCustomActionsToResult(UserCustomActionCollection coll, ref ConcurrentStack<CustomActionsResult> customActions, ref ConcurrentDictionary<string, CustomizationResult> customizationResults, ref ConcurrentStack<UIExperienceScanError> UIExpScanErrors, string listUrl = "", string listTitle = "")
         {
+            var baseUri = new Uri(url);
+            var webAppUrl = baseUri.Scheme + "://" + baseUri.Host;
+
             foreach (UserCustomAction uca in coll)
             {
                 try
@@ -62,7 +65,7 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                     CustomActionsResult result = new CustomActionsResult()
                     {
                         SiteUrl = url,
-                        Url = !String.IsNullOrEmpty(listUrl) ? $"{url}{listUrl}" : url,
+                        Url = !String.IsNullOrEmpty(listUrl) ? $"{webAppUrl}{listUrl}" : url,
                         ListTitle = listUrl,
                         Title = uca.Title,
                         Name = uca.Name,

@@ -30,6 +30,8 @@ namespace SharePoint.UIExperience.Scanner.Scanners
         public void Analyze(ClientContext cc, ref ConcurrentDictionary<string, ListResult> ListResults, ref ConcurrentStack<UIExperienceScanError> UIExpScanErrors)
         {
             Console.WriteLine("List compatability... " + url);
+            var baseUri = new Uri(url);
+            var webAppUrl = baseUri.Scheme + "://" + baseUri.Host;
 
             var lists = cc.Web.GetListsToScan();
             foreach(var list in lists)
@@ -48,8 +50,8 @@ namespace SharePoint.UIExperience.Scanner.Scanners
 
                 if (listResult != null && !listResult.WorksInModern)
                 {
-                    listResult.SiteUrl = url;
-                    listResult.Url = $"{url}{list.DefaultViewUrl}";
+                    listResult.SiteUrl = url;                    
+                    listResult.Url = $"{webAppUrl}{list.DefaultViewUrl}";
                     listResult.ListTitle = list.Title;
                     if (!ListResults.TryAdd(listResult.Url, listResult))
                     {
