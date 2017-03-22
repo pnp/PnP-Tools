@@ -75,8 +75,8 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                         ScriptSrc = "",
                     };
 
-                    if (!uca.Location.Equals("EditControlBlock", StringComparison.InvariantCultureIgnoreCase) ||
-                        !uca.Location.Equals("CommandUI.Ribbon", StringComparison.InvariantCultureIgnoreCase))
+                    if (!(uca.Location.Equals("EditControlBlock", StringComparison.InvariantCultureIgnoreCase) ||
+                          uca.Location.Equals("CommandUI.Ribbon", StringComparison.InvariantCultureIgnoreCase) ))
                     {
                         add = true;
                         result.ScriptBlock = uca.ScriptBlock != null ? uca.ScriptBlock : "";

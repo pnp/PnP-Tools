@@ -87,7 +87,7 @@ namespace SharePoint.UIExperience.Scanner
             help.AddPreOptionsLine("");
             help.AddPreOptionsLine("e.g. UIExperienceScanner.exe -t contoso -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=");
             help.AddPreOptionsLine("e.g. UIExperienceScanner.exe -m scan -t contoso -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=");
-            help.AddPreOptionsLine("e.g. UIExperienceScanner.exe -m customactions,listexperience,modernfeature -t contoso -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=");
+            help.AddPreOptionsLine("e.g. UIExperienceScanner.exe -m blockedlists,blockedpages,ignoredcustomizations -t contoso -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=");
             help.AddPreOptionsLine("");
             help.AddPreOptionsLine("Using credentials:");
             help.AddPreOptionsLine("UIExperienceScanner.exe -m <mode> -t <tenant> -u <your user id> -p <your user password>");
