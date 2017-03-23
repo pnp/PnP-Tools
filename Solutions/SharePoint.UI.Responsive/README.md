@@ -49,9 +49,9 @@ from one of the following link, depending on your target platform:
 (see the <a href="https://github.com/OfficeDev/PnP-PowerShell#installation">SharePointPnP.PowerShell installation 
 instructions</a> for further details): 
 
-* <a href="https://github.com/OfficeDev/PnP-PowerShell/blob/master/Binaries/SharePointPnPPowerShell2013.msi">SharePointPnP.PowerShell  package for SharePoint 2013</a>
-* <a href="https://github.com/OfficeDev/PnP-PowerShell/blob/master/Binaries/SharePointPnPPowerShell2016.msi">SharePointPnP.PowerShell  package for SharePoint 2016</a>
-* <a href="https://github.com/OfficeDev/PnP-PowerShell/blob/master/Binaries/SharePointPnPPowerShellOnline.msi">SharePointPnP.PowerShell  package for SharePoint Online</a>
+* <a href="https://github.com/SharePoint/PnP-PowerShell/releases">SharePointPnP.PowerShell  package for SharePoint 2013</a>
+* <a href="https://github.com/SharePoint/PnP-PowerShell/releases">SharePointPnP.PowerShell  package for SharePoint 2016</a>
+* <a href="https://github.com/SharePoint/PnP-PowerShell/releases">SharePointPnP.PowerShell  package for SharePoint Online</a>
 
 >**Note**: Depending on your target platform (SharePoint 2013/2016 on-premises, or SharePoint Online) you should refer to
 the right build of the SharePointPnP.PowerShell commands. Nevertheless, even the SharePointPnPPowerShellOnline version, which
@@ -74,7 +74,7 @@ The *Enable-SPResponsiveUI* script accepts the following parameters:
 
 Here you can see a couple of examples about how to invoke the *Enable-SPResponsiveUI* script:
 
-###EXAMPLE 1
+### EXAMPLE 1
 ```PowerShell
 PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteurl "https://intranet.mydomain.com/sites/targetSite"
 ```
@@ -82,7 +82,7 @@ PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteurl "https://intranet.mydomain.co
 The example above enables the Responsive UI on the target Site Collection with URL https://intranet.mydomain.com/sites/targetSite and uses the same Site Collection for hosting the JavaScript and CSS files. 
 The user's credentials are not provided, so the cmdlet will directly prompt the user.
 
-###EXAMPLE 2
+### EXAMPLE 2
 ```PowerShell
 PS C:\> $creds = Get-Credential
 PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteurl "https://intranet.mydomain.com/sites/targetSite" -Credentials $creds
@@ -90,7 +90,7 @@ PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteurl "https://intranet.mydomain.co
  
 The example above enables the Responsive UI on the target Site Collection with the user's credentials provided through the *$creds* variable.
 
-###EXAMPLE 3
+### EXAMPLE 3
 ```PowerShell
 PS C:\> $creds = Get-Credential
 PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteUrl "https://intranet.mydomain.com/sites/targetSite" -InfrastructureSiteUrl "https://intranet.mydomain.com/sites/infrastructureSite" -Credentials $creds
@@ -129,7 +129,7 @@ and you should see the background is pale yellow after you run the script agains
 # Disable the Responsive UI #
 If you decide to disable the Responsive UI, use the *Disable-PnPResponsiveUI* cmdlet.
 
-###EXAMPLE
+### EXAMPLE
 ```PowerShell
 # connect to site (not needed if you just ran the enable script)...
 PS C:\> Connect-PnPOnline "https://intranet.mydomain.com/sites/targetSite"  
