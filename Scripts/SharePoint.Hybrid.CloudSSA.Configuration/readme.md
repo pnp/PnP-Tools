@@ -1,6 +1,10 @@
-# Cloud Search Service Application Configuration #
+# Cloud Search Service Application and Supporting Scripts for Deployment and Configuration #
 
-### Summary ###
+## Summary ##
+This section of the PnP tools repository contains a series of scripts to help deploy and configure hybrid scenarios for SharePoint and Office 365 SharePoint Online. The following scripts are available
+
+### CreateHybridCloudSSA.ps1 ###
+
 This script is designed for configuring a SharePoint Server farm with a hybrid Cloud Search Service Application
 
 It requires the following variables:
@@ -15,32 +19,141 @@ It requires the following variables:
 
 The authors recommend that two servers be used to ensure high availability of the service application.
     
-
-*work in progress*
  
-### Applies to ###
+#### Applies to ####
 -  SharePoint 2016 on-premises
 -  SharePoint 2013 on-premises
 
-### Prerequisites ###
+#### Prerequisites ####
 Any special pre-requisites?
 
-### Solution ###
+#### Solution ####
 Solution | Author(s)
 ---------|----------
 Hybrid Cloud Search Service Application Configuration Wizard | Neil Hodgkinson (Microsoft), Marcus Tiongson (Microsoft), Manas Biswas (Microsoft)
  
-### Version history ###
+#### Version history ####
 Version  | Date | Comments
 ---------| -----| --------
 1.0  | October 3rd 2016 | Initial release
 
+
+### SpHybridValidation.ps1 ###
+
+This script take a single input of the global admin credentials and validates the local farm hybrid connection to the tenant.
+
+#### Applies to ####
+-  SharePoint 2016 on-premises
+-  SharePoint 2013 on-premises
+
+#### Prerequisites ####
+Any special pre-requisites?
+
+#### Solution ####
+Solution | Author(s)
+---------|----------
+Sp Hybrid Configuration Validation | Neil Hodgkinson (Microsoft), Manas Biswas (Microsoft)
+ 
+#### Version history ####
+Version  | Date | Comments
+---------| -----| --------
+1.0  | October 3rd 2016 | Initial release
+
+
+### DetectWorkflowConnection.ps1 ###
+
+This script requires no inputs and simply detects the presence of a WorkFlow Manager Connection on the local farm.
+
+#### Applies to ####
+-  SharePoint 2016 on-premises
+-  SharePoint 2013 on-premises
+
+#### Prerequisites ####
+Any special pre-requisites?
+
+#### Solution ####
+Solution | Author(s)
+---------|----------
+Provider Hosted Add Ins Detection | Neil Hodgkinson (Microsoft)
+ 
+#### Version history ####
+Version  | Date | Comments
+---------| -----| --------
+1.0  | October 3rd 2016 | Initial release
+
+
+### DetectProviderHostedAddIns.ps1 ###
+
+This script requires no inputs and simply detects the presence of Provider Hosted Addins on the local farm, reporting back the AddIn name and the web url of each instance deployed to the farm. It then repairs the TrustedSecurityTokenIssuer registration in the farm and regenerates the App Principals and permission for each app instance.
+
+#### Applies to ####
+-  SharePoint 2016 on-premises
+-  SharePoint 2013 on-premises
+
+#### Prerequisites ####
+Any special pre-requisites?
+
+#### Solution ####
+Solution | Author(s)
+---------|----------
+Provider Hosted Add Ins Detection | Neil Hodgkinson (Microsoft)
+ 
+#### Version history ####
+Version  | Date | Comments
+---------| -----| --------
+1.0  | October 3rd 2016 | Initial release
+
+
+
+
+### AuthenticationRealmFixUp.ps1 ###
+
+This script requires no inputs and simply detects the presence of Provider Hosted Addins on the local farm, reporting back the AddIn name and the web url of each instance deployed to the farm.
+
+#### Applies to ####
+-  SharePoint 2016 on-premises
+-  SharePoint 2013 on-premises
+
+#### Prerequisites ####
+Any special pre-requisites?
+
+#### Solution ####
+Solution | Author(s)
+---------|----------
+Provider Hosted Add Ins Detection | Neil Hodgkinson (Microsoft)
+ 
+#### Version history ####
+Version  | Date | Comments
+---------| -----| --------
+1.0  | October 3rd 2016 | Initial release
+
+
+### WorkFlowManagerFixUp.ps1 ###
+
+This script requires no inputs and simply regenerates the WorkFlow Manager Connection on the local farm.
+
+#### Applies to ####
+-  SharePoint 2016 on-premises
+-  SharePoint 2013 on-premises
+
+#### Prerequisites ####
+Any special pre-requisites?
+
+#### Solution ####
+Solution | Author(s)
+---------|----------
+Provider Hosted Add Ins Detection | Neil Hodgkinson (Microsoft)
+ 
+#### Version history ####
+Version  | Date | Comments
+---------| -----| --------
+1.0  | October 3rd 2016 | Initial release
+
+
+
+
 ### Disclaimer ###
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
-
-
 ----------
 
-# For detailed description of scenarios and steps, please refer to following documentation in the repository.#
-
-TBD
+### For detailed description of scenarios and steps, please refer to following documentation in the repository.####
