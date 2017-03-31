@@ -18,7 +18,7 @@ SharePoint.UIExperience.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
-0.1 (preview) | March 21st 2017 | Initial release
+0.5 (preview) | March 21st 2017 | Initial release
 
 ### Disclaimer ###
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
@@ -148,6 +148,7 @@ Report | Content
 **IgnoredCustomizations_CustomAction.csv** | Contains a list of all user custom actions which are ignored on on "modern" experiences.
 **IgnoredCustomizations_AlternateCSS.csv** | Listing all the sites that have the ´AlternateCssUr´property set.
 **Error.csv** | if the scan tool encountered errors then these are logged in this file.
+**ScannerSummary.csv** | Logs the number of scanned site collections, webs and list plus information on scan duration and scanner version
 
 # Report details
 ## Understanding the ModernPagesBlocked.csv file
@@ -156,7 +157,8 @@ This report contains the following columns:
 Column | Description
 ---------|----------
 **URL** | Url of the scanned object (site in this case).
-**SiteURL** | Url of the scanned site.
+**Site Url** | Url of the scanned site.
+**Site Collection Url** | Url of the scanned site collection.
 **Blocked via disabled modern page web feature** | TRUE if the "modern" page experience was blocked because the modern page feature (B6917CB1-93A0-4B97-A84D-7CF49975D4EC) was disabled.
 
 ## Understanding the ModernListBlocked.csv file
@@ -165,8 +167,10 @@ This report contains the following columns:
 Column | Description
 ---------|----------
 **URL** | Url of the scanned object (list form page url in this case).
-**SiteURL** | Url of the scanned site.
+**Site Url** | Url of the scanned site.
+**Site Collection Url** | Url of the scanned site collection.
 **List Title** | Title of the list. 
+**Only blocked by OOB reaons** | TRUE if the list is **only** blocked due to reasons which you as customer cannot influence, being blocked due to managed metadata navigation, unsupported list base template, unsupported list view type of unsupported field type. Note that you can use the the **-o (-excludelistsonlyblockedbyoobreaons) parameter** to skip logging lists which are only blocked due to these reasons
 **Blocked at site level** | TRUE if the list is blocked because the **site** scoped feature (E3540C7D-6BEA-403C-A224-1A12EAFEE4C4) was enabled.
 **Blocked at web level** | TRUE if the list is blocked because the **web** scoped feature (52E14B6F-B1BB-4969-B89B-C4FAA56745EF) was enabled.
 **Blocked at list level** | TRUE if the user changed the list experience setting to "classic experience".
@@ -204,7 +208,8 @@ This report contains the following columns:
 Column | Description
 ---------|----------
 **URL** | Url of the scanned object (site in this case).
-**SiteURL** | Url of the scanned site.
+**Site Url** | Url of the scanned site.
+**Site Collection Url** | Url of the scanned site collection.
 **Ignored MasterPage** | The site was using a non out of the box master page.
 **Ignored Custom MasterPage** | The site was using a non out of the box custom master page.
 **Ignored AlternateCSS** | The site was using a custom CSS script.
@@ -216,7 +221,8 @@ This report contains the following columns:
 Column | Description
 ---------|----------
 **URL** | Url of the scanned object (site in this case).
-**SiteURL** | Url of the scanned site.
+**Site Url** | Url of the scanned site.
+**Site Collection Url** | Url of the scanned site collection.
 **MasterPage** | Used non out of the box master page.
 **Custom MasterPage** | Used non out of the box custom master page.
 
@@ -226,7 +232,8 @@ This report contains the following columns:
 Column | Description
 ---------|----------
 **URL** | Url of the scanned object (site or list url in this case).
-**SiteURL** | Url of the scanned site.
+**Site Url** | Url of the scanned site.
+**Site Collection Url** | Url of the scanned site collection.
 **List name** | Name of the list (in case of a list scoped user custom action).
 **Title** | User custom action title.
 **Name** | Name of the user custom action.
@@ -244,12 +251,13 @@ This report contains the following columns:
 Column | Description
 ---------|----------
 **URL** | Url of the scanned object (site in this case).
-**SiteURL** | Url of the scanned site.
+**Site Url** | Url of the scanned site.
+**Site Collection Url** | Url of the scanned site collection.
 **AlternateCSS** | Value of the ´AlternateCssUrl´ property.
 
 # Advanced topics #
 
-## I want to do a partial scan
+## I want to do a partial scan...can I?
 Using the -m command line parameter you can specify the scan mode. The tool supports three scans as listed below. If the -m command line parameter is omitted all three scans will be executed.
 - **BlockedLists**: scans all lists for compatibility with the "modern" list and library experience
 - **BlockedPages**: scans all sites for compatibility with the "modern" pages experiences
@@ -265,7 +273,12 @@ A real life sample:
 uiexperiencescanner -m BlockedPages -t contoso -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 ```
 
-## How can I decrease the time it takes to scan the environment
+## There's a large amount of lists logged...is this normal?
+By default the scanner will output all the lists which cannot render their default view page using modern. Since Microsoft did not implement all possible features in the modern list UI (e.g. managed metadata navigation) these lists are logged as well. If you want to filter out the lists which are not able to show in modern because of out of the box reasons then you've two options:
+- Filter the CSV file on "Only blocked by OOB reaons" = FALSE
+- Use the -o (-excludelistsonlyblockedbyoobreaons) command line parameter which will skip logging these lists
+
+## How can I decrease the time it takes to scan the environment?
 If you've a very large environment the scan will take a long time since it will have to process all libraries in your tenant. Use below tips to speed up the scanning:
 - Run the scan on an Azure VM hosted in the same region as your SharePoint Online tenant, this will optimize the network traffic between the scanner and SharePoint Online
 - Use the -r (see later in the chapter) parameter to for example only scan the sites that start with A,B,C,D on one machine, E,F,G,H on the next one,...This way you can have parallel scans running each handling a subset of site collections. This however means you'll need to manually combine the resulting CSV files
@@ -277,7 +290,7 @@ A tenant administrator could have blocked the ["modern" list and library experie
 - If the scan scope included **BlockedPages** then the tool will still list all sites where the "modern" page feature was disabled, but in reality no sites can use the "modern" page feature. This scan however still allows you to understand which sites will not have "modern" pages once it get's turned on.
 - If the scan scope included **BlockedLists** then the tool will do a scan of **all** lists and return compatibility data whenever a list will not work in "modern". This will help you understand the impact of turning on "modern" for your tenant...remember that while the tenant setting is off only list and libraries where the listexperience was forcefully set to "modern" are showing the "modern" user experience.
 
-## I'm running SharePoint Online dedicated ##
+## I'm running SharePoint Online dedicated, is this different? ##
 In SharePoint Online Dedicated one can have vanity url's like teams.contoso.com which implies that the tool cannot automatically determine the used url's and tenant admin center url. Using below command line switches you can specify the site url's to scan and the tenant admin center url. Note that the urls need to be separated by a comma.
 
 ```console
@@ -292,7 +305,7 @@ uiexperiencescanner -r https://team.contoso.com/*,https://mysites.contoso.com/*
                     -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 ```
 
-## I don't want to use app-only ##
+## I don't want to use app-only, can I use credentials? ##
 The best option is to use app-only since that will ensure that the tool can read all site collections but you can also run the tool using credentials.
 
 ```console
@@ -305,7 +318,7 @@ A real life sample:
 uiexperiencescanner -t contoso -c admin@contoso.onmicrosoft.com -p mypassword
 ```
 
-## I only want to scan a few sites ##
+## I only want to scan a few sites, can I do that? ##
 Using the urls command line switch you can control which sites are scanned. You can specify one or more url's which can have a wild card. Samples of valid url's are:
  - https://contoso.sharepoint.com/*
  - https://contoso.sharepoint.com/sites/mysite
@@ -322,7 +335,7 @@ uiexperiencescanner -r https://contoso.sharepoint.com/*,https://contoso.sharepoi
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
-SharePoint UI Experience Scanner tool 0.1.0.0
+SharePoint UI Experience Scanner tool 0.5.0.0
 Copyright (C) 2017 SharePoint PnP
 ==========================================================
 
@@ -359,39 +372,43 @@ UIExperienceScanner.exe -m <mode> -r <urls> -a <tenant admin site> -u <your user
 e.g. UIExperienceScanner.exe -m scan -r https://team.contoso.com/*,https://mysites.contoso.com/* -a
 https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd
 
-  -m, --mode               (Default: Scan) Execution mode. Choose scan to scan all UIExperience. Use following
-                           UIExperience options blockedlists, blockedpages or ignoredcustomizations for individual
-                           scanning. Omit or use scan for a full scan
+ -m, --mode                                  (Default: Scan) Execution mode. Choose scan to scan all UIExperience. Use
+                                             following UIExperience options blockedlists, blockedpages or
+                                             ignoredcustomizations for individual scanning. Omit or use scan for a
+                                             full scan
 
-  -t, --tenant             Tenant name, e.g. contoso when your sites are under https://contoso.sharepoint.com/sites.
-                           This is the recommended model for SharePoint Online MT as this way all site collections will
-                           be scanned
+ -t, --tenant                                Tenant name, e.g. contoso when your sites are under
+                                             https://contoso.sharepoint.com/sites. This is the recommended model for
+                                             SharePoint Online MT as this way all site collections will be scanned
 
-  -r, --urls               List of (wildcard) urls (e.g.
-                           https://contoso.sharepoint.com/*,https://contoso-my.sharepoint.com,https://contoso-my.sharepo
-                           int.com/personal/*) that you want to get scanned. When you specify the --tenant optoin then
-                           this parameter is ignored
+ -r, --urls                                  List of (wildcard) urls (e.g.
+                                             https://contoso.sharepoint.com/*,https://contoso-my.sharepoint.com,https:/
+                                             /contoso-my.sharepoint.com/personal/*) that you want to get scanned. When
+                                             you specify the --tenant optoin then this parameter is ignored
 
-  -c, --clientid           Client ID of the app-only principal used to scan your site collections
+ -c, --clientid                              Client ID of the app-only principal used to scan your site collections
 
-  -s, --clientsecret       Client Secret of the app-only principal used to scan your site collections
+ -s, --clientsecret                          Client Secret of the app-only principal used to scan your site
+                                             collections
 
-  -u, --user               User id used to scan/enumerate your site collections
+ -u, --user                                  User id used to scan/enumerate your site collections
 
-  -p, --password           Password of the user used to scan/enumerate your site collections
+ -p, --password                              Password of the user used to scan/enumerate your site collections
 
-  -a, --tenantadminsite    Url to your tenant admin site (e.g. https://contoso-admin.contoso.com): only needed when
-                           your not using SPO MT
+ -a, --tenantadminsite                       Url to your tenant admin site (e.g. https://contoso-admin.contoso.com):
+                                             only needed when your not using SPO MT
 
-  -x, --excludeOD4B        (Default: True) Exclude OD4B sites from the scan
+ -x, --excludeod4b                           (Default: True) Exclude OD4B sites from the scan
 
-  -e, --separator          (Default: ,) Separator used in output CSV files (e.g. ";")
+ -o, --excludelistsonlyblockedbyoobreaons    (Default: False) Exclude lists which are blocked due to out of the box
+                                             reasons: managed metadata navigation, base template, view type of field
+                                             type
 
-  -h, --threads            (Default: 10) Number of parallel threads, maximum = 100
+ -e, --separator                             (Default: ,) Separator used in output CSV files (e.g. ";")
 
-  -v, --verbose            (Default: False) Show more execution details
+ -h, --threads                               (Default: 10) Number of parallel threads, maximum = 100
 
-  --help                   Display this help screen.
+ --help                                      Display this help screen.
 ```
 
 <img src="https://telemetry.sharepointpnp.com/pnp-tools/solutions/sharepoint-uiexperiencescanner" /> 

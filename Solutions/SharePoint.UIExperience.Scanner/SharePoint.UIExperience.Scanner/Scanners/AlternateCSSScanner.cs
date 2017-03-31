@@ -13,10 +13,12 @@ namespace SharePoint.UIExperience.Scanner.Scanners
     public class AlternateCSSScanner
     {
         private string url;
+        private string siteColUrl;
 
-        public AlternateCSSScanner(string url)
+        public AlternateCSSScanner(string url, string siteColUrl)
         {
             this.url = url;
+            this.siteColUrl = siteColUrl;
         }
 
         /// <summary>
@@ -34,8 +36,9 @@ namespace SharePoint.UIExperience.Scanner.Scanners
             {
                 AlternateCSSResult result = new AlternateCSSResult()
                 {
-                    Url = url,
-                    SiteUrl = url,
+                    Url = this.url,
+                    SiteUrl = this.url,
+                    SiteColUrl = this.siteColUrl,
                     AlternateCSS = web.AlternateCssUrl
                 };
 

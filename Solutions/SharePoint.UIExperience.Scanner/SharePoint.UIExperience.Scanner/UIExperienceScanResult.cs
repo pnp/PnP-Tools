@@ -10,6 +10,7 @@ namespace SharePoint.UIExperience.Scanner
     {
         public string Url { get; set; }
         public string SiteUrl { get; set; }
+        public string SiteColUrl { get; set; }
     }
 
     public class ListBaseResult : UIExperienceScanResult
@@ -54,6 +55,7 @@ namespace SharePoint.UIExperience.Scanner
     // New classes for Page / List / Customizations consolidated reports
     public class PageResult : UIExperienceScanResult
     {
+        public string WebTemplate { get; set; }
         public bool BlockedViaDisabledModernPageWebFeature { get; set; }
     }
 
@@ -122,6 +124,39 @@ namespace SharePoint.UIExperience.Scanner
                 return true;
             }
         }
+
+        public bool OnlyBlockedByOOBReasons
+        {
+            get
+            {
+                if ((this.XsltViewWebPartCompatibility.BlockedByManagedMetadataNavFeature ||
+                    this.XsltViewWebPartCompatibility.BlockedByBusinessDataField ||
+                    this.XsltViewWebPartCompatibility.BlockedByGeoLocationField ||
+                    this.XsltViewWebPartCompatibility.BlockedByPublishingField ||
+                    this.XsltViewWebPartCompatibility.BlockedByTaskOutcomeField ||
+                    this.XsltViewWebPartCompatibility.BlockedByListBaseTemplate ||
+                    this.XsltViewWebPartCompatibility.BlockedByViewType)
+                    && !(this.BlockedAtSiteLevel ||
+                         this.BlockedAtWebLevel ||
+                         this.BlockedAtListLevel ||
+                         this.BlockedByNotBeingAbleToLoadPage ||
+                         this.BlockedByZeroOrMultipleWebParts ||
+                         this.XsltViewWebPartCompatibility.BlockedByJSLinkField ||
+                         this.XsltViewWebPartCompatibility.BlockedByListCustomAction ||
+                         this.XsltViewWebPartCompatibility.BlockedByJSLink ||
+                         this.XsltViewWebPartCompatibility.BlockedByXsl ||
+                         this.XsltViewWebPartCompatibility.BlockedByXslLink)
+                   )
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
     }
 
     public class XsltViewWebPartCompatibility

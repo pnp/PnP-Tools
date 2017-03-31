@@ -69,7 +69,7 @@ namespace Microsoft.SharePoint.Client
 
             // Site
             Site site = cc.Site;
-            site.EnsureProperties(p => p.Features);
+            site.EnsureProperties(p => p.Features, p => p.Url);
             result.BlockedAtSiteLevel = site.Features.Where(f => f.DefinitionId == FeatureId_Site_Modern).Count() > 0;
             // Web
             cc.Web.EnsureProperties(p => p.Features, p => p.Url);
@@ -176,6 +176,7 @@ namespace Microsoft.SharePoint.Client
                                     {
                                         Error = ex.Message,
                                         SiteURL = cc.Web.Url,
+                                        SiteColUrl = site.Url
                                     };
                                     UIExpScanErrors.Push(error);
                                     Console.WriteLine("Error for site {1}: {0}", ex.Message, cc.Web.Url);
@@ -230,6 +231,7 @@ namespace Microsoft.SharePoint.Client
                                 {
                                     Error = ex.Message,
                                     SiteURL = cc.Web.Url,
+                                    SiteColUrl = site.Url,
                                 };
                                 UIExpScanErrors.Push(error);
                                 Console.WriteLine("Error for site {1}: {0}", ex.Message, cc.Web.Url);
@@ -242,6 +244,7 @@ namespace Microsoft.SharePoint.Client
                         {
                             Error = ex.Message,
                             SiteURL = cc.Web.Url,
+                            SiteColUrl = site.Url
                         };
                         UIExpScanErrors.Push(error);
                         Console.WriteLine("Error for site {1}: {0}", ex.Message, cc.Web.Url);

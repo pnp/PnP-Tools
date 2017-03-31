@@ -47,17 +47,17 @@ namespace SharePoint.UIExperience.Scanner
         [Option('a', "tenantadminsite", HelpText = "Url to your tenant admin site (e.g. https://contoso-admin.contoso.com): only needed when your not using SPO MT")]
         public string TenantAdminSite { get; set; }
 
-        [Option('x', "excludeOD4B", HelpText = "Exclude OD4B sites from the scan", DefaultValue = true)]
+        [Option('x', "excludeod4b", HelpText = "Exclude OD4B sites from the scan", DefaultValue = true)]
         public bool ExcludeOD4B { get; set; }
+
+        [Option('o', "excludelistsonlyblockedbyoobreaons", HelpText = "Exclude lists which are blocked due to out of the box reasons: managed metadata navigation, base template, view type of field type", DefaultValue = false)]
+        public bool ExcludeListsOnlyBlockedByOobReasons { get; set; }
 
         [Option('e', "separator", HelpText = "Separator used in output CSV files (e.g. \";\")", DefaultValue = ",")]
         public string Separator { get; set; }
 
         [Option('h', "threads", HelpText = "Number of parallel threads, maximum = 100", DefaultValue = 10)]
         public int Threads { get; set; }
-
-        [Option('v', "verbose", HelpText = "Show more execution details", DefaultValue = false)]
-        public bool Verbose { get; set; }
 
         [HelpOption]
         public string GetUsage()

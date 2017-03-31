@@ -20,10 +20,12 @@ namespace SharePoint.UIExperience.Scanner.Scanners
         private static readonly Guid FeatureId_Site_Publishing = new Guid("F6924D36-2FA8-4F0B-B16D-06B7250180FA");
 
         private string url;
+        private string siteColUrl;
 
-        public PageScanner(string url)
+        public PageScanner(string url, string siteColUrl)
         {
             this.url = url;
+            this.siteColUrl = siteColUrl;
         }
 
         /// <summary>
@@ -34,13 +36,22 @@ namespace SharePoint.UIExperience.Scanner.Scanners
         public PageResult Analyze(ClientContext cc)
         {
 
-            Console.WriteLine("Page compatability... " + url);
+            Console.WriteLine("Page compatability... " + this.url);
             Web web = cc.Web;
-            PageResult featureResult = new PageResult();
-            featureResult.Url = url;
-            featureResult.SiteUrl = url;
 
-            cc.Web.EnsureProperties(p => p.Features);
+            PageResult featureResult = new PageResult()
+            {
+                Url = this.url,
+                SiteUrl = this.url,
+                SiteColUrl = this.siteColUrl,
+            };
+            cc.Web.EnsureProperties(p => p.Features, p => p.WebTemplate, p => p.Configuration);
+
+            // Log used web template
+            if (web.WebTemplate != null)
+            {
+                featureResult.WebTemplate = $"{web.WebTemplate}#{web.Configuration}";
+            }
 
             // Page feature check: users can disable this to prevent modern page creation
             featureResult.BlockedViaDisabledModernPageWebFeature = web.Features.Where(f => f.DefinitionId == FeatureId_Site_ModernPage).Count() == 0;

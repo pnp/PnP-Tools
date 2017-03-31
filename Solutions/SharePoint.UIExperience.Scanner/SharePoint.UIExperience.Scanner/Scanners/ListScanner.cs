@@ -16,10 +16,14 @@ namespace SharePoint.UIExperience.Scanner.Scanners
     public class ListScanner
     {
         private string url;
+        private string siteColUrl;
+        private bool excludeListsOnlyBlockedByOobReasons = false;
 
-        public ListScanner(string url)
+        public ListScanner(string url, string siteColUrl, bool excludeListsOnlyBlockedByOobReasons)
         {
             this.url = url;
+            this.siteColUrl = siteColUrl;
+            this.excludeListsOnlyBlockedByOobReasons = excludeListsOnlyBlockedByOobReasons;
         }
 
         /// <summary>
@@ -27,14 +31,15 @@ namespace SharePoint.UIExperience.Scanner.Scanners
         /// </summary>
         /// <param name="cc">ClientContext object of the site to scan</param>
         /// <param name="ListResults">Collection of ListResult objects</param>
-        public void Analyze(ClientContext cc, ref ConcurrentDictionary<string, ListResult> ListResults, ref ConcurrentStack<UIExperienceScanError> UIExpScanErrors)
+        public int Analyze(ClientContext cc, ref ConcurrentDictionary<string, ListResult> ListResults, ref ConcurrentStack<UIExperienceScanError> UIExpScanErrors)
         {
-            Console.WriteLine("List compatability... " + url);
+            Console.WriteLine("List compatability... " + this.url);
             var baseUri = new Uri(url);
             var webAppUrl = baseUri.Scheme + "://" + baseUri.Host;
 
             var lists = cc.Web.GetListsToScan();
-            foreach(var list in lists)
+
+            foreach (var list in lists)
             {
                 ListResult listResult;
                 if (list.DefaultViewUrl.ToLower().Contains(".aspx"))
@@ -44,27 +49,37 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                 }
                 else
                 {
-                    listResult = new ListResult();
-                    listResult.BlockedByNotBeingAbleToLoadPage = true;
+                    listResult = new ListResult()
+                    {
+                        BlockedByNotBeingAbleToLoadPage = true
+                    };
                 }
 
                 if (listResult != null && !listResult.WorksInModern)
                 {
-                    listResult.SiteUrl = url;                    
+                    if (excludeListsOnlyBlockedByOobReasons && listResult.OnlyBlockedByOOBReasons)
+                    {
+                        continue;
+                    }
+
+                    listResult.SiteUrl = this.url;                    
                     listResult.Url = $"{webAppUrl}{list.DefaultViewUrl}";
+                    listResult.SiteColUrl = this.siteColUrl;
                     listResult.ListTitle = list.Title;
                     if (!ListResults.TryAdd(listResult.Url, listResult))
                     {
                         UIExperienceScanError error = new UIExperienceScanError()
                         {
                             Error = $"Could not add list scan result for {listResult.Url}",
-                            SiteURL = url,
+                            SiteURL = this.url,
+                            SiteColUrl = this.siteColUrl
                         };
                         UIExpScanErrors.Push(error);
                         Console.WriteLine($"Could not add list scan result for {listResult.Url}");
                     }
                 }
             }
+            return lists.Count;
         }       
     }
 }

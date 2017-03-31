@@ -14,10 +14,12 @@ namespace SharePoint.UIExperience.Scanner.Scanners
     public class MasterPageScanner
     {
         private string url;
+        private string siteColUrl;
 
-        public MasterPageScanner(string url)
+        public MasterPageScanner(string url, string siteColUrl)
         {
             this.url = url;
+            this.siteColUrl = siteColUrl;
         }
 
         /// <summary>
@@ -27,26 +29,34 @@ namespace SharePoint.UIExperience.Scanner.Scanners
         /// <returns>MasterPageResult containing information about the custom master page usage</returns>
         public MasterPageResult Analyze(ClientContext cc)
         {
-            Console.WriteLine("Master page... " + url);
+            Console.WriteLine("Master page... " + this.url);
 
-            List<string> excludeMasterPage = new List<string>();
-            excludeMasterPage.Add("v4.master");
-            excludeMasterPage.Add("minimal.master");
-            excludeMasterPage.Add("seattle.master");
-            excludeMasterPage.Add("oslo.master");
-            excludeMasterPage.Add("mysite15.master"); // mysite host
-            excludeMasterPage.Add("boston.master"); // modern group sites
+            List<string> excludeMasterPage = new List<string>
+            {
+                "v4.master",
+                "minimal.master",
+                "seattle.master",
+                "oslo.master",
+                "default.master",
+                "app.master",
+                "mwsdefault.master",
+                "mwsdefaultv4.master",
+                "mwsdefaultv15.master",
+                "mysite15.master", // mysite host
+                "boston.master" // modern group sites
+            };
 
             Web web = cc.Web;
-            web.EnsureProperties(p => p.CustomMasterUrl, p => p.MasterUrl, p => p.ServerRelativeUrl);
+            web.EnsureProperties(p => p.CustomMasterUrl, p => p.MasterUrl, p => p.ServerRelativeUrl, p => p.WebTemplate, p => p.Configuration);
 
             MasterPageResult result = null;
             if (cc.Web.MasterUrl != null && !excludeMasterPage.Contains(cc.Web.MasterUrl.Substring(cc.Web.MasterUrl.LastIndexOf("/") + 1).ToLower()))
             {
                 result = new MasterPageResult()
                 {
-                    Url = url,
-                    SiteUrl = url,
+                    Url = this.url,
+                    SiteUrl = this.url,
+                    SiteColUrl = this.siteColUrl,
                     MasterPage = cc.Web.MasterUrl,
                 };
             }
@@ -60,8 +70,9 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                 {
                     result = new MasterPageResult()
                     {
-                        Url = url,
-                        SiteUrl = url,
+                        Url = this.url,
+                        SiteUrl = this.url,
+                        SiteColUrl = this.siteColUrl,
                         CustomMasterPage = cc.Web.CustomMasterUrl,
                     };
                 }

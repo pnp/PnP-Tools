@@ -15,10 +15,12 @@ namespace SharePoint.UIExperience.Scanner.Scanners
     public class CustomActionScanner
     {
         private string url;
+        private string siteColUrl;
 
-        public CustomActionScanner(string url)
+        public CustomActionScanner(string url, string siteColUrl)
         {
             this.url = url;
+            this.siteColUrl = siteColUrl;
         }
 
         /// <summary>
@@ -54,7 +56,7 @@ namespace SharePoint.UIExperience.Scanner.Scanners
 
         private void AddCustomActionsToResult(UserCustomActionCollection coll, ref ConcurrentStack<CustomActionsResult> customActions, ref ConcurrentDictionary<string, CustomizationResult> customizationResults, ref ConcurrentStack<UIExperienceScanError> UIExpScanErrors, string listUrl = "", string listTitle = "")
         {
-            var baseUri = new Uri(url);
+            var baseUri = new Uri(this.url);
             var webAppUrl = baseUri.Scheme + "://" + baseUri.Host;
 
             foreach (UserCustomAction uca in coll)
@@ -64,8 +66,9 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                     bool add = false;
                     CustomActionsResult result = new CustomActionsResult()
                     {
-                        SiteUrl = url,
-                        Url = !String.IsNullOrEmpty(listUrl) ? $"{webAppUrl}{listUrl}" : url,
+                        SiteUrl = this.url,
+                        Url = !String.IsNullOrEmpty(listUrl) ? $"{webAppUrl}{listUrl}" : this.url,
+                        SiteColUrl = this.siteColUrl,
                         ListTitle = listUrl,
                         Title = uca.Title,
                         Name = uca.Name,
@@ -141,7 +144,8 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                                 UIExperienceScanError error = new UIExperienceScanError()
                                 {
                                     Error = $"Could not update custom action scan result for {customizationResult.Url}",
-                                    SiteURL = url,
+                                    SiteURL = this.url,
+                                    SiteColUrl = this.siteColUrl
                                 };
                                 UIExpScanErrors.Push(error);
                                 Console.WriteLine($"Could not update custom action scan result for {customizationResult.Url}");
@@ -153,6 +157,7 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                             {
                                 SiteUrl = result.SiteUrl,
                                 Url = result.Url,
+                                SiteColUrl = this.siteColUrl,
                                 IgnoredCustomAction = true
                             };
 
@@ -162,6 +167,7 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                                 {
                                     Error = $"Could not add custom action scan result for {customizationResult.Url}",
                                     SiteURL = url,
+                                    SiteColUrl = siteColUrl
                                 };
                                 UIExpScanErrors.Push(error);
                                 Console.WriteLine($"Could not add custom action scan result for {customizationResult.Url}");
@@ -175,10 +181,11 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                     UIExperienceScanError error = new UIExperienceScanError()
                     {
                         Error = ex.Message,
-                        SiteURL = url,
+                        SiteURL = this.url,
+                        SiteColUrl = this.siteColUrl
                     };
                     UIExpScanErrors.Push(error);
-                    Console.WriteLine("Error for site {1}: {0}", ex.Message, url);
+                    Console.WriteLine("Error for site {1}: {0}", ex.Message, this.url);
                 }
             }
         }

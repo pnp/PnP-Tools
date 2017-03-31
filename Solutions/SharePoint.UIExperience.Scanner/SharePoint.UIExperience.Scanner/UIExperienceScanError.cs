@@ -6,6 +6,7 @@
     public class UIExperienceScanError
     {
         public string SiteURL { get; set; }
+        public string SiteColUrl { get; set; }
 
         public string Error { get; set; }
     }
