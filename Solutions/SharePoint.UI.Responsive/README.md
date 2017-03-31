@@ -4,7 +4,7 @@ PowerShell cmdlet *Enable-PnPResponsiveUI*, and also
 provides you the capability to enable a custom Responsive UI for a Site Collection.
 If you just want to enable the responsive UI with the default PnP responsive template you
 can simply use the PowerShell cmdlet directly.
-See the *Enable-PnPResponsiveUI* and *Disable-PnPResponsiveUI* [cmdlets documentation](https://github.com/OfficeDev/PnP-PowerShell) for more information. 
+See the *Enable-PnPResponsiveUI* and *Disable-PnPResponsiveUI* [cmdlets documentation](https://github.com/SharePoint/PnP-PowerShell) for more information. 
 Altough you can use this solution to enable the default PnP responsive template, the goal of this solution is to show how 
 to use the PnP provisioning engine to deploy custom versions of the CSS and JavaScript assets
 which are used to create the responsive site, 
@@ -22,8 +22,8 @@ If you simply want to have an overview of this solution, you can read the
  
 >**Note**: This is an **Open Source** project, and any contribution from the community
 is more than welcome. Thus, feel free to review the code and submit any 
-<a href="https://github.com/OfficeDev/PnP-Tools/issues">Issues</a> or
-<a href="https://github.com/OfficeDev/PnP-Tools/pulls">Pull Requests</a>, using GitHub.
+<a href="https://github.com/SharePoint/PnP-Tools/issues?q=is%3Aissue+is%3Aopen+label%3A%22Responsive+Package%22">Issues</a> or
+<a href="https://github.com/SharePoint/PnP-Tools/pulls">Pull Requests</a>, using GitHub.
  
 # Setup Instructions #
 In order to setup the solution and to enable the Responsive UI on a target
@@ -38,7 +38,7 @@ Site Collection, you simply need to:
 ## Download the files
 You can download the files manually, one by one, or you can download
 a ZIP file with all the PnP-Tools, simply following
-<a href="https://github.com/OfficeDev/PnP-Tools/archive/master.zip">this link</a>. 
+<a href="https://github.com/SharePoint/PnP-Tools/archive/master.zip">this link</a>. 
 Within the ZIP file, under the /Solutions/SharePoint.UI.Responsive folder, you will
 find all the required files.
 
@@ -46,7 +46,7 @@ find all the required files.
 ## Setup software requirements
 This solution requires the SharePointPnP.PowerShell commands, which you can install
 from one of the following link, depending on your target platform: 
-(see the <a href="https://github.com/OfficeDev/PnP-PowerShell#installation">SharePointPnP.PowerShell installation 
+(see the <a href="https://github.com/SharePoint/PnP-PowerShell#installation">SharePointPnP.PowerShell installation 
 instructions</a> for further details): 
 
 * <a href="https://github.com/SharePoint/PnP-PowerShell/releases">SharePointPnP.PowerShell  package for SharePoint 2013</a>
@@ -68,9 +68,12 @@ script, which is included in the
 <a href="./Enable-SPResponsiveUI.ps1">Enable-SPResponsiveUI.ps1</a> file of this solution.
 
 The *Enable-SPResponsiveUI* script accepts the following parameters:
-* **TargetSiteurl**: it is a mandatory parameter, which declares the URL of the Site Collection where the Responsive UI will be enabled. It has to be provided as a full URL, like for example: https://intranet.mydomain.com/sites/targetSite or https://tenant.sharepoint.com/sites/siteCollection
-* **InfrastructureSiteUrl**: it is an optional parameter, which declares the URL of an infrastructural Site Collection, where will be uploaded/updated the JavaScript and CSS files backing the Responsive UI solution. If you don't provide a value for this parameter, the cmdlet will use the target Site Collection to host these files. It has to be provided as a full URL, like for example: https://intranet.mydomain.com/sites/infrastructureSite or https://tenant.sharepoint.com/sites/infrastructureSite
-* **Credentials**: it is an optional parameter, which defines the user credentials that will be used to authenticate against both the target Site Collection. Should be the credentials of a user, who is Site Collection Administrator for the target Site Collections. If you don't provide this parameter, the script will directly prompt you for credentials.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| TargetSiteurl|  String | True | URL of the Site Collection where the Responsive UI will be enabled. It has to be provided as a full URL, like for example: https://intranet.mydomain.com/sites/targetSite or https://tenant.sharepoint.com/sites/siteCollection |
+| InfrastructureSiteUrl | String | False | URL of an infrastructural Site Collection, where will be uploaded/updated the JavaScript and CSS files backing the Responsive UI solution. If you don't provide a value for this parameter, the cmdlet will use the target Site Collection to host these files. It has to be provided as a full URL, like for example: https://intranet.mydomain.com/sites/infrastructureSite or https://tenant.sharepoint.com/sites/infrastructureSite |
+| Credentials | CredentialPipeBind | False | User credentials that will be used to authenticate against both the target Site Collection. Should be the credentials of a user, who is Site Collection Administrator for the target Site Collections. If you don't provide this parameter, the script will directly prompt you for credentials. |
 
 Here you can see a couple of examples about how to invoke the *Enable-SPResponsiveUI* script:
 
@@ -137,7 +140,7 @@ PS C:\> Connect-PnPOnline "https://intranet.mydomain.com/sites/targetSite"
 PS C:\> Disable-PnPResponsiveUI  
 ```
 
-See the *Disable-PnPResponsiveUI* [cmdlet documentation](https://github.com/OfficeDev/PnP-PowerShell) for more information. 
+See the *Disable-PnPResponsiveUI* [cmdlet documentation](https://github.com/SharePoint/PnP-PowerShell) for more information. 
 
 If you want to remove your custom CSS and JavaScript you can remove the files from the site collection and then re-run the 
 *Enable-PnPResponsiveUI* cmdlet which will re-instate the PnP versions of the files.
@@ -172,7 +175,7 @@ The Responsive UI is applied to the following pages of the root site of a Site C
 * Site Settings
 
 >**Note**: We tried to do our best to properly behave with any out of the box Web Part, and we tested most of the common page definitions/layouts. However, 
-there could be cases in which the Responsive UI could be better. In that case, plese feel free to contribute to this Open Source project either by suggesting 
+there could be cases in which the Responsive UI could be better. In that case, please feel free to contribute to this Open Source project either by suggesting 
 a Pull Request, or by submitting an Issue.
 
 ## Implementation details
@@ -194,7 +197,7 @@ but the files will be provisioned at the site (web) level,
 so you will not be able to navigate to /Style Library/SP.Responsive.UI to see the provisioned files using the SharePoint UI.
 
 It is interesting to notice that the deployment phase of the solution leverages the PnP Remote Provisioning Engine. If you are interested in digging into the PnP Remote Provisioning Engine
-you can read the document <a href="https://github.com/OfficeDev/PnP-Guidance/blob/master/articles/Introducing-the-PnP-Provisioning-Engine.md">"Introducing the PnP Provisioning Engine"</a> 
+you can read the document <a href="https://github.com/SharePoint/PnP-Guidance/blob/master/articles/Introducing-the-PnP-Provisioning-Engine.md">"Introducing the PnP Provisioning Engine"</a> 
 on GitHub, or you can watch the video
 <a href="https://channel9.msdn.com/blogs/OfficeDevPnP/Getting-Started-with-PnP-Provisioning-Engine">"Getting Started with PnP Provisioning Engine"</a> on Channel 9.
 
