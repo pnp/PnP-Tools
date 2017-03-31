@@ -227,12 +227,12 @@ namespace SharePoint.UIExperience.Scanner
                 // output summary report
                 outputfile = string.Format("{0}\\ModernPagesBlocked.csv", uiExpScanner.OutputFolder);
                 Console.WriteLine("Outputting modern page blocked scan to {0}", outputfile);
-                outputHeaders = new string[] { "Url", "Site Url", "Site Collection Url", "Blocked via disabled modern page web feature" };
+                outputHeaders = new string[] { "Url", "Site Url", "Site Collection Url", "Web Template", "Blocked via disabled modern page web feature" };
                 System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, outputHeaders)));
 
                 foreach(var item in uiExpScanner.PageResults)
                 {
-                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, ToCsv(item.Key), ToCsv(item.Value.SiteUrl), ToCsv(item.Value.SiteColUrl), item.Value.BlockedViaDisabledModernPageWebFeature)));
+                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, ToCsv(item.Key), ToCsv(item.Value.SiteUrl), ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.WebTemplate), item.Value.BlockedViaDisabledModernPageWebFeature)));
                 }
             }
             #endregion
