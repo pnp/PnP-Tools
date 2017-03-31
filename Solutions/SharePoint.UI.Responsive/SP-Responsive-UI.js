@@ -201,6 +201,8 @@ PnPResponsiveApp.Main = (function () {
                 /* Add button to preserve html link */
                 var expandBtn = document.createElement('button');
                 expandBtn.type = 'button';
+                var expandSpan = document.createElement('span');
+                expandBtn.appendChild(expandSpan);
                 childs[c].parentNode.insertBefore(expandBtn, childs[c]);
                 expandBtn.addEventListener('click', function () {
                     toggleClass(this.parentNode, 'expand');
