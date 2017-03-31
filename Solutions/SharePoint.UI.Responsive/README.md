@@ -159,11 +159,15 @@ The PnP default Responsive UI supports three rendering models:
 In the following screenshots you can see a sample rendering of the Home Page of a 
 Team Site, for the three supported rendering models.
 
-![SharePoint 2016 - Desktop Mode](http://i.imgur.com/D1rOLxv.png)
+![SharePoint 2016 - Desktop Mode](https://cloud.githubusercontent.com/assets/15279205/24545062/0259110c-1606-11e7-95a3-fb10ea976c48.PNG)
 
-![SharePoint 2016 - Tablet Mode](http://i.imgur.com/zNFKwHN.png)
+![SharePoint 2016 - Tablet Mode Collapse](https://cloud.githubusercontent.com/assets/15279205/24545065/0262f92e-1606-11e7-9339-241c27b4b8d3.PNG)
 
-![SharePoint 2016 - SmartPhone Mode](http://i.imgur.com/PJPGvuP.png)
+![SharePoint 2016 - Tablet Mode Expend](https://cloud.githubusercontent.com/assets/15279205/24545064/0259d6dc-1606-11e7-9798-3db17ce9961a.PNG)
+
+![SharePoint 2016 - SmartPhone Mode Collapse](https://cloud.githubusercontent.com/assets/15279205/24545063/02596cf6-1606-11e7-8e06-ea8447a9be67.PNG)
+
+![SharePoint 2016 - SmartPhone Mode Expand](https://cloud.githubusercontent.com/assets/15279205/24545061/02591350-1606-11e7-9379-2b10c690d3da.PNG)
 
 The Responsive UI is applied to the following pages of the root site of a Site Collection, as well as of any sub-site (as long as you disable the "Mobile Browser View" feature in any specific sub-site):
 * Home Page
