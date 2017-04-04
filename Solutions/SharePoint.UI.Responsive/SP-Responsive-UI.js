@@ -1,117 +1,156 @@
-/* PnP SharePoint - Responsiveness */
+/*
+ * PnP SharePoint - Responsiveness
+ *
+ * @See : https://github.com/SharePoint/PnP-Guidance/blob/master/articles/Embedding-JavaScript-into-SharePoint.md
+ */
 
-var PnPResponsiveApp = PnPResponsiveApp || {};
-
-PnPResponsiveApp.responsivizeSettings = function () {
-	// return if no longer on Settings page
-	if (window.location.href.indexOf('/settings.aspx') < 0) return;
-	
-	// find the Settings root element, or wait if not available yet
-	var settingsRoot = $(".ms-siteSettings-root");
-	if (!settingsRoot.length) {
-		setTimeout(PnPResponsiveApp.responsivizeSettings, 100);
-        return;
-	}
-	
-	$(".ms-siteSettings-root .ms-linksection-level1").each(function () {
-		var self = $(this);
-		var settingsDiv = $('<div>');
-		settingsDiv.addClass("pnp-settingsdiv");
-		self.find(".ms-linksection-iconCell img").appendTo(settingsDiv);
-		self.find(".ms-linksection-textCell").children().appendTo(settingsDiv);
-		settingsDiv.appendTo(settingsRoot);
-	});
-	settingsRoot.find("table").remove();
+/*
+ * Load Namespace and managing MDS
+ */
+if (window.hasOwnProperty('Type')) {
+    Type.registerNamespace('PnPResponsiveApp');
+} else {
+    window.PnPResponsiveApp = window.PnPResponsiveApp || {};
 }
 
+PnPResponsiveApp.Main = (function() {
+    /*
+     * Toggle element class
+     *
+     */
+    function toggleClass(el, cls) {
+        if (hasClass(el, cls)) {
+            var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+            el.className = el.className.replace(reg, ' ');
+        } else {
+            el.className = el.className + ' ' + cls;
+        }
+    }
 
-PnPResponsiveApp.setUpToggling = function () {
-	// if it is already responsivized, return
-    if ($("#navbar-toggle").length)
-        return;
+    /*
+     * Check if className exists
+     *
+     * Return true if exists
+     */
+    function hasClass(el, cls) {
+        return (' ' + el.className + ' ').indexOf(' ' + cls + ' ') === -1 ? false : true;
+    }
 
-    // Set up sidenav toggling
-    var topNav = $('#DeltaTopNavigation');
-    var topNavClone = topNav.clone()
-    topNavClone.addClass('mobile-only');
-    topNavClone.attr('id', topNavClone.attr('id') + "_mobileClone");
-    topNav.addClass('no-mobile');
-    $('#sideNavBox').append(topNavClone);
-    var sideNavToggle = $('<button>');
-    sideNavToggle.attr('id', 'navbar-toggle')
-    sideNavToggle.addClass('mobile-only');
-	sideNavToggle.addClass('burger');
-    sideNavToggle.attr('type', 'button');
-	sideNavToggle.html("<span></span>");
-    sideNavToggle.click(function() { 
-        $("body").toggleClass('shownav');
-		sideNavToggle.toggleClass('selected');
-    });
-    $("#pageTitle").before(sideNavToggle);
-}
+    /* Dynamic CSS/JS embedding and loading */
+    function loadCSS(url) {
+        var head = document.getElementsByTagName('head')[0];
+        var style = document.createElement('link');
+        style.type = 'text/css';
+        style.rel = 'stylesheet';
+        style.href = url;
+        head.appendChild(style);
+    }
+    /*
+     * (Not need anymore)
+     */
+    function loadScript(url, callback) {
+        var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+        script.onreadystatechange = callback;
+        script.onload = callback;
+        head.appendChild(script);
+    }
 
-PnPResponsiveApp.init = function () {
-    if (!window.jQuery) {
-        // jQuery is needed for PnP Responsive UI to run, and is not fully loaded yet, try later
-        setTimeout(PnPResponsiveApp.init, 100);
-    } else {
-        $(function() { // only execute when DOM is fully loaded
-
-            // embedding and loading of all necessary CSS files and JS libraries
-            var currentScriptUrl = $('#PnPResponsiveUI').attr('src');
+    return {
+        init: function() {
+            var currentScriptUrl = document.getElementById('PnPResponsiveUI').src;
             if (currentScriptUrl != undefined) {
-                var currentScriptBaseUrl = currentScriptUrl.substring(0, currentScriptUrl.lastIndexOf("/") + 1);
-
-                addViewport();
-                loadCSS(currentScriptBaseUrl + 'SP-Responsive-UI.css');
+                var currentScriptBaseUrl = currentScriptUrl.substring(0, currentScriptUrl.lastIndexOf('/') + 1);
+                loadCSS(currentScriptBaseUrl + 'sp-responsive-ui.css');
             }
 
-            PnPResponsiveApp.setUpToggling();
-			PnPResponsiveApp.responsivizeSettings();
-			
-			// also listen for dynamic page change to Settings page
-			window.onhashchange = function () { PnPResponsiveApp.responsivizeSettings(); };
-			
-			// extend/override some SP native functions to fix resizing quirks
-			var originalResizeFunction = FixRibbonAndWorkspaceDimensions;
-			FixRibbonAndWorkspaceDimensions = function() {
-				// let sharepoint do its thing
-				originalResizeFunction();
-				// fix the body container width
-				$("#s4-bodyContainer").width($("#s4-workspace").width() );
-			}
-        });
-    }
-}
+            PnPResponsiveApp.Main.setUpToggling();
+            PnPResponsiveApp.Main.responsivizeSettings();
 
-/* Dynamic CSS/JS embedding and loading */
-function loadCSS(url) {
-    var head = document.getElementsByTagName('head')[0];
-    var style = document.createElement('link');
-	style.type = 'text/css';
-	style.rel = 'stylesheet';
-    style.href = url;
-    head.appendChild(style);
-}
-function loadScript(url, callback) {
-    var head = document.getElementsByTagName('head')[0];
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = url;
-    script.onreadystatechange = callback;
-    script.onload = callback;
-    head.appendChild(script);
-}
-function addViewport() {
-    var head = document.getElementsByTagName('head')[0];
-    var viewport = document.createElement('meta');
-    viewport.name= "viewport";
-    viewport.content= "width=device-width, initial-scale=1"; 
-    head.appendChild(viewport);
-}
+            // also listen for dynamic page change to Settings page
+            window.onhashchange = function() { PnPResponsiveApp.Main.responsivizeSettings(); };
 
+            // Extend/override some SP native functions to fix resizing quirks
 
-// embedding of jQuery, and initialization of responsiveness when ready
-loadScript("//code.jquery.com/jquery-1.12.0.min.js", function() {
-    PnPResponsiveApp.init();
-});
+            // First of all save the original function definition
+            var originalResizeFunction = FixRibbonAndWorkspaceDimensions;
+
+            // Then define a new one
+            FixRibbonAndWorkspaceDimensions = function() {
+                // let sharepoint do its thing
+                originalResizeFunction();
+                // fix the body container width
+                document.getElementById('s4-bodyContainer').style.width = document.getElementById('s4-workspace').offsetWidth;
+            };
+        },
+        /*
+         * Add viewport and support retina devices
+         */
+        addViewport: function() {
+            var head = document.getElementsByTagName('head')[0];
+            var viewport = document.createElement('meta');
+            viewport.name = 'viewport';
+            if (window.devicePixelRatio == 2) {
+                viewport.content = 'width=device-width, user-scalable=no, initial-scale=.5, maximum-scale=.5, minimum-scale=.5';
+            } else {
+                viewport.content = 'width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0';
+            }
+            var appleMeta = document.createElement('meta');
+            appleMeta.name = 'apple-mobile-web-app-capable';
+            appleMeta.content = 'yes';
+            head.appendChild(viewport);
+            head.appendChild(appleMeta);
+        },
+        responsivizeSettings: function() {
+            // return if no longer on Settings page
+            if (window.location.href.indexOf('/settings.aspx') < 0) return;
+
+            // find the Settings root element, or wait if not available yet
+            var settingsRoot = document.getElementsByClassName('ms-siteSettings-root')[0];
+            if (!settingsRoot) {
+                setTimeout(PnPResponsiveApp.Main.responsivizeSettings, 100);
+                return;
+            }
+
+            var linkSettingsSectionsLvl = settingsRoot.getElementsByClassName('ms-linksection-level1');
+            for (var i = 0; i < linkSettingsSectionsLvl.length; i++) {
+                var self = linkSettingsSectionsLvl[i];
+                var settingsDiv = document.createElement('div');
+                settingsDiv.className = 'pnp-settingsdiv';
+                settingsDiv.appendChild(self.getElementsByTagName('img')[0]);
+                settingsDiv.appendChild(self.getElementsByClassName('ms-linksection-textCell')[0]);
+                settingsRoot.appendChild(settingsDiv);
+            }
+            settingsRoot.removeChild(settingsRoot[0].getElementsByTagName('table')[0]);
+        },
+        setUpToggling: function() {
+            // if it is already responsivized, return
+            if (document.getElementById('navbar-toggle'))
+                return;
+
+            // Set up sidenav toggling
+            var topNav = document.getElementById('DeltaTopNavigation');
+            var topNavClone = topNav.cloneNode(true);
+            topNavClone.className = topNavClone.className + ' mobile-only';
+            topNavClone.id = topNavClone.getAttribute('id') + '_mobileClone';
+            topNav.className = topNav.className + ' no-mobile';
+            document.getElementById('sideNavBox').appendChild(topNavClone);
+
+            var sideNavToggle = document.createElement('button');
+            sideNavToggle.id = 'navbar-toggle';
+            sideNavToggle.className = 'mobile-only burger';
+            sideNavToggle.type = 'button';
+            sideNavToggle.innerHTML = '<span></span>';
+            sideNavToggle.addEventListener('click', function() {
+                toggleClass(document.getElementsByTagName('body')[0], 'shownav');
+                toggleClass(sideNavToggle, 'selected');
+            });
+            document.getElementById('pageTitle').parentNode.insertBefore(sideNavToggle, document.getElementById('pageTitle'));
+        }
+    };
+})();
+
+PnPResponsiveApp.Main.addViewport();
+PnPResponsiveApp.Main.init();
