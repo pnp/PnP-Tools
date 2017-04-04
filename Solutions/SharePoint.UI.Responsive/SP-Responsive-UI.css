@@ -2,7 +2,9 @@
     display: none;
 }
 
-#sideNavBox, #contentRow, #siteIcon {
+#sideNavBox,
+#contentRow,
+#siteIcon {
     -webkit-transition: all 400ms ease;
     -moz-transition: all 400ms ease;
     -ms-transition: all 400ms ease;
@@ -11,10 +13,12 @@
 }
 
 #contentBox {
-	min-width: auto;
+    min-width: auto;
 }
 
+
 /* Make sure dialog windows don't break */
+
 .ms-dialog #contentRow {
     margin-left: 0;
 }
@@ -28,8 +32,10 @@
     font-size: 1em;
 }
 
+
 /* Tablet/smartphones common styles for collapsibles */
-@media only screen and (max-width : 768px) {
+
+@media only screen and (max-width: 768px) {
     .mobile-only {
         display: block;
     }
@@ -37,71 +43,310 @@
     .no-mobile {
         display: none;
     }
-	
-	/* Mobile and Table Burger styles */
-	.burger {
-		position: relative;
-		left: 0px;
-		top: 0px;
-		padding: 0px 7px;
-		display: inline-block;
-	}
-	.burger span,
-	.burger span:before,
-	.burger span:after {
-		display: block;
-		width: 100%;
-		height: 2px;
-		background: black;
-		-ms-transition: all 0.5s;
-		-webkit-transition: all 0.5s;
-		transition: all 0.5s;
-		-webkit-backface-visibility: hidden;
-		backface-visibility: hidden;
-	}
-	.burger span {
-		position: relative;
-		margin: 0 0 0 0;
-	}
-	.burger span:before,
-	.burger span:after {
-		position: absolute;
-		content: "";
-	}
-	.burger span:before {
-		top: -8px;
-	}
-	.burger span:after {
-		top: 8px;
-	}
-	.burger.selected span:before {
-		-ms-transform: translate(0px, 8px) rotate(90deg);
-		-webkit-transform: translate(0px, 8px) rotate(90deg);
-		transform: translate(0px, 8px) rotate(90deg);
-	}
-	.burger.selected span:after {
-		-ms-transform: translate(0px, -8px) rotate(90deg);
-		-webkit-transform: translate(0px, -8px) rotate(90deg);
-		transform: translate(0px, -8px) rotate(90deg);
-	}
-	.burger.selected span {
-		-ms-transform: rotate(-45deg);
-		-webkit-transform: rotate(-45deg);
-		transform: rotate(-45deg);
-	}
+    /* Mobile and Table Burger styles */
+    .burger {
+        position: relative;
+        left: 0px;
+        top: 0px;
+        padding: 0px 7px;
+        display: inline-block;
+    }
 
-	/* Other mobile and table styles  - not sure if this should apply for all screen sizes */
-	img {
-		max-width: 100%;
-	}
-	
+        #suiteBar-rwd > #suiteBar-close:before,
+        #suiteBar-rwd > #suiteBar-close:after,
+        .burger span,
+        .burger span:before,
+        .burger span:after {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: black;
+            -ms-transition: all 0.5s;
+            -webkit-transition: all 0.5s;
+            transition: all 0.5s;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        .burger span {
+            position: relative;
+            margin: 0 0 0 0;
+        }
+
+            #suiteBar-rwd > #suiteBar-close:before,
+            #suiteBar-rwd > #suiteBar-close:after,
+            .burger span:before,
+            .burger span:after {
+                position: absolute;
+                content: "";
+            }
+
+            #suiteBar-rwd > #suiteBar-close:before,
+            .burger span:before {
+                top: -8px;
+            }
+
+            #suiteBar-rwd > #suiteBar-close:after,
+            .burger span:after {
+                top: 8px;
+            }
+
+        .burger.selected span:before {
+            -ms-transform: translate(0px, 8px) rotate(90deg);
+            -webkit-transform: translate(0px, 8px) rotate(90deg);
+            transform: translate(0px, 8px) rotate(90deg);
+        }
+
+        .burger.selected span:after {
+            -ms-transform: translate(0px, -8px) rotate(90deg);
+            -webkit-transform: translate(0px, -8px) rotate(90deg);
+            transform: translate(0px, -8px) rotate(90deg);
+        }
+
+        .burger.selected span {
+            -ms-transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+
+    #DeltaSuiteLinks > #suiteLinksBox {
+        display: none;
+    }
+
+    #suiteBar-open {
+        float: right;
+        height: 30px;
+        min-width: auto;
+        border: 0;
+        padding-top: 2px;
+    }
+
+        #suiteBar-open > span {
+            line-height: 20px;
+        }
+
+        #suiteBar-open:hover {
+            cursor: pointer;
+        }
+
+        #suiteBar-open > span:before {
+            content: '\2219 \2219 \2219';
+            font-size: 40px;
+            color: #fff;
+        }
+
+    #suiteBar-rwd {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 30px;
+        width: 100%;
+        z-index: 1;
+    }
+
+        #suiteBar-rwd.mobile-only.ms-hide {
+            display: none;
+        }
+
+        #suiteBar-rwd > #suiteBar-close {
+            min-width: 40px;
+            height: 30px;
+            margin-left: 0;
+            border: 0;
+        }
+
+            #suiteBar-rwd > #suiteBar-close:hover {
+                cursor: pointer;
+            }
+
+            #suiteBar-rwd > #suiteBar-close:before {
+                -ms-transform: translate(0px, 22px) rotate(-45deg);
+                -webkit-transform: translate(0px, 21px) rotate(-45deg);
+                transform: translate(0px, 21px) rotate(-45deg);
+                background: #fff;
+                height: 3px;
+                width: 20px;
+            }
+
+            #suiteBar-rwd > #suiteBar-close:after {
+                -ms-transform: translate(0px, 5px) rotate(45deg);
+                -webkit-transform: translate(0px, 5px) rotate(45deg);
+                transform: translate(0px, 5px) rotate(45deg);
+                background: #fff;
+                height: 3px;
+                width: 20px;
+            }
+
+        #suiteBar-rwd > #suiteBarButtons_mobileClone {
+            float: right;
+            background-color: rgb( 239, 239, 239);
+            padding-right: 5px;
+        }
+
+    #suiteBarButtons {
+        display: none;
+    }
+
+    #suiteBar-rwd #suiteLinksBox_mobileClone {
+        float: right;
+    }
+    /*
+    * Support mobileClone Style to arrow of Suite Active Links
+    */
+    #suiteBar-rwd #Suite_ActiveLinkIndicator_Clip_mobileClone {
+        display: inline-block;
+        left: 50%;
+        position: absolute;
+        top: 16px;
+        z-index: 102;
+    }
+    /*
+    * Support mobileClone Style to Settings icon
+    */
+    #suiteBar-rwd .ms-siteactions-root > span > a.ms-selectedtitle,
+    #suiteBar-rwd .ms-siteactions-root > span > a.ms-unselectedtitle {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        padding: 8px 7px 6px 8px;
+        border: 0;
+    }
+    /*
+    * Hide EDIT LINK from top navigation
+    */
+    #DeltaTopNavigation_mobileClone a[id*='_NavMenu_EditLinks'] {
+        display: none;
+    }
+    /*
+    * Support Top Nav rwd as accordion
+    */
+    #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] {
+        width: 100%;
+    }
+        /*
+        * Change position and collapse sub nodes
+        */
+        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] li.dynamic-children > ul {
+            position: inherit;
+            border: 0;
+            box-shadow: none;
+            padding: 0;
+            overflow: hidden;
+            height: 0;
+        }
+        /*
+        * Expand sub nodes
+        */
+        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] li.dynamic-children.expand > ul {
+            height: auto;
+            padding-left: 15px;
+            border-top-width: 1px;
+            border-top-style: dotted;
+            background-color: inherit;
+        }
+        /*
+        * Nodes position
+        */
+        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] li.dynamic-children .ms-core-listMenu-item {
+            padding: 0;
+            margin-right: 0;
+            line-height: 30px;
+            font-size: 1.1em;
+        }
+        /*
+        * Remove arrow background 
+        */
+        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.additional-background,
+        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic .additional-background.dynamic-children {
+            background-image: none;
+            padding-right: 0;
+        }
+
+        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > a {
+            display: inline;
+        }
+        /*
+        * Expand/Collapse button style
+        */
+        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button {
+            float: right;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            width: 20px;
+            height: 30px;
+            font-size: 0;
+            text-indent: -9999px;
+            box-shadow: none;
+            border-radius: none;
+            border: none;
+            cursor: pointer;
+            background-color: inherit;
+        }
+
+            #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button:focus {
+                outline: none;
+            }
+
+            #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button span {
+                display: block;
+                position: absolute;
+                top: 15px;
+                left: 3px;
+                right: 3px;
+                height: 1px;
+                background: #444;
+            }
+
+                #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button span::before,
+                #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button span::after {
+                    position: absolute;
+                    display: block;
+                    left: 0;
+                    width: 100%;
+                    height: 1px;
+                    background-color: #444;
+                    content: "";
+                    transition-duration: 0.3s, 0.3s;
+                    transition-delay: 0.3s, 0s;
+                }
+
+                #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button span::before {
+                    top: -3px;
+                    transition-property: top, transform;
+                }
+
+                #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button span::after {
+                    bottom: -3px;
+                    transition-property: bottom, transform;
+                }
+
+        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.expand > button span {
+            background-color: inherit;
+        }
+
+            #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.expand > button span::before {
+                top: 0;
+                transform: rotate(45deg);
+            }
+
+            #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.expand > button span::after {
+                bottom: 0;
+                transform: rotate(-45deg);
+            }
+
+            #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.expand > button span::before,
+            #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.expand > button span::after {
+                transition-delay: 0s, 0.3s;
+            }
 }
 
 
-
 /* Tablets */
-@media only screen and (min-width: 481px) and (max-width : 768px) {
 
+@media only screen and (min-width: 481px) and (max-width: 768px) {
     /* Sidebar navigation toggling */
     #titleAreaBox {
         position: relative;
@@ -115,7 +360,7 @@
         position: absolute;
         top: 0;
         left: 0;
-		width: 21px;
+        width: 21px;
         height: 73px;
         padding: 5px;
     }
@@ -148,9 +393,9 @@
     #DeltaTopNavigation {
         display: none;
     }
-
     /* Stack title area */
-    div#titleAreaBox, div#titleAreaRow {
+    div#titleAreaBox,
+    div#titleAreaRow {
         display: block;
         margin: 0;
     }
@@ -163,11 +408,10 @@
         display: block;
     }
 
-    #siteIcon, .ms-siteicon-img, .ms-siteicon-a {
-        max-height: 75px;
-    }
-
-	#s4-titlerow {
+    #siteIcon,
+    .ms-siteicon-img,
+    .ms-siteicon-a,
+    #s4-titlerow {
         height: 75px;
     }
 
@@ -180,23 +424,28 @@
         margin-bottom: 0;
     }
 
-    .ms-core-listMenu-horizontalBox ul, .ms-core-listMenu-horizontalBox li, .ms-core-listMenu-horizontalBox .ms-core-listMenu-item, .ms-core-listMenu-horizontalBox > ul > li > table {
+    .ms-core-listMenu-horizontalBox ul,
+    .ms-core-listMenu-horizontalBox li,
+    .ms-core-listMenu-horizontalBox .ms-core-listMenu-item,
+    .ms-core-listMenu-horizontalBox > ul > li > table {
         display: block;
     }
 
     .ms-breadcrumb-box {
         height: auto;
     }
-
     /* Main content panel */
-    table#layoutsTable, table#layoutsTable > tbody, table#layoutsTable > tbody > tr, table#layoutsTable > tbody > tr > td {
+    table#layoutsTable,
+    table#layoutsTable > tbody,
+    table#layoutsTable > tbody > tr,
+    table#layoutsTable > tbody > tr > td {
         display: block;
     }
 
-    table#layoutsTable > tbody > tr > td {
-        width: auto !important;
-        padding: 0;
-    }
+        table#layoutsTable > tbody > tr > td {
+            width: auto !important;
+            padding: 0;
+        }
 
     table.ms-listviewtable {
         border-collapse: collapse;
@@ -217,33 +466,34 @@
     }
 }
 
-/* Smartphones */
-@media screen and (max-width: 480px) {
 
+/* Smartphones */
+
+@media screen and (max-width: 480px) {
     div#s4-bodyContainer {
         width: auto !important;
         margin-left: 10px;
         margin-right: 10px;
         font-size: 1.1em;
     }
-
     /* Stack logo, top nav and search */
-    div#titleAreaBox, div#titleAreaRow {
+    div#titleAreaBox,
+    div#titleAreaRow {
         display: block;
         margin: 0;
     }
 
-    div#titleAreaRow > div {
-        display: block;
-        float: none;
-        clear: both;
-        margin: 0;
-    }
+        div#titleAreaRow > div {
+            display: block;
+            float: none;
+            clear: both;
+            margin: 0;
+        }
 
-    div#titleAreaRow .ms-core-pageTitle {
-	overflow: hidden;
-	white-space: nowrap;
-    }
+        div#titleAreaRow .ms-core-pageTitle {
+            overflow: hidden;
+            white-space: nowrap;
+        }
 
     #DeltaTopNavigation {
         display: none;
@@ -258,7 +508,8 @@
         max-height: 100px;
     }
 
-    div#s4-titlerow, .ms-breadcrumb-box {
+    div#s4-titlerow,
+    .ms-breadcrumb-box {
         height: auto;
     }
 
@@ -274,23 +525,23 @@
         width: 80%;
     }
 
-    div#searchInputBox, div#searchInputBox div.ms-srch-sb {
+    div#searchInputBox,
+    div#searchInputBox div.ms-srch-sb {
         float: none;
         height: 22px;
         display: block;
     }
 
-    div#searchInputBox div.ms-srch-sb > a {
-        float: right;
-    }
-
+        div#searchInputBox div.ms-srch-sb > a {
+            float: right;
+        }
     /* Title breadcrumb */
     #pageTitle #DeltaPlaceHolderPageTitleInTitleArea > span > span:not(:last-child-of-type) {
-	font-size: .4em;
+        font-size: .4em;
     }
 
     #pageTitle #DeltaPlaceHolderPageTitleInTitleArea > span > span:last-child-of-type {
-	display: block;
+        display: block;
     }
 
     #pageTitle #DeltaPlaceHolderPageTitleInTitleArea > span > span > span > span {
@@ -298,11 +549,13 @@
     }
 
     #pageTitle #DeltaPlaceHolderPageDescription {
-	display: none;
+        display: none;
     }
-
     /* Breadcrumb navigation in title area */
-    .ms-core-listMenu-horizontalBox ul, .ms-core-listMenu-horizontalBox li, .ms-core-listMenu-horizontalBox .ms-core-listMenu-item, .ms-core-listMenu-horizontalBox > ul > li > table {
+    .ms-core-listMenu-horizontalBox ul,
+    .ms-core-listMenu-horizontalBox li,
+    .ms-core-listMenu-horizontalBox .ms-core-listMenu-item,
+    .ms-core-listMenu-horizontalBox > ul > li > table {
         display: block;
     }
 
@@ -314,22 +567,21 @@
         margin-bottom: 25px;
         display: block;
     }
-
     /* Sidebar navigation toggling */
     #navbar-toggle {
         margin: 0;
         min-width: 0;
-		width: 33px;
-		height: 33px;
+        width: 33px;
+        height: 33px;
         float: right;
         margin-top: 1.2em;
-		z-index: 100;
-		position: relative;
-		-webkit-box-shadow: -10px -2px 10px 10px #fff;
-		box-shadow: -10px -2px 10px 10px #fff;
+        z-index: 100;
+        position: relative;
+        -webkit-box-shadow: -10px -2px 10px 10px #fff;
+        box-shadow: -10px -2px 10px 10px #fff;
     }
-	
-	#sideNavBox {
+
+    #sideNavBox {
         float: none;
         clear: both;
         width: auto;
@@ -337,7 +589,6 @@
         margin-right: 0;
         margin-left: 0;
         padding-left: 20px;
-
         /* Start out as collapsed*/
         max-height: 0;
         overflow: hidden;
@@ -347,7 +598,6 @@
         max-height: 850px;
         overflow: visible;
     }
-
     /* Main content panel */
     #contentRow {
         padding-top: 0;
@@ -360,14 +610,17 @@
         min-width: 0;
     }
 
-    table#layoutsTable, table#layoutsTable > tbody, table#layoutsTable > tbody > tr, table#layoutsTable > tbody > tr > td {
+    table#layoutsTable,
+    table#layoutsTable > tbody,
+    table#layoutsTable > tbody > tr,
+    table#layoutsTable > tbody > tr > td {
         display: block;
     }
 
-    table#layoutsTable > tbody > tr > td {
-        width: auto !important;
-        padding: 0;
-    }
+        table#layoutsTable > tbody > tr > td {
+            width: auto !important;
+            padding: 0;
+        }
 
     table.ms-listviewtable {
         border-collapse: collapse;
@@ -386,48 +639,53 @@
     td.ms-cellstyle .ms-list-itemLink {
         height: auto;
     }
-
     /* Fix excessive width of document list view */
     .ms-webpartPage-root {
-	border-spacing: 0;
+        border-spacing: 0;
     }
-
     /* Remove text from icon+text action buttons for document list view */
     .ms-viewlsts .ms-vl-sectionHeaderRow .ms-splinkbutton-text {
-	display: none;
+        display: none;
     }
 
     .ms-viewlsts .ms-vl-sectionHeaderRow .ms-vl-settingsmarginleft {
-	margin-left: 5px;
+        margin-left: 5px;
     }
-
     /* Hide detail columns in document list view */
-    .ms-listviewtable thead tr th:nth-child(n+5), .ms-listviewtable tbody tr td:nth-child(n+5) {
-	display: none;
+    .ms-listviewtable thead tr th:nth-child(n+5),
+    .ms-listviewtable tbody tr td:nth-child(n+5) {
+        display: none;
     }
 
     .ms-qcb-button {
-	padding-right: 5px;
+        padding-right: 5px;
     }
 
     div.ms-dragDropAttract-subtle {
         min-width: auto;
     }
-	
-	/* Newsfeed fixes for mobile less than 450px */
-    .ms-microfeed-fullMicrofeedDiv, .ms-microfeed-microblogpart, .ms-microfeed-attachmentPreviewDiv, .ms-microfeed-feedPart, .ms-microfeed-rootText {
+    /* Newsfeed fixes for mobile less than 450px */
+    .ms-microfeed-fullMicrofeedDiv,
+    .ms-microfeed-microblogpart,
+    .ms-microfeed-attachmentPreviewDiv,
+    .ms-microfeed-feedPart,
+    .ms-microfeed-rootText {
         min-width: 200px;
     }
-   .ms-microfeed-replyArea {
+
+    .ms-microfeed-replyArea {
         min-width: 150px !important;
         margin-left: 20px !important;
     }
-	.ms-secondaryCommandLink {
+
+    .ms-secondaryCommandLink {
         word-break: break-all;
     }
 }
 
+
 /* SETTINGS */
+
 .pnp-settingsdiv {
     width: 250px;
     display: inline-block;
@@ -437,11 +695,10 @@
     margin-bottom: 20px;
 }
 
-.pnp-settingsdiv:nth-child(last):after {
-    clear: both;
-}
+    .pnp-settingsdiv:nth-child(last):after {
+        clear: both;
+    }
 
-.pnp-settingsdiv img {
-    display: none;
-}
-
+    .pnp-settingsdiv img {
+        display: none;
+    }
