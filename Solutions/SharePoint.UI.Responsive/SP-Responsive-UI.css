@@ -141,7 +141,7 @@
         left: 0;
         height: 30px;
         width: 100%;
-        z-index: 1;
+        z-index: 101;
     }
 
         #suiteBar-rwd.mobile-only.ms-hide {
