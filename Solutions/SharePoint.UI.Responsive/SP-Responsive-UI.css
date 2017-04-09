@@ -535,6 +535,22 @@
         div#searchInputBox div.ms-srch-sb > a {
             float: right;
         }
+
+    /*
+     * Fix Search Tool bar width in WebPart Page
+     */
+    .ms-srch-sb-border,
+    .ms-srch-sb.ms-srch-sb-borderFocused {
+        width: 100%;
+        float: none;
+        margin: 10px 0;
+    }
+
+        .ms-srch-sb-border > a,
+        .ms-srch-sb.ms-srch-sb-borderFocused > a {
+            float: right;
+        }
+
     /* Title breadcrumb */
     #pageTitle #DeltaPlaceHolderPageTitleInTitleArea > span > span:not(:last-child-of-type) {
         font-size: .4em;
