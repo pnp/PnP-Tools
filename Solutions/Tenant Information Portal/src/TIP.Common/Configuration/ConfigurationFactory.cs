@@ -26,48 +26,58 @@ using TIP.Common.Configuration.Internal;
 
 namespace TIP.Common.Configuration
 {
-    /// <summary>
-    /// Factory class for working with configuration of the applications
-    /// </summary>
-    public sealed class ConfigurationFactory
-    {
-        #region Instance Members
-        private static readonly Lazy<ConfigurationFactory> _instance = new Lazy<ConfigurationFactory>(() => new ConfigurationFactory());
-        #endregion
+	/// <summary>
+	/// Factory class for working with configuration of the applications
+	/// </summary>
+	public sealed class ConfigurationFactory
+	{
+		#region Instance Members
+		private static readonly Lazy<ConfigurationFactory> _instance = new Lazy<ConfigurationFactory>(() => new ConfigurationFactory());
+		#endregion
 
-        #region Constructor
-        private ConfigurationFactory()
-        {
-        }
-        #endregion
+		#region Constructor
+		private ConfigurationFactory()
+		{
+		}
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        /// <summary>
-        /// Returns an instance of <see cref="ConfigurationFactory"/>
-        /// </summary>
-        public static ConfigurationFactory Instance
-        {
-            get
-            {
-                return _instance.Value;
-            }
-        }
-        #endregion
+		/// <summary>
+		/// Returns an instance of <see cref="ConfigurationFactory"/>
+		/// </summary>
+		public static ConfigurationFactory Instance
+		{
+			get
+			{
+				return _instance.Value;
+			}
+		}
+		#endregion
 
-        #region Public Members
+		#region Public Members
 
-        /// <summary>
-        /// Returns an instance of <see cref="AppConfig"/>
-        /// </summary>
-        /// <returns></returns>
-        public AppConfig GetApplicationConfiguration()
-        {
-            var _configManager = new ConfigManager();
-            return _configManager.GetApplicationConfig();
-        }
-        #endregion
+		/// <summary>
+		/// Returns an instance of <see cref="AppConfig"/>
+		/// </summary>
+		/// <returns></returns>
+		public AppConfig GetApplicationConfiguration()
+		{
+			var _configManager = new ConfigManager();
+			return _configManager.GetApplicationConfig();
+		}
+
+		/// <summary>
+		/// Returns an instance of <see cref="WebJobConfig"/> 
+		/// </summary>
+		/// <returns></returns>
+		public WebJobConfig GetWebJobConfiguration()
+		{
+			var _configManager = new ConfigManager();
+			return _configManager.GetWebJobConfig();
+		}
+		#endregion
 
 
-    }
+	}
 }
