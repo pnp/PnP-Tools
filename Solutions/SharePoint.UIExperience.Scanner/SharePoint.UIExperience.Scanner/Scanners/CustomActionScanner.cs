@@ -90,12 +90,13 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                         result.Problem = "Invalid location";
                     }
 
-                    Guid registrationIDGuid;
-                    if (Guid.TryParse(uca.RegistrationId, out registrationIDGuid))
-                    {
-                        result.Problem = !String.IsNullOrEmpty(result.Problem) ? $"{result.Problem}, Specific list registration" : "Specific list registration";
-                        add = true;
-                    }
+                    // List scoped custom actions registered to a specific listid do work in "modern" 
+                    //Guid registrationIDGuid;
+                    //if (Guid.TryParse(uca.RegistrationId, out registrationIDGuid))
+                    //{
+                    //    result.Problem = !String.IsNullOrEmpty(result.Problem) ? $"{result.Problem}, Specific list registration" : "Specific list registration";
+                    //    add = true;
+                    //}
 
                     if (!string.IsNullOrEmpty(uca.CommandUIExtension))
                     {
