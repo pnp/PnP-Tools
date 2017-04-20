@@ -341,6 +341,21 @@
             #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.expand > button span::after {
                 transition-delay: 0s, 0.3s;
             }
+
+    /*
+     * PnP Fix : Note Board horizontal scroll
+     */
+    .ms-socialCommentItem .socialcomment-contents {
+        max-width: 100%;
+        width: auto;
+    }
+
+    #siteIcon #DeltaSiteLogo img {
+        height: auto !important;
+        max-height: 75px !important;
+        display: inline-block;
+        vertical-align: middle;
+    }
 }
 
 
