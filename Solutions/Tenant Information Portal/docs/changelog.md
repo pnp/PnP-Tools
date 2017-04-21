@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 2.0
+* Added WebJob
+* Updates to Configuration objects to support WebJob
+
 ## Version 1.0.4
 * Fixed Error Controller in Bug https://github.com/OfficeDev/PnP-Tools/issues/57
 * OWIN Middleware to add X-RequestDuration response header
