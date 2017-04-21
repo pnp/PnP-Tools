@@ -132,10 +132,9 @@ namespace SharePoint.UIExperience.Scanner
                             ccWeb.Load(ccWeb.Web, p => p.Features, p => p.WebTemplate, p => p.Configuration); // Features web level, web template                                                 
 
                         }
-                        if (Modes.Contains(Mode.Scan) || Modes.Contains(Mode.BlockedLists) || Modes.Contains(Mode.IgnoredCustomizations))
-                        {
-                            ccWeb.Load(ccWeb.Web, p => p.Lists.Include(li => li.UserCustomActions, li => li.Title, li => li.Hidden, li => li.DefaultViewUrl, li => li.BaseTemplate, li => li.RootFolder, li => li.ListExperienceOptions)); // List check, includes list user custom actions                                                                                         
-                        }
+                        
+                        // Lists is needed in all three scenarios, so we always prefetch them.
+                        ccWeb.Load(ccWeb.Web, p => p.Lists.Include(li => li.UserCustomActions, li => li.Title, li => li.Hidden, li => li.DefaultViewUrl, li => li.BaseTemplate, li => li.RootFolder, li => li.ListExperienceOptions)); // List check, includes list user custom actions                                                                                         
                         ccWeb.ExecuteQueryRetry();
 
                         // Fill site collection url
@@ -151,7 +150,7 @@ namespace SharePoint.UIExperience.Scanner
                             var featureScanResult = featureScanner.Analyze(ccWeb);
                             if (featureScanResult != null)
                             {
-                                if (!this.PageResults.TryAdd(featureScanResult.Url, featureScanResult))
+                                if (!this.PageResults.TryAdd(Guid.NewGuid().ToString() + featureScanResult.Url, featureScanResult))
                                 {
                                     UIExperienceScanError error = new UIExperienceScanError()
                                     {

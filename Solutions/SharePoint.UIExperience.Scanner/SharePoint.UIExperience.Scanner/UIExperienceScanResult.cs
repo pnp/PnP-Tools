@@ -56,6 +56,7 @@ namespace SharePoint.UIExperience.Scanner
     public class PageResult : UIExperienceScanResult
     {
         public string WebTemplate { get; set; }
+        public bool WasEnabledBySPO { get; set; }
         public bool BlockedViaDisabledModernPageWebFeature { get; set; }
     }
 

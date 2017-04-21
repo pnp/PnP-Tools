@@ -156,7 +156,7 @@ namespace SharePoint.UIExperience.Scanner
                     }
 
                     System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n",
-                        string.Join(options.Separator, ToCsv(list.Key), ToCsv(list.Value.SiteUrl), ToCsv(list.Value.SiteColUrl), ToCsv(list.Value.ListTitle), list.Value.OnlyBlockedByOOBReasons,
+                        string.Join(options.Separator, ToCsv(list.Key.Substring(36)), ToCsv(list.Value.SiteUrl), ToCsv(list.Value.SiteColUrl), ToCsv(list.Value.ListTitle), list.Value.OnlyBlockedByOOBReasons,
                                                        list.Value.BlockedAtSiteLevel, list.Value.BlockedAtWebLevel, list.Value.BlockedAtListLevel, list.Value.PageRenderType, list.Value.ListExperience, list.Value.BlockedByNotBeingAbleToLoadPage, ToCsv(list.Value.BlockedByNotBeingAbleToLoadPageException),
                                                        list.Value.XsltViewWebPartCompatibility.BlockedByManagedMetadataNavFeature, list.Value.XsltViewWebPartCompatibility.BlockedByViewType, ToCsv(list.Value.XsltViewWebPartCompatibility.ViewType), list.Value.XsltViewWebPartCompatibility.BlockedByListBaseTemplate, list.Value.XsltViewWebPartCompatibility.ListBaseTemplate,
                                                        list.Value.BlockedByZeroOrMultipleWebParts, list.Value.XsltViewWebPartCompatibility.BlockedByJSLink, ToCsv(list.Value.XsltViewWebPartCompatibility.JSLink), list.Value.XsltViewWebPartCompatibility.BlockedByXslLink, ToCsv(list.Value.XsltViewWebPartCompatibility.XslLink), list.Value.XsltViewWebPartCompatibility.BlockedByXsl,
@@ -227,12 +227,12 @@ namespace SharePoint.UIExperience.Scanner
                 // output summary report
                 outputfile = string.Format("{0}\\ModernPagesBlocked.csv", uiExpScanner.OutputFolder);
                 Console.WriteLine("Outputting modern page blocked scan to {0}", outputfile);
-                outputHeaders = new string[] { "Url", "Site Url", "Site Collection Url", "Web Template", "Blocked via disabled modern page web feature" };
+                outputHeaders = new string[] { "Url", "Site Url", "Site Collection Url", "Web Template", "Modern page feature was enabled", "Blocked via disabled modern page web feature" };
                 System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, outputHeaders)));
-
+                
                 foreach(var item in uiExpScanner.PageResults)
                 {
-                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, ToCsv(item.Key), ToCsv(item.Value.SiteUrl), ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.WebTemplate), item.Value.BlockedViaDisabledModernPageWebFeature)));
+                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, ToCsv(item.Key.Substring(36)), ToCsv(item.Value.SiteUrl), ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.WebTemplate), item.Value.WasEnabledBySPO, item.Value.BlockedViaDisabledModernPageWebFeature)));
                 }
             }
             #endregion

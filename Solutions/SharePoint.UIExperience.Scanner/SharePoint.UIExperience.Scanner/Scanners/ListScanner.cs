@@ -66,7 +66,7 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                     listResult.Url = $"{webAppUrl}{list.DefaultViewUrl}";
                     listResult.SiteColUrl = this.siteColUrl;
                     listResult.ListTitle = list.Title;
-                    if (!ListResults.TryAdd(listResult.Url, listResult))
+                    if (!ListResults.TryAdd(Guid.NewGuid().ToString() + listResult.Url, listResult))
                     {
                         UIExperienceScanError error = new UIExperienceScanError()
                         {

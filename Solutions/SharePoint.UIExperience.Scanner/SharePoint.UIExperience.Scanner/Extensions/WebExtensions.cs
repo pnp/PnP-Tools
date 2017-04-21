@@ -42,7 +42,7 @@ namespace Microsoft.SharePoint.Client
 
             ListCollection listCollection = web.Lists;
             listCollection.EnsureProperties(coll => coll.Include(li => li.UserCustomActions, li => li.Title, li => li.Hidden, li => li.DefaultViewUrl, li => li.BaseTemplate, li => li.RootFolder, li => li.ListExperienceOptions));
-
+                                                                                           
             // Let's process the visible lists
             foreach (List list in listCollection.Where(p => p.Hidden == false))
             {

@@ -26,5 +26,22 @@ namespace Microsoft.SharePoint.Client
             }
         }
 
+        /// <summary>
+        /// Searches for the content type with the closest match to the value of the specified content type ID. 
+        /// If the search finds two matches, the shorter ID is returned. 
+        /// </summary>
+        /// <param name="contentTypes">Content type collection to search</param>
+        /// <param name="contentTypeId">Complete ID for the content type to search</param>
+        /// <returns>Content type Id object or null if was not found</returns>
+        public static ContentTypeId BestMatch(this ContentTypeCollection contentTypes, string contentTypeId)
+        {
+            var res = contentTypes.Where(c => c.Id.StringValue.StartsWith(contentTypeId)).OrderBy(c => c.Id.StringValue.Length).FirstOrDefault();
+            if (res != null)
+            {
+                return res.Id;
+            }
+            return null;
+        }
+
     }
 }
