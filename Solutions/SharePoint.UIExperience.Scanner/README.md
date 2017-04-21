@@ -160,6 +160,7 @@ Column | Description
 **Site Url** | Url of the scanned site.
 **Site Collection Url** | Url of the scanned site collection.
 **Web Template** | Web template of the scanned site.
+**Modern page feature was enabled** | TRUE is the "modern" page feature was enabled by SharePoint Online or manually. Use this column to detect for which sites the feature was manually turned off.
 **Blocked via disabled modern page web feature** | TRUE if the "modern" page experience was blocked because the modern page feature (B6917CB1-93A0-4B97-A84D-7CF49975D4EC) was disabled.
 
 ## Understanding the ModernListBlocked.csv file
