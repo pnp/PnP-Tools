@@ -20,51 +20,78 @@
 //SOFTWARE.
 // ------------------------------------------------------------------------------
 
+using System;
 using System.Configuration;
 using Microsoft.Online.Applications.Core.Configuration;
 
 namespace TIP.Common.Configuration.Internal
 {
-/// <summary>
-    /// Handles reading from the configuration file or Azure configuration
-    /// </summary>
-    internal class ConfigManager
-    {
-        /// <summary>
-        /// Returns a Domain Model which represents the application config
-        /// </summary>
-        /// <returns><see cref="AppConfig"/></returns>
-        public AppConfig GetApplicationConfig()
-        {
-            //TODO LOGGING
-            var _config = new AppConfig
-            {
-                ClientID = this.ReadConfiguration(Constants.Configuration.CLIENT_ID_KEY),
-                ClientSecret = this.ReadConfiguration(Constants.Configuration.CLIENT_SECRET_KEY),
-                PostLogoutRedirectURI = this.ReadConfiguration(Constants.Configuration.POST_LOGOUTREDIRECTURI_KEY),
-                TenantDomain = this.ReadConfiguration(Constants.Configuration.TENANT_KEY)
-            };
-            return _config;
-        }
+	/// <summary>
+	/// Handles reading from the configuration file or Azure configuration
+	/// </summary>
+	internal class ConfigManager
+	{
+		/// <summary>
+		/// Returns a Domain Model which represents the application config
+		/// </summary>
+		/// <returns><see cref="AppConfig"/></returns>
+		public AppConfig GetApplicationConfig()
+		{
+			//TODO LOGGING
+			var _config = new AppConfig
+			{
+				ClientID = this.ReadConfiguration(Constants.Configuration.CLIENT_ID_KEY),
+				ClientSecret = this.ReadConfiguration(Constants.Configuration.CLIENT_SECRET_KEY),
+				PostLogoutRedirectURI = this.ReadConfiguration(Constants.Configuration.POST_LOGOUTREDIRECTURI_KEY),
+				TenantDomain = this.ReadConfiguration(Constants.Configuration.TENANT_KEY)
+			};
+			return _config;
+		}
 
-        #region Private Members
-        /// <summary>
-        /// Gets the configuration item by a specific key. 
-        /// returns <see cref="string.Empty"/> if the value is not set.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        private string ReadConfiguration(string key)
-        {
-            var _result = string.Empty;
+		/// <summary>
+		/// Returns a Domain Model which represents the WebJob config
+		/// </summary>
+		/// <returns><see cref="WebJobConfig"/></returns>
+		public WebJobConfig GetWebJobConfig()
+		{
+			//TODO LOGGING
+			var _appConfig = GetApplicationConfig();
+			var _config = new WebJobConfig
+			{
+				ClientID              = _appConfig.ClientID,
+				ClientSecret          = _appConfig.ClientSecret,
+				PostLogoutRedirectURI = _appConfig.PostLogoutRedirectURI,
+				TenantDomain          = _appConfig.TenantDomain,
+				ConnectorUrl          = this.ReadConfiguration(Constants.Configuration.CONNECTOR_URL_KEY),
+				PortalUrl             = this.ReadConfiguration(Constants.Configuration.PORTAL_URL_KEY),
+				NotificationInterval  = Convert.ToInt32(this.ReadConfiguration(Constants.Configuration.NOTIFICATION_INTERVAL_KEY))
+			};
+			return _config;
+		}
 
-            if (!string.IsNullOrEmpty(key))
-            {
-                _result = ConfigurationManager.AppSettings[key];
-            }
-            return _result;
+		private string ReadConfiguration(object cONNECTOR_URL_KEY)
+		{
+			throw new NotImplementedException();
+		}
 
-        }
-        #endregion
-    }
+		#region Private Members
+		/// <summary>
+		/// Gets the configuration item by a specific key. 
+		/// returns <see cref="string.Empty"/> if the value is not set.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		private string ReadConfiguration(string key)
+		{
+			var _result = string.Empty;
+
+			if (!string.IsNullOrEmpty(key))
+			{
+				_result = ConfigurationManager.AppSettings[key];
+			}
+			return _result;
+
+		}
+		#endregion
+	}
 }

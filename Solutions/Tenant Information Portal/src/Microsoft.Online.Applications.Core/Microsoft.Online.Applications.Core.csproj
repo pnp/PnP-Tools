@@ -94,6 +94,7 @@
     <Compile Include="Clients\BaseClient.cs" />
     <Compile Include="Clients\AdalClient.cs" />
     <Compile Include="Configuration\AppConfig.cs" />
+    <Compile Include="Configuration\WebJobConfig.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Enums\AccountType.cs" />
     <Compile Include="Enums\CredentialType.cs" />

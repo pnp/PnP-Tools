@@ -22,26 +22,29 @@
 
 namespace TIP.Common
 {
-    /// <summary>
-    /// Static member to hold constants
-    /// </summary>
-    public static class Constants
-    {
-        /// <summary>
-        /// Used to identify the key which is either in the .config file or Azure config
-        /// </summary>
-        public static class Configuration
-        {
-            public const string CLIENT_ID_KEY = "ida:ClientId";
-            public const string CLIENT_SECRET_KEY = "ida:ClientSecret";
-            public const string POST_LOGOUTREDIRECTURI_KEY = "ida:PostLogoutRedirectUri";
-            public const string TENANT_KEY = "ida:Tenant";
-        }
+	/// <summary>
+	/// Static member to hold constants
+	/// </summary>
+	public static class Constants
+	{
+		/// <summary>
+		/// Used to identify the key which is either in the .config file or Azure config
+		/// </summary>
+		public static class Configuration
+		{
+			public const string CLIENT_ID_KEY              = "ida:ClientId";
+			public const string CLIENT_SECRET_KEY          = "ida:ClientSecret";
+			public const string POST_LOGOUTREDIRECTURI_KEY = "ida:PostLogoutRedirectUri";
+			public const string TENANT_KEY                 = "ida:Tenant";
+			public const string CONNECTOR_URL_KEY          = "ConnectorUrl";
+			public const string PORTAL_URL_KEY             = "PortalUrl";
+			public const string NOTIFICATION_INTERVAL_KEY  = "NotificationInterval";
+		}
 
-        public static class ErrorCodes
-        {
-            public const string GENERAL = "TIP50000";
-        }
+		public static class ErrorCodes
+		{
+			public const string GENERAL = "TIP50000";
+		}
 
-    }
+	}
 }
