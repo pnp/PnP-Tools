@@ -206,6 +206,7 @@ namespace SharePoint.UIExperience.Scanner
                                     {
                                         SiteUrl = alternateCSSResult.SiteUrl,
                                         Url = alternateCSSResult.Url,
+                                        SiteColUrl = alternateCSSResult.SiteColUrl,
                                         IgnoredAlternateCSS = alternateCSSResult.AlternateCSS
                                     };
 
@@ -252,6 +253,7 @@ namespace SharePoint.UIExperience.Scanner
                                     {
                                         SiteUrl = masterPageResult.SiteUrl,
                                         Url = masterPageResult.Url,
+                                        SiteColUrl = masterPageResult.SiteColUrl,
                                         IgnoredMasterPage = masterPageResult.MasterPage,
                                         IgnoredCustomMasterPage = masterPageResult.CustomMasterPage
                                     };
