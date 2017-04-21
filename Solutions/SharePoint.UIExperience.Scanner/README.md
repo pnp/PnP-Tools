@@ -1,4 +1,4 @@
-# SharePoint "Modern" user interface experience scanner - Preview release #
+# SharePoint "Modern" user interface experience scanner - Release candidate #
 
 ### Summary ###
 Using this command line utility you can scan your tenant for compatibility with the SharePoint Online "modern" user interface experience. The scanner will give you a detailed view of sites that are not using "modern" pages, lists and libraries that are rendered in "classic" mode and finally it will also give you a report of customizations which are simply ignored in the "modern" user interface. 
@@ -18,7 +18,7 @@ SharePoint.UIExperience.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
-0.5 (preview) | March 21st 2017 | Initial release
+0.9 (preview) | April 21st 2017 | Initial release
 
 ### Disclaimer ###
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
@@ -160,7 +160,7 @@ Column | Description
 **Site Url** | Url of the scanned site.
 **Site Collection Url** | Url of the scanned site collection.
 **Web Template** | Web template of the scanned site.
-**Modern page feature was enabled** | TRUE is the "modern" page feature was enabled by SharePoint Online or manually. Use this column to detect for which sites the feature was manually turned off.
+**Modern page feature was enabled** | TRUE is the "modern" page feature was enabled by SharePoint Online or manually. Use this column to detect for which sites the feature was turned off afterwards. See [MSDN](https://msdn.microsoft.com/en-us/pnp_articles/modern-experience-customizations-customize-pages#why-is-my-site-not-having-the-modern-pages-functionality) for more details on when the "modern" page feature should have been turned on.
 **Blocked via disabled modern page web feature** | TRUE if the "modern" page experience was blocked because the modern page feature (B6917CB1-93A0-4B97-A84D-7CF49975D4EC) was disabled.
 
 ## Understanding the ModernListBlocked.csv file
