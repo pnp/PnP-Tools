@@ -189,23 +189,23 @@ namespace SharePoint.UIExperience.Scanner
                 // alternate css
                 outputfile = string.Format("{0}\\IgnoredCustomizations_AlternateCSS.csv", uiExpScanner.OutputFolder);
                 Console.WriteLine("Outputting alternate css scan to {0}", outputfile);
-                outputHeaders = new string[] { "Url", "Site Url", "Site Collection Url", "AlternateCSS" };
+                outputHeaders = new string[] { "Url", "Site Url", "Site Collection Url", "Web Template", "AlternateCSS" };
                 System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, outputHeaders)));
                 AlternateCSSResult item2;
                 while (uiExpScanner.AlternateCSSResults.TryPop(out item2))
                 {
-                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, ToCsv(item2.Url), ToCsv(item2.SiteUrl), ToCsv(item2.SiteColUrl), ToCsv(item2.AlternateCSS))));
+                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, ToCsv(item2.Url), ToCsv(item2.SiteUrl), ToCsv(item2.SiteColUrl), ToCsv(item2.WebTemplate), ToCsv(item2.AlternateCSS))));
                 }
 
                 // master pages
                 outputfile = string.Format("{0}\\IgnoredCustomizations_MasterPage.csv", uiExpScanner.OutputFolder);
                 Console.WriteLine("Outputting master page scan to {0}", outputfile);
-                outputHeaders = new string[] { "Url", "Site Url", "Site Collection Url", "MasterPage", "Custom MasterPage" };
+                outputHeaders = new string[] { "Url", "Site Url", "Site Collection Url", "Web Template", "MasterPage", "Custom MasterPage" };
                 System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, outputHeaders)));
                 MasterPageResult item3;
                 while (uiExpScanner.MasterPageResults.TryPop(out item3))
                 {
-                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, ToCsv(item3.Url), ToCsv(item3.SiteUrl), ToCsv(item3.SiteColUrl), ToCsv(item3.MasterPage), ToCsv(item3.CustomMasterPage))));
+                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, ToCsv(item3.Url), ToCsv(item3.SiteUrl), ToCsv(item3.SiteColUrl), ToCsv(item3.WebTemplate), ToCsv(item3.MasterPage), ToCsv(item3.CustomMasterPage))));
                 }
 
                 // output summary report

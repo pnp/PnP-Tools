@@ -44,10 +44,12 @@ namespace SharePoint.UIExperience.Scanner
 
     public class AlternateCSSResult : UIExperienceScanResult
     {
+        public string WebTemplate { get; set; }
         public string AlternateCSS { get; set; }
     }
     public class MasterPageResult : UIExperienceScanResult
     {
+        public string WebTemplate { get; set; }
         public string MasterPage { get; set; }
         public string CustomMasterPage { get; set; }
     }

@@ -30,7 +30,7 @@ namespace SharePoint.UIExperience.Scanner.Scanners
         {
             Console.WriteLine("AlternateCSS... " + url);
             Web web = cc.Web;
-            web.EnsureProperty(p => p.AlternateCssUrl);        
+            web.EnsureProperties(p => p.AlternateCssUrl, p => p.WebTemplate, p => p.Configuration);        
 
             if (!string.IsNullOrEmpty(web.AlternateCssUrl))
             {
@@ -39,6 +39,7 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                     Url = this.url,
                     SiteUrl = this.url,
                     SiteColUrl = this.siteColUrl,
+                    WebTemplate = $"{web.WebTemplate}#{web.Configuration}",
                     AlternateCSS = web.AlternateCssUrl
                 };
 

@@ -57,6 +57,7 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                     Url = this.url,
                     SiteUrl = this.url,
                     SiteColUrl = this.siteColUrl,
+                    WebTemplate = $"{web.WebTemplate}#{web.Configuration}",
                     MasterPage = cc.Web.MasterUrl,
                 };
             }
@@ -73,6 +74,7 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                         Url = this.url,
                         SiteUrl = this.url,
                         SiteColUrl = this.siteColUrl,
+                        WebTemplate = $"{web.WebTemplate}#{web.Configuration}",
                         CustomMasterPage = cc.Web.CustomMasterUrl,
                     };
                 }

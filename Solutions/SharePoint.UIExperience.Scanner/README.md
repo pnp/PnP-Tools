@@ -225,6 +225,7 @@ Column | Description
 **URL** | Url of the scanned object (site in this case).
 **Site Url** | Url of the scanned site.
 **Site Collection Url** | Url of the scanned site collection.
+**Web Template** | Web template of the scanned site.
 **MasterPage** | Used non out of the box master page.
 **Custom MasterPage** | Used non out of the box custom master page.
 
@@ -255,6 +256,7 @@ Column | Description
 **URL** | Url of the scanned object (site in this case).
 **Site Url** | Url of the scanned site.
 **Site Collection Url** | Url of the scanned site collection.
+**Web Template** | Web template of the scanned site.
 **AlternateCSS** | Value of the ´AlternateCssUrl´ property.
 
 # Advanced topics #

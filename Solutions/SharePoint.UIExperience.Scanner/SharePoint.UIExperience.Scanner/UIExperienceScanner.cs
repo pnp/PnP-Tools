@@ -129,11 +129,12 @@ namespace SharePoint.UIExperience.Scanner
                         }
                         if (Modes.Contains(Mode.Scan) || Modes.Contains(Mode.BlockedPages) || Modes.Contains(Mode.BlockedLists))
                         {
-                            ccWeb.Load(ccWeb.Web, p => p.Features, p => p.WebTemplate, p => p.Configuration); // Features web level, web template                                                 
+                            ccWeb.Load(ccWeb.Web, p => p.Features); // Features web level                                                
 
                         }
-                        
-                        // Lists is needed in all three scenarios, so we always prefetch them.
+
+                        // WebTemplate and Lists is needed in all three scenarios, so we always prefetch them.
+                        ccWeb.Load(ccWeb.Web, p => p.WebTemplate, p => p.Configuration); 
                         ccWeb.Load(ccWeb.Web, p => p.Lists.Include(li => li.UserCustomActions, li => li.Title, li => li.Hidden, li => li.DefaultViewUrl, li => li.BaseTemplate, li => li.RootFolder, li => li.ListExperienceOptions)); // List check, includes list user custom actions                                                                                         
                         ccWeb.ExecuteQueryRetry();
 
