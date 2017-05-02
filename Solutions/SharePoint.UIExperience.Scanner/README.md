@@ -27,10 +27,12 @@ Version  | Date | Comments
 ----------
 
 # What will this tool do for you? #
-The main purpose of this tool is to give you a reports of sites, lists, libraries and deployed customizations which will not work as expected when using the SharePoint "modern" user interface experiences. You can use the generated reports to:
-- Get a better understanding of which customizations in your tenant are not compatible with the "Modern" experiences
+The main purpose of this tool is to give you a report of sites, lists, libraries and deployed customizations which will not work as expected when using the SharePoint "modern" user interface experiences. You can use the generated reports to:
 - Which sites do not have the ability to create "modern" pages
 - Which lists are not presenting themselves using the "modern" user interface and what's causing that: there are many reasons why a list is falling back to showing the "classic" user interface, all of which will be listed in the report.
+- Get a better understanding of which customizations in your tenant are not compatible with the "modern" experiences
+
+Using the reports you can streamline the "modern" experience in your tenant: you can increase the amount of sites, libraries and lists that work fine using "modern", but the reports also give you the data that allows you to disable "modern" for a subset of sites which are not yet ready for it.
 
 # Quick start guide #
 ## Download the tool ##
