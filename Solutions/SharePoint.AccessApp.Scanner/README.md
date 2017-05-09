@@ -46,7 +46,7 @@ Below steps show how to setup the app-only principal with the needed permissions
 #### Create a new principal ####
 Navigate to a site in your tenant (e.g. https://contoso.sharepoint.com) and then call the **appregnew.aspx** page (e.g. https://contoso.sharepoint.com/_layouts/15/appregnew.aspx). In this page click on the **Generate** button to generate a client id and client secret and fill the remaining information like shown in the screen-shot below.
 
-![create app-only principal](http://i.imgur.com/zvxkz5c.png)
+![create app-only principal](http://i.imgur.com/2uD1JKY.png)
 
 >**Important**
 > - Store the retrieved information (client id and client secret) since you'll need this in the next step!
@@ -54,7 +54,7 @@ Navigate to a site in your tenant (e.g. https://contoso.sharepoint.com) and then
 #### Grant permissions to the created principal ####
 Next step is granting permissions to the newly created principal. Since we're granting tenant scoped permissions this granting can only be done via the **appinv.aspx** page on the tenant administration site. You can reach this site via https://contoso-admin.sharepoint.com/_layouts/15/appinv.aspx. Once the page is loaded add your client id and look up the created principal:
 
-![Grant permissions to app-only principal](http://i.imgur.com/cMbU9xX.png)
+![Grant permissions to app-only principal](http://i.imgur.com/1vvvFFB.png)
 
 In order to grant permissions you'll need to provide the permission XML that describes the needed permissions. Since the Access App scanner needs to be able to access all sites + also uses search with app-only it **requires** below permissions:
 
@@ -66,7 +66,7 @@ In order to grant permissions you'll need to provide the permission XML that des
 
 When you click on **Create** you'll be presented with a permission consent dialog. Press **Trust It** to grant the permissions:
 
-![Trust principal](http://i.imgur.com/6ogrxxV.png)
+![Trust principal](http://i.imgur.com/rwSmPWU.png)
 
 >**Important**
 > - Please safeguard the created client id/secret combination as would it be your administrator account. Using this client id/secret one **can read/update all data in your SharePoint Online environment**!
