@@ -1,4 +1,4 @@
-﻿
+
 $namespace = @{dsml="http://www.dsml.org/DSML"; 'ms-dsml'="http://www.microsoft.com/MMS/DSML"}
 
 function Install-SharePointSyncConfiguration
@@ -77,9 +77,14 @@ function Install-SharePointSyncConfiguration
     }
 
     $MimPowerShellModuleAssembly = Get-Item -Path (Join-Path (Get-SynchronizationServicePath) UIShell\Microsoft.DirectoryServices.MetadirectoryServices.Config.dll)
-    if ($MimPowerShellModuleAssembly.VersionInfo.ProductMajorPart -eq 4 -and
+    if (($MimPowerShellModuleAssembly.VersionInfo.ProductMajorPart -eq 4 -and
         $MimPowerShellModuleAssembly.VersionInfo.ProductMinorPart -eq 3 -and 
-        $MimPowerShellModuleAssembly.VersionInfo.ProductBuildPart -ge 2064)
+        $MimPowerShellModuleAssembly.VersionInfo.ProductBuildPart -ge 2064) -or
+        (
+        $MimPowerShellModuleAssembly.VersionInfo.ProductMajorPart -eq 4 -and
+        $MimPowerShellModuleAssembly.VersionInfo.ProductMinorPart -ge 4 -and 
+        $MimPowerShellModuleAssembly.VersionInfo.ProductBuildPart -ge 1237
+        ))
     {
         Write-Verbose "Sufficient MIM PowerShell version detected (>= 4.3.2064): $($MimPowerShellModuleAssembly.VersionInfo.ProductVersion)"
     }
@@ -183,17 +188,22 @@ function Start-SharePointSync
    The sychronization service configuration consists on an Active Directory management agent, and a SharePoint management agent.  This function runs them in the following order:
    1. ADMA Import
    2. ADMA Sync
-   3. SPMA Import
-   4. SPMA Sync
-   5. SPMA Export
-   6. SPMA Import
-   7. SPMA Sync
+   4. SPMA Import
+   5. SPMA Sync
+   6. SPMA Export
+   7. SPMA Delta Export
+   8. SPMA Detal Import
+   9. SPMA Sync
+   10. ADMA Export
 .EXAMPLE
    Run the management agents in full mode (full import, full sync)
    Start-SharePointSync -Verbose
 .EXAMPLE
    Run the management agents in delta mode (delta import, delta sync)
    Start-SharePointSync -Delta -Verbose
+.EXAMPLE
+   Run a additional management agents, including the default ADMA and SPMA
+   Start-SharePointSync -AdditionalManagementAgents "ADMA-CONTOSO,ADMA-FABRIKAM"
 #>
 
     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='High')]
@@ -202,7 +212,9 @@ function Start-SharePointSync
     (
         # Turn on Delta operations for the management agents
         [Switch]
-        $Delta
+        $Delta,
+	[Parameter(Mandatory=$false, Position=1)]
+	[string[]]$AdditionalManagementAgents
     )
 
 ### Run the connectors
@@ -210,6 +222,16 @@ if ($Delta)
 {
     Start-ManagementAgent -Name ADMA -RunProfile DELTAIMPORT
     Start-ManagementAgent -Name ADMA -RunProfile DELTASYNC
+    
+    if($AdditionalManagementAgents -ne $null -and $AdditionalManagementAgents.Count -gt 0)
+    {
+        foreach($managementAgent in $AdditionalManagementAgents)
+	    {
+	        Start-ManagementAgent -Name $managementAgent -RunProfile DELTAIMPORT
+	        Start-ManagementAgent -Name $managementAgent -RunProfile DELTASYNC
+	    }
+    }
+
     Start-ManagementAgent -Name SPMA -RunProfile DELTAIMPORT
     Start-ManagementAgent -Name SPMA -RunProfile DELTASYNC
 }
@@ -217,6 +239,16 @@ else
 {
     Start-ManagementAgent -Name ADMA -RunProfile FULLIMPORT
     Start-ManagementAgent -Name ADMA -RunProfile FULLSYNC
+    
+    if($AdditionalManagementAgents -ne $null -and $AdditionalManagementAgents.Count -gt 0)
+    {
+        foreach($managementAgent in $AdditionalManagementAgents)
+	    {
+	        Start-ManagementAgent -Name $managementAgent -RunProfile FULLIMPORT
+	        Start-ManagementAgent -Name $managementAgent -RunProfile FULLSYNC
+	    }
+    }
+
     Start-ManagementAgent -Name SPMA -RunProfile FULLIMPORT
     Start-ManagementAgent -Name SPMA -RunProfile FULLSYNC
 }
@@ -231,10 +263,22 @@ $($spma.NumExportDelete().ReturnValue) Deletes
 "@
 if ($PSCmdlet.ShouldProcess('SharePoint',$confirmMessage))
 {
-    ### Run the Export to SharePoint and Confirming Import
+    ### Run the Export to SharePoint and Confirming Import; Export to Active Directory
     Start-ManagementAgent -Name SPMA -RunProfile EXPORT
+
+    if($AdditionalManagementAgents -ne $null -and $AdditionalManagementAgents.Count -gt 0)
+    {
+        foreach($managementAgent in $AdditionalManagementAgents)
+	    {
+            Start-ManagementAgent -Name $managementAgent -RunProfile EXPORT
+            Start-ManagementAgent -Name $managementAgent -RunProfile DELTAIMPORT
+            Start-ManagementAgent -Name $managementAgent -RunProfile DELTASYNC
+	    }
+    
     Start-ManagementAgent -Name SPMA -RunProfile DELTAIMPORT
     Start-ManagementAgent -Name SPMA -RunProfile DELTASYNC
+    Start-ManagementAgent -Name ADMA -RunProfile EXPORT
+    }
 }
 
 }##Closing: function Start-SharePointSync
@@ -357,6 +401,7 @@ try{
     Start-ManagementAgent SPMA EXPORT     -StopOnError
     Start-ManagementAgent SPMA FULLIMPORT -StopOnError
     Start-ManagementAgent SPMA FULLSYNC   -StopOnError
+    Start-ManagementAgent ADMA EXPORT     -StopOnError
 }
 catch
 {    

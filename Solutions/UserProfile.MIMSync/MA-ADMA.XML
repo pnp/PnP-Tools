@@ -13555,6 +13555,30 @@
           </step>
         </configuration>
       </run-configuration>
+      <run-configuration>
+        <id>{1997D260-0BC0-432B-BA4C-8A9C4836FA72}</id>
+        <name>Export</name>
+        <creation-time>2016-03-13 16:39:13.037</creation-time>
+        <version>1</version>
+        <last-modification-time>2016-03-13 16:39:13.037</last-modification-time>
+        <configuration>
+          <step>
+            <step-type type="export">
+            </step-type>
+            <threshold>
+              <batch-size>1</batch-size>
+            </threshold>
+            <partition>{4E13002B-96ED-4021-81D6-DD370E7CB697}</partition>
+            <custom-data>
+              <adma-step-data>
+                <batch-size>100</batch-size>
+                <page-size>500</page-size>
+                <time-limit>120</time-limit>
+              </adma-step-data>
+            </custom-data>
+          </step>
+        </configuration>
+      </run-configuration>
     </ma-run-data>
     <capabilities-mask>d373</capabilities-mask>
     <export-type>1</export-type>
