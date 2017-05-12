@@ -53,6 +53,10 @@ namespace SharePoint.AccessApp.Scanner
         [Option('h', "threads", HelpText = "Number of parallel threads, maximum = 100", DefaultValue = 10)]
         public int Threads { get; set; }
 
+        [Option('q', "dontusesearchquery", HelpText = "Use site enumeration instead of search to find the Access Apps", DefaultValue = false)]
+        public bool DontUseSearchQuery { get; set; }
+
+
         [HelpOption]
         public string GetUsage()
         {
@@ -76,7 +80,7 @@ namespace SharePoint.AccessApp.Scanner
             help.AddPreOptionsLine("");
             help.AddPreOptionsLine("Let the tool figure out your urls (works only for SPO MT):");
             help.AddPreOptionsLine("==========================================================");
-            help.AddPreOptionsLine("Using app-only:");
+            help.AddPreOptionsLine("Using app-only (recommended!):");
             help.AddPreOptionsLine("accessappscanner.exe -t <tenant> -c <your client id> -s <your client secret>");
             help.AddPreOptionsLine("");
             help.AddPreOptionsLine("e.g. accessappscanner.exe -t contoso -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=");
@@ -84,17 +88,17 @@ namespace SharePoint.AccessApp.Scanner
             help.AddPreOptionsLine("Using credentials:");
             help.AddPreOptionsLine("accessappscanner.exe -t <tenant> -u <your user id> -p <your user password>");
             help.AddPreOptionsLine("");
-            help.AddPreOptionsLine("e.g. accessappscanner.exe -m scan -t contoso -u spadmin@contoso.onmicrosoft.com -p pwd");
+            help.AddPreOptionsLine("e.g. accessappscanner.exe -t contoso -u spadmin@contoso.onmicrosoft.com -p pwd");
             help.AddPreOptionsLine("");
-            help.AddPreOptionsLine("Specifying your urls to scan + url to tenant admin (needed for SPO Dedicated):");
-            help.AddPreOptionsLine("==============================================================================");
-            help.AddPreOptionsLine("Using app-only:");
-            help.AddPreOptionsLine("accessappscanner.exe -r <urls> -a <tenant admin site> -c <your client id> -s <your client secret>");
-            help.AddPreOptionsLine("e.g. accessappscanner.exe -m scan -r https://team.contoso.com/*,https://mysites.contoso.com/* -a https://contoso-admin.contoso.com -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=");
+            help.AddPreOptionsLine("Specifying your url to tenant admin (needed for SPO Dedicated):");
+            help.AddPreOptionsLine("===============================================================");
+            help.AddPreOptionsLine("Using app-only (recommended!):");
+            help.AddPreOptionsLine("accessappscanner.exe -a <tenant admin site> -c <your client id> -s <your client secret>");
+            help.AddPreOptionsLine("e.g. accessappscanner.exe -a https://contoso-admin.contoso.com -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=");
             help.AddPreOptionsLine("");
             help.AddPreOptionsLine("Using credentials:");
-            help.AddPreOptionsLine("accessappscanner.exe -r <urls> -a <tenant admin site> -u <your user id> -p <your user password>");
-            help.AddPreOptionsLine("e.g. accessappscanner.exe -m scan -r https://team.contoso.com/*,https://mysites.contoso.com/* -a https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd");
+            help.AddPreOptionsLine("accessappscanner.exe -a <tenant admin site> -u <your user id> -p <your user password>");
+            help.AddPreOptionsLine("e.g. accessappscanner.exe -a https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd");
             help.AddOptions(this);
             return help;
         }

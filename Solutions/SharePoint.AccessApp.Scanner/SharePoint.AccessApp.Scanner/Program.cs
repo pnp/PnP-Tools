@@ -85,6 +85,8 @@ namespace SharePoint.AccessApp.Scanner
                 TenantAdminSite = options.TenantAdminSite,
                 OutputFolder = DateTime.Now.Ticks.ToString(),
                 Separator = options.Separator,
+                Tenant = options.Tenant,
+                UseSearchQuery = !options.DontUseSearchQuery
             };
 
             // temp debug
@@ -102,20 +104,23 @@ namespace SharePoint.AccessApp.Scanner
 
             accessAppScanner.ExcludeOD4B = options.ExcludeOD4B;
 
-            // set scan urls
-            if (!String.IsNullOrEmpty(options.Tenant))
+            if (!accessAppScanner.UseSearchQuery)
             {
-                accessAppScanner.AddSite(string.Format("https://{0}.sharepoint.com/*", options.Tenant));
-                if (!accessAppScanner.ExcludeOD4B)
+                // set scan urls
+                if (!String.IsNullOrEmpty(options.Tenant))
                 {
-                    accessAppScanner.AddSite(string.Format("https://{0}-my.sharepoint.com/*", options.Tenant));
+                    accessAppScanner.AddSite(string.Format("https://{0}.sharepoint.com/*", options.Tenant));
+                    if (!accessAppScanner.ExcludeOD4B)
+                    {
+                        accessAppScanner.AddSite(string.Format("https://{0}-my.sharepoint.com/*", options.Tenant));
+                    }
                 }
-            }
-            else
-            {
-                foreach (var url in options.Urls)
+                else
                 {
-                    accessAppScanner.AddSite(url);
+                    foreach (var url in options.Urls)
+                    {
+                        accessAppScanner.AddSite(url);
+                    }
                 }
             }
 
@@ -183,7 +188,7 @@ namespace SharePoint.AccessApp.Scanner
                 FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
                 string version = fvi.FileVersion;
                 TimeSpan ts = DateTime.Now.Subtract(accessAppScanner.StartTime);
-                System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, accessAppScanner.ScannedSites, accessAppScanner.ScannedWebs, $"{ts.Days} days, {ts.Hours} hours, {ts.Minutes} minutes and {ts.Seconds} seconds", version)));
+                System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, !accessAppScanner.UseSearchQuery?accessAppScanner.ScannedSites:0, accessAppScanner.ScannedWebs, $"{ts.Days} days, {ts.Hours} hours, {ts.Minutes} minutes and {ts.Seconds} seconds", version)));
             }
             #endregion
 

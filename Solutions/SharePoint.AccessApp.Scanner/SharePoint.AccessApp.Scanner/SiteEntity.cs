@@ -53,6 +53,15 @@ namespace SharePoint.AccessApp.Scanner
         }
 
         /// <summary>
+        /// IndexDocId for Search Paging
+        /// </summary>
+        public double IndexDocId
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// The site locale. See http://technet.microsoft.com/en-us/library/ff463597.aspx for a complete list of Lcid's
         /// </summary>
         public uint Lcid
@@ -149,4 +158,5 @@ namespace SharePoint.AccessApp.Scanner
             set;
         }
     }
+
 }

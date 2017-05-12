@@ -1,6 +1,7 @@
 ﻿using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.Search.Query;
 using SharePoint.AccessApp.Scanner.Framework.TimerJobs;
+using SharePoint.AccessApp.Scanner.Utilities;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -22,6 +23,8 @@ namespace SharePoint.AccessApp.Scanner
         public string OutputFolder = "";
         public string Separator = ",";
         public bool ExcludeListsOnlyBlockedByOobReasons = false;
+        public string Tenant = "";
+        public bool UseSearchQuery = false;
         internal List<Mode> Modes;
 
         private static volatile bool firstSiteCollectionDone = false;
@@ -43,9 +46,41 @@ namespace SharePoint.AccessApp.Scanner
         /// <returns></returns>
         public override List<string> ResolveAddedSites(List<string> addedSites)
         {
-            var sites = base.ResolveAddedSites(addedSites);
-            this.SitesToScan = sites.Count;
-            return sites;
+            if (!this.UseSearchQuery)
+            {
+                var sites = base.ResolveAddedSites(addedSites);
+                this.SitesToScan = sites.Count;
+                return sites;
+            }
+            else
+            {
+                List<string> searchedSites = new List<string>(100);
+
+                string tenantAdmin = "";
+                if (!string.IsNullOrEmpty(this.TenantAdminSite))
+                {
+                    tenantAdmin = this.TenantAdminSite;
+                }
+                else
+                {
+                    tenantAdmin = $"https://{this.Tenant}-admin.sharepoint.com";
+                }
+
+                this.Realm = TokenHelper.GetRealmFromTargetUrl(new Uri(tenantAdmin));
+                using (ClientContext ccAdmin = this.CreateClientContext(tenantAdmin))
+                {
+                    var results = ccAdmin.Web.SiteSearch("contentclass:STS_Web (WebTemplate:ACCSVC OR WebTemplate:ACCSRV)");
+                    foreach (var site in results)
+                    {
+                        if (!searchedSites.Contains(site.Url))
+                        {
+                            searchedSites.Add(site.Url);
+                        }
+                    }
+                }
+                this.SitesToScan = searchedSites.Count;
+                return searchedSites;
+            }
         }
 
         /// <summary>
@@ -55,8 +90,17 @@ namespace SharePoint.AccessApp.Scanner
         {
             try
             {
-                // Get all the sub sites in the site we're processing
-                IEnumerable<string> expandedSites = GetAllSubSites(e.SiteClientContext.Site);
+                IEnumerable<string> expandedSites = null;
+                if (!this.UseSearchQuery)
+                {
+                    // Get all the sub sites in the site we're processing
+                    expandedSites = GetAllSubSites(e.SiteClientContext.Site);
+                }
+                else
+                {
+                    expandedSites = new List<string>();
+                    (expandedSites as List<string>).Add(e.Url);
+                }
 
                 bool isFirstSiteInList = true;
                 string siteCollectionUrl = "";
@@ -148,14 +192,17 @@ namespace SharePoint.AccessApp.Scanner
                                             viewsLifetime = 0;
                                             viewsLifetimeUnique = 0;
 
-                                            foreach (ResultTable t in siteQueryResults.Value)
+                                            if (siteQueryResults.Value != null)
                                             {
-                                                foreach (IDictionary<string, object> r in t.ResultRows)
+                                                foreach (ResultTable t in siteQueryResults.Value)
                                                 {
-                                                    viewsRecent += r["ViewsRecent"] != null ? int.Parse(r["ViewsRecent"].ToString()) : 0;
-                                                    viewsRecentUnique += r["ViewsRecentUniqueUsers"] != null ? int.Parse(r["ViewsRecentUniqueUsers"].ToString()) : 0;
-                                                    viewsLifetime += r["ViewsLifeTime"] != null ? int.Parse(r["ViewsLifeTime"].ToString()) : 0;
-                                                    viewsLifetimeUnique += r["ViewsLifeTimeUniqueUsers"] != null ? int.Parse(r["ViewsLifeTimeUniqueUsers"].ToString()) : 0;
+                                                    foreach (IDictionary<string, object> r in t.ResultRows)
+                                                    {
+                                                        viewsRecent += r["ViewsRecent"] != null ? int.Parse(r["ViewsRecent"].ToString()) : 0;
+                                                        viewsRecentUnique += r["ViewsRecentUniqueUsers"] != null ? int.Parse(r["ViewsRecentUniqueUsers"].ToString()) : 0;
+                                                        viewsLifetime += r["ViewsLifeTime"] != null ? int.Parse(r["ViewsLifeTime"].ToString()) : 0;
+                                                        viewsLifetimeUnique += r["ViewsLifeTimeUniqueUsers"] != null ? int.Parse(r["ViewsLifeTimeUniqueUsers"].ToString()) : 0;
+                                                    }
                                                 }
                                             }
                                         }

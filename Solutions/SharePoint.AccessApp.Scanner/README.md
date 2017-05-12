@@ -19,6 +19,7 @@ SharePoint.AccessApp.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+0.2 | May 12th 2017 | Updated to use search as default option...massive performance improvement
 0.1 | May 9th 2017 | First beta version
 
 ### Disclaimer ###
@@ -33,7 +34,7 @@ The main purpose of this tool is to give you a report of Access 2010 and 2013 Ap
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [Access App scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.AccessApp.Scanner/Releases/Access%20App%20scanner%20for%20SharePoint%20Online%20v0.1.zip?raw=true)
+ - [Access App scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.AccessApp.Scanner/Releases/Access%20App%20scanner%20for%20SharePoint%20Online%20v0.2.zip?raw=true)
 
 Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder containing the tool **AccessAppScanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -176,13 +177,51 @@ lists
 
 # Advanced topics #
 
-## How can I decrease the time it takes to scan the environment?
-If you've a very large environment the scan will take a long time since it will have to process all sites in your tenant. Use below tips to speed up the scanning:
-- Run the scan on an Azure VM hosted in the same region as your SharePoint Online tenant, this will optimize the network traffic between the scanner and SharePoint Online
-- Use the -r (see later in the chapter) parameter to for example only scan the sites that start with A,B,C,D on one machine, E,F,G,H on the next one,...This way you can have parallel scans running each handling a subset of site collections. This however means you'll need to manually combine the resulting CSV files.
-- Increase the number of threads, default is 10 but increasing to 20 can help on large environments. It will however not double the performance :-)
+## The tool seems to be very fast...did something go wrong?
+The default setting of the tool is to use search to retrieve the list of Access App sites...and this approach is super fast, even on large environments. See the chapter on using enumeration in case you don't want to use the search based approach.
 
 ## I'm running SharePoint Online dedicated, is this different? ##
+In SharePoint Online Dedicated one can have vanity url's like teams.contoso.com which implies that the tool cannot automatically determine the used url's and tenant admin center url. Using below command line switch you can specify the admin site url which is sufficient if you use the default search based retrieval.
+
+```console
+accessappscanner -a <tenantadminsite> -c <clientid> -s <clientsecret>
+```
+
+A real life sample:
+
+```console
+accessappscanner -a https://contoso-admin.contoso.com -c 7a5c1615-997a-4059-a784-db2245ec7cc1 
+                 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
+```
+
+## I don't want to use search to find the sites...what other options are there?
+In case you're concerned about the missing sites because they're not indexed you can always run the tool via site enumeration by specifying the -q parameter.
+
+
+```console
+accessappscanner -t <tenant> -c <clientid> -s <clientsecret> -q
+```
+
+A real life sample:
+
+```console
+accessappscanner -t contoso -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw= -q
+```
+
+### I only want to scan a few sites when not using search, can I do that? ##
+Using the urls command line switch you can control which sites are scanned. You can specify one or more url's which can have a wild card. Samples of valid url's are:
+ - https://contoso.sharepoint.com/*
+ - https://contoso.sharepoint.com/sites/mysite
+ - https://contoso-my.sharepoint.com/personal/*
+
+To specify the url's you can use the -r parameter as shown below:
+
+```console
+accessappscanner -r https://contoso.sharepoint.com/*,https://contoso.sharepoint.com/sites/mysite,https://contoso-my.sharepoint.com/personal/* 
+-c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
+```
+
+### I'm running SharePoint Online dedicated, is this different when not using search? ##
 In SharePoint Online Dedicated one can have vanity url's like teams.contoso.com which implies that the tool cannot automatically determine the used url's and tenant admin center url. Using below command line switches you can specify the site url's to scan and the tenant admin center url. Note that the urls need to be separated by a comma.
 
 ```console
@@ -197,6 +236,13 @@ accessappscanner -r https://team.contoso.com/*,https://mysites.contoso.com/*
                  -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 ```
 
+### How can I decrease the time it takes to scan the environment when not using search?
+If you've a very large environment the scan will take a long time since it will have to process all sites in your tenant. Use below tips to speed up the scanning:
+- Run the scan on an Azure VM hosted in the same region as your SharePoint Online tenant, this will optimize the network traffic between the scanner and SharePoint Online
+- Use the -r (see later in the chapter) parameter to for example only scan the sites that start with A,B,C,D on one machine, E,F,G,H on the next one,...This way you can have parallel scans running each handling a subset of site collections. This however means you'll need to manually combine the resulting CSV files.
+- Increase the number of threads, default is 10 but increasing to 20 can help on large environments. It will however not double the performance :-)
+
+
 ## I don't want to use app-only, can I use credentials? ##
 The best option is to use app-only since that will ensure that the tool can read all site collections but you can also run the tool using credentials.
 
@@ -210,24 +256,14 @@ A real life sample:
 accessappscanner -t contoso -c admin@contoso.onmicrosoft.com -p mypassword
 ```
 
-## I only want to scan a few sites, can I do that? ##
-Using the urls command line switch you can control which sites are scanned. You can specify one or more url's which can have a wild card. Samples of valid url's are:
- - https://contoso.sharepoint.com/*
- - https://contoso.sharepoint.com/sites/mysite
- - https://contoso-my.sharepoint.com/personal/*
-
-To specify the url's you can use the -r parameter as shown below:
-
-```console
-accessappscanner -r https://contoso.sharepoint.com/*,https://contoso.sharepoint.com/sites/mysite,https://contoso-my.sharepoint.com/personal/* 
--c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
-```
+>**Note:**
+>The account you're using needs to be a tenant admin account and needs to have access to all your sites if you want to get a complete report.
 
 
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
-SharePoint AccessApp Scanner tool 0.1.0.0
+SharePoint AccessApp Scanner tool 0.2.0.0
 Copyright (C) 2017 SharePoint PnP
 ==========================================================
 
@@ -236,7 +272,7 @@ https://github.com/SharePoint/PnP-Tools/tree/master/Solutions/SharePoint.AccessA
 
 Let the tool figure out your urls (works only for SPO MT):
 ==========================================================
-Using app-only:
+Using app-only (recommended!):
 accessappscanner.exe -t <tenant> -c <your client id> -s <your client secret>
 
 e.g. accessappscanner.exe -t contoso -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s
@@ -245,50 +281,50 @@ eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 Using credentials:
 accessappscanner.exe -t <tenant> -u <your user id> -p <your user password>
 
-e.g. accessappscanner.exe -m scan -t contoso -u spadmin@contoso.onmicrosoft.com -p pwd
+e.g. accessappscanner.exe -t contoso -u spadmin@contoso.onmicrosoft.com -p pwd
 
-Specifying your urls to scan + url to tenant admin (needed for SPO Dedicated):
-==============================================================================
-Using app-only:
-accessappscanner.exe -r <urls> -a <tenant admin site> -c <your client id> -s <your client secret>
-e.g. accessappscanner.exe -m scan -r https://team.contoso.com/*,https://mysites.contoso.com/* -a
-https://contoso-admin.contoso.com -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s
+Specifying your url to tenant admin (needed for SPO Dedicated):
+===============================================================
+Using app-only (recommended!):
+accessappscanner.exe -a <tenant admin site> -c <your client id> -s <your client secret>
+e.g. accessappscanner.exe -a https://contoso-admin.contoso.com -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s
 eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 
 Using credentials:
-accessappscanner.exe -r <urls> -a <tenant admin site> -u <your user id> -p <your user password>
-e.g. accessappscanner.exe -m scan -r https://team.contoso.com/*,https://mysites.contoso.com/* -a
-https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd
+accessappscanner.exe -a <tenant admin site> -u <your user id> -p <your user password>
+e.g. accessappscanner.exe -a https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd
 
-  -m, --mode               (Default: Scan) Execution mode. Omit or use scan for a full scan
+  -m, --mode                  (Default: Scan) Execution mode. Omit or use scan for a full scan
 
-  -t, --tenant             Tenant name, e.g. contoso when your sites are under https://contoso.sharepoint.com/sites.
-                           This is the recommended model for SharePoint Online MT as this way all site collections will
-                           be scanned
+  -t, --tenant                Tenant name, e.g. contoso when your sites are under https://contoso.sharepoint.com/sites.
+                              This is the recommended model for SharePoint Online MT as this way all site collections
+                              will be scanned
 
-  -r, --urls               List of (wildcard) urls (e.g.
-                           https://contoso.sharepoint.com/*,https://contoso-my.sharepoint.com,https://contoso-my.sharepo
-                           int.com/personal/*) that you want to get scanned. When you specify the --tenant optoin then
-                           this parameter is ignored
+  -r, --urls                  List of (wildcard) urls (e.g.
+                              https://contoso.sharepoint.com/*,https://contoso-my.sharepoint.com,https://contoso-my.shar
+                              epoint.com/personal/*) that you want to get scanned. When you specify the --tenant optoin
+                              then this parameter is ignored
 
-  -c, --clientid           Client ID of the app-only principal used to scan your site collections
+  -c, --clientid              Client ID of the app-only principal used to scan your site collections
 
-  -s, --clientsecret       Client Secret of the app-only principal used to scan your site collections
+  -s, --clientsecret          Client Secret of the app-only principal used to scan your site collections
 
-  -u, --user               User id used to scan/enumerate your site collections
+  -u, --user                  User id used to scan/enumerate your site collections
 
-  -p, --password           Password of the user used to scan/enumerate your site collections
+  -p, --password              Password of the user used to scan/enumerate your site collections
 
-  -a, --tenantadminsite    Url to your tenant admin site (e.g. https://contoso-admin.contoso.com): only needed when
-                           your not using SPO MT
+  -a, --tenantadminsite       Url to your tenant admin site (e.g. https://contoso-admin.contoso.com): only needed when
+                              your not using SPO MT
 
-  -x, --excludeod4b        (Default: False) Exclude OD4B sites from the scan
+  -x, --excludeod4b           (Default: False) Exclude OD4B sites from the scan
 
-  -e, --separator          (Default: ,) Separator used in output CSV files (e.g. ";")
+  -e, --separator             (Default: ,) Separator used in output CSV files (e.g. ";")
 
-  -h, --threads            (Default: 10) Number of parallel threads, maximum = 100
+  -h, --threads               (Default: 10) Number of parallel threads, maximum = 100
 
-  --help                   Display this help screen.
+  -q, --dontusesearchquery    (Default: False) Use site enumeration instead of search to find the Access Apps
+
+  --help                      Display this help screen.
 ```
 
 <img src="https://telemetry.sharepointpnp.com/pnp-tools/solutions/sharepoint-accessappscanner" /> 
