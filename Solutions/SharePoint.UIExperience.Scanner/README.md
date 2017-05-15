@@ -7,6 +7,8 @@ If you want to learn more about the "modern" experiences then please checkout ou
 - [Customizing "modern" lists and libraries](https://msdn.microsoft.com/en-us/pnp_articles/modern-experience-customizations-customize-lists-and-libraries)
 - [Customizing "modern" pages](https://msdn.microsoft.com/en-us/pnp_articles/modern-experience-customizations-customize-pages)
 
+If you rather watch a video to learn more about this tool then [please consult the PnP Webcast](https://dev.office.com/blogs/sharepoint-modern-user-interface-experience-scanner) on this topic.
+
 ### Applies to ###
 -  SharePoint Online
 
