@@ -78,8 +78,17 @@ function Install-SharePointSyncConfiguration
 
     $MimPowerShellModuleAssembly = Get-Item -Path (Join-Path (Get-SynchronizationServicePath) UIShell\Microsoft.DirectoryServices.MetadirectoryServices.Config.dll)
     if ($MimPowerShellModuleAssembly.VersionInfo.ProductMajorPart -eq 4 -and
-        $MimPowerShellModuleAssembly.VersionInfo.ProductMinorPart -eq 3 -and 
-        $MimPowerShellModuleAssembly.VersionInfo.ProductBuildPart -ge 2064)
+    	(
+		(
+		$MimPowerShellModuleAssembly.VersionInfo.ProductMinorPart -eq 3 -and 
+		$MimPowerShellModuleAssembly.VersionInfo.ProductBuildPart -ge 2064
+		) -or
+		(
+		$MimPowerShellModuleAssembly.VersionInfo.ProductMinorPart -eq 4 -and 
+		$MimPowerShellModuleAssembly.VersionInfo.ProductBuildPart -ge 1237
+		)
+	 )
+	)
     {
         Write-Verbose "Sufficient MIM PowerShell version detected (>= 4.3.2064): $($MimPowerShellModuleAssembly.VersionInfo.ProductVersion)"
     }
