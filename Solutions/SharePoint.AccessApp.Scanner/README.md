@@ -195,7 +195,7 @@ accessappscanner -a https://contoso-admin.contoso.com -c 7a5c1615-997a-4059-a784
 ```
 
 ## I don't want to use search to find the sites...what other options are there?
-In case you're concerned about the missing sites because they're not indexed you can always run the tool via site enumeration by specifying the -q parameter.
+In case you're concerned about the missing sites because they're not indexed you can always run the tool via site enumeration by specifying the **-q parameter**.
 
 
 ```console
@@ -218,14 +218,14 @@ To specify the url's you can use the -r parameter as shown below:
 
 ```console
 accessappscanner -r https://contoso.sharepoint.com/*,https://contoso.sharepoint.com/sites/mysite,https://contoso-my.sharepoint.com/personal/* 
--c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
+-c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw= -q
 ```
 
 ### I'm running SharePoint Online dedicated, is this different when not using search? ##
 In SharePoint Online Dedicated one can have vanity url's like teams.contoso.com which implies that the tool cannot automatically determine the used url's and tenant admin center url. Using below command line switches you can specify the site url's to scan and the tenant admin center url. Note that the urls need to be separated by a comma.
 
 ```console
-accessappscanner -r <urls> -a <tenantadminsite> -c <clientid> -s <clientsecret>
+accessappscanner -r <urls> -a <tenantadminsite> -c <clientid> -s <clientsecret> -q
 ```
 
 A real life sample:
@@ -234,6 +234,7 @@ A real life sample:
 accessappscanner -r https://team.contoso.com/*,https://mysites.contoso.com/* 
                  -a https://contoso-admin.contoso.com -c 7a5c1615-997a-4059-a784-db2245ec7cc1 
                  -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
+                 -q 
 ```
 
 ### How can I decrease the time it takes to scan the environment when not using search?
