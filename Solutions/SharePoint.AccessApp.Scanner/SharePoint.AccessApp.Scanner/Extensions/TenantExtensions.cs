@@ -27,7 +27,7 @@ namespace Microsoft.SharePoint.Client
             var sites = new List<SiteEntity>();
             SPOSitePropertiesEnumerable props = null;
 
-            while (props == null || props.NextStartIndexFromSharePoint != null)
+            while (props == null || !string.IsNullOrEmpty(props.NextStartIndexFromSharePoint))
             {
 
                 // approach to be used as of Feb 2017
@@ -68,6 +68,8 @@ namespace Microsoft.SharePoint.Client
                     }
                     sites.Add(siteEntity);
                 }
+                Console.WriteLine(props.NextStartIndexFromSharePoint);
+                Console.WriteLine($"Added {props.Count} sites, total sites to scan is now {sites.Count}");
             }
 
             return sites;

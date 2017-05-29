@@ -100,6 +100,7 @@
     <Compile Include="AccessAppScannerResults.cs" />
     <Compile Include="Extensions\ClientContextExtensions.cs" />
     <Compile Include="Extensions\ClientObjectExtensions.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
     <Compile Include="Enums\TenantEnums.cs" />
     <Compile Include="SiteEntity.cs" />

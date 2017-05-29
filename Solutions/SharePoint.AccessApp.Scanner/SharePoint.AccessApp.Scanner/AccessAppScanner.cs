@@ -277,7 +277,7 @@ namespace SharePoint.AccessApp.Scanner
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error showing progress: {ex.ToString()}");
+                        Console.WriteLine($"Error showing progress: {ex.ToDetailedString()}");
                     }
                 }
             }
