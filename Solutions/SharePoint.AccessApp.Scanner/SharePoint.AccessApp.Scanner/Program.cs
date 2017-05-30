@@ -147,14 +147,16 @@ namespace SharePoint.AccessApp.Scanner
                 // output summary report
                 outputfile = string.Format("{0}\\AccessApps.csv", accessAppScanner.OutputFolder);
                 Console.WriteLine("Outputting Access App scan to {0}", outputfile);
-                outputHeaders = new string[] { "Site Url", "Parent Site Url", "Site Collection Url", "Web Title", "Web Template", "App Created On", "App Instance Status", "App Instance Id", "Web Id", "ViewsRecent", "viewsRecentUnique", "viewsLifetime", "viewsLifetimeUnique" };
+                outputHeaders = new string[] { "Site Url", "Parent Site Url", "Site Collection Url", "Web Title",
+                                               "Web Template", "App Created On", "App Last Accessed On", "App Instance Status", "App Instance Id", "Web Id",
+                                               "ViewsRecent", "viewsRecentUnique", "viewsLifetime", "viewsLifetimeUnique" };
                 System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, outputHeaders)));
 
                 AccessAppScanData scanData;
                 while (accessAppScanner.AccessAppResults.TryPop(out scanData))
                 {
                     System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(options.Separator, ToCsv(scanData.SiteUrl), ToCsv(scanData.ParentSiteUrl), ToCsv(scanData.SiteColUrl), ToCsv(scanData.WebTitle), 
-                        ToCsv(scanData.WebTemplate), scanData.WebCreatedDate , scanData.AppInstanceStatus, scanData.AppInstanceId, scanData.WebId,
+                        ToCsv(scanData.WebTemplate), scanData.WebCreatedDate , scanData.LastAccessedDate,scanData.AppInstanceStatus, scanData.AppInstanceId, scanData.WebId,
                         scanData.ViewsRecent, scanData.ViewsRecentUnique, scanData.ViewsLifetime, scanData.ViewsLifetimeUnique)));
                 }
             }

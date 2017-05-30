@@ -19,6 +19,7 @@ SharePoint.AccessApp.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+0.4 | May 30th 2017 | Added "App Last Accessed On" column for Access 2013 apps
 0.3 | May 29th 2017 | Improvements in site enumeration logic (when not using search) + more detailed error output
 0.2 | May 12th 2017 | Updated to use search as default option...massive performance improvement
 0.1 | May 9th 2017 | First beta version
@@ -157,6 +158,8 @@ Column | Description
 **Site Collection Url** | Url of the scanned site collection.
 **Web Title** | Title of the Access App.
 **Web Template** | Web template of the Access App site.
+**App Created On** | Date when the Access App was created.
+**App Last Accessed On** | Date when the Access App was accessed the last time.
 **App Instance Status** | Status of the Access App (only relevant to Access 2013 Apps).
 **App Instance Id** | Id (guid) of the Access App (only relevant to Access 2013 Apps).
 **Web Id** | Id (guid) of the Access App site.
@@ -172,9 +175,10 @@ Filter | Takeaway
 ---------|----------
 **No filter** | Will give you a list of all the found Access Apps. If the amount of found Access Apps is zero or the found Access Apps are not relevant anymore then it's strongly recommended to [disable Access Apps for your tenant](https://support.office.com/en-us/article/Enable-and-disable-Access-apps-in-your-organization-92e0f958-4b53-411a-8499-52acec00413e?ui=en-US&rs=en-US&ad=US). 
 **Web Template = ACCSVC#0** | Will give you all the Access 2013 Apps, meaning the Access Apps created using Access 2013+ where the data is living in SQL Azure. 
-**Web Template = ACCSRV#0** | Will give you all the Access 2010 Apps, meaning the Access Apps created using Access 2010 where the data is living in SharePoint 
+**Web Template = ACCSRV#0** | Will give you all the Access 2010 Apps, meaning the Access Apps created using Access 2010 where the data is living in SharePoint. 
 lists
-**ViewsRecent = 0** | All the Access Apps of which the hosting site collection has not been visited in the last 14 days
+**Web Template = ACCSVC#0 AND App Last Accessed On in 2017** | Listing all Access Apps  that have been recently accessed gives you the list of Access Apps to remediate. **Note:** the scanner is only returning last accessed data for 2013 Access Apps.
+**ViewsRecent = 0** | All the Access Apps of which the hosting site collection has not been visited in the last 14 days.
 
 # Advanced topics #
 
@@ -265,7 +269,7 @@ accessappscanner -t contoso -c admin@contoso.onmicrosoft.com -p mypassword
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
-SharePoint AccessApp Scanner tool 0.3.0.0
+SharePoint AccessApp Scanner tool 0.4.0.0
 Copyright (C) 2017 SharePoint PnP
 ==========================================================
 

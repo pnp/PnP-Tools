@@ -166,6 +166,9 @@ namespace SharePoint.AccessApp.Scanner
                                 if (ccWeb.Web.WebTemplate.Equals("ACCSVC", StringComparison.InvariantCultureIgnoreCase) ||
                                     ccWeb.Web.WebTemplate.Equals("ACCSRV", StringComparison.InvariantCultureIgnoreCase))
                                 {
+                                    // Get the date when this Access App was last accessed
+                                    var lastAccessedDate = ccWeb.Web.GetPropertyBagValueString("accsvcLastAccessedDate", "");
+                                    
                                     // Query for usage on the actual site collection, do this only once per site collection
                                     if (viewsRecent == -1)
                                     {
@@ -220,7 +223,8 @@ namespace SharePoint.AccessApp.Scanner
                                         WebCreatedDate = ccWeb.Web.Created,
                                         WebTemplate = $"{ccWeb.Web.WebTemplate}#{ccWeb.Web.Configuration}",
                                         AppInstanceId = ccWeb.Web.AppInstanceId,
-                                        WebId = ccWeb.Web.Id
+                                        WebId = ccWeb.Web.Id,
+                                        LastAccessedDate = lastAccessedDate,
                                     };
 
                                     Console.WriteLine($"Access App found in {site}.");

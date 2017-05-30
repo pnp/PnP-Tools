@@ -26,6 +26,7 @@ namespace SharePoint.AccessApp.Scanner
         public Guid AppInstanceId { get; set; }
         public Guid WebId { get; set; }
         public string AppInstanceStatus { get; set; }
+        public string LastAccessedDate { get; set; }
         public int ViewsRecent { get; set; }
         public int ViewsRecentUnique { get; set; }
         public int ViewsLifetime { get; set; }

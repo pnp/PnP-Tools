@@ -113,5 +113,89 @@ namespace Microsoft.SharePoint.Client
         }
 
 
+        /// <summary>
+        /// Type independent implementation of the property getter.
+        /// </summary>
+        /// <param name="web">Web to read the property bag value from</param>
+        /// <param name="key">Key of the property bag entry to return</param>
+        /// <returns>Value of the property bag entry</returns>
+        private static object GetPropertyBagValueInternal(Web web, string key)
+        {
+            web.AllProperties.ClearObjectData();
+
+            var props = web.AllProperties;
+            web.Context.Load(props);
+            web.Context.ExecuteQueryRetry();
+            if (props.FieldValues.ContainsKey(key))
+            {
+                return props.FieldValues[key];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Get int typed property bag value. If does not contain, returns default value.
+        /// </summary>
+        /// <param name="web">Web to read the property bag value from</param>
+        /// <param name="key">Key of the property bag entry to return</param>
+        /// <param name="defaultValue"></param>
+        /// <returns>Value of the property bag entry as integer</returns>
+        public static int? GetPropertyBagValueInt(this Web web, string key, int defaultValue)
+        {
+            object value = GetPropertyBagValueInternal(web, key);
+            if (value != null)
+            {
+                return (int)value;
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
+
+        /// <summary>
+        /// Get DateTime typed property bag value. If does not contain, returns default value.
+        /// </summary>
+        /// <param name="web">Web to read the property bag value from</param>
+        /// <param name="key">Key of the property bag entry to return</param>
+        /// <param name="defaultValue"></param>
+        /// <returns>Value of the property bag entry as integer</returns>
+        public static DateTime? GetPropertyBagValueDateTime(this Web web, string key, DateTime defaultValue)
+        {
+            object value = GetPropertyBagValueInternal(web, key);
+            if (value != null)
+            {
+                return (DateTime)value;
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
+
+        /// <summary>
+        /// Get string typed property bag value. If does not contain, returns given default value.
+        /// </summary>
+        /// <param name="web">Web to read the property bag value from</param>
+        /// <param name="key">Key of the property bag entry to return</param>
+        /// <param name="defaultValue"></param>
+        /// <returns>Value of the property bag entry as string</returns>
+        public static string GetPropertyBagValueString(this Web web, string key, string defaultValue)
+        {
+            object value = GetPropertyBagValueInternal(web, key);
+            if (value != null)
+            {
+                return (string)value;
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
+
+
     }
 }
