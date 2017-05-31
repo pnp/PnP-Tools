@@ -151,7 +151,7 @@ namespace SharePoint.AccessApp.Scanner
                             }
 
                             // Perf optimization: do one call per web to load all the needed properties
-                            ccWeb.Load(ccWeb.Web, p => p.Id, p => p.WebTemplate, p => p.Configuration, p => p.Title, p => p.Created, p => p.AppInstanceId, p => p.ParentWeb);
+                            ccWeb.Load(ccWeb.Web, p => p.Id, p => p.WebTemplate, p => p.Configuration, p => p.Title, p => p.Created, p => p.AppInstanceId, p => p.ParentWeb, p => p.LastItemUserModifiedDate);
                             ccWeb.ExecuteQueryRetry();
 
                             // Fill site collection url
@@ -168,7 +168,8 @@ namespace SharePoint.AccessApp.Scanner
                                 {
                                     // Get the date when this Access App was last accessed
                                     var lastAccessedDate = ccWeb.Web.GetPropertyBagValueString("accsvcLastAccessedDate", "");
-                                    
+                                    var lastModifiedDate = ccWeb.Web.LastItemUserModifiedDate;
+                                                                       
                                     // Query for usage on the actual site collection, do this only once per site collection
                                     if (viewsRecent == -1)
                                     {
@@ -225,6 +226,7 @@ namespace SharePoint.AccessApp.Scanner
                                         AppInstanceId = ccWeb.Web.AppInstanceId,
                                         WebId = ccWeb.Web.Id,
                                         LastAccessedDate = lastAccessedDate,
+                                        LastModifiedByUserDate = (ccWeb.Web.WebTemplate.Equals("ACCSRV", StringComparison.InvariantCultureIgnoreCase) ? lastModifiedDate.ToString() : "")
                                     };
 
                                     Console.WriteLine($"Access App found in {site}.");

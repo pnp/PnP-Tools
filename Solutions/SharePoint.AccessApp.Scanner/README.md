@@ -36,7 +36,7 @@ The main purpose of this tool is to give you a report of Access 2010 and 2013 Ap
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [Access App scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.AccessApp.Scanner/Releases/Access%20App%20scanner%20for%20SharePoint%20Online%20v0.2.zip?raw=true)
+ - [Access App scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.AccessApp.Scanner/Releases/Access%20App%20scanner%20for%20SharePoint%20Online%20v0.5.zip?raw=true)
 
 Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder containing the tool **AccessAppScanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -159,7 +159,8 @@ Column | Description
 **Web Title** | Title of the Access App.
 **Web Template** | Web template of the Access App site.
 **App Created On** | Date when the Access App was created.
-**App Last Accessed On** | Date when the Access App was accessed the last time.
+**Access 2013 App Last Accessed On** | Date when the Access App was accessed the last time.
+**Access 2010 App Last Modified By User On** | Date when the last user driven change was done.
 **App Instance Status** | Status of the Access App (only relevant to Access 2013 Apps).
 **App Instance Id** | Id (guid) of the Access App (only relevant to Access 2013 Apps).
 **Web Id** | Id (guid) of the Access App site.
@@ -177,7 +178,8 @@ Filter | Takeaway
 **Web Template = ACCSVC#0** | Will give you all the Access 2013 Apps, meaning the Access Apps created using Access 2013+ where the data is living in SQL Azure. 
 **Web Template = ACCSRV#0** | Will give you all the Access 2010 Apps, meaning the Access Apps created using Access 2010 where the data is living in SharePoint. 
 lists
-**Web Template = ACCSVC#0 AND App Last Accessed On in 2017** | Listing all Access Apps  that have been recently accessed gives you the list of Access Apps to remediate. **Note:** the scanner is only returning last accessed data for 2013 Access Apps.
+**Web Template = ACCSVC#0 AND Access 2013 App Last Accessed On in 2017** | Listing all Access 2013 Apps  that have been recently accessed gives you the list of Access Apps to remediate.
+**Web Template = ACCSRV#0 AND Access 2010 App Last Modified By User On in 2017** | Listing all Access 2010 Apps that have had a recent change gives you the list of Access Apps to remediate.
 **ViewsRecent = 0** | All the Access Apps of which the hosting site collection has not been visited in the last 14 days.
 
 # Advanced topics #
