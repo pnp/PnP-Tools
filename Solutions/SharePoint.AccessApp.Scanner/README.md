@@ -19,7 +19,8 @@ SharePoint.AccessApp.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
-0.4 | May 30th 2017 | Added "App Last Accessed On" column for Access 2013 apps
+0.5 | May 31st 2017 | Added "Access 2010 App Last Modified By User On" column for Access 2010 apps
+0.4 | May 30th 2017 | Added "Access 2013 App Last Accessed On" column for Access 2013 apps
 0.3 | May 29th 2017 | Improvements in site enumeration logic (when not using search) + more detailed error output
 0.2 | May 12th 2017 | Updated to use search as default option...massive performance improvement
 0.1 | May 9th 2017 | First beta version
@@ -271,7 +272,7 @@ accessappscanner -t contoso -c admin@contoso.onmicrosoft.com -p mypassword
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
-SharePoint AccessApp Scanner tool 0.4.0.0
+SharePoint AccessApp Scanner tool 0.5.0.0
 Copyright (C) 2017 SharePoint PnP
 ==========================================================
 
