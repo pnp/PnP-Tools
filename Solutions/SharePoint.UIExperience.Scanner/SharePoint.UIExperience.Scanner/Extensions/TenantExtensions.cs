@@ -27,7 +27,7 @@ namespace Microsoft.SharePoint.Client
             var sites = new List<SiteEntity>();
             SPOSitePropertiesEnumerable props = null;
 
-            while (props == null || props.NextStartIndexFromSharePoint != null)
+            while (props == null || !string.IsNullOrEmpty(props.NextStartIndexFromSharePoint))
             {
 
                 // approach to be used as of Feb 2017

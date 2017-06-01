@@ -269,8 +269,11 @@ namespace Microsoft.SharePoint.Client
             }
 
             // Step 3.6: Check for managed metadata navigation feature
-            cc.Web.EnsureProperties(p => p.Features);
-            result.XsltViewWebPartCompatibility.BlockedByManagedMetadataNavFeature = cc.Web.Features.Where(f => f.DefinitionId == FeatureId_Web_MetaDataNav).Count() > 0;
+            if (!Constants.IsExcludedFromScan(Constants.ManagedMetadataNavigationSupport))
+            {
+                cc.Web.EnsureProperties(p => p.Features);
+                result.XsltViewWebPartCompatibility.BlockedByManagedMetadataNavFeature = cc.Web.Features.Where(f => f.DefinitionId == FeatureId_Web_MetaDataNav).Count() > 0;
+            }
 
             // Step 4: check the view
             if (webPart.Properties.FieldValues.Keys.Contains("ViewFlags") && webPart.Properties["ViewFlags"] != null && !String.IsNullOrEmpty(webPart.Properties["ViewFlags"].ToString()))

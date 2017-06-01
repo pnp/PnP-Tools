@@ -20,6 +20,7 @@ SharePoint.UIExperience.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.1 | June 1st 2017 | Managed metadata navigation support will be available (see https://techcommunity.microsoft.com/t5/SharePoint-Blog/SharePoint-filters-pane-updates-filtering-and-metadata/ba-p/74162), so don't mark it as a blocker
 1.0 | May 2nd 2017 | First main version
 
 ### Disclaimer ###
@@ -39,7 +40,7 @@ Using the reports you can streamline the "modern" experience in your tenant: you
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [UIExperience scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.UIExperience.Scanner/Releases/UI%20Experience%20scanner%20for%20SharePoint%20Online%20v1.0.zip?raw=true)
+ - [UIExperience scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.UIExperience.Scanner/Releases/UI%20Experience%20scanner%20for%20SharePoint%20Online%20v1.1.zip?raw=true)
 
 Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder containing the tool **UIExperienceScanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -184,7 +185,7 @@ Column | Description
 **Site Url** | Url of the scanned site.
 **Site Collection Url** | Url of the scanned site collection.
 **List Title** | Title of the list. 
-**Only blocked by OOB reaons** | TRUE if the list is **only** blocked due to reasons which you as customer cannot influence, being blocked due to managed metadata navigation, unsupported list base template, unsupported list view type or unsupported field type being shown. Note that you can use the the **-o (-excludelistsonlyblockedbyoobreaons) parameter** to skip logging lists which are only blocked due to these reasons
+**Only blocked by OOB reaons** | TRUE if the list is **only** blocked due to reasons which you as customer cannot influence, being blocked due to unsupported list base template, unsupported list view type or unsupported field type being shown. Note that you can use the the **-o (-excludelistsonlyblockedbyoobreaons) parameter** to skip logging lists which are only blocked due to these reasons
 **Blocked at site level** | TRUE if the list is blocked because the **site** scoped feature (E3540C7D-6BEA-403C-A224-1A12EAFEE4C4) was enabled.
 **Blocked at web level** | TRUE if the list is blocked because the **web** scoped feature (52E14B6F-B1BB-4969-B89B-C4FAA56745EF) was enabled.
 **Blocked at list level** | TRUE if the user changed the list experience setting to "classic experience".
@@ -192,7 +193,7 @@ Column | Description
 **List experience** | The set list experience setting: auto (default), modern or classic. 
 **Blocked by not being able to load page** | TRUE if the page associated with the list default view could not be loaded.
 **Blocked by not being able to load page exception** | The error that was triggered when the page could not be loaded.
-**Blocked by managed metadata navigation** | TRUE if the list is blocked because the web scoped metadata navigation (7201d6a4-a5d3-49a1-8c19-19c4bac6e668) feature was enabled.
+**Blocked by managed metadata navigation** | TRUE if the list is blocked because the web scoped metadata navigation (7201d6a4-a5d3-49a1-8c19-19c4bac6e668) feature was enabled. **Note:** Microsoft started rolling out support for managed metadata navigation in the "modern" list and library experience. See https://techcommunity.microsoft.com/t5/SharePoint-Blog/SharePoint-filters-pane-updates-filtering-and-metadata/ba-p/74162 for more details.
 **Blocked by view type** | TRUE if the list default view is using a view type which cannot be shown in "modern".
 **View type** | The used view type that is not working in "modern".
 **Blocked by list base template** | TRUE if the list is blocked because it's based upon a list type which can't be shown in "modern".
@@ -395,7 +396,7 @@ uiexperiencescanner -r https://contoso.sharepoint.com/*,https://contoso.sharepoi
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
-SharePoint UI Experience Scanner tool 1.0.0.0
+SharePoint UI Experience Scanner tool 1.1.0.0
 Copyright (C) 2017 SharePoint PnP
 ==========================================================
 
@@ -411,7 +412,7 @@ e.g. UIExperienceScanner.exe -t contoso -c 7a5c1615-997a-4059-a784-db2245ec7cc1 
 eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 e.g. UIExperienceScanner.exe -m scan -t contoso -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s
 eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
-e.g. UIExperienceScanner.exe -m customactions,listexperience,modernfeature -t contoso -c
+e.g. UIExperienceScanner.exe -m blockedlists,blockedpages,ignoredcustomizations -t contoso -c
 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 
 Using credentials:
@@ -432,43 +433,44 @@ UIExperienceScanner.exe -m <mode> -r <urls> -a <tenant admin site> -u <your user
 e.g. UIExperienceScanner.exe -m scan -r https://team.contoso.com/*,https://mysites.contoso.com/* -a
 https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd
 
- -m, --mode                                  (Default: Scan) Execution mode. Choose scan to scan all UIExperience. Use
-                                             following UIExperience options blockedlists, blockedpages or
-                                             ignoredcustomizations for individual scanning. Omit or use scan for a
-                                             full scan
+  -m, --mode                                  (Default: Scan) Execution mode. Choose scan to scan all UIExperience. Use
+                                              following UIExperience options blockedlists, blockedpages or
+                                              ignoredcustomizations for individual scanning. Omit or use scan for a
+                                              full scan
 
- -t, --tenant                                Tenant name, e.g. contoso when your sites are under
-                                             https://contoso.sharepoint.com/sites. This is the recommended model for
-                                             SharePoint Online MT as this way all site collections will be scanned
+  -t, --tenant                                Tenant name, e.g. contoso when your sites are under
+                                              https://contoso.sharepoint.com/sites. This is the recommended model for
+                                              SharePoint Online MT as this way all site collections will be scanned
 
- -r, --urls                                  List of (wildcard) urls (e.g.
-                                             https://contoso.sharepoint.com/*,https://contoso-my.sharepoint.com,https:/
-                                             /contoso-my.sharepoint.com/personal/*) that you want to get scanned. When
-                                             you specify the --tenant optoin then this parameter is ignored
+  -r, --urls                                  List of (wildcard) urls (e.g.
+                                              https://contoso.sharepoint.com/*,https://contoso-my.sharepoint.com,https:/
+                                              /contoso-my.sharepoint.com/personal/*) that you want to get scanned. When
+                                              you specify the --tenant optoin then this parameter is ignored
 
- -c, --clientid                              Client ID of the app-only principal used to scan your site collections
+  -c, --clientid                              Client ID of the app-only principal used to scan your site collections
 
- -s, --clientsecret                          Client Secret of the app-only principal used to scan your site
-                                             collections
+  -s, --clientsecret                          Client Secret of the app-only principal used to scan your site
+                                              collections
 
- -u, --user                                  User id used to scan/enumerate your site collections
+  -u, --user                                  User id used to scan/enumerate your site collections
 
- -p, --password                              Password of the user used to scan/enumerate your site collections
+  -p, --password                              Password of the user used to scan/enumerate your site collections
 
- -a, --tenantadminsite                       Url to your tenant admin site (e.g. https://contoso-admin.contoso.com):
-                                             only needed when your not using SPO MT
+  -a, --tenantadminsite                       Url to your tenant admin site (e.g. https://contoso-admin.contoso.com):
+                                              only needed when your not using SPO MT
 
- -x, --excludeod4b                           (Default: True) Exclude OD4B sites from the scan
+  -x, --includeod4b                           (Default: False) Include OD4B sites in the scan
 
- -o, --excludelistsonlyblockedbyoobreaons    (Default: False) Exclude lists which are blocked due to out of the box
-                                             reasons: managed metadata navigation, base template, view type of field
-                                             type
+  -o, --excludelistsonlyblockedbyoobreaons    (Default: False) Exclude lists which are blocked due to out of the box
+                                              reasons: managed metadata navigation, base template, view type of field
+                                              type
 
- -e, --separator                             (Default: ,) Separator used in output CSV files (e.g. ";")
+  -e, --separator                             (Default: ,) Separator used in output CSV files (e.g. ";")
 
- -h, --threads                               (Default: 10) Number of parallel threads, maximum = 100
+  -h, --threads                               (Default: 10) Number of parallel threads, maximum = 100
 
- --help                                      Display this help screen.
+  --help                                      Display this help screen.
+
 ```
 
 <img src="https://telemetry.sharepointpnp.com/pnp-tools/solutions/sharepoint-uiexperiencescanner" /> 

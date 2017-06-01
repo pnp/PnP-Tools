@@ -101,7 +101,7 @@ namespace SharePoint.UIExperience.Scanner
                 uiExpScanner.UseOffice365Authentication(options.User, options.Password);
             }
 
-            uiExpScanner.ExcludeOD4B = options.ExcludeOD4B;
+            uiExpScanner.ExcludeOD4B = !options.IncludeOD4B;
 
             // set scan urls
             if (!String.IsNullOrEmpty(options.Tenant))

@@ -47,8 +47,8 @@ namespace SharePoint.UIExperience.Scanner
         [Option('a', "tenantadminsite", HelpText = "Url to your tenant admin site (e.g. https://contoso-admin.contoso.com): only needed when your not using SPO MT")]
         public string TenantAdminSite { get; set; }
 
-        [Option('x', "excludeod4b", HelpText = "Exclude OD4B sites from the scan", DefaultValue = true)]
-        public bool ExcludeOD4B { get; set; }
+        [Option('x', "includeod4b", HelpText = "Include OD4B sites in the scan", DefaultValue = false)]
+        public bool IncludeOD4B { get; set; }
 
         [Option('o', "excludelistsonlyblockedbyoobreaons", HelpText = "Exclude lists which are blocked due to out of the box reasons: managed metadata navigation, base template, view type of field type", DefaultValue = false)]
         public bool ExcludeListsOnlyBlockedByOobReasons { get; set; }
