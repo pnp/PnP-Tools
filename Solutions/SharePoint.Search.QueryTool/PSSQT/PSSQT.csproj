@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9D6FEDA5-B9E2-4149-B414-466FC56CFAB6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PSSQT</RootNamespace>
+    <AssemblyName>PSSQT</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\WindowsPowerShell\3.0\System.Management.Automation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Channels" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SearchQueryTool\Helpers\CookieReader.cs">
+      <Link>Helpers\CookieReader.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\HttpRequestResponsePair.cs">
+      <Link>Helpers\HttpRequestResponsePair.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\HttpRequestRunner.cs">
+      <Link>Helpers\HttpRequestRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\HttpWebRequestExtensions.cs">
+      <Link>Helpers\HttpWebRequestExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\BM25.cs">
+      <Link>Helpers\RankDetail\BM25.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\Bm25PropertyWeights.cs">
+      <Link>Helpers\RankDetail\Bm25PropertyWeights.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\BucketedStatic.cs">
+      <Link>Helpers\RankDetail\BucketedStatic.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\DocProps.cs">
+      <Link>Helpers\RankDetail\DocProps.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\Dynamic.cs">
+      <Link>Helpers\RankDetail\Dynamic.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\MinSpan.cs">
+      <Link>Helpers\RankDetail\MinSpan.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\Pid.cs">
+      <Link>Helpers\RankDetail\Pid.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\PropertyContext.cs">
+      <Link>Helpers\RankDetail\PropertyContext.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\QueryTerm.cs">
+      <Link>Helpers\RankDetail\QueryTerm.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\RankDocHitList.cs">
+      <Link>Helpers\RankDetail\RankDocHitList.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\RankingFeature.cs">
+      <Link>Helpers\RankDetail\RankingFeature.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\RankingFeatures.cs">
+      <Link>Helpers\RankDetail\RankingFeatures.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\RankLogParser.cs">
+      <Link>Helpers\RankDetail\RankLogParser.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\RankValuesList.cs">
+      <Link>Helpers\RankDetail\RankValuesList.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\RenderableBm25F.cs">
+      <Link>Helpers\RankDetail\RenderableBm25F.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\RenderableBucketedStatic.cs">
+      <Link>Helpers\RankDetail\RenderableBucketedStatic.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\RenderableDynamicFeature.cs">
+      <Link>Helpers\RankDetail\RenderableDynamicFeature.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\RenderableMinSpan.cs">
+      <Link>Helpers\RankDetail\RenderableMinSpan.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\RenderableRankingFeature.cs">
+      <Link>Helpers\RankDetail\RenderableRankingFeature.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\RenderableStaticFeature.cs">
+      <Link>Helpers\RankDetail\RenderableStaticFeature.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\ResultItem.cs">
+      <Link>Helpers\RankDetail\ResultItem.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\ScoreDetail.cs">
+      <Link>Helpers\RankDetail\ScoreDetail.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\RankDetail\StaticRank.cs">
+      <Link>Helpers\RankDetail\StaticRank.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\Helpers\WebAuthentication.cs">
+      <Link>Helpers\WebAuthentication.cs</Link>
+    </Compile>
+    <Compile Include="..\searchquerytool\helpers\XmlHelper.cs">
+      <Link>Helpers\XmlHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\searchquerytool\model\SearchConnection.cs">
+      <Link>Model\SearchConnection.cs</Link>
+    </Compile>
+    <Compile Include="..\searchquerytool\model\SearchPreset.cs">
+      <Link>Model\SearchPreset.cs</Link>
+    </Compile>
+    <Compile Include="..\searchquerytool\model\SearchPresetList.cs">
+      <Link>Model\SearchPresetList.cs</Link>
+    </Compile>
+    <Compile Include="..\searchquerytool\model\SearchQueryRequest.cs">
+      <Link>Model\SearchQueryRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\searchquerytool\model\SearchQueryResult.cs">
+      <Link>Model\SearchQueryResult.cs</Link>
+    </Compile>
+    <Compile Include="..\searchquerytool\model\SearchRequest.cs">
+      <Link>Model\SearchRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\searchquerytool\model\SearchResult.cs">
+      <Link>Model\SearchResult.cs</Link>
+    </Compile>
+    <Compile Include="..\searchquerytool\model\SearchSuggestionsRequest.cs">
+      <Link>Model\SearchSuggestionsRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\searchquerytool\model\SearchSuggestionsResult.cs">
+      <Link>Model\SearchSuggestionsResult.cs</Link>
+    </Compile>
+    <Compile Include="..\SearchQueryTool\SPAuthenticationClient\AuthenticationClient.cs">
+      <Link>SPAuthenticationClient\AuthenticationClient.cs</Link>
+    </Compile>
+    <Compile Include="ExplainRankResultProcessor.cs" />
+    <Compile Include="Helpers\SPOClientWebAuth.cs" />
+    <Compile Include="QueryResultProcessor.cs" />
+    <Compile Include="RankDetailTooManyResults.cs" />
+    <Compile Include="RankingFeatureHelper.cs" />
+    <Compile Include="RankingFeatureFormatter.cs" />
+    <Compile Include="RankLogHelper.cs" />
+    <Compile Include="RankLogParser\BM25FeatureProperty.cs" />
+    <Compile Include="RankLogParser\BM25QueryTerm.cs" />
+    <Compile Include="RankLogParser\BM25QueryTermIndex.cs" />
+    <Compile Include="RankLogParser\BM25QueryTermIndexGroup.cs" />
+    <Compile Include="RankLogParser\BM25QueryTermIndexGroups.cs" />
+    <Compile Include="RankLogParser\BM25Schema.cs" />
+    <Compile Include="RankLogParser\PidMapping.cs" />
+    <Compile Include="RankLogParser\PidMappings.cs" />
+    <Compile Include="RankLogParser\Program.cs" />
+    <Compile Include="RankLogParser\RankLog.cs" />
+    <Compile Include="RankLogParser\RankLogElement.cs" />
+    <Compile Include="RankLogParser\RankLogQuery.cs" />
+    <Compile Include="RankLogParser\RankLogStage.cs" />
+    <Compile Include="RankLogParser\RankLogStageBaseStaticFeature.cs" />
+    <Compile Include="RankLogParser\RankLogStageBM25.cs" />
+    <Compile Include="RankLogParser\RankLogStageBucketedStaticFeature.cs" />
+    <Compile Include="RankLogParser\RankLogStageDynamicFeature.cs" />
+    <Compile Include="RankLogParser\RankLogStageFeature.cs" />
+    <Compile Include="RankLogParser\RankLogStageModel.cs" />
+    <Compile Include="RankLogParser\RankLogStageModelBM25Feature.cs" />
+    <Compile Include="RankLogParser\RankLogStageProximityFeature.cs" />
+    <Compile Include="RankLogParser\RankLogStageStaticFeature.cs" />
+    <Compile Include="RankModelNames.cs" />
+    <Compile Include="ResultSourceNames.cs" />
+    <Compile Include="SearchQueryRequestExtensions.cs" />
+    <Compile Include="SearchSPIndex.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TransformResults.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Doc\PSSQT.docx" />
+    <None Include="PSSQT.psd1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Scripts\Issues\Issue1.ps1" />
+    <None Include="Scripts\Search-Compare.ps1" />
+    <None Include="Scripts\Search-DefaultSite.ps1" />
+    <None Include="Scripts\Update-AssemblyFileVersion.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Doc\Installation.txt" />
+    <Content Include="Samples\CopyXml.xslt">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Samples\Default.xslt">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Samples\results.xml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>%25SystemRoot%25\system32\WindowsPowerShell\v1.0\powershell.exe -File "$(SolutionDir)PSSQT\Scripts\Update-AssemblyFileVersion.ps1"  -assemblyInfoFilePath "$(SolutionDir)PSSQT\Properties\AssemblyInfo.cs"</PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
