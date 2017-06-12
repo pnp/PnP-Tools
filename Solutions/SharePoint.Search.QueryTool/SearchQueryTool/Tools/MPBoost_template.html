@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="excanvas.js"></script><![endif]-->
+    <script language="javascript" type="text/javascript" src="jquery.min.js"></script>
+    <script language="javascript" type="text/javascript" src="jquery.jqplot.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="jquery.jqplot.css" />
+    <title>SharePoint Freshness Boost with XRANK</title>
+        <script>
+        function CreateXRANK() {
+            var constant = document.getElementById("constant").value;
+            var maxboost = document.getElementById("maxboost").value;
+            var query = document.getElementById("query").value;
+            var intervals = document.getElementById("interval").value.split(",");
+            var lastRank = 0;
+            var queryTest = "my test query";
+            for (var i = intervals.length - 1; i >= 0; i--) {
+                var rank = maxboost / (1 + (constant * intervals[i]));
+                var deltaRank = rank - lastRank;
+				
+				var decimalString = deltaRank.toString().substr(2);
+				var expDeltaRank = decimalString + "E-" + decimalString.length;
+				
+                query = "(" + query + ")" + " XRANK(cb=" + expDeltaRank + ") " + "write>{ToDay-" + intervals[i] + "}";
+
+                var dateOffset = (24 * 60 * 60 * 1000) * intervals[i];
+                var myDate = new Date();
+                myDate.setTime(myDate.getTime() - dateOffset);
+                var dateString = myDate.getFullYear() + "-" + (myDate.getMonth() + 1) + "-" + myDate.getDate();
+
+                queryTest = "(" + queryTest + ")" + " XRANK(cb=" + expDeltaRank + ") " + "write>" + dateString;
+
+                lastRank = rank;
+            }
+            query = "{?" + query + "}"; //will not execute if variable is missing
+            document.getElementById("result").value = query;
+            document.getElementById("resultTest").value = queryTest;
+        }
+    </script>
+    <style>
+        .mainbody {
+            font-family: "Segoe UI Light", "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+            font-size: 16px;
+        }
+
+        h1 {
+            font-size: 2em;
+            font-weight: normal;
+            margin: 0;
+            color: #fff !important;
+        }
+
+        th {
+            background-color: #0072c6;
+            color: #fff !important;
+            padding-bottom:10px;
+            padding-left:15px;
+            padding-right:15px;
+        }
+
+        button {
+            background-color: #0072c6;
+            color: #fff;
+            font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+            border: 1px solid #92c0e0;
+            padding-left: 10px;
+            padding-right: 7px;
+            font-size: 1em;
+        }
+		a, a:visited {color:blue}
+    </style>
+</head>
+<body onload="CreateXRANK()">
+<div class="mainbody">
+    <table>
+        <tr>
+            <th colspan="4">
+                <h1>SharePoint Manage Property Boost Generator</h1>                
+            </th>
+            <td rowspan="6" valign="top" style="width:400px;padding-left:10px">
+                <div id="plot"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>Constant</td>
+            <td>
+                <input id="constant" type="text" value="0.0333" title="Constant used for logarithmic distribution" /></td>
+            <td>Max Boost</td>
+            <td>
+                <input id="maxboost" type="text" value="1" title="Maximum boost value for todays items" /></td>
+        </tr>
+        <tr>
+            <td>Max Value</td>
+            <td>
+                <input id="interval" type="text" value="15" title="Max value to calculate boost for" /></td>
+            <td>Steps</td>
+            <td>
+                <input id="steps" type="text" value="1" title="Increment steps" /></td>
+
+        </tr>
+        <tr>
+            <td>Query</td>
+            <td>
+                <input id="query" type="text" value="{searchTerms}" title="Query from Query Rule or test query" /></td>
+
+        </tr>
+        <tr>
+            <td valign="top">XRANK Query Rule</td>
+            <td colspan="3">
+                <textarea id="result" rows="10" cols="10" style="width:99%"></textarea></td>
+        </tr>
+        <tr>
+            <td valign="top">XRANK test</td>
+            <td colspan="3">
+                <textarea id="resultTest" rows="10" cols="10" style="width:99%"></textarea></td>
+        </tr>
+        <tr>
+            <td colspan="4" align="right"><button onclick="CreateXRANK()">Generate</button></td>
+        </tr>
+    </table>
+</div>    
+</body>
+</html>

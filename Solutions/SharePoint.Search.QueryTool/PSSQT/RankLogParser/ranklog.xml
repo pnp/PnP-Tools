@@ -1,0 +1,199 @@
+<rank_log version="15.0.0000.1000" id="8F6FD0BC-06F9-43CF-BBAB-08C377E083F4" instance_id="IndexComponent1-e1dc0a81-55e6-4fac-b956-13fabf6abb65-SP7549b196172f.I.0.0" corr_id="2A0FAD9D-B47C-00DE-64E0-FA326F156C28">
+    <query tree="AND(AND(WORDS(content:test, content:tests), OR(FILTER(...), FILTER(...), FILTER(...), FILTER(...), FILTER(...), FILTER(...), FILTER(...), FILTER(...), FILTER(...), FILTER(...)), FILTER(...)), FILTER(...))" properties=" AnchortextCompleteQueryProperty:ºtest DateTimeUtcNow:2016-10-13T16:00:17.3862702Z DetectedLanguageRanking:9 PersonalizationData: RecommendedforQueryProperty:" />
+    <stage type="linear" id="C238DBDE-33F1-4F2E-B0EB-D1FA2A147CBE" rank="0.392917" rank_after="0.392917" stage_rank_interval="[-2.99419,9.31839]">
+        <bm25 name="ContentRank">
+            <schema pid_mapping="[1:content::7:%default] [2:content::1:%default] [3:content::5:%default] [56:content::2:%default] [100:content::3:link] [10:content::6:link] [264:content::14:link] " pids_not_mapped="" />
+            <query_term term="WORDS(content:test, content:tests)">
+                <index name="content" N="30966" n="193" avdl="15 2.00043 2.03479 1.41667 1 3.72768 9.80374 140.902 1 1 1 1 1 1 1 1 ">
+                    <group id="%default" ext_doc_id="5004" int_doc_id="4195" precalc="0" tf_prime="1.43331" weight="1" tf="0 0 1 0 0 0 0 5 0 0 0 0 0 0 0 0 " dl="0 0 3 0 0 3 0 54 0 0 0 0 0 0 0 0 " />
+                    <group id="link" ext_doc_id="5004" int_doc_id="30" precalc="0" tf_prime="0.684463" weight="1" tf="0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 " dl="0 0 0 0 0 0 6 0 0 0 0 0 0 0 0 0 " />
+                </index>
+                <rank score="3.44924" score_acc="3.44924" term_weight="5.07795" />
+            </query_term>
+            <final score="3.44924" transformed="3.44924" normalized="3.44924" hidden_nodes_adds="0.920954 " />
+        </bm25>
+        <bucketed_static_feature name="DetectedLanguageRanking" property_name="DetectedLanguageRanking" raw_value_transform="equal" used_default="0" property_value_found="1" property_value="9" raw_value_in="9" raw_value="9" raw_value_transformed="1" hidden_nodes_adds="0.110725" />
+        <static_feature name="EventRate" property_name="EventRate" used_default="1" raw_value="0.0005" raw_value_transformed="0.0005" transformed="-2.98578" normalized="-2.98578" hidden_nodes_adds="-0.113686 " />
+        <dynamic name="AnchortextComplete">
+            <property_name value="AnchortextCompleteQueryProperty" />
+            <final rank="0.392917216" />
+        </dynamic>
+        <stage_model type="linear" num_hidden_nodes="1" max_stage_wid_count="4294967295" precalc_enabled="1">
+            <bm25_feature name="ContentRank" k1="1">
+                <property pid="1" w="0.102708" b="0.616058" />
+                <property pid="2" w="1.49288" b="0.534469" />
+                <property pid="3" w="0.614379" b="0.491691" />
+                <property pid="56" w="0.771913" b="0.58127" />
+                <property pid="100" w="1.07343" b="0.309329" />
+                <property pid="10" w="0.273496" b="0.517656" />
+                <property pid="264" w="0.877087" b="0.510194" />
+                <normalization sdev="1" mean="0" />
+                <layer1 weights="0.267002" />
+            </bm25_feature>
+            <bucketed_static_feature name="InternalFileType" pid="98" property_name="" default="0">
+                <bucket value="0" adds="0.271178" />
+                <bucket value="1" adds="0.558566" />
+                <bucket value="2" adds="0.601424" />
+                <bucket value="3" adds="-0.306627" />
+                <bucket value="4" adds="-0.654765" />
+                <bucket value="5" adds="-0.57174" />
+                <bucket value="6" adds="0.0216141" />
+                <bucket value="7" adds="-0.00289686" />
+                <bucket value="8" adds="0.144065" />
+                <bucket value="11" adds="0.575169" />
+            </bucketed_static_feature>
+            <bucketed_static_feature name="DetectedLanguageRanking" pid="5" property_name="DetectedLanguageRanking" raw_value_transform="equal" default="0">
+                <bucket value="0" adds="-0.110721" />
+                <bucket value="1" adds="0.110725" />
+            </bucketed_static_feature>
+            <static_feature name="clickdistance" pid="96" property_name="" default="5">
+                <transform_rational k="7.34429" />
+                <normalization sdev="1" mean="0" />
+                <layer1 weights="-1.43566" />
+            </static_feature>
+            <static_feature name="UrlDepth" pid="303" property_name="" default="3">
+                <transform_rational k="13.208" />
+                <normalization sdev="1" mean="0" />
+                <layer1 weights="-0.361452" />
+            </static_feature>
+            <static_feature name="QLogClicks" pid="306" property_name="" default="0">
+                <transform_logarithmic b="1.06282" maxx="10000" />
+                <normalization sdev="1" mean="0" />
+                <layer1 weights="0.0347034" />
+            </static_feature>
+            <static_feature name="QLogSkips" pid="307" property_name="" default="0">
+                <transform_logarithmic b="2.98569" maxx="10000" />
+                <normalization sdev="1" mean="0" />
+                <layer1 weights="-0.0347034" />
+            </static_feature>
+            <static_feature name="QLogLastClicks" pid="341" property_name="" default="0">
+                <transform_rational k="4.10985" />
+                <normalization sdev="1" mean="0" />
+                <layer1 weights="0.408059" />
+            </static_feature>
+            <static_feature name="EventRate" pid="657" property_name="" default="0.0005">
+                <transform_logarithmic b="0.05" maxx="1e+006" />
+                <normalization sdev="1" mean="0" />
+                <layer1 weights="0.0380758" />
+            </static_feature>
+            <dynamic_feature name="AnchortextComplete" pid="501" property_name="AnchortextCompleteQueryProperty" default="0">
+                <transform_rational k="0.914955" />
+                <normalization sdev="1" mean="0" />
+                <layer1 weights="0.71542" />
+            </dynamic_feature>
+        </stage_model>
+    </stage>
+    <stage type="neural_net" id="2F2F56E0-F4F0-4A22-A9F2-F8A579C9EBFF" rank="-1.04445" rank_after="12.6001" stage_rank_interval="[-4.32614,4.32614]">
+        <bm25 name="ContentRank">
+            <schema pid_mapping="[1:content::7:%default] [2:content::1:%default] [3:content::5:%default] [56:content::2:%default] [100:content::3:link] [10:content::6:link] [264:content::14:link] " pids_not_mapped="" />
+            <query_term term="WORDS(content:test, content:tests)">
+                <index name="content" N="30966" n="193" avdl="15 2.00043 2.03479 1.41667 1 3.72768 9.80374 140.902 1 1 1 1 1 1 1 1 ">
+                    <group id="%default" ext_doc_id="5004" int_doc_id="4195" precalc="0" tf_prime="1.7012" weight="1" tf="0 0 1 0 0 0 0 5 0 0 0 0 0 0 0 0 " dl="0 0 3 0 0 3 0 54 0 0 0 0 0 0 0 0 " />
+                    <group id="link" ext_doc_id="5004" int_doc_id="30" precalc="0" tf_prime="0.991457" weight="1" tf="0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 " dl="0 0 0 0 0 0 6 0 0 0 0 0 0 0 0 0 " />
+                </index>
+                <rank score="3.70281" score_acc="3.70281" term_weight="5.07795" />
+            </query_term>
+            <final score="3.70281" transformed="3.70281" normalized="-0.375772" hidden_nodes_adds="-0.150092 -0.00833117 0.0962025 0.337085 0.19132 0.184577 " />
+        </bm25>
+        <static_feature name="UrlDepth" property_name="UrlDepth" used_default="0" raw_value="4" raw_value_transformed="4" transformed="0.557406" normalized="-0.295484" hidden_nodes_adds="0.175067 0.0734096 -0.0250903 0.0451885 0.0956468 0.00821871 " />
+        <bucketed_static_feature name="InternalFileType" property_name="InternalFileType" used_default="0" raw_value_in="1" raw_value="1" raw_value_transformed="1" hidden_nodes_adds="-3.04908 2.22181 1.63769 0.139462 2.01221 1.22687" />
+        <bucketed_static_feature name="DetectedLanguageRanking" property_name="DetectedLanguageRanking" raw_value_transform="equal" used_default="0" property_value_found="1" property_value="9" raw_value_in="9" raw_value="9" raw_value_transformed="1" hidden_nodes_adds="-0.704154 -0.446414 -0.727134 0.299837 0.902301 -2.39597" />
+        <static_feature name="clickdistance" property_name="clickdistance" used_default="0" raw_value="15" raw_value_transformed="15" transformed="0.828228" normalized="0.877686" hidden_nodes_adds="0.409139 -0.333181 -0.0712617 0.0887983 0.336421 0.0420487 " />
+        <static_feature name="QLogClicks" property_name="QLogClicks" used_default="0" raw_value="0" raw_value_transformed="0" transformed="0.0272029" normalized="-0.0930059" hidden_nodes_adds="-0.0261068 0.0202893 0.0453403 0.00260782 0.000102996 -0.00673199 " />
+        <static_feature name="QLogSkips" property_name="QLogSkips" used_default="0" raw_value="0" raw_value_transformed="0" transformed="1.09628" normalized="0.663011" hidden_nodes_adds="-0.186107 0.144636 0.323217 0.0185904 0.000734229 -0.0479903 " />
+        <static_feature name="QLogLastClicks" property_name="QLogLastClicks" used_default="0" raw_value="0" raw_value_transformed="0" transformed="0" normalized="-3" hidden_nodes_adds="0.23151 -0.60358 0.192252 0.062658 0.333051 -0.00506964 " />
+        <static_feature name="EventRate" property_name="EventRate" used_default="1" raw_value="0.0005" raw_value_transformed="0.0005" transformed="-2.98578" normalized="-2.9916" hidden_nodes_adds="-0.639274 -0.559842 -0.410694 -0.223828 -0.321487 -0.0802985 " />
+        <proximity_feature name="Title_MinSpanExactDiscounted" pid="2" proximity_type="exact_discounted" used_default="0" raw_value="0" transformed="0" normalized="-0.63667" single_term_hit="1" best_diff_terms="1" hidden_nodes_adds="0.0777986 -0.0641272 0.279579 -0.0324611 0.0564403 0.0805515 " />
+        <proximity_feature name="Title_MinSpanComplete" pid="2" proximity_type="complete" used_default="0" raw_value="0" transformed="0" normalized="-0.619584" num_complete_matches="0" hidden_nodes_adds="0.0714449 0.183108 0.180206 0.0085748 -0.100297 0.0514212 " />
+        <proximity_feature name="Title_MinSpanPerfect" pid="2" proximity_type="perfect" used_default="0" raw_value="0" transformed="0" normalized="-0.343162" num_perfect_matches="0" hidden_nodes_adds="0.0048271 -0.00442046 0.0286939 0.0192544 0.0275743 -0.0596452 " />
+        <proximity_feature name="body_MinSpanExactDiscounted" pid="1" proximity_type="exact_discounted" used_default="1" raw_value="0.408176" transformed="0.408176" normalized="0.0989087" single_term_hit="1" best_diff_terms="1" hidden_nodes_adds="-0.00681584 0.00724975 0.0552803 -0.0117233 -0.018912 -0.057839 " />
+        <dynamic name="AnchortextComplete">
+            <property_name value="AnchortextCompleteQueryProperty" />
+            <final rank="-3.82358 0.647781 1.62002 0.790957 3.52316 -1.03491" />
+        </dynamic>
+        <stage_model type="neural_net" num_hidden_nodes="6" max_stage_wid_count="1000" precalc_enabled="0">
+            <layer2>
+                <threshold values=" -0.142921 0.248482 0.0866142 -0.0421435 0.132034 -0.104485" />
+                <neurons_weight values=" 0.817676 0.893481 -0.492963 -0.660686 -0.648086 -0.813251" />
+            </layer2>
+            <bm25_feature name="ContentRank" k1="1">
+                <property pid="1" w="0.106335" b="0.624163" />
+                <property pid="2" w="1.4429" b="0.551102" />
+                <property pid="3" w="0.749188" b="0.471073" />
+                <property pid="56" w="1.06681" b="0.579603" />
+                <property pid="100" w="1.21459" b="0.36485" />
+                <property pid="10" w="0.398208" b="0.507029" />
+                <property pid="264" w="0.952109" b="0.50301" />
+                <normalization sdev="2.56622" mean="4.66712" />
+                <layer1 weights="0.399423 0.0221708 -0.256013 -0.897046 -0.509138 -0.491193" />
+            </bm25_feature>
+            <bucketed_static_feature name="InternalFileType" pid="98" property_name="" default="0">
+                <bucket value="0" adds="-2.09552 1.38815 2.07504 -0.256023 1.19681 1.15352" />
+                <bucket value="1" adds="-3.04908 2.22181 1.63769 0.139462 2.01221 1.22687" />
+                <bucket value="2" adds="-3.05729 2.50882 1.25948 0.187865 1.75897 1.50768" />
+                <bucket value="3" adds="-2.13048 0.473415 2.25769 0.161365 0.457383 0.743557" />
+                <bucket value="4" adds="-2.39241 -0.480859 2.7579 -0.134933 1.15155 1.24655" />
+                <bucket value="5" adds="-2.97945 -0.514921 1.99862 -0.0803853 0.11283 1.2737" />
+                <bucket value="6" adds="-3.34699 1.33723 2.77827 -0.105031 1.01348 1.85355" />
+                <bucket value="7" adds="-3.34764 1.2233 2.77806 -0.0214256 1.02694 1.89058" />
+                <bucket value="8" adds="-2.92811 0.971875 2.23819 0.242123 -1.08011 3.12378" />
+                <bucket value="11" adds="-1.46163 1.15532 2.44871 -0.679063 0.514947 0.885559" />
+            </bucketed_static_feature>
+            <bucketed_static_feature name="DetectedLanguageRanking" pid="5" property_name="DetectedLanguageRanking" raw_value_transform="equal" default="0">
+                <bucket value="0" adds="0.704154 0.446414 0.727134 -0.299837 -0.902301 2.39597" />
+                <bucket value="1" adds="-0.704154 -0.446414 -0.727134 0.299837 0.902301 -2.39597" />
+            </bucketed_static_feature>
+            <static_feature name="clickdistance" pid="96" property_name="" default="5">
+                <transform_rational k="3.11096" />
+                <normalization sdev="0.112023" mean="0.729906" />
+                <layer1 weights="0.466156 -0.379612 -0.0811926 0.101173 0.383305 0.0479085" />
+            </static_feature>
+            <static_feature name="UrlDepth" pid="303" property_name="" default="3">
+                <transform_rational k="3.1761" />
+                <normalization sdev="0.117572" mean="0.592147" />
+                <layer1 weights="-0.592475 -0.248439 0.0849125 -0.15293 -0.323696 -0.0278144" />
+            </static_feature>
+            <static_feature name="QLogClicks" pid="306" property_name="" default="0">
+                <transform_logarithmic b="1.02758" maxx="10000" />
+                <normalization sdev="1.41409" mean="0.158722" />
+                <layer1 weights="0.2807 -0.218151 -0.487499 -0.0280393 -0.00110742 0.0723824" />
+            </static_feature>
+            <static_feature name="QLogSkips" pid="307" property_name="" default="0">
+                <transform_logarithmic b="2.99301" maxx="10000" />
+                <normalization sdev="1.41409" mean="0.158722" />
+                <layer1 weights="-0.2807 0.218151 0.487499 0.0280393 0.00110742 -0.0723824" />
+            </static_feature>
+            <static_feature name="QLogLastClicks" pid="341" property_name="" default="0">
+                <transform_rational k="5.47675" />
+                <normalization sdev="0.16648" mean="0.49944" />
+                <layer1 weights="-0.0771701 0.201193 -0.0640841 -0.020886 -0.111017 0.00168988" />
+            </static_feature>
+            <static_feature name="EventRate" pid="657" property_name="" default="0.0005">
+                <transform_logarithmic b="0.05" maxx="1e+006" />
+                <normalization sdev="1.18432" mean="0.557215" />
+                <layer1 weights="0.21369 0.187138 0.137282 0.0748189 0.107463 0.0268413" />
+            </static_feature>
+            <proximity_feature name="body_MinSpanExactDiscounted" pid="1" proximity_type="exact_discounted" index="" context="7" default="0.408176" discounted="1" exact="1">
+                <transform_linear a="1" b="0" maxx="1" />
+                <normalization sdev="0.341752" mean="0.374374" />
+            </proximity_feature>
+            <proximity_feature name="Title_MinSpanExactDiscounted" pid="2" proximity_type="exact_discounted" index="" context="1" default="0.366553" discounted="1" exact="1">
+                <transform_linear a="1" b="0" maxx="1" />
+                <normalization sdev="0.329694" mean="0.209906" />
+            </proximity_feature>
+            <proximity_feature name="Title_MinSpanComplete" pid="2" proximity_type="complete" index="" context="1" default="0" discounted="0" exact="0">
+                <transform_linear a="1" b="0" maxx="1" />
+                <normalization sdev="0.485228" mean="0.300639" />
+            </proximity_feature>
+            <proximity_feature name="Title_MinSpanPerfect" pid="2" proximity_type="perfect" index="" context="1" default="0" discounted="0" exact="0">
+                <transform_linear a="1" b="0" maxx="1" />
+                <normalization sdev="0.307008" mean="0.105354" />
+            </proximity_feature>
+            <dynamic_feature name="AnchortextComplete" pid="501" property_name="AnchortextCompleteQueryProperty" default="0">
+                <transform_rational k="1.06144" />
+                <normalization sdev="0.0861466" mean="0.0153605" />
+                <layer1 weights="0.177992 -0.0963095 -0.0882886 -0.207024 -0.0451806 -0.139861" />
+            </dynamic_feature>
+        </stage_model>
+    </stage>
+</rank_log>

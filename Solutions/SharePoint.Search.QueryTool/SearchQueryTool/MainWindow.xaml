@@ -1,0 +1,1436 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Classic" x:Class="SearchQueryTool.MainWindow"
+        Icon="Images/sp_site.png"
+        Title="SharePoint Search Query Tool v2.6" Height="820" Width="1100" MinWidth="800" MinHeight="600">
+    <Window.Resources>
+        <DrawingImage x:Key="Overlay">
+            <DrawingImage.Drawing>
+                <ImageDrawing Rect="0 0 16 16" ImageSource="Images/search_icon.png"/>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+        <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
+        <Style x:Key="GroupBoxStyleNoHeader" TargetType="{x:Type GroupBox}">
+            <Setter Property="BorderBrush" Value="{x:Static Themes:ClassicBorderDecorator.ClassicBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GroupBox}">
+                        <Grid SnapsToDevicePixels="true">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="6"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="6"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="6"/>
+                            </Grid.RowDefinitions>
+                            <Border BorderBrush="Transparent" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.ColumnSpan="4" Grid.Column="0" Grid.Row="1" Grid.RowSpan="3"/>
+                            <Themes:ClassicBorderDecorator BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" BorderStyle="Etched" Grid.ColumnSpan="4" Grid.Row="1" Grid.RowSpan="3">
+                                <Themes:ClassicBorderDecorator.OpacityMask>
+                                    <MultiBinding ConverterParameter="7" Converter="{StaticResource BorderGapMaskConverter}">
+
+                                    </MultiBinding>
+                                </Themes:ClassicBorderDecorator.OpacityMask>
+                            </Themes:ClassicBorderDecorator>
+                            <Border x:Name="Header" Grid.Column="1" Padding="3,0,3,0" Grid.Row="0" Grid.RowSpan="2">
+                                <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Border>
+                            <ContentPresenter Grid.ColumnSpan="2" Grid.Column="1" Margin="{TemplateBinding Padding}" Grid.Row="2" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo ProgressState="Normal" Overlay="{StaticResource Overlay}"/>
+    </Window.TaskbarItemInfo>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.4*" MaxWidth="430"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="22"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.ColumnSpan="2">
+            <MenuItem Header="File">
+                <MenuItem Header="Save Connection Properties" Click="MenuSaveConnectionProperties_Click" />
+                <MenuItem Header="Exit" Click="MenuFileExit_Click" />
+            </MenuItem>
+            <MenuItem Header="Tools">
+                <MenuItem Header="Freshness Boost Generator" Click="FreshnessBoost_Click" />
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="About" Click="MenuAbout_Click" />
+            </MenuItem>
+        </Menu>
+
+
+
+        <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="10,10,10,0" MaxHeight="50">
+            <Button Padding="8" 
+				IsDefault="{Binding IsKeyboardFocused, ElementName=QueryTextBox}"
+				x:Name="RunButton"
+				Margin="10,0,10,0" 
+				Click="RunButton_Click"
+				Width="100" Content="Run"/>
+            <Separator Width="10" />
+            <TextBox x:Name="RequestUriStringTextBox" TextWrapping="Wrap" IsReadOnly="True" IsReadOnlyCaretVisible="True" Margin="10,0,10,0" Padding="8" Foreground="#FF0009C3" />
+        </DockPanel>
+
+        <DockPanel  Grid.Row="2" Name="BreadCrumbDockPanel" Grid.ColumnSpan="2" Margin="10,10,0,0" HorizontalAlignment="Left" Visibility="Collapsed">
+            <DockPanel>
+                <!--<Expander Name="ExpanderHiddenConstraints" Header="Hidden Constraints" IsExpanded="false" Foreground="Black" Content="{WrapPanel Name=HiddenConstraintWrapPanel, Orientation=Horizontal}" />-->
+                <Expander Name="ExpanderHiddenConstraints" Header="Hidden Constraints" IsExpanded="false" Foreground="Black">
+                    <WrapPanel Name="HiddenConstraintWrapPanel" Orientation="Horizontal" />
+                </Expander>
+            </DockPanel>
+        </DockPanel>
+
+        <DockPanel Grid.Row="3" Margin="10,10,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <GroupBox x:Name="QueryGroupBox" Grid.Column="0" Grid.Row="0" Header="Query" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,0,-12,0">
+                    <DockPanel>
+                        <TabControl x:Name="SearchMethodTypeTabControl" SelectionChanged="SearchMethodTypeTabControl_SelectionChanged">
+                            <TabItem x:Name="QueryMethodTypeTabItem" Header="Query" Selector.IsSelected="True">
+                                <ScrollViewer Background="White">
+                                    <StackPanel Margin="5,5,5,5">
+
+                                        <StackPanel Margin="5,5,0,0">
+                                            <TextBlock Name="HitStatusTextBlock" Text="0 hits" Margin="5,0" Foreground="DimGray" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                                        </StackPanel>
+
+                                        <StackPanel Margin="5,5,0,0" Orientation="Horizontal">
+                                            <Label Content="Query Text:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+                                        </StackPanel>
+
+                                        <TextBox x:Name="QueryTextBox"
+                                                 Margin="5,0,5,0" 
+											AcceptsReturn="False"
+											Height="60"
+											Padding="4" 
+											TextWrapping="Wrap" 
+											DataContext="Query" MouseDoubleClick="QueryDoubleClick"
+											LostFocus="SearchQueryTextBox_LostFocus_Handler">
+                                            *
+                                        </TextBox>
+
+                                        <StackPanel Margin="5,15,5,0" Orientation="Horizontal">
+                                            <Label Content="Start:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="0" 
+												MaxLength="4"
+												Padding="4"
+												x:Name="StartRowTextBox"
+												DataContext="StartRow"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Center" 
+												Width="38">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="A zero-based index of the first search result to be returned."/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+
+                                            <Label Content="Row limit:" 
+												HorizontalAlignment="Left" 
+												Margin="15,0,0,0" 
+												VerticalAlignment="Top"/>
+                                            <TextBox HorizontalAlignment="Left" 
+												Height="26" 
+												Margin="5,0,0,0" 
+												MaxLength="4"
+												Text="10"
+												Padding="4"
+												x:Name="RowsTextBox"
+												DataContext="Rows"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Center"
+												Width="38">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="The maximum number of search results that we want returned, starting at the index specified in Start."/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                            <Label Content="Rows per page:" 
+												HorizontalAlignment="Left" 
+												Margin="15,0,0,0" 
+												VerticalAlignment="Top"/>
+                                            <TextBox HorizontalAlignment="Left" 
+												Height="26" 
+												Margin="5,0,0,0" 
+												MaxLength="4"
+												Text="0"
+												Padding="4"
+												x:Name="RowsPerPageTextBox"
+												DataContext="RowsPerPage"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Center"
+												Width="38">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="The number of results to return per page."/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </StackPanel>
+
+                                        <Grid Margin="5,15,5,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="10" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <StackPanel Orientation="Vertical">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.2*"/>
+                                                        <ColumnDefinition Width="1*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox x:Name="EnableStemmingCheckBox" 
+														DataContext="EnableStemming"
+														IsChecked="{x:Null}"
+														Unchecked="SearchQueryCheckBox_CheckChanged"
+														Checked="SearchQueryCheckBox_CheckChanged" Content="Enable Stemming">
+                                                        <CheckBox.ToolTip>
+                                                            <TextBlock><Run Text="Specifies whether inflectional forms of the given tokens are used to locate result items or not."/><LineBreak /><Run Text="If &quot;true&quot;, use of inflectional forms of tokens is used to locate result items."/><LineBreak /><LineBreak /><Run Text="Example: search queries with the query text &quot;car&quot; return result items containing the token &quot;car&quot; or the token &quot;cars&quot;, if such items exist."/></TextBlock>
+                                                        </CheckBox.ToolTip>
+                                                    </CheckBox>
+                                                </Grid>
+                                                <Rectangle Height="5" />
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.2*"/>
+                                                        <ColumnDefinition Width="1*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox x:Name="EnableQueryRulesCheckBox" 
+														DataContext="EnableQueryRules"
+														IsChecked="{x:Null}"
+														Unchecked="SearchQueryCheckBox_CheckChanged"
+														Checked="SearchQueryCheckBox_CheckChanged"
+														ToolTip="Enable Query Rules" Content="Enable Query Rules"/>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.2*"/>
+                                                        <ColumnDefinition Width="1*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox x:Name="EnableNicknamesCheckBox" 
+														DataContext="EnableNicknames"
+														IsChecked="{x:Null}"
+														Unchecked="SearchQueryCheckBox_CheckChanged"
+														Checked="SearchQueryCheckBox_CheckChanged" Content="Enable Nicknames">
+                                                        <CheckBox.ToolTip>
+                                                            <TextBlock><Run Text="Specifies whether the exact tokens in the query text are used to find result items or whether the nicknames of the tokens are considered as well."/></TextBlock>
+                                                        </CheckBox.ToolTip>
+                                                    </CheckBox>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.2*"/>
+                                                        <ColumnDefinition Width="1*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox x:Name="ProcessBestBetsCheckBox" 
+														DataContext="ProcessBestBets"
+														IsChecked="{x:Null}"
+														Unchecked="SearchQueryCheckBox_CheckChanged"
+														Checked="SearchQueryCheckBox_CheckChanged" Content="Process BestBets">
+                                                        <CheckBox.ToolTip>
+                                                            <TextBlock><Run Text="Specifies if the search promoted results should be returned, if available, as a result set."/></TextBlock>
+                                                        </CheckBox.ToolTip>
+                                                    </CheckBox>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.2*"/>
+                                                        <ColumnDefinition Width="1*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox x:Name="ProcessPersonalFavoritesCheckBox" 
+														DataContext="ProcessPersonalFavorites"
+														IsChecked="{x:Null}"
+														Unchecked="SearchQueryCheckBox_CheckChanged"
+														Checked="SearchQueryCheckBox_CheckChanged"
+														ToolTip="Process Personal Favorites" Content="Process Personal ..."/>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="25*"/>
+                                                        <ColumnDefinition Width="140*"/>
+                                                        <ColumnDefinition Width="52*"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                </Grid>
+
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="2" Orientation="Vertical">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.4*"/>
+                                                        <ColumnDefinition Width="1*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox x:Name="TrimDuplicatesCheckBox" 
+														DataContext="TrimDuplicates"
+														Unchecked="SearchQueryCheckBox_CheckChanged"
+														IsChecked="{x:Null}"
+														Checked="SearchQueryCheckBox_CheckChanged"
+														ToolTip="Specifies whether duplicates are removed before sorting, selecting, and returning result items." Content="Trim Duplicates"/>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.4*"/>
+                                                        <ColumnDefinition Width="1*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox x:Name="EnableFqlCheckBox" 
+														DataContext="EnableFql"
+														IsChecked="{x:Null}"
+														Unchecked="SearchQueryCheckBox_CheckChanged"
+														Checked="SearchQueryCheckBox_CheckChanged"
+														ToolTip="Specifies the type of the query. If true; specifies that the query is specified as a FAST Query Language (FQL) query." Content="Enable FQL"/>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.4*"/>
+                                                        <ColumnDefinition Width="1*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox x:Name="EnablePhoneticCheckBox" 
+														DataContext="EnablePhonetic"
+														Unchecked="SearchQueryCheckBox_CheckChanged"
+														IsChecked="{x:Null}"
+														Checked="SearchQueryCheckBox_CheckChanged"
+														ToolTip="Specifies whether the phonetic forms of tokens are used to locate result items or not." Content="Enable Phonetic"/>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.4*"/>
+                                                        <ColumnDefinition Width="1*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox x:Name="ByPassResultTypesCheckBox" 
+														DataContext="ByPassResultTypes"
+														IsChecked="{x:Null}"
+														ToolTip="Specifies if the search result item type should be returned for the query results."
+														Unchecked="SearchQueryCheckBox_CheckChanged"
+														Checked="SearchQueryCheckBox_CheckChanged" Content="Bypass Result Types"/>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.4*"/>
+                                                        <ColumnDefinition Width="1*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox x:Name="GenerateBlockRankLogCheckBox" 
+														DataContext="GenerateBlockRankLog"
+														IsChecked="{x:Null}"
+														ToolTip="Generate Block Ranklog"
+														Unchecked="SearchQueryCheckBox_CheckChanged"
+														Checked="SearchQueryCheckBox_CheckChanged" Content="Generate Block Rank"/>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="25*"/>
+                                                        <ColumnDefinition Width="100*"/>
+                                                        <ColumnDefinition Width="52*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox x:Name="IncludeRankDetailCheckBox" 
+														DataContext="IncludeRankDetail"
+														IsChecked="False"
+														ToolTip="Include Rank Detail - Requires admin access! Make sure less than 100 results are returned, otherwise the rank detail wont show!"
+														Unchecked="SearchQueryCheckBox_CheckChanged"
+														Checked="SearchQueryCheckBox_CheckChanged" Grid.ColumnSpan="2" Content="Include Rank Detail"/>
+                                                </Grid>
+                                            </StackPanel>
+
+                                            <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,10,0,5">
+                                                <Button Content="Reset All Checkboxes" x:Name="ResetCheckboxesButton" HorizontalAlignment="Left" Click="ResetCheckboxesButton_Click" VerticalAlignment="Center" Margin="0,0,5,0" />
+                                                <Button Content="Save As New Preset..." Name="SaveAsNewPresetButton" HorizontalAlignment="Left" Click="SaveAsNewPresetButton_OnClick" VerticalAlignment="Center" Margin="0,0,5,0" />
+                                                <Button Content="Copy to clipboard" ToolTip="Copy the JSON/XML result to the clip board" Name="CopyClipboardButton" HorizontalAlignment="Left" Click="CopyClipboardButton_OnClickButton_OnClick" VerticalAlignment="Center" Margin="0,0,5,0" />
+                                            </DockPanel>
+                                        </Grid>
+
+                                        <StackPanel Margin="5,5,5,0">
+                                            <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,0,0,5">
+                                                <Label Content="Presets:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                                <ComboBox Name="PresetComboBox" Margin="5" SelectionChanged="PresetComboBox_OnSelectionChanged" Width="281" Height="22">
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{Binding Name}" />
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
+                                                </ComboBox>
+                                                <Button Content="Save" Name="SavePresetButton" HorizontalAlignment="Left" Click="SavePresetButton_OnClick" VerticalAlignment="Center" Margin="0,0,5,0" />
+                                            </DockPanel>
+                                        </StackPanel>                                        
+                                        
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Query Template:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												DataContext="QueryTemplate"
+												x:Name="QueryTemplateTextBox"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left" />
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Select Properties:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="SelectProperties" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                            </Button>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												DataContext="SelectProperties"
+												x:Name="SelectPropertiesTextBox"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="Specifies the list of managed properties to return for each search result item."/><LineBreak /><Run Text="For a managed property to be returned; the Retrievable flag must be set to &quot;true&quot; in the search schema."/><LineBreak /><LineBreak /><Run Text="Example: Path,Title,Url"/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0" x:Name="GraphQueryContainer">
+                                            <Label Content="Graph Query:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="GraphQuery" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                            </Button>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												DataContext="GraphQuery"
+												x:Name="GraphQueryTextBox"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="Graph Properties (SPO only)."/><LineBreak /><LineBreak /><Run Text="See: http://msdn.microsoft.com/en-us/library/office/dn783218(v=office.15).aspx"/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+                                        <DockPanel Margin="5,5,5,0" x:Name="GraphRankingContainer">
+                                            <Label Content="Graph Ranking:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="GraphRanking" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                            </Button>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												DataContext="GraphRanking"
+												x:Name="GraphRankingTextBox"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="Graph Properties (SPO only)."/><LineBreak /><LineBreak /><Run Text="See: http://msdn.microsoft.com/en-us/library/office/dn783218(v=office.15).aspx"/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Refiners:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="Refiners" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                            </Button>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="RefinersTextBox"
+												DataContext="Refiners"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="Specifies a list of refiners to return as a comma-separated list of strings."/><LineBreak /><LineBreak /><Run Text="Example: companies(filter=7/0/*),contentclass(filter=7/0/*),ContentType(filter=7/0/*),FileExtension(filter=7/0/*),FileType(filter=7/0/*)"/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Refinement Filters:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="RefinementFilters" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                            </Button>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="RefinementFiltersTextBox"
+												DataContext="RefinementFilters"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="The list of refinement tokens for drilldown into search results."/><LineBreak /><Run Text="Refinement tokens are returned as part of the RefinementResults table for the search query."/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Sort List:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="SortList" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                            </Button>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="SortListTextBox"
+												DataContext="SortList"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="Specifies the list of properties to sort the search results by."/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Trim Duplicates Include Id:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="TrimDuplicatesIncludeIdTextBox"
+												DataContext="TrimDuplicatesIncludeId"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left"
+												ToolTip="Id of the document to include duplicates for."/>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Hit Highlighted Properties:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="HitHighlightedPropertiesTextBox"
+												DataContext="HitHighlightedProperties"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="Specifies the list of properties to include in the HitHighlightedProperties for each result item."/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Ranking Model Id:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="RankingModelId" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                            </Button>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="RankingModelIdTextBox"
+												DataContext="RankingModelId"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												ToolTip="The GUID of the ranking model to be used for this search query.&#xA;&#xA;9399df62-f089-4033-bdc5-a7ea22936e8e is the default model used in 2010"
+												TextAlignment="Left" />
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Culture:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+                                            <ComboBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="CultureTextBox"
+												DataContext="Culture"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												ToolTip="Specifies the identifier of the language culture of the search query.&#xA;&#xA;If present, the value must be a valid LCID of a culture name.&#xA;&#xA;Example: 1033 for 'en-US'"
+												IsEditable="True">
+                                                <ComboBoxItem Tag="54" Content="Afrikaans [af | 54]"/>
+                                                <ComboBoxItem Tag="28" Content="Albanian [sq | 28]"/>
+                                                <ComboBoxItem Tag="1" Content="Arabic [ar | 1]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="43" Content="Armenian [hy | 43]"/>
+                                                <ComboBoxItem Tag="44" Content="Azerbaijani [az | 44]"/>
+                                                <ComboBoxItem Tag="69" Content="Bangla [bn | 69]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="45" Content="Basque (Basque) [eu | 45]"/>
+                                                <ComboBoxItem Tag="35" Content="Belarusian [be | 35]"/>
+                                                <ComboBoxItem Tag="30746" Content="Bosnian [bs | 30746]"/>
+                                                <ComboBoxItem Tag="126" Content="Breton [br | 126]"/>
+                                                <ComboBoxItem Tag="2" Content="Bulgarian [bg | 2]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="3" Content="Catalan [ca | 3]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="2052" Content="Chinese Simplified [zh-cn | 2052]  supports: word breaking"/>
+                                                <ComboBoxItem Tag="1028" Content="Chinese Traditional [zh-tw | 1028]  supports: word breaking"/>
+                                                <ComboBoxItem Tag="26" Content="Croatian [hr | 26]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="5" Content="Czech [cs | 5]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="6" Content="Danish [da | 6]  supports: word breaking / stemming / decompounding"/>
+                                                <ComboBoxItem Tag="19" Content="Dutch [nl | 19]  supports: word breaking / stemming / decompounding / phonetic"/>
+                                                <ComboBoxItem Tag="9" Content="English [en | 9]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="37" Content="Estonian [et | 37]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="56" Content="Faeroese [fo | 56]"/>
+                                                <ComboBoxItem Tag="41" Content="Farsi [fa | 41]"/>
+                                                <ComboBoxItem Tag="100" Content="Filipino [fil | 100]"/>
+                                                <ComboBoxItem Tag="11" Content="Finnish [fi | 11]  supports: word breaking / stemming / decompounding"/>
+                                                <ComboBoxItem Tag="12" Content="French [fr | 12]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="98" Content="Frisian [fy | 98]"/>
+                                                <ComboBoxItem Tag="86" Content="Galician [gl | 86]"/>
+                                                <ComboBoxItem Tag="55" Content="Georgian [ka | 55]"/>
+                                                <ComboBoxItem Tag="7" Content="German [de | 7]  supports: word breaking / stemming / decompounding / phonetic"/>
+                                                <ComboBoxItem Tag="8" Content="Greek [el | 8]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="71" Content="Gujarati [gu | 71]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="104" Content="Hausa [ha | 104]"/>
+                                                <ComboBoxItem Tag="13" Content="Hebrew [he | 13]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="57" Content="Hindi [hi | 57]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="14" Content="Hungarian [hu | 14]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="15" Content="Icelandic [is | 15]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="33" Content="Indonesian [id | 33]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="60" Content="Irish Gaelic [ga | 60]"/>
+                                                <ComboBoxItem Tag="16" Content="Italian [it | 16]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="17" Content="Japanese [ja | 17]  supports: word breaking / phonetic"/>
+                                                <ComboBoxItem Tag="75" Content="Kannada [kn | 75]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="63" Content="Kazakh [kk | 63]"/>
+                                                <ComboBoxItem Tag="64" Content="Kirghiz [ky | 64]"/>
+                                                <ComboBoxItem Tag="18" Content="Korean [ko | 18]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="146" Content="Kurdish [ku | 146]"/>
+                                                <ComboBoxItem Tag="38" Content="Latvian [lv | 38]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="39" Content="Lithuanian [lt | 39]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="110" Content="Luxembourgish [lb | 110]"/>
+                                                <ComboBoxItem Tag="47" Content="Macedonian [mk | 47]"/>
+                                                <ComboBoxItem Tag="62" Content="Malay [ms | 62]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="76" Content="Malayalam [ml | 76]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="58" Content="Maltese [mt | 58]"/>
+                                                <ComboBoxItem Tag="129" Content="Maori [mi | 129]"/>
+                                                <ComboBoxItem Tag="78" Content="Marathi [mr | 78]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="80" Content="Mongolian [mn | 80]"/>
+                                                <ComboBoxItem Tag="31764" Content="Norwegian Bokmål [nb | 31764]  supports: word breaking / stemming / decompounding"/>
+                                                <ComboBoxItem Tag="30740" Content="Norwegian Nynorsk [nn | 30740]  supports: stemming"/>
+                                                <ComboBoxItem Tag="99" Content="Pashto [ps | 99]"/>
+                                                <ComboBoxItem Tag="21" Content="Polish [pl | 21]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="22" Content="Portuguese [pt | 22]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="70" Content="Punjabi [pa | 70]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="24" Content="Romanian [ro | 24]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="23" Content="Romansh [rm | 23]"/>
+                                                <ComboBoxItem Tag="25" Content="Russian [ru | 25]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="59" Content="Sami Nothern [se | 59]"/>
+                                                <ComboBoxItem Tag="31770" Content="Serbian [sr | 31770]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="27" Content="Slovak [sk | 27]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="36" Content="Slovenian [sl | 36]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="10" Content="Spanish [es | 10]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="65" Content="Swahili [sw | 65]"/>
+                                                <ComboBoxItem Tag="29" Content="Swedish [sv | 29]  supports: word breaking / stemming / decompounding"/>
+                                                <ComboBoxItem Tag="73" Content="Tamil [ta | 73]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="74" Content="Telugu [te | 74]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="30" Content="Thai [th | 30]  supports: word breaking"/>
+                                                <ComboBoxItem Tag="31" Content="Turkish [tr | 31]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="34" Content="Ukrainian [uk | 34]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="32" Content="Urdu [ur | 32]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="67" Content="Uzbek [uz | 67]"/>
+                                                <ComboBoxItem Tag="42" Content="Vietnamese [vi | 42]  supports: word breaking"/>
+                                                <ComboBoxItem Tag="82" Content="Welsh [cy | 82]"/>
+                                                <ComboBoxItem Tag="53" Content="Zulu [zu | 53]"/>
+                                            </ComboBox>
+                                        </DockPanel>
+                                        
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Result Source Id:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="SourceId" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                            </Button>
+                                            <!--<Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"></Rectangle>-->
+
+                                            <ComboBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="SourceIdTextBox"
+												DataContext="SourceId"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												ToolTip="Specifies the unique identifier for result source to use for executing the search query - select a default result source or provide a custom id&#xA;&#xA;You can also use source level and source name. E.g.: SPSite|My Custom Source&#xA;&#xA;Valid levels are: SSA, SPSiteSubscription, SPSite, SPWeb"
+												IsEditable="True"
+                                                      
+                                  >
+                                                <ComboBoxItem Tag="8413cd39-2156-4e00-b54d-11efd9abdb89" Content="Local SharePoint Results"/>
+                                                <ComboBoxItem Tag="b09a7990-05ea-4af9-81ef-edfab16c4e31" Content="Local People Results"/>
+                                                <ComboBoxItem Tag="203fba36-2763-4060-9931-911ac8c0583b" Content="Local Reports And Data Results"/>
+                                                <ComboBoxItem Tag="78b793ce-7956-4669-aa3b-451fc5defebf" Content="Local Video Results"/>
+                                                <!--<ComboBoxItem Tag="02329dfc-758e-4532-9c60-492fa63d4c45">Local SharePoint Graph</ComboBoxItem>-->
+                                                <ComboBoxItem Tag="e7ec8cee-ded8-43c9-beb5-436b54b31e84" Content="Documents"/>
+                                                <ComboBoxItem Tag="5dc9f503-801e-4ced-8a2c-5d1237132419" Content="Items matching a content type"/>
+                                                <ComboBoxItem Tag="e1327b9c-2b8c-4b23-99c9-3730cb29c3f7" Content="Items matching a tag"/>
+                                                <ComboBoxItem Tag="48fec42e-4a92-48ce-8363-c2703a40e67d" Content="Items related to current user"/>
+                                                <ComboBoxItem Tag="5c069288-1d17-454a-8ac6-9c642a065f48" Content="Items with same keyword as this item"/>
+                                                <ComboBoxItem Tag="5e34578e-4d08-4edc-8bf3-002acf3cdbcc" Content="Pages"/>
+                                                <ComboBoxItem Tag="38403c8c-3975-41a8-826e-717f2d41568a" Content="Pictures"/>
+                                                <ComboBoxItem Tag="97c71db1-58ce-4891-8b64-585bc2326c12" Content="Popular"/>
+                                                <ComboBoxItem Tag="ba63bbae-fa9c-42c0-b027-9a878f16557c" Content="Recently changed items"/>
+                                                <ComboBoxItem Tag="ec675252-14fa-4fbe-84dd-8d098ed74181" Content="Recommended Items"/>
+                                                <ComboBoxItem Tag="9479bf85-e257-4318-b5a8-81a180f5faa1" Content="Wiki"/>
+
+                                            </ComboBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Hidden Constraints:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="HiddenConstraintsTextBox"
+												DataContext="HiddenConstraints"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="Specifies additional query terms that will be appended to the query."/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Personalization Data:" 
+		HorizontalAlignment="Left" 
+		VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+
+                                            <TextBox Height="26" 
+		Margin="5,0,0,0" 
+		Text="" 
+		Padding="4"
+		x:Name="PersonalizationDataTextBox"
+		DataContext="PersonalizationData"
+		LostFocus="SearchQueryTextBox_LostFocus_Handler"
+		TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="The user profile guid of a person. Used for social distance people search"/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Results Url:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												DataContext="ResultsUrl"
+												x:Name="ResultsUrlTextBox"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="Specifies the URL for the page where the search results are going to be displayed."/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Collapse Spec:" 
+												ToolTip="Collapse Specifiation"
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												DataContext="CollapseSpecifiation"
+												x:Name="CollapseSpecTextBox"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="A set of collapse specifications containing managed properties that are used to determine how to collapse individual search results."/><LineBreak /><Run Text="Results are collapsed into one or a specified number of results if they match any of the individual collapse specifications. Within a single"/><LineBreak /><Run Text="collapse specification, results will be collapsed if their properties match all of the individual properties in the collapse specification."/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Query Tag:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="QueryTagTextBox"
+												DataContext="QueryTag"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="Specifies the custom tags to be used to identify the query. Multiple tags must be separated by a semicolon."/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Query Log Client type:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+
+                                            <ComboBox Height="26" Margin="5,0,0,0" Padding="4" 
+												x:Name="QueryLogClientTypeComboBox"
+												SelectionChanged="QueryLogClientTypeComboBox_SelectionChanged">
+                                                <ComboBoxItem DataContext="" Content=""/>
+                                                <ComboBoxItem DataContext="Alerts" Content="Alerts"/>
+                                                <ComboBoxItem DataContext="AllResultsQuery" Content="AllResultsQuery"/>
+                                                <ComboBoxItem DataContext="CatalogItemReuseQuery" Content="CatalogItemReuseQuery"/>
+                                                <ComboBoxItem DataContext="ContentSearchHigh" Content="ContentSearchHigh"/>
+                                                <ComboBoxItem DataContext="ContentSearchLow" Content="ContentSearchLow"/>
+                                                <ComboBoxItem DataContext="ContentSearchRegular" Content="ContentSearchRegular" IsSelected="True"/>
+                                                <ComboBoxItem DataContext="CSOM" Content="CSOM"/>
+                                                <ComboBoxItem DataContext="Custom" Content="Custom"/>
+                                                <ComboBoxItem DataContext="DiscoveryDownloadManager" Content="DiscoveryDownloadManager"/>
+                                                <ComboBoxItem DataContext="DiscoverySearch" Content="DiscoverySearch"/>
+                                                <ComboBoxItem DataContext="DocsSharedWithMe" Content="DocsSharedWithMe"/>
+                                                <ComboBoxItem DataContext="Monitoring" Content="Monitoring"/>
+                                                <ComboBoxItem DataContext="MySiteSecurityTrimmer" Content="MySiteSecurityTrimmer"/>
+                                                <ComboBoxItem DataContext="MyTaskSync" Content="MyTaskSync"/>
+                                                <ComboBoxItem DataContext="ObjectModel" Content="ObjectModel"/>
+                                                <ComboBoxItem DataContext="ObjectModelBackwardsCompatible" Content="ObjectModelBackwardsCompatible"/>
+                                                <ComboBoxItem DataContext="PeopleResultsQuery" Content="PeopleResultsQuery"/>
+                                                <ComboBoxItem DataContext="ReportsAndDataResultsQuery" Content="ReportsAndDataResultsQuery"/>
+                                                <ComboBoxItem DataContext="RSS" Content="RSS"/>
+                                                <ComboBoxItem DataContext="SearchWebPartConfiguration" Content="SearchWebPartConfiguration"/>
+                                                <ComboBoxItem DataContext="SEOSiteMapQuery" Content="SEOSiteMapQuery"/>
+                                                <ComboBoxItem DataContext="SiteResultsQuery_All" Content="SiteResultsQuery_All"/>
+                                                <ComboBoxItem DataContext="SiteResultsQuery_Docs" Content="SiteResultsQuery_Docs"/>
+                                                <ComboBoxItem DataContext="SiteResultsQuery_Sites" Content="SiteResultsQuery_Sites"/>
+                                                <ComboBoxItem DataContext="UI" Content="UI"/>
+                                                <ComboBoxItem DataContext="Unknown" Content="Unknown"/>
+                                                <ComboBoxItem DataContext="VideoResultsQuery" Content="VideoResultsQuery"/>
+                                                <ComboBoxItem DataContext="WebService" Content="WebService"/>
+                                            </ComboBox>
+                                        </DockPanel>
+
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </TabItem>
+                            <TabItem x:Name="SuggestMethodTypeTabItem" Header="Suggest">
+                                <ScrollViewer MaxHeight="480">
+                                    <StackPanel Margin="5,5,5,5">
+                                        <StackPanel Margin="5,5,0,0" Orientation="Horizontal">
+                                            <Label Content="Query Text:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+                                        </StackPanel>
+                                        <TextBox x:Name="SuggestionsQueryTextBox"
+											Margin="5,0,5,0" 
+											AcceptsReturn="False"
+											Height="26"
+											Padding="4" 
+											TextWrapping="Wrap"
+											DataContext="Query"
+											LostFocus="SearchSuggestionsTextBox_LostFocus_Handler"/>
+
+                                        <DockPanel Margin="5,15,5,0">
+                                            <CheckBox x:Name="PreQuerySuggestionsCheckBox"
+												Height="20"
+												DataContext="PreQuerySuggestions"
+												Checked="SearchSuggestionsCheckBox_CheckChanged"
+												Unchecked="SearchSuggestionsCheckBox_CheckChanged"
+												IsChecked="True" Content="Pre Query Suggestions"/>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <CheckBox x:Name="PeopleNameSuggestionsCheckBox"
+												Height="20"
+												DataContext="ShowPeopleNameSuggestions"
+												Checked="SearchSuggestionsCheckBox_CheckChanged"
+												Unchecked="SearchSuggestionsCheckBox_CheckChanged"
+												IsChecked="True" Content="Show People Name Suggestions"/>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <CheckBox x:Name="HitHighlightingCheckBox"
+												Height="20"
+												DataContext="HitHighlighting"
+												Checked="SearchSuggestionsCheckBox_CheckChanged"
+												Unchecked="SearchSuggestionsCheckBox_CheckChanged"
+												IsChecked="True" Content="Hit Highlighting"/>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <CheckBox x:Name="CapitalizeFirstLettersCheckBox"
+												Height="20"
+												DataContext="CapitalizeFirstLetters"
+												Checked="SearchSuggestionsCheckBox_CheckChanged"
+												Unchecked="SearchSuggestionsCheckBox_CheckChanged"
+												IsChecked="True" Content="Capitalize First Letters"/>
+                                        </DockPanel>
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Number of Query Suggestions:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="NumberOfQuerySuggestionsTextBox"
+												ToolTip="The number of query suggestions to retrieve."
+												TextAlignment="Left"
+												DataContext="NumberOfQuerySuggestions"
+												LostFocus="SearchSuggestionsTextBox_LostFocus_Handler"/>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Number of Result Suggestions:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="NumberOfResultSuggestionsTextBox"
+												ToolTip="The number of personal results to retrieve."
+												TextAlignment="Left"
+												DataContext="NumberOfResultSuggestions"
+												LostFocus="SearchSuggestionsTextBox_LostFocus_Handler"/>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Culture:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+                                            <ComboBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="SuggestionsCultureTextBox"
+												DataContext="SuggestionsCulture"
+												LostFocus="SearchSuggestionsTextBox_LostFocus_Handler"
+												ToolTip="Specifies the identifier of the language culture of the search suggestion query.&#xA;&#xA;If present, the value must be a valid LCID of a culture name, as specified in [RFC3066].&#xA;&#xA;Example: 1033 for 'en-US'"
+												IsEditable="True">
+                                                <ComboBoxItem Tag="54" Content="Afrikaans [af | 54]"/>
+                                                <ComboBoxItem Tag="28" Content="Albanian [sq | 28]"/>
+                                                <ComboBoxItem Tag="1" Content="Arabic [ar | 1]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="43" Content="Armenian [hy | 43]"/>
+                                                <ComboBoxItem Tag="44" Content="Azerbaijani [az | 44]"/>
+                                                <ComboBoxItem Tag="69" Content="Bangla [bn | 69]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="45" Content="Basque (Basque) [eu | 45]"/>
+                                                <ComboBoxItem Tag="35" Content="Belarusian [be | 35]"/>
+                                                <ComboBoxItem Tag="30746" Content="Bosnian [bs | 30746]"/>
+                                                <ComboBoxItem Tag="126" Content="Breton [br | 126]"/>
+                                                <ComboBoxItem Tag="2" Content="Bulgarian [bg | 2]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="3" Content="Catalan [ca | 3]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="2052" Content="Chinese Simplified [zh-cn | 2052]  supports: word breaking"/>
+                                                <ComboBoxItem Tag="1028" Content="Chinese Traditional [zh-tw | 1028]  supports: word breaking"/>
+                                                <ComboBoxItem Tag="26" Content="Croatian [hr | 26]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="5" Content="Czech [cs | 5]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="6" Content="Danish [da | 6]  supports: word breaking / stemming / decompounding"/>
+                                                <ComboBoxItem Tag="19" Content="Dutch [nl | 19]  supports: word breaking / stemming / decompounding / phonetic"/>
+                                                <ComboBoxItem Tag="9" Content="English [en | 9]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="37" Content="Estonian [et | 37]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="56" Content="Faeroese [fo | 56]"/>
+                                                <ComboBoxItem Tag="41" Content="Farsi [fa | 41]"/>
+                                                <ComboBoxItem Tag="100" Content="Filipino [fil | 100]"/>
+                                                <ComboBoxItem Tag="11" Content="Finnish [fi | 11]  supports: word breaking / stemming / decompounding"/>
+                                                <ComboBoxItem Tag="12" Content="French [fr | 12]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="98" Content="Frisian [fy | 98]"/>
+                                                <ComboBoxItem Tag="86" Content="Galician [gl | 86]"/>
+                                                <ComboBoxItem Tag="55" Content="Georgian [ka | 55]"/>
+                                                <ComboBoxItem Tag="7" Content="German [de | 7]  supports: word breaking / stemming / decompounding / phonetic"/>
+                                                <ComboBoxItem Tag="8" Content="Greek [el | 8]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="71" Content="Gujarati [gu | 71]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="104" Content="Hausa [ha | 104]"/>
+                                                <ComboBoxItem Tag="13" Content="Hebrew [he | 13]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="57" Content="Hindi [hi | 57]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="14" Content="Hungarian [hu | 14]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="15" Content="Icelandic [is | 15]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="33" Content="Indonesian [id | 33]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="60" Content="Irish Gaelic [ga | 60]"/>
+                                                <ComboBoxItem Tag="16" Content="Italian [it | 16]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="17" Content="Japanese [ja | 17]  supports: word breaking / phonetic"/>
+                                                <ComboBoxItem Tag="75" Content="Kannada [kn | 75]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="63" Content="Kazakh [kk | 63]"/>
+                                                <ComboBoxItem Tag="64" Content="Kirghiz [ky | 64]"/>
+                                                <ComboBoxItem Tag="18" Content="Korean [ko | 18]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="146" Content="Kurdish [ku | 146]"/>
+                                                <ComboBoxItem Tag="38" Content="Latvian [lv | 38]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="39" Content="Lithuanian [lt | 39]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="110" Content="Luxembourgish [lb | 110]"/>
+                                                <ComboBoxItem Tag="47" Content="Macedonian [mk | 47]"/>
+                                                <ComboBoxItem Tag="62" Content="Malay [ms | 62]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="76" Content="Malayalam [ml | 76]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="58" Content="Maltese [mt | 58]"/>
+                                                <ComboBoxItem Tag="129" Content="Maori [mi | 129]"/>
+                                                <ComboBoxItem Tag="78" Content="Marathi [mr | 78]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="80" Content="Mongolian [mn | 80]"/>
+                                                <ComboBoxItem Tag="31764" Content="Norwegian Bokmål [nb | 31764]  supports: word breaking / stemming / decompounding"/>
+                                                <ComboBoxItem Tag="30740" Content="Norwegian Nynorsk [nn | 30740]  supports: stemming"/>
+                                                <ComboBoxItem Tag="99" Content="Pashto [ps | 99]"/>
+                                                <ComboBoxItem Tag="21" Content="Polish [pl | 21]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="22" Content="Portuguese [pt | 22]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="70" Content="Punjabi [pa | 70]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="24" Content="Romanian [ro | 24]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="23" Content="Romansh [rm | 23]"/>
+                                                <ComboBoxItem Tag="25" Content="Russian [ru | 25]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="59" Content="Sami Nothern [se | 59]"/>
+                                                <ComboBoxItem Tag="31770" Content="Serbian [sr | 31770]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="27" Content="Slovak [sk | 27]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="36" Content="Slovenian [sl | 36]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="10" Content="Spanish [es | 10]  supports: word breaking / stemming / phonetic"/>
+                                                <ComboBoxItem Tag="65" Content="Swahili [sw | 65]"/>
+                                                <ComboBoxItem Tag="29" Content="Swedish [sv | 29]  supports: word breaking / stemming / decompounding"/>
+                                                <ComboBoxItem Tag="73" Content="Tamil [ta | 73]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="74" Content="Telugu [te | 74]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="30" Content="Thai [th | 30]  supports: word breaking"/>
+                                                <ComboBoxItem Tag="31" Content="Turkish [tr | 31]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="34" Content="Ukrainian [uk | 34]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="32" Content="Urdu [ur | 32]  supports: word breaking / stemming"/>
+                                                <ComboBoxItem Tag="67" Content="Uzbek [uz | 67]"/>
+                                                <ComboBoxItem Tag="42" Content="Vietnamese [vi | 42]  supports: word breaking"/>
+                                                <ComboBoxItem Tag="82" Content="Welsh [cy | 82]"/>
+                                                <ComboBoxItem Tag="53" Content="Zulu [zu | 53]"/>
+                                            </ComboBox>
+                                        </DockPanel>
+
+                                    </StackPanel>
+
+                                </ScrollViewer>
+                            </TabItem>
+                        </TabControl>
+                    </DockPanel>
+                </GroupBox>
+
+                <GroupBox Grid.Column="0" Grid.Row="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,0,-12,0" Style="{DynamicResource GroupBoxStyleNoHeader}">
+                    
+
+                    <Expander Name="ConnectionExpanderBox" Padding="5" Header="Connection" Foreground="Black" IsExpanded="True">
+                        <Expander.Content>
+                            <Grid Margin="5,10,5,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <DockPanel HorizontalAlignment="Stretch">
+                                    <Label Content="SharePoint Site URL:"/>
+                                    <Image x:Name="SharePointSiteUrlAlertImage" Source="Images/alert_icon.png" ToolTip="Invalid Url" Visibility="Hidden" Width="14" Height="14" Margin="5" DockPanel.Dock="Right"/>
+                                    <TextBox x:Name="SharePointSiteUrlTextBox" Height="26" 
+									Margin="5,0,5,0" 
+									Padding="4"
+									Text="http://localhost"
+									LostFocus="SharePointSiteUrlTextBox_LostFocus"
+									TextAlignment="Left" />
+                                </DockPanel>
+                                <StackPanel Grid.Row="1" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                    <Label Content="Timeout (sec):"/>
+                                    <TextBox x:Name="WebRequestTimeoutTextBox" Height="26" 
+									Margin="5,0,5,1" 
+									Text="30" 
+									Padding="4"
+									TextAlignment="Left" Width="50" RenderTransformOrigin="1.847,0.53"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="2" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                    <Label Content="Accept:"/>
+                                    <RadioButton x:Name="AcceptJsonRadioButton" Content="json" IsChecked="True" VerticalAlignment="Center" GroupName="AcceptFormat" />
+                                    <Rectangle Width="10"/>
+                                    <RadioButton x:Name="AcceptXmlRadioButton" Content="xml" VerticalAlignment="Center" GroupName="AcceptFormat" />
+                                </StackPanel>
+                                <DockPanel Grid.Row="3" Margin="0,10,0,0">
+                                    <Label Content="Method:" />
+                                    <RadioButton VerticalContentAlignment="Center" IsChecked="True" Checked="HttpMethodModeRadioButton_Checked" x:Name="HttpGetMethodRadioButton" GroupName="HttpMethodMode" Content="HTTP GET"/>
+                                    <RadioButton Margin="5,0,0,0" VerticalContentAlignment="Center" Checked="HttpMethodModeRadioButton_Checked" x:Name="HttpPostMethodRadioButton" GroupName="HttpMethodMode" Content="HTTP POST"/>
+                                </DockPanel>
+                                <StackPanel Grid.Row="4" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+
+                                        <Label Content="Authentication:"/>
+                                        <ComboBox Grid.Column="1" 
+										SelectedValuePath="Content"
+										Padding="4" 
+										SelectionChanged="AuthenticationTypeComboBox_SelectionChanged"
+										x:Name="AuthenticationTypeComboBox">
+                                            <ComboBoxItem Content="Authenticate using current user" IsSelected="True" />
+                                            <ComboBoxItem Content="Authenticate using specific user account" />
+                                            <ComboBoxItem Content="Anonymous" />
+                                        </ComboBox>
+
+                                        <Rectangle Height="5" Grid.ColumnSpan="2" Grid.Row="1"/>
+
+                                        <Label Grid.Row="2" Content="Authentication Method:"/>
+                                        <ComboBox Grid.Row="2" Grid.Column="1"
+										SelectedValuePath="Content"
+										IsEnabled="False"
+										Padding="4" 
+										SelectionChanged="AuthenticationMethodComboBox_SelectionChanged"
+										x:Name="AuthenticationMethodComboBox">
+                                            <ComboBoxItem DataContext="WinAuth" Content="Windows" IsSelected="True" />
+                                            <ComboBoxItem DataContext="SPOAuth" Content="SharePoint Online" />
+                                            <ComboBoxItem DataContext="FormsAuth" Content="Forms-based" />
+                                            <ComboBoxItem DataContext="ForefrontAuth" Content="Forefront Gateway (TMG/UAG)" />
+                                        </ComboBox>
+
+                                        <Rectangle Height="5" Grid.ColumnSpan="2" Grid.Row="3"/>
+
+                                        <Grid Grid.Row="4" Grid.Column="1">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+
+                                            <StackPanel x:Name="UsernameAndPasswordTextBoxContainer">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Label  Content="Username:" Width="70"/>
+                                                    <TextBox x:Name="AuthenticationUsernameTextBox" IsEnabled="False" LostFocus="AuthenticationUsernameTextBox_LostFocus" Padding="4" Width="150"/>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5,0,10">
+                                                    <Label  Content="Password:" Width="70"/>
+                                                    <PasswordBox x:Name="AuthenticationPasswordTextBox" IsEnabled="False" LostFocus="AuthenticationPasswordTextBox_LostFocus" Padding="4" Width="150"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <StackPanel x:Name="LoginButtonContainer" Margin="0,5,0,0" Visibility="Hidden">
+                                                <Button x:Name="LoginButton" Content="Sign-in" Padding="5" Click="LoginButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <Label x:Name="LoggedinLabel" Padding="5" Visibility="Hidden" Content="Successfully signed-in" FontWeight="Bold" Foreground="#FF275706"/>
+                                            </StackPanel>
+                                        </Grid>
+
+
+
+                                    </Grid>
+
+
+
+                                </StackPanel>
+                                <StackPanel Grid.Row="5" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal"/>
+                            </Grid>
+                        </Expander.Content>
+                    </Expander>
+
+                </GroupBox>
+
+
+
+
+
+                <GroupBox Grid.Column="0" Grid.Row="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,0,-12,0" Style="{DynamicResource GroupBoxStyleNoHeader}">
+                    <Expander x:Name="ConnectionSignalR" Padding="5" Header="Advanced" IsExpanded="False">
+
+                        <Grid Margin="5,10,5,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0">
+                                <Label Content="Item preview:"/>
+                                <CheckBox x:Name="ExperimentalFeaturesCheckBox" 
+									DataContext="experimentalfeatures"
+									IsChecked="False"
+									ToolTip="Include view all managed properties and inline preview"
+									Unchecked="SearchQueryCheckBox_CheckChanged"
+									Checked="SearchQueryCheckBox_CheckChanged" Margin="20 0 0 0" Content="Enable for Primary Results"/>
+                                <StackPanel Margin="0 10 0 0">
+                                    <Label Content="Real-Time Search Debugging:"/>
+                                    <DockPanel HorizontalAlignment="Stretch" Margin="10 0 0 0">
+                                        <Label Content="SignalR Hub URL:"/>
+                                        <Image x:Name="SignalRUrlImage" Source="Images/alert_icon.png" ToolTip="Invalid Url" Visibility="Hidden" Width="14" Height="14" Margin="5" DockPanel.Dock="Right"/>
+                                        <TextBox x:Name="SignalRHubUrlTextBox" Height="26" Margin="5,0,5,0" Padding="4" Text="http://sharepoint2013:8080" LostFocus="SharePointSiteUrlTextBox_LostFocus" TextAlignment="Left" />
+                                    </DockPanel>
+                                    <DockPanel Margin="10 7 0 0">
+                                        <Button x:Name="ConnectToSignalR" Click="ConnectToSignalR_OnClick" Content="Connect" Width="100" HorizontalAlignment="Left"/>
+                                    </DockPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+
+                    </Expander>
+                </GroupBox>
+
+
+            </Grid>
+        </DockPanel>
+
+        <GroupBox Grid.Row="3" Grid.Column="1" Header="Results" Margin="20,10,10,10" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <DockPanel>
+                <TextBlock x:Name="ResultsTextBlock"/>
+                <TabControl>
+                    <TabItem Header="Status" x:Name="StatsResultTabItem"
+						ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
+                    <TabItem Header="Raw" x:Name="RawResultTabItem" MinWidth="60" 
+						ScrollViewer.CanContentScroll="True"
+						ScrollViewer.HorizontalScrollBarVisibility="Auto"
+						ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                    <TabItem Header="Primary Results" x:Name="PrimaryResultsTabItem" 
+						ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                    <TabItem Header="Refinement Res..." ToolTip="Refinement Results" x:Name="RefinementResultsTabItem"  
+						ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                    <TabItem Header="Secondary Res..." ToolTip="Secondary Results" x:Name="SecondaryResultsTabItem" 
+						ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                    <TabItem Header="Suggestion Res..." ToolTip="Suggestion Results" x:Name="SuggestionResultsTabItem" 
+						ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                    <TabItem Header="Debug" ToolTip="Debug Query" x:Name="DebugTabItem"  IsEnabled="False">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                            <ItemsControl Margin="10" x:Name="DebugGrid" >
+                                <ItemsControl.Template>
+                                    <ControlTemplate TargetType="{x:Type ItemsControl}">
+                                        <ItemsPresenter/>
+                                    </ControlTemplate>
+                                </ItemsControl.Template>
+
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="Black" BorderThickness="1" Margin="0 0 0 5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="110"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <Label VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Content="Query:"/>
+                                                <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1" Margin="3,0,3,7" Text="{Binding Query}"/>
+
+                                                <Expander Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="View" HorizontalAlignment="Left">
+                                                    <Grid HorizontalAlignment="Left">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="110"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                            <RowDefinition/>
+                                                        </Grid.RowDefinitions>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Content="Template:"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Margin="3,0,3,7" Text="{Binding Template}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="1" Grid.Column="0" Content="Hidden Constraint:"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Margin="3,0,3,7" Text="{Binding HiddenConstraint}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="2" Grid.Column="0" Content="SiteSubscriptionId:"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Margin="3,0,3,7" Text="{Binding SiteSubscriptionId}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="3" Grid.Column="0" Margin="0,-7,0,7" Content="Bound Variables:"/>
+                                                        <ListBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding BoundVariables, Mode=OneWay}">
+                                                            <ListBox.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,-7,7" Width="450" Text="{Binding Mode=OneWay}"/>
+                                                                </DataTemplate>
+                                                            </ListBox.ItemTemplate>
+                                                        </ListBox>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="4" Grid.Column="0" Margin="0,-7,0,7" Content="Template Helper:"/>
+                                                        <ListBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding QueryTemplateHelper, Mode=OneWay}">
+                                                            <ListBox.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,-7,7" Width="450" Text="{Binding Mode=OneWay}"/>
+                                                                </DataTemplate>
+                                                            </ListBox.ItemTemplate>
+                                                        </ListBox>
+
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="5" Grid.Column="0" Content="Relevant Results:"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="5" Grid.Column="1" Margin="3,0,3,7" Text="{Binding RelevantResults}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="6" Grid.Column="0" Content="Personal Results:"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="6" Grid.Column="1" Margin="3,0,3,7" Text="{Binding PersonalResults}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="7" Grid.Column="0" Content="Refiner Results:"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="7" Grid.Column="1" Margin="3,0,3,7" Text="{Binding RefinerResults}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="8" Grid.Column="0" Content="Query Suggestion:"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="8" Grid.Column="1" Margin="3,0,3,7" Text="{Binding QuerySuggestion}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="9" Grid.Column="0" Content="QueryExpanded1:"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="9" Grid.Column="1" Margin="3,0,3,7" HorizontalAlignment="Left" Width="450" TextWrapping="Wrap" Text="{Binding QueryExpanded1}"/>
+
+                                                        <Label VerticalAlignment="Top" Grid.Row="10" Grid.Column="0" Content="QueryExpanded2:"/>
+                                                        <TextBox Margin="3,0,3,7" Grid.Row="10"  Grid.Column="1" IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Top" HorizontalAlignment="Left"  Width="450" TextWrapping="Wrap" Text="{Binding QueryExpanded2And3}"/>
+                                                    </Grid>
+                                                </Expander>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </TabItem>
+
+                </TabControl>
+            </DockPanel>
+
+        </GroupBox>
+
+        <StackPanel Grid.Row="5" Grid.ColumnSpan="2">
+            <StatusBar Margin="10,0,10,0" Background="{x:Null}" BorderBrush="Gray">
+                <StatusBar.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </StatusBar.ItemsPanel>
+                <StatusBarItem>
+                    <DockPanel>
+                        <TextBlock x:Name="StateBarTextBlock" Text="Ready"/>
+                        <ProgressBar x:Name="ProgressBar" Value="0" Width="100" Visibility="Hidden" IsIndeterminate="False" Orientation="Horizontal" Height="18" Margin="15,0,0,0"/>
+                    </DockPanel>
+                </StatusBarItem>
+            </StatusBar>
+        </StackPanel>
+
+    </Grid>
+</Window>
