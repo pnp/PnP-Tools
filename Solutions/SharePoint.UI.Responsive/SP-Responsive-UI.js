@@ -115,6 +115,9 @@ PnPResponsiveApp.Main = (function () {
                 loadCSS(currentScriptBaseUrl + 'sp-responsive-ui.css');
             }
 
+            /* This is a Modal Dialog, so no navigation */
+            if (document.getElementsByTagName('body')[0] && hasClass(document.getElementsByTagName('body')[0], 'ms-dialogBody')) { return; }
+
             PnPResponsiveApp.Main.setUpToggling();
             PnPResponsiveApp.Main.responsivizeSettings();
             PnPResponsiveApp.Main.setUpSuiteBarToogling();
