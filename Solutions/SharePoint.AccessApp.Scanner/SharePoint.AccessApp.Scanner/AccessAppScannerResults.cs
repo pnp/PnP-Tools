@@ -32,6 +32,7 @@ namespace SharePoint.AccessApp.Scanner
         public int ViewsRecentUnique { get; set; }
         public int ViewsLifetime { get; set; }
         public int ViewsLifetimeUnique { get; set; }
+        public string SiteAdmins { get; set; }
     }
 
     /// <summary>

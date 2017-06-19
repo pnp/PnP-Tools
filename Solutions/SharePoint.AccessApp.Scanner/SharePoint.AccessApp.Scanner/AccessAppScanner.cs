@@ -151,7 +151,8 @@ namespace SharePoint.AccessApp.Scanner
                             }
 
                             // Perf optimization: do one call per web to load all the needed properties
-                            ccWeb.Load(ccWeb.Web, p => p.Id, p => p.WebTemplate, p => p.Configuration, p => p.Title, p => p.Created, p => p.AppInstanceId, p => p.ParentWeb, p => p.LastItemUserModifiedDate);
+                            ccWeb.Load(ccWeb.Web, p => p.Id, p => p.WebTemplate, p => p.Configuration, p => p.Title, p => p.Created, p => p.AppInstanceId, p => p.ParentWeb, p => p.LastItemUserModifiedDate, p => p.SiteUsers, p => p.AssociatedOwnerGroup);
+                            ccWeb.Load(ccWeb.Web.AssociatedOwnerGroup, p => p.Users);
                             ccWeb.ExecuteQueryRetry();
 
                             // Fill site collection url
@@ -186,6 +187,10 @@ namespace SharePoint.AccessApp.Scanner
 
                                         SearchExecutor seachExecutor = new SearchExecutor(e.SiteClientContext);
                                         siteQueryResults = seachExecutor.ExecuteQuery(siteQuery);
+
+                                        // Load site collection site users
+                                        e.SiteClientContext.Load(e.SiteClientContext.Web, p => p.SiteUsers);
+
                                         e.SiteClientContext.ExecuteQueryRetry();
 
                                         // Fill site usage information
@@ -231,20 +236,95 @@ namespace SharePoint.AccessApp.Scanner
 
                                     Console.WriteLine($"Access App found in {site}.");
 
-                                    if (accessAppResult.AppInstanceId != Guid.Empty)
+                                    // grab the site collection administrators
+                                    if (e.SiteClientContext.Web.SiteUsers != null)
+                                    {
+                                        try
+                                        {
+                                            var admins = e.SiteClientContext.Web.SiteUsers.Where(p => p.IsSiteAdmin);
+                                            if (admins != null && admins.Count() > 0)
+                                            {
+                                                foreach (var admin in admins)
+                                                {
+                                                    if (!string.IsNullOrEmpty(admin.Email))
+                                                    {
+                                                        accessAppResult.SiteAdmins = AddSiteOwner(accessAppResult.SiteAdmins, admin.Email);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        catch
+                                        {
+                                            //Eat exceptions...rather log all Access Apps i the main result list instead of dropping some due to error getting owners
+                                        }
+                                    }
+
+                                    try
+                                    {
+                                        // grab folks from the Access Web App site owners group
+                                        if (ccWeb.Web.AssociatedOwnerGroup != null && ccWeb.Web.AssociatedOwnerGroup.Users != null && ccWeb.Web.AssociatedOwnerGroup.Users.Count > 0)
+                                        {
+                                            foreach (var owner in ccWeb.Web.AssociatedOwnerGroup.Users)
+                                            {
+                                                if (!string.IsNullOrEmpty(owner.Email))
+                                                {
+                                                    accessAppResult.SiteAdmins = AddSiteOwner(accessAppResult.SiteAdmins, owner.Email);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        //Eat exceptions...rather log all Access Apps i the main result list instead of dropping some due to error getting owners
+                                    }
+
+                                    if (!string.IsNullOrEmpty(ccWeb.Web.ParentWeb.ServerRelativeUrl))
                                     {
                                         Uri siteCollectionUri = new Uri(siteCollectionUrl);
                                         string parentWebUrl = $"{siteCollectionUri.Scheme}://{siteCollectionUri.DnsSafeHost}:{siteCollectionUri.Port}{ccWeb.Web.ParentWeb.ServerRelativeUrl}";
+                                        accessAppResult.ParentSiteUrl = parentWebUrl;
+
                                         using (var ccParent = this.CreateClientContext(parentWebUrl))
                                         {
                                             try
                                             {
-                                                var appInstance = ccParent.Web.GetAppInstanceById(accessAppResult.AppInstanceId);
-                                                ccParent.Load(appInstance);
+                                                // Get users from parent web site owners group
+                                                ccParent.Load(ccParent.Web, p => p.AssociatedOwnerGroup);
+                                                ccParent.Load(ccParent.Web.AssociatedOwnerGroup, p => p.Users);
+
+                                                // Check app status
+                                                AppInstance appInstance = null;
+                                                if (accessAppResult.AppInstanceId != Guid.Empty)
+                                                {
+                                                    appInstance = ccParent.Web.GetAppInstanceById(accessAppResult.AppInstanceId);
+                                                    ccParent.Load(appInstance);
+                                                }
+
                                                 ccParent.ExecuteQueryRetry();
 
-                                                accessAppResult.ParentSiteUrl = parentWebUrl;
-                                                accessAppResult.AppInstanceStatus = appInstance.Status.ToString();
+                                                if (accessAppResult.AppInstanceId != Guid.Empty)
+                                                {
+                                                    accessAppResult.AppInstanceStatus = appInstance.Status.ToString();
+                                                }
+
+                                                try
+                                                {
+                                                    // Process parent web owners
+                                                    if (ccParent.Web.AssociatedOwnerGroup != null && ccParent.Web.AssociatedOwnerGroup.Users != null && ccParent.Web.AssociatedOwnerGroup.Users.Count > 0)
+                                                    {
+                                                        foreach (var owner in ccParent.Web.AssociatedOwnerGroup.Users)
+                                                        {
+                                                            if (!string.IsNullOrEmpty(owner.Email))
+                                                            {
+                                                                accessAppResult.SiteAdmins = AddSiteOwner(accessAppResult.SiteAdmins, owner.Email);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                catch
+                                                {
+                                                    //Eat exceptions...rather log all Access Apps i the main result list instead of dropping some due to error getting owners
+                                                }
                                             }
                                             catch (Exception ex)
                                             {
@@ -267,7 +347,7 @@ namespace SharePoint.AccessApp.Scanner
                         {
                             AccessAppScanError error = new AccessAppScanError()
                             {
-                                Error = ex.Message,
+                                Error = ex.ToDetailedString(),
                                 SiteUrl = site,
                                 SiteColUrl = siteCollectionUrl
                             };
@@ -291,12 +371,24 @@ namespace SharePoint.AccessApp.Scanner
             {
                 AccessAppScanError error = new AccessAppScanError()
                 {
-                    Error = ex.Message,
+                    Error = ex.ToDetailedString(),
                     SiteUrl = e.SiteClientContext.Site.Url,
                     SiteColUrl = e.SiteClientContext.Site.Url
                 };
                 this.AccessAppScanErrors.Push(error);
                 Console.WriteLine("Error for site {1}: {0}", ex.Message, e.SiteClientContext.Site.Url);
+            }
+        }
+
+        private string AddSiteOwner(string ownerlist, string newOwner)
+        {
+            if (string.IsNullOrEmpty(ownerlist) || !ownerlist.Contains(newOwner))
+            {
+                return ownerlist + (!string.IsNullOrEmpty(ownerlist) ? $"|{newOwner}" : $"{newOwner}");
+            }
+            else
+            {
+                return ownerlist;
             }
         }
     }

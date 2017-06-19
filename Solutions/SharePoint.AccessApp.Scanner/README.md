@@ -1,7 +1,7 @@
 # SharePoint Access App scanner #
 
 ### Summary ###
-Using this command line utility you can scan your tenant for the presence of Access Apps. Access Apps are deprecated and in the future Microsoft will in a first phase prevent you from adding new Access Apps and in the final phase we'll prevent you running your Access Apps. With the data obtained by this scanner you can plan for the needed remediation work.
+Using this command line utility you can scan your tenant for the presence of Access Apps. Access Apps are being retired and Microsoft will prevent you from adding new Access Apps and in the final phase of the retirement we'll prevent you running your Access Apps. With the data obtained by this scanner you can plan for the needed remediation work.
 
 If you want to learn more about the Access App deprecation then please checkout:
 - [Access Services in SharePoint Roadmap](https://support.office.com/en-us/article/Access-Services-in-SharePoint-Roadmap-497fd86b-e982-43c4-8318-81e6d3e711e8?ui=en-US&rs=en-US&ad=US)
@@ -19,6 +19,7 @@ SharePoint.AccessApp.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.0 | June 19th 2017 | Version 1.0 release. Added "Site Admins/Owners" column 
 0.5 | May 31st 2017 | Added "Access 2010 App Last Modified By User On" column for Access 2010 apps
 0.4 | May 30th 2017 | Added "Access 2013 App Last Accessed On" column for Access 2013 apps
 0.3 | May 29th 2017 | Improvements in site enumeration logic (when not using search) + more detailed error output
@@ -37,7 +38,7 @@ The main purpose of this tool is to give you a report of Access 2010 and 2013 Ap
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [Access App scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.AccessApp.Scanner/Releases/Access%20App%20scanner%20for%20SharePoint%20Online%20v0.5.zip?raw=true)
+ - [Access App scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.AccessApp.Scanner/Releases/Access%20App%20scanner%20for%20SharePoint%20Online%20v1.0.zip?raw=true)
 
 Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder containing the tool **AccessAppScanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -77,8 +78,8 @@ When you click on **Create** you'll be presented with a permission consent dialo
 
 With the preparation work done let's continue with doing a scan. 
 
-### Scanning SharePoint Online environment ###
-Below option is the typical usage of the tool for most customers: you specify a mode, your tenant name and the created client id and secret:
+### Scanning SharePoint Online MT environment ###
+Below option is the typical usage of the tool for most customers: you specify a mode, your tenant name and the created client id and secret. Please check out the **I'm running SharePoint Online dedicated** section if you need to scan a SharePoint Online Dedicated environment.
 
 ```console
 accessappscanner -t <tenant> -c <clientid> -s <clientsecret>
@@ -161,11 +162,12 @@ Column | Description
 **Web Template** | Web template of the Access App site.
 **App Created On** | Date when the Access App was created.
 **Access 2013 App Last Accessed On** | Date when the Access App was accessed the last time.
-**Access 2010 App Last Modified By User On** | Date when the last user driven change was done.
+**Access 2010 App Last Modified By User On** | Date when the last user driven change was done. **Note:** this is an alternative solution for now, once the needed product changes are done the scanner will also list the last accessed date for Access 2010 Apps.
 **App Instance Status** | Status of the Access App (only relevant to Access 2013 Apps).
 **App Instance Id** | Id (guid) of the Access App (only relevant to Access 2013 Apps).
 **Web Id** | Id (guid) of the Access App site.
-**ViewsRecent** | Recent (last 14 days) views for the site collection hosting this Access App
+**Site admins\owners** | List of email addresses from site collection admins, Access App site owners and the site owners of the parent web of the Access App
+**ViewsRecent** | Recent (last 14 days) views for the **site collection** hosting this Access App
 **ViewsRecentUnique** | Recent (last 14 days) unique views for the site collection hosting this Access App
 **ViewsLifeTime** | Lifetime views for the site collection hosting this Access App (only 500 first search results are processed)
 **ViewsLifeTimeUnique** | Lifetime unique views for the site collection hosting this Access App (only 500 first search results are processed)
@@ -272,7 +274,7 @@ accessappscanner -t contoso -c admin@contoso.onmicrosoft.com -p mypassword
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
-SharePoint AccessApp Scanner tool 0.5.0.0
+SharePoint AccessApp Scanner tool 1.0.0.0
 Copyright (C) 2017 SharePoint PnP
 ==========================================================
 
