@@ -263,7 +263,7 @@ accessappscanner -t <tenant> -u <user> -p <password>
 A real life sample:
 
 ```console
-accessappscanner -t contoso -c admin@contoso.onmicrosoft.com -p mypassword
+accessappscanner -t contoso -u admin@contoso.onmicrosoft.com -p mypassword
 ```
 
 >**Note:**
