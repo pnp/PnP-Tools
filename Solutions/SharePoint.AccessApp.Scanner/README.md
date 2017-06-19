@@ -1,7 +1,7 @@
 # SharePoint Access App scanner #
 
 ### Summary ###
-Using this command line utility you can scan your tenant for the presence of Access Apps. Access Apps are being retired and Microsoft will prevent you from adding new Access Apps and in the final phase of the retirement we'll prevent you running your Access Apps. With the data obtained by this scanner you can plan for the needed remediation work.
+Using this command line utility you can scan your tenant for the presence of Access Apps. Access Apps are being retired and Microsoft will prevent you from adding new Access Apps and in the final phase of the retirement Microsoft will prevent from running your Access Apps. With the data obtained by this scanner you can plan for the needed remediation work.
 
 If you want to learn more about the Access App deprecation then please checkout:
 - [Access Services in SharePoint Roadmap](https://support.office.com/en-us/article/Access-Services-in-SharePoint-Roadmap-497fd86b-e982-43c4-8318-81e6d3e711e8?ui=en-US&rs=en-US&ad=US)
@@ -33,7 +33,7 @@ Version  | Date | Comments
 ----------
 
 # What will this tool do for you? #
-The main purpose of this tool is to give you a report of Access 2010 and 2013 Apps that are present in your tenant. Access Apps are deprecated and in the future Microsoft will in a first phase prevent you from adding new Access Apps and in the final phase we'll prevent you running your Access Apps. With the data obtained by this scanner you can plan for the needed remediation work.
+The main purpose of this tool is to give you a report of Access 2010 and 2013 Apps that are present in your tenant. Access Apps are being retired and Microsoft will prevent you from adding new Access Apps and in the final phase of the retirement Microsoft will prevent from running your Access Apps. With the data obtained by this scanner you can plan for the needed remediation work.
 
 # Quick start guide #
 ## Download the tool ##
@@ -179,8 +179,7 @@ Filter | Takeaway
 ---------|----------
 **No filter** | Will give you a list of all the found Access Apps. If the amount of found Access Apps is zero or the found Access Apps are not relevant anymore then it's strongly recommended to [disable Access Apps for your tenant](https://support.office.com/en-us/article/Enable-and-disable-Access-apps-in-your-organization-92e0f958-4b53-411a-8499-52acec00413e?ui=en-US&rs=en-US&ad=US). 
 **Web Template = ACCSVC#0** | Will give you all the Access 2013 Apps, meaning the Access Apps created using Access 2013+ where the data is living in SQL Azure. 
-**Web Template = ACCSRV#0** | Will give you all the Access 2010 Apps, meaning the Access Apps created using Access 2010 where the data is living in SharePoint. 
-lists
+**Web Template = ACCSRV#0** | Will give you all the Access 2010 Apps, meaning the Access Apps created using Access 2010 where the data is living in SharePoint lists.
 **Web Template = ACCSVC#0 AND Access 2013 App Last Accessed On in 2017** | Listing all Access 2013 Apps  that have been recently accessed gives you the list of Access Apps to remediate.
 **Web Template = ACCSRV#0 AND Access 2010 App Last Modified By User On in 2017** | Listing all Access 2010 Apps that have had a recent change gives you the list of Access Apps to remediate.
 **ViewsRecent = 0** | All the Access Apps of which the hosting site collection has not been visited in the last 14 days.
