@@ -197,7 +197,7 @@ sandboxtool -m scanandanalyze -t <tenant> -u <user> -p <password>
 A real life sample:
 
 ```console
-sandboxtool -m scanandanalyze -t contoso -c admin@contoso.onmicrosoft.com -s mysecret
+sandboxtool -m scanandanalyze -t contoso -u admin@contoso.onmicrosoft.com -p mysecret
 ```
 
 ## I only want to scan a few sites ##
