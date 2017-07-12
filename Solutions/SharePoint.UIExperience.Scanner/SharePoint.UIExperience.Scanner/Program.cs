@@ -311,9 +311,10 @@ namespace SharePoint.UIExperience.Scanner
         }
 
         /// <summary>
-        /// Drop carriage returns, leading and trailing spaces + escape embedded quotes
+        ///Load csv file and return data
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="path"></param>
+        /// <param name="separator"></param>
         /// <returns></returns>
         private static IEnumerable<string[]> LoadSitesFromCsv(string path, params char[] separator)
         {
