@@ -20,6 +20,7 @@ SharePoint.UIExperience.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.2 | August 14th 2017 | Support for Announcement and Links lists is available, so don't mark it as a blocker
 1.1 | June 1st 2017 | Managed metadata navigation support will be available (see https://techcommunity.microsoft.com/t5/SharePoint-Blog/SharePoint-filters-pane-updates-filtering-and-metadata/ba-p/74162), so don't mark it as a blocker
 1.0 | May 2nd 2017 | First main version
 
@@ -40,7 +41,7 @@ Using the reports you can streamline the "modern" experience in your tenant: you
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [UIExperience scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.UIExperience.Scanner/Releases/UI%20Experience%20scanner%20for%20SharePoint%20Online%20v1.1.zip?raw=true)
+ - [UIExperience scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.UIExperience.Scanner/Releases/UI%20Experience%20scanner%20for%20SharePoint%20Online%20v1.2.zip?raw=true)
 
 Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder containing the tool **UIExperienceScanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -396,7 +397,7 @@ uiexperiencescanner -r https://contoso.sharepoint.com/*,https://contoso.sharepoi
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
-SharePoint UI Experience Scanner tool 1.1.0.0
+SharePoint UI Experience Scanner tool 1.2.0.0
 Copyright (C) 2017 SharePoint PnP
 ==========================================================
 

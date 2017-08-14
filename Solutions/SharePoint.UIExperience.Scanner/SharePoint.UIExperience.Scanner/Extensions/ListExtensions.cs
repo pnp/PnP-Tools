@@ -13,7 +13,9 @@ namespace Microsoft.SharePoint.Client
         {
             list.EnsureProperty(p => p.BaseTemplate);
 
-            if (list.BaseTemplate == (int)ListTemplateType.DocumentLibrary ||
+            if (list.BaseTemplate == (int)ListTemplateType.Announcements ||
+                list.BaseTemplate == (int)ListTemplateType.Links ||
+                list.BaseTemplate == (int)ListTemplateType.DocumentLibrary ||
                 list.BaseTemplate == (int)ListTemplateType.PictureLibrary ||
                 list.BaseTemplate == (int)ListTemplateType.WebPageLibrary ||
                 list.BaseTemplate == (int)ListTemplateType.GenericList)
