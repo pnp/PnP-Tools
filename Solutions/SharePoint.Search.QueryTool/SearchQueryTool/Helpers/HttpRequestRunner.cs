@@ -31,7 +31,8 @@ namespace SearchQueryTool.Helpers
                                            searchRequest.UserName,
                                            searchRequest.Password,
                                            searchRequest.SecurePassword,
-                                           searchRequest.Cookies);
+                                           searchRequest.Cookies,
+                                           searchRequest.Token);
             
             HttpWebResponse response = null;
 
@@ -62,7 +63,8 @@ namespace SearchQueryTool.Helpers
                                            searchRequest.UserName,
                                            searchRequest.Password,
                                            searchRequest.SecurePassword,
-                                           searchRequest.Cookies);
+                                           searchRequest.Cookies,
+                                           searchRequest.Token);
 
             request.Method = "POST";
             request.ContentType = "application/json;odata=verbose;charset=utf-8";
@@ -105,7 +107,8 @@ namespace SearchQueryTool.Helpers
                                            searchRequest.UserName,
                                            searchRequest.Password,
                                            searchRequest.SecurePassword,
-                                           searchRequest.Cookies);
+                                           searchRequest.Cookies,
+                                           searchRequest.Token);
             
             request.Method = "POST";
             request.ContentType = "application/json;odata=verbose;charset=utf-8";
@@ -155,7 +158,8 @@ namespace SearchQueryTool.Helpers
                                                        string username = null, 
                                                        string password = null,
                                                        SecureString securePassword = null,
-                                                       CookieCollection authCookies = null)
+                                                       CookieCollection authCookies = null,
+                                                       string accessToken = null)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
@@ -191,6 +195,10 @@ namespace SearchQueryTool.Helpers
             else if (authType == AuthenticationType.SPO || authType == AuthenticationType.Forefront)
             {
                 request.ApplyCookieCredentials(authCookies);
+            }
+            else if (authType == AuthenticationType.SPOManagement)
+            {
+                request.Headers.Add("Authorization", accessToken);
             }
             return request;
         }

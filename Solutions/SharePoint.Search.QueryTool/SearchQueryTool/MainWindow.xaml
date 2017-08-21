@@ -1191,6 +1191,7 @@
 										x:Name="AuthenticationMethodComboBox">
                                             <ComboBoxItem DataContext="WinAuth" Content="Windows" IsSelected="True" />
                                             <ComboBoxItem DataContext="SPOAuth" Content="SharePoint Online" />
+                                            <ComboBoxItem DataContext="SPOAuth2" Content="SharePoint Online Management" />
                                             <ComboBoxItem DataContext="FormsAuth" Content="Forms-based" />
                                             <ComboBoxItem DataContext="ForefrontAuth" Content="Forefront Gateway (TMG/UAG)" />
                                         </ComboBox>

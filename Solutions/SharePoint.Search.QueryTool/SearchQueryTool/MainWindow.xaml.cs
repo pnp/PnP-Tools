@@ -28,6 +28,7 @@ using SearchQueryTool.Helpers;
 using SearchQueryTool.Model;
 using Path = System.IO.Path;
 using ResultItem = SearchQueryTool.Model.ResultItem;
+using ADAL = Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace SearchQueryTool
 {
@@ -44,6 +45,8 @@ namespace SearchQueryTool
 
         private const string DefaultSharePointSiteUrl = "http://localhost";
         private const string ConnectionPropsXmlFileName = "connection-props.xml";
+        private const string AuthorityUri = "https://login.windows.net/common/oauth2/authorize";
+        private ADAL.AuthenticationContext AuthContext = null;
 
         private SearchQueryRequest _searchQueryRequest;
         private readonly SearchSuggestionsRequest _searchSuggestionsRequest;
@@ -68,6 +71,7 @@ namespace SearchQueryTool
                 (sender, certificate, chain, sslPolicyErrors) => true;
             _searchQueryRequest = new SearchQueryRequest { SharePointSiteUrl = DefaultSharePointSiteUrl };
             _searchSuggestionsRequest = new SearchSuggestionsRequest { SharePointSiteUrl = DefaultSharePointSiteUrl };
+            _searchSuggestionsRequest = new SearchSuggestionsRequest { SharePointSiteUrl = DefaultSharePointSiteUrl };
             _searchConnection = new SearchConnection();
 
             ObservableQueryCollection = new SafeObservable<SearchQueryDebug>(Dispatcher);
@@ -79,9 +83,9 @@ namespace SearchQueryTool
             var tmpPath = ReadSetting("PresetsFolderPath");
             if (!Regex.IsMatch(tmpPath, @"^\w", RegexOptions.IgnoreCase) && !tmpPath.StartsWith(@"\"))
             {
-                tmpPath = Path.GetFullPath(tmpPath);                
+                tmpPath = Path.GetFullPath(tmpPath);
             }
-            PresetFolderPath = (!String.IsNullOrEmpty(tmpPath)) ? tmpPath : Path.GetFullPath(@".\Presets");
+            PresetFolderPath = (!string.IsNullOrEmpty(tmpPath)) ? tmpPath : Path.GetFullPath(@".\Presets");
             if (!Directory.Exists(tmpPath))
             {
                 try
@@ -207,8 +211,14 @@ namespace SearchQueryTool
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-        private void RunButton_Click(object sender, RoutedEventArgs e)
+        private async void RunButton_Click(object sender, RoutedEventArgs e)
         {
+            string dc = (AuthenticationMethodComboBox.SelectedItem as ComboBoxItem).DataContext as string;
+            if (dc == "SPOAuth2")
+            {
+                await AdalLogin(false);
+            }
+
             SearchMethodType currentSelectedSearchMethodType = CurrentSearchMethodType;
 
             // fire off the query operation
@@ -269,7 +279,7 @@ namespace SearchQueryTool
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="SelectionChangedEventArgs" /> instance containing the event data.</param>
         private void AuthenticationTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {           
+        {
             int selectedIndex = AuthenticationTypeComboBox.SelectedIndex;
             if (selectedIndex == 0) // use current user
             {
@@ -329,7 +339,7 @@ namespace SearchQueryTool
             // 1 - SharePoint Online
             // 2 - Forms-based
             // 3 - Forefront gateway (UAG/TMG)
-            
+
             if (AuthenticationTypeComboBox.SelectedIndex == 0)
             {
                 GraphQueryContainer.Visibility = Visibility.Collapsed;
@@ -353,6 +363,17 @@ namespace SearchQueryTool
             else if (dc == "SPOAuth")
             {
                 _searchQueryRequest.AuthenticationType = AuthenticationType.SPO;
+                _searchSuggestionsRequest.AuthenticationType = _searchQueryRequest.AuthenticationType;
+
+                UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Hidden;
+                LoginButtonContainer.Visibility = Visibility.Visible;
+                LoggedinLabel.Visibility = Visibility.Hidden;
+                GraphQueryContainer.Visibility = Visibility.Visible;
+                GraphRankingContainer.Visibility = Visibility.Visible;
+            }
+            else if (dc == "SPOAuth2")
+            {
+                _searchQueryRequest.AuthenticationType = AuthenticationType.SPOManagement;
                 _searchSuggestionsRequest.AuthenticationType = _searchQueryRequest.AuthenticationType;
 
                 UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Hidden;
@@ -411,7 +432,7 @@ namespace SearchQueryTool
             _searchSuggestionsRequest.Password = AuthenticationPasswordTextBox.Password;
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             LoggedinLabel.Visibility = Visibility.Hidden;
             _searchQueryRequest.Cookies = null;
@@ -420,25 +441,77 @@ namespace SearchQueryTool
             try
             {
                 SharePointSiteUrlTextBox_LostFocus(sender, e);
-                string dc = (AuthenticationMethodComboBox.SelectedItem as ComboBoxItem).DataContext as string;
-                CookieCollection cc = WebAuthentication.GetAuthenticatedCookies(_searchQueryRequest.SharePointSiteUrl, _searchQueryRequest.AuthenticationType);                
-
-                if (cc == null)
-                {                    
-                    ShowMsgBox(string.Format("Authentication failed. Please try again.\n\n{0}", _searchQueryRequest.SharePointSiteUrl));                    
+                string dc = ((ComboBoxItem)AuthenticationMethodComboBox.SelectedItem).DataContext as string;
+                if (dc == "SPOAuth2")
+                {
+                    try
+                    {
+                        await AdalLogin(true);
+                        if (string.IsNullOrWhiteSpace(_searchQueryRequest.Token)) throw new ApplicationException("No token");
+                        LoggedinLabel.Visibility = Visibility.Visible;
+                    }
+                    catch (Exception exception)
+                    {
+                        ShowMsgBox(
+                            $"Authentication failed. Please try again.\n\n{_searchQueryRequest.SharePointSiteUrl}\n\n{exception.Message}");
+                    }
                 }
                 else
                 {
-                    LoggedinLabel.Visibility = Visibility.Visible;
+                    AuthContext = null;
+                    CookieCollection cc = WebAuthentication.GetAuthenticatedCookies(_searchQueryRequest.SharePointSiteUrl, _searchQueryRequest.AuthenticationType);
+
+                    if (cc == null)
+                    {
+                        ShowMsgBox(
+                            $"Authentication failed. Please try again.\n\n{_searchQueryRequest.SharePointSiteUrl}");
+                    }
+                    else
+                    {
+                        LoggedinLabel.Visibility = Visibility.Visible;
+                    }
+                    _searchQueryRequest.Cookies = cc;
+                    _searchSuggestionsRequest.Cookies = cc;
                 }
-                _searchQueryRequest.Cookies = cc;
-                _searchSuggestionsRequest.Cookies = cc;
             }
             catch (Exception ex)
             {
                 ShowError(ex);
-                ShowMsgBox(string.Format("Authentication failed. Please try again.\n\n{0}\n\n{1}", _searchQueryRequest.SharePointSiteUrl, ex.Message));                
+                ShowMsgBox(
+                    $"Authentication failed. Please try again.\n\n{_searchQueryRequest.SharePointSiteUrl}\n\n{ex.Message}");
             }
+        }
+
+        async Task AdalLogin(bool forcePrompt)
+        {
+            var spUri = new Uri(_searchQueryRequest.SharePointSiteUrl);
+
+            string resourceUri = spUri.Scheme + "://" + spUri.Authority;
+            const string clientId = "9bc3ab49-b65d-410a-85ad-de819febfddc";
+            const string redirectUri = "https://oauth.spops.microsoft.com/";
+
+            Window ownerWindow = Application.Current.MainWindow.Owner;
+
+            ADAL.AuthenticationResult authenticationResult;
+
+            if (AuthContext == null || forcePrompt)
+            {
+                ADAL.TokenCache cache = new ADAL.TokenCache();
+                AuthContext = new ADAL.AuthenticationContext(AuthorityUri, cache);
+            }
+            try
+            {
+                if (forcePrompt) throw new ADAL.AdalSilentTokenAcquisitionException();
+                authenticationResult = await AuthContext.AcquireTokenSilentAsync(resourceUri, clientId);
+            }
+            catch (ADAL.AdalSilentTokenAcquisitionException)
+            {
+                var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Always, ownerWindow);
+                authenticationResult = await AuthContext.AcquireTokenAsync(resourceUri, clientId, new Uri(redirectUri), authParam);
+            }
+
+            _searchQueryRequest.Token = authenticationResult.CreateAuthorizationHeader();
+            _searchSuggestionsRequest.Token = authenticationResult.CreateAuthorizationHeader();
         }
 
         #endregion
@@ -528,16 +601,12 @@ namespace SearchQueryTool
                     case "rowsperpage":
                         _searchQueryRequest.RowsPerPage = DataConverter.TryConvertToInt(tb.Text.Trim());
                         break;
-
-                    default:
-                        break;
                 }
 
                 UpdateRequestUriStringTextBlock();
             }
 
-            ComboBox cb = sender as ComboBox;
-            if (cb != null)
+            if (sender is ComboBox cb)
             {
                 string dataContext = (cb.DataContext as string) ?? "";
                 switch (dataContext.ToLower())
@@ -546,7 +615,7 @@ namespace SearchQueryTool
                         {
                             string sourceId = cb.Text;
                             ComboBoxItem comboBoxItem = cb.SelectedItem as ComboBoxItem;
-                            if (comboBoxItem != null && comboBoxItem.Tag != null)
+                            if (comboBoxItem?.Tag != null)
                             {
                                 sourceId = comboBoxItem.Tag as string;
                             }
@@ -563,7 +632,7 @@ namespace SearchQueryTool
                         {
                             string culture = cb.Text;
                             ComboBoxItem comboBoxItem = cb.SelectedItem as ComboBoxItem;
-                            if (comboBoxItem != null && comboBoxItem.Tag != null)
+                            if (comboBoxItem?.Tag != null)
                             {
                                 culture = comboBoxItem.Tag as string;
                             }
@@ -576,8 +645,6 @@ namespace SearchQueryTool
                             cb.Text = _searchQueryRequest.Culture;
                             break;
                         }
-                    default:
-                        break;
                 }
 
                 UpdateRequestUriStringTextBlock();
@@ -591,8 +658,7 @@ namespace SearchQueryTool
         /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
         private void SearchQueryCheckBox_CheckChanged(object sender, RoutedEventArgs e)
         {
-            CheckBox cb = sender as CheckBox;
-            if (cb != null)
+            if (sender is CheckBox cb)
             {
                 string datacontext = (cb.DataContext as string) ?? "";
                 switch (datacontext.ToLower())
@@ -633,9 +699,6 @@ namespace SearchQueryTool
                     case "experimentalfeatures":
                         _enableExperimentalFeatures = cb.IsChecked.Value;
                         break;
-
-                    default:
-                        break;
                 }
 
                 UpdateRequestUriStringTextBlock();
@@ -649,7 +712,7 @@ namespace SearchQueryTool
         /// <param name="e">The <see cref="SelectionChangedEventArgs" /> instance containing the event data.</param>
         private void QueryLogClientTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string selectedValue = (QueryLogClientTypeComboBox.SelectedItem as ComboBoxItem).DataContext as string;
+            string selectedValue = ((ComboBoxItem)QueryLogClientTypeComboBox.SelectedItem).DataContext as string;
             _searchQueryRequest.ClientType = selectedValue;
 
             UpdateRequestUriStringTextBlock();
@@ -701,8 +764,7 @@ namespace SearchQueryTool
 
         private void SearchSuggestionsTextBox_LostFocus_Handler(object sender, RoutedEventArgs e)
         {
-            TextBox tb = sender as TextBox;
-            if (tb != null)
+            if (sender is TextBox tb)
             {
                 string dataContext = (tb.DataContext as string) ?? "";
                 switch (dataContext.ToLower())
@@ -716,15 +778,12 @@ namespace SearchQueryTool
                     case "numberofresultsuggestions":
                         _searchSuggestionsRequest.NumberOfResultSuggestions = DataConverter.TryConvertToInt(tb.Text.Trim());
                         break;
-                    default:
-                        break;
                 }
 
                 UpdateRequestUriStringTextBlock();
             }
 
-            ComboBox cb = sender as ComboBox;
-            if (cb != null)
+            if (sender is ComboBox cb)
             {
                 string dataContext = (cb.DataContext as string) ?? "";
                 switch (dataContext.ToLower())
@@ -732,12 +791,11 @@ namespace SearchQueryTool
                     case "suggestionsculture":
                         {
                             string suggestionsCulture = cb.Text;
-                            ComboBoxItem comboBoxItem = cb.SelectedItem as ComboBoxItem;
-                            if (comboBoxItem != null && comboBoxItem.Tag != null)
+                            if (cb.SelectedItem is ComboBoxItem comboBoxItem && comboBoxItem.Tag != null)
                             {
                                 suggestionsCulture = comboBoxItem.Tag as string;
                             }
-                            if (!String.IsNullOrEmpty(suggestionsCulture))
+                            if (!string.IsNullOrWhiteSpace(suggestionsCulture))
                             {
                                 _searchSuggestionsRequest.Culture = DataConverter.TryConvertToInt(suggestionsCulture);
                                 cb.Text = _searchSuggestionsRequest.Culture.ToString();
@@ -749,8 +807,6 @@ namespace SearchQueryTool
                             }
                             break;
                         }
-                    default:
-                        break;
                 }
 
                 UpdateRequestUriStringTextBlock();
@@ -759,8 +815,7 @@ namespace SearchQueryTool
 
         private void SearchSuggestionsCheckBox_CheckChanged(object sender, RoutedEventArgs e)
         {
-            CheckBox cb = sender as CheckBox;
-            if (cb != null)
+            if (sender is CheckBox cb)
             {
                 string datacontext = (cb.DataContext as string) ?? "";
                 switch (datacontext.ToLower())
@@ -776,9 +831,6 @@ namespace SearchQueryTool
                         break;
                     case "capitalizefirstletters":
                         _searchSuggestionsRequest.CapitalizeFirstLetters = cb.IsChecked;
-                        break;
-
-                    default:
                         break;
                 }
 
@@ -803,10 +855,10 @@ namespace SearchQueryTool
                 if (d != null && d is String)
                 {
                     string senderDatacontext = d as string;
-                    if (!String.IsNullOrEmpty(senderDatacontext))
+                    if (!string.IsNullOrWhiteSpace(senderDatacontext))
                     {
                         string exampleString = SampleStrings.GetExampleStringFor(senderDatacontext);
-                        if (!String.IsNullOrEmpty(exampleString))
+                        if (!string.IsNullOrWhiteSpace(exampleString))
                         {
                             switch (senderDatacontext.ToLower())
                             {
@@ -861,7 +913,7 @@ namespace SearchQueryTool
             {
                 var outputPath = Path.Combine(Environment.CurrentDirectory, ConnectionPropsXmlFileName);
                 connection.SaveXml(outputPath);
-                StateBarTextBlock.Text = String.Format("Successfully saved connection properties to {0}", Path.GetFullPath(outputPath));
+                StateBarTextBlock.Text = $"Successfully saved connection properties to {Path.GetFullPath(outputPath)}";
             }
             catch (Exception ex)
             {
@@ -902,7 +954,7 @@ namespace SearchQueryTool
         {
             string status = "Init";
             string queryText = QueryTextBox.Text.Trim();
-            if (String.IsNullOrEmpty(queryText))
+            if (string.IsNullOrEmpty(queryText))
             {
                 QueryTextBox.Focus();
                 return;
@@ -922,8 +974,8 @@ namespace SearchQueryTool
                     ? AcceptType.Json
                     : AcceptType.Xml;
 
-                //todo this should be splitted to several methods so we can reuse them
-                Task.Factory.StartNew(() => { return HttpRequestRunner.RunWebRequest(_searchQueryRequest); },
+                //todo this should be split to several methods so we can reuse them
+                Task.Factory.StartNew(() => HttpRequestRunner.RunWebRequest(_searchQueryRequest),
                     TaskCreationOptions.LongRunning)
                     .ContinueWith(task =>
                     {
@@ -1056,26 +1108,24 @@ namespace SearchQueryTool
         {
             var ret = new List<string>();
 
-            if (!String.IsNullOrWhiteSpace(input))
-            {
-                var regex = new Regex(@"(?<key>\(*\w+)[:|=<>](?<value>""[\S\s]+""\)*|\w+\)*)");
+            if (string.IsNullOrWhiteSpace(input)) return ret;
+            var regex = new Regex(@"(?<key>\(*\w+)[:|=<>](?<value>""[\S\s]+""\)*|\w+\)*)");
 
-                try
+            try
+            {
+                var buf = input;
+                var match = regex.Match(buf);
+                while (match.Success)
                 {
-                    var buf = input;
-                    var match = regex.Match(buf);
-                    while (match.Success)
-                    {
-                        var m = match.Captures[0].ToString();
-                        buf = buf.Replace(m, "").Trim();
-                        ret.Add(m);
-                        match = regex.Match(buf);
-                    }
+                    var m = match.Captures[0].ToString();
+                    buf = buf.Replace(m, "").Trim();
+                    ret.Add(m);
+                    match = regex.Match(buf);
                 }
-                catch
-                {
-                    // ignore
-                }
+            }
+            catch
+            {
+                // ignore
             }
             return ret;
         }
@@ -1088,7 +1138,7 @@ namespace SearchQueryTool
             // ParseHiddenConstraints hidden constraints and populate panel with new breadcrumb buttons
             var hiddenConstraints = HiddenConstraintsTextBox.Text;
 
-            if (String.IsNullOrWhiteSpace(hiddenConstraints))
+            if (string.IsNullOrWhiteSpace(hiddenConstraints))
             {
                 // Initialize state when we have no hidden constraints
                 ExpanderHiddenConstraints.Header = String.Format("Hidden Constraints");
@@ -1130,7 +1180,7 @@ namespace SearchQueryTool
                         var text = textBlock.Text;
 
                         // Remove text from HiddenConstraints
-                        if (!String.IsNullOrWhiteSpace(text))
+                        if (!string.IsNullOrWhiteSpace(text))
                         {
                             HiddenConstraintsTextBox.Text = HiddenConstraintsTextBox.Text.Replace(text.Trim(), "").Trim();
 
@@ -1197,7 +1247,7 @@ namespace SearchQueryTool
         private void StartSearchSuggestionRequest()
         {
             string queryText = SuggestionsQueryTextBox.Text.Trim();
-            if (String.IsNullOrEmpty(queryText))
+            if (string.IsNullOrEmpty(queryText))
             {
                 SuggestionsQueryTextBox.Focus();
                 return;
@@ -1306,9 +1356,8 @@ namespace SearchQueryTool
                 TextWrapping = TextWrapping.WrapWithOverflow
             };
 
-            tb.AppendText(String.Format("HTTP/{0} {1} {2}\n", searchResult.HttpProtocolVersion,
-                (int)searchResult.StatusCode,
-                searchResult.StatusDescription));
+            tb.AppendText(
+                $"HTTP/{searchResult.HttpProtocolVersion} {(int) searchResult.StatusCode} {searchResult.StatusDescription}\n");
             if (searchResult.StatusCode != HttpStatusCode.OK)
             {
                 tb.AppendText(searchResult.ResponseContent);
@@ -1318,11 +1367,11 @@ namespace SearchQueryTool
             {
                 var searchQueryResult = searchResult as SearchQueryResult;
 
-                if (!String.IsNullOrEmpty(searchQueryResult.SerializedQuery))
-                    tb.AppendText(String.Format("\tSerialized Query:\n{0}\n\n", searchQueryResult.SerializedQuery));
+                if (!string.IsNullOrEmpty(searchQueryResult.SerializedQuery))
+                    tb.AppendText($"\tSerialized Query:\n{searchQueryResult.SerializedQuery}\n\n");
 
-                if (!String.IsNullOrEmpty(searchQueryResult.QueryElapsedTime))
-                    tb.AppendText(String.Format("\tElapsed Time (ms): {0}\n\n", searchQueryResult.QueryElapsedTime));
+                if (!string.IsNullOrEmpty(searchQueryResult.QueryElapsedTime))
+                    tb.AppendText($"\tElapsed Time (ms): {searchQueryResult.QueryElapsedTime}\n\n");
 
                 if (searchQueryResult.TriggeredRules != null && searchQueryResult.TriggeredRules.Count > 0)
                 {
@@ -1330,7 +1379,7 @@ namespace SearchQueryTool
 
                     foreach (var rule in searchQueryResult.TriggeredRules)
                     {
-                        tb.AppendText(String.Format("\t\tQuery Rule Id: {0}\n", rule));
+                        tb.AppendText($"\t\tQuery Rule Id: {rule}\n");
                     }
                     tb.AppendText("\n");
                 }
@@ -1338,12 +1387,12 @@ namespace SearchQueryTool
                 if (searchQueryResult.PrimaryQueryResult != null)
                 {
                     tb.AppendText("\tPrimary Query Results:\n");
-                    tb.AppendText(String.Format("\t\tTotal Rows: {0}\n", searchQueryResult.PrimaryQueryResult.TotalRows));
-                    tb.AppendText(String.Format("\t\tTotal Rows Including Duplicates: {0}\n",
-                        searchQueryResult.PrimaryQueryResult.TotalRowsIncludingDuplicates));
-                    tb.AppendText(String.Format("\t\tQuery Id: {0}\n", searchQueryResult.PrimaryQueryResult.QueryId));
-                    tb.AppendText(String.Format("\t\tQuery Rule Id: {0}\n", searchQueryResult.PrimaryQueryResult.QueryRuleId));
-                    tb.AppendText(String.Format("\t\tQuery Modification: {0}\n", searchQueryResult.PrimaryQueryResult.QueryModification));
+                    tb.AppendText($"\t\tTotal Rows: {searchQueryResult.PrimaryQueryResult.TotalRows}\n");
+                    tb.AppendText(
+                        $"\t\tTotal Rows Including Duplicates: {searchQueryResult.PrimaryQueryResult.TotalRowsIncludingDuplicates}\n");
+                    tb.AppendText($"\t\tQuery Id: {searchQueryResult.PrimaryQueryResult.QueryId}\n");
+                    tb.AppendText($"\t\tQuery Rule Id: {searchQueryResult.PrimaryQueryResult.QueryRuleId}\n");
+                    tb.AppendText($"\t\tQuery Modification: {searchQueryResult.PrimaryQueryResult.QueryModification}\n");
 
                 }
 
@@ -1747,7 +1796,7 @@ namespace SearchQueryTool
             sqr.EnablePhonetic = _searchQueryRequest.EnablePhonetic;
             sqr.EnableQueryRules = _searchQueryRequest.EnableQueryRules;
             sqr.EnableStemming = _searchQueryRequest.EnableStemming;
-            if(_searchQueryRequest.SourceId != null)
+            if (_searchQueryRequest.SourceId != null)
             {
                 sqr.SourceId = _searchQueryRequest.SourceId;
             }
@@ -2413,7 +2462,7 @@ namespace SearchQueryTool
             if (currentWindowsIdentity != null)
             {
                 if (AuthenticationUsernameTextBox != null
-                    && String.IsNullOrWhiteSpace(AuthenticationUsernameTextBox.Text))
+                    && string.IsNullOrWhiteSpace(AuthenticationUsernameTextBox.Text))
                     AuthenticationUsernameTextBox.Text = currentWindowsIdentity.Name;
             }
         }
@@ -2873,10 +2922,10 @@ namespace SearchQueryTool
 
             try
             {
-                if (!String.IsNullOrEmpty(connection.SpSiteUrl)) { SharePointSiteUrlTextBox.Text = connection.SpSiteUrl; }
-                if (!String.IsNullOrEmpty(connection.Timeout)) { WebRequestTimeoutTextBox.Text = connection.Timeout; }
+                if (!string.IsNullOrEmpty(connection.SpSiteUrl)) { SharePointSiteUrlTextBox.Text = connection.SpSiteUrl; }
+                if (!string.IsNullOrEmpty(connection.Timeout)) { WebRequestTimeoutTextBox.Text = connection.Timeout; }
 
-                if (!String.IsNullOrEmpty(connection.Accept))
+                if (!string.IsNullOrEmpty(connection.Accept))
                 {
                     switch (connection.Accept.ToLower())
                     {
@@ -2889,7 +2938,7 @@ namespace SearchQueryTool
                     }
                 }
 
-                if (!String.IsNullOrEmpty(connection.HttpMethod))
+                if (!string.IsNullOrEmpty(connection.HttpMethod))
                 {
                     switch (connection.HttpMethod.ToLower())
                     {
@@ -2905,7 +2954,7 @@ namespace SearchQueryTool
                 AuthenticationTypeComboBox.SelectedIndex = connection.AuthTypeIndex;
                 AuthenticationMethodComboBox.SelectedIndex = connection.AuthMethodIndex;
 
-                if (!String.IsNullOrEmpty(connection.HttpMethod) && AuthenticationUsernameTextBox.IsEnabled)
+                if (!string.IsNullOrEmpty(connection.HttpMethod) && AuthenticationUsernameTextBox.IsEnabled)
                 {
                     AuthenticationUsernameTextBox.Text = connection.Username;
                     _searchQueryRequest.UserName = connection.Username;
