@@ -342,6 +342,12 @@ namespace SearchQueryTool
 
             //if (this.AuthenticationTypeComboBox.SelectedIndex == 2) return;
             //if (this.AuthenticationMethodComboBox.SelectedIndex == 2) return; //anonymous
+
+            if (AuthenticationTypeComboBox.SelectedIndex == 0)
+            {
+                return;
+            }
+
             string dc = (AuthenticationMethodComboBox.SelectedItem as ComboBoxItem).DataContext as string;
             if (AuthenticationTypeComboBox.SelectedIndex == 2) dc = "Anonymous";
             if (dc == "WinAuth")
