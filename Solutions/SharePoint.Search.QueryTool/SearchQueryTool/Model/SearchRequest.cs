@@ -28,6 +28,7 @@ namespace SearchQueryTool.Model
         Windows,
         Forms,
         SPO,
+        SPOManagement,
         Anonymous,
         Forefront        
     }
@@ -48,6 +49,8 @@ namespace SearchQueryTool.Model
         public SecureString SecurePassword { get; set; }
         [XmlIgnore] 
         public CookieCollection Cookies { get; set; }
+
+        public string Token { get; set; }
 
         public abstract Uri GenerateHttpGetUri();
         public abstract Uri GenerateHttpPostUri();

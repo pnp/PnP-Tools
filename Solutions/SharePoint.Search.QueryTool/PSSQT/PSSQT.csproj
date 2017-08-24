@@ -233,7 +233,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>%25SystemRoot%25\system32\WindowsPowerShell\v1.0\powershell.exe -File "$(SolutionDir)PSSQT\Scripts\Update-AssemblyFileVersion.ps1"  -assemblyInfoFilePath "$(SolutionDir)PSSQT\Properties\AssemblyInfo.cs"</PreBuildEvent>
+    <PreBuildEvent>rem %25SystemRoot%25\system32\WindowsPowerShell\v1.0\powershell.exe -File "$(SolutionDir)PSSQT\Scripts\Update-AssemblyFileVersion.ps1"  -assemblyInfoFilePath "$(SolutionDir)PSSQT\Properties\AssemblyInfo.cs"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -123,12 +123,6 @@
   <data name="selectproperties_ex" xml:space="preserve">
     <value>Path,Url,Title,Author,Write,ServerRedirectedEmbedURL,WorkId</value>
   </data>
-  <data name="graphquery_ex" xml:space="preserve">
-    <value>ACTOR(ME, action:1021)</value>
-  </data>
-  <data name="graphranking_ex" xml:space="preserve">
-    <value>{"features":[{"function":"EdgeWeight"}]}</value>
-  </data>
   <data name="refinementfilters_ex" xml:space="preserve">
     <value>filetype:equals("pptx")</value>
   </data>

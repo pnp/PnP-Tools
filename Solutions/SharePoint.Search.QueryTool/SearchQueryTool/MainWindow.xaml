@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Classic" x:Class="SearchQueryTool.MainWindow"
         Icon="Images/sp_site.png"
-        Title="SharePoint Search Query Tool v2.6" Height="820" Width="1100" MinWidth="800" MinHeight="600">
+        Title="SharePoint Search Query Tool v2.7" Height="820" Width="1100" MinWidth="800" MinHeight="600">
     <Window.Resources>
         <DrawingImage x:Key="Overlay">
             <DrawingImage.Drawing>
@@ -455,52 +455,6 @@
                                                 </TextBox.ToolTip>
                                             </TextBox>
                                         </DockPanel>
-
-                                        <DockPanel Margin="5,5,5,0" x:Name="GraphQueryContainer">
-                                            <Label Content="Graph Query:" 
-												HorizontalAlignment="Left" 
-												VerticalAlignment="Top"/>
-
-                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="GraphQuery" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
-                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
-                                            </Button>
-
-                                            <TextBox Height="26" 
-												Margin="5,0,0,0" 
-												Text="" 
-												Padding="4"
-												DataContext="GraphQuery"
-												x:Name="GraphQueryTextBox"
-												LostFocus="SearchQueryTextBox_LostFocus_Handler"
-												TextAlignment="Left">
-                                                <TextBox.ToolTip>
-                                                    <TextBlock><Run Text="Graph Properties (SPO only)."/><LineBreak /><LineBreak /><Run Text="See: http://msdn.microsoft.com/en-us/library/office/dn783218(v=office.15).aspx"/></TextBlock>
-                                                </TextBox.ToolTip>
-                                            </TextBox>
-                                        </DockPanel>
-                                        <DockPanel Margin="5,5,5,0" x:Name="GraphRankingContainer">
-                                            <Label Content="Graph Ranking:" 
-												HorizontalAlignment="Left" 
-												VerticalAlignment="Top"/>
-
-                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="GraphRanking" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
-                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
-                                            </Button>
-
-                                            <TextBox Height="26" 
-												Margin="5,0,0,0" 
-												Text="" 
-												Padding="4"
-												DataContext="GraphRanking"
-												x:Name="GraphRankingTextBox"
-												LostFocus="SearchQueryTextBox_LostFocus_Handler"
-												TextAlignment="Left">
-                                                <TextBox.ToolTip>
-                                                    <TextBlock><Run Text="Graph Properties (SPO only)."/><LineBreak /><LineBreak /><Run Text="See: http://msdn.microsoft.com/en-us/library/office/dn783218(v=office.15).aspx"/></TextBlock>
-                                                </TextBox.ToolTip>
-                                            </TextBox>
-                                        </DockPanel>
-
                                         <DockPanel Margin="5,5,5,0">
                                             <Label Content="Refiners:" 
 												HorizontalAlignment="Left" 
@@ -754,7 +708,6 @@
                                                 <ComboBoxItem Tag="b09a7990-05ea-4af9-81ef-edfab16c4e31" Content="Local People Results"/>
                                                 <ComboBoxItem Tag="203fba36-2763-4060-9931-911ac8c0583b" Content="Local Reports And Data Results"/>
                                                 <ComboBoxItem Tag="78b793ce-7956-4669-aa3b-451fc5defebf" Content="Local Video Results"/>
-                                                <!--<ComboBoxItem Tag="02329dfc-758e-4532-9c60-492fa63d4c45">Local SharePoint Graph</ComboBoxItem>-->
                                                 <ComboBoxItem Tag="e7ec8cee-ded8-43c9-beb5-436b54b31e84" Content="Documents"/>
                                                 <ComboBoxItem Tag="5dc9f503-801e-4ced-8a2c-5d1237132419" Content="Items matching a content type"/>
                                                 <ComboBoxItem Tag="e1327b9c-2b8c-4b23-99c9-3730cb29c3f7" Content="Items matching a tag"/>
@@ -1191,6 +1144,7 @@
 										x:Name="AuthenticationMethodComboBox">
                                             <ComboBoxItem DataContext="WinAuth" Content="Windows" IsSelected="True" />
                                             <ComboBoxItem DataContext="SPOAuth" Content="SharePoint Online" />
+                                            <ComboBoxItem DataContext="SPOAuth2" Content="SharePoint Online Management" />
                                             <ComboBoxItem DataContext="FormsAuth" Content="Forms-based" />
                                             <ComboBoxItem DataContext="ForefrontAuth" Content="Forefront Gateway (TMG/UAG)" />
                                         </ComboBox>
