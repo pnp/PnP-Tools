@@ -340,12 +340,6 @@ namespace SearchQueryTool
             // 2 - Forms-based
             // 3 - Forefront gateway (UAG/TMG)
 
-            if (AuthenticationTypeComboBox.SelectedIndex == 0)
-            {
-                GraphQueryContainer.Visibility = Visibility.Collapsed;
-                GraphRankingContainer.Visibility = Visibility.Collapsed;
-                return;
-            }
             //if (this.AuthenticationTypeComboBox.SelectedIndex == 2) return;
             //if (this.AuthenticationMethodComboBox.SelectedIndex == 2) return; //anonymous
             string dc = (AuthenticationMethodComboBox.SelectedItem as ComboBoxItem).DataContext as string;
@@ -357,8 +351,6 @@ namespace SearchQueryTool
 
                 UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Visible;
                 LoginButtonContainer.Visibility = Visibility.Hidden;
-                GraphQueryContainer.Visibility = Visibility.Collapsed;
-                GraphRankingContainer.Visibility = Visibility.Collapsed;
             }
             else if (dc == "SPOAuth")
             {
@@ -368,8 +360,6 @@ namespace SearchQueryTool
                 UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Hidden;
                 LoginButtonContainer.Visibility = Visibility.Visible;
                 LoggedinLabel.Visibility = Visibility.Hidden;
-                GraphQueryContainer.Visibility = Visibility.Visible;
-                GraphRankingContainer.Visibility = Visibility.Visible;
             }
             else if (dc == "SPOAuth2")
             {
@@ -379,8 +369,6 @@ namespace SearchQueryTool
                 UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Hidden;
                 LoginButtonContainer.Visibility = Visibility.Visible;
                 LoggedinLabel.Visibility = Visibility.Hidden;
-                GraphQueryContainer.Visibility = Visibility.Visible;
-                GraphRankingContainer.Visibility = Visibility.Visible;
             }
             else if (dc == "FormsAuth")
             {
@@ -389,8 +377,6 @@ namespace SearchQueryTool
 
                 UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Visible;
                 LoginButtonContainer.Visibility = Visibility.Hidden;
-                GraphQueryContainer.Visibility = Visibility.Collapsed;
-                GraphRankingContainer.Visibility = Visibility.Collapsed;
             }
             else if (dc == "ForefrontAuth")
             {
@@ -400,8 +386,6 @@ namespace SearchQueryTool
                 UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Hidden;
                 LoginButtonContainer.Visibility = Visibility.Visible;
                 LoggedinLabel.Visibility = Visibility.Hidden;
-                GraphQueryContainer.Visibility = Visibility.Collapsed;
-                GraphRankingContainer.Visibility = Visibility.Collapsed;
             }
             else if (dc == "Anonymous")
             {
@@ -410,8 +394,6 @@ namespace SearchQueryTool
 
                 UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Hidden;
                 LoginButtonContainer.Visibility = Visibility.Hidden;
-                GraphQueryContainer.Visibility = Visibility.Collapsed;
-                GraphRankingContainer.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -540,25 +522,6 @@ namespace SearchQueryTool
                     case "selectproperties":
                         _searchQueryRequest.SelectProperties = tb.Text.Trim();
                         break;
-                    case "graphquery":
-                        _searchQueryRequest.GraphQuery = tb.Text.Trim();
-                        break;
-                    case "graphranking":
-                        {
-                            _searchQueryRequest.GraphRankingModel = tb.Text.Trim();
-                            if (!string.IsNullOrWhiteSpace(_searchQueryRequest.GraphRankingModel))
-                            {
-                                _searchQueryRequest.RankingModelId = "0c77ded8-c3ef-466d-929d-905670ea1d72";
-                                RankingModelIdTextBox.Text = "0c77ded8-c3ef-466d-929d-905670ea1d72";
-                            }
-                            else if (RankingModelIdTextBox.Text == "0c77ded8-c3ef-466d-929d-905670ea1d72")
-                            {
-                                RankingModelIdTextBox.Text = "";
-                                _searchQueryRequest.RankingModelId = string.Empty;
-                            }
-
-                            break;
-                        }
                     case "refiners":
                         _searchQueryRequest.Refiners = tb.Text.Trim();
                         break;
@@ -869,14 +832,6 @@ namespace SearchQueryTool
                                 case "selectproperties":
                                     SelectPropertiesTextBox.Text = exampleString;
                                     SelectPropertiesTextBox.Focus();
-                                    break;
-                                case "graphquery":
-                                    GraphQueryTextBox.Text = exampleString;
-                                    GraphQueryTextBox.Focus();
-                                    break;
-                                case "graphranking":
-                                    GraphRankingTextBox.Text = exampleString;
-                                    GraphRankingTextBox.Focus();
                                     break;
                                 case "refiners":
                                     RefinersTextBox.Text = exampleString;
@@ -1852,7 +1807,6 @@ namespace SearchQueryTool
                             sqr.Refiners = "";
                             sqr.SelectProperties = String.Join(",", refiners.Select(x => x.Name).ToArray());
                             sqr.SelectProperties = sqr.SelectProperties.Replace(",ClassificationLastScan", ""); // this mp messes up the call
-                            sqr.GraphQuery = "";
                             sqr.HttpMethodType = HttpMethodType.Post;
 
                             Task.Factory.StartNew(() => HttpRequestRunner.RunWebRequest(sqr), ct,
@@ -2962,16 +2916,6 @@ namespace SearchQueryTool
                 }
 
                 ExperimentalFeaturesCheckBox.IsChecked = connection.EnableExperimentalFeatures;
-
-                GraphQueryContainer.Visibility = AuthenticationMethodComboBox.SelectedValue.ToString() ==
-                                                 "SharePoint Online"
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
-
-                GraphRankingContainer.Visibility = AuthenticationMethodComboBox.SelectedValue.ToString() ==
-                                                   "SharePoint Online"
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
             }
             catch (Exception ex)
             {

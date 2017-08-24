@@ -28,8 +28,6 @@ namespace SearchQueryTool.Model
         public int? RowLimit { get; set; }
         public int? RowsPerPage { get; set; }
         public string SelectProperties { get; set; }
-        public string GraphQuery { get; set; }
-        public string GraphRankingModel { get; set; }
         public string Refiners { get; set; }
         public string RefinementFilters { get; set; }
         public string HitHighlightedProperties { get; set; }
@@ -132,10 +130,6 @@ namespace SearchQueryTool.Model
 
             List<string> customPropertyParts = new List<string>();
 
-            if (!String.IsNullOrEmpty(this.GraphQuery))
-            {
-                customPropertyParts.Add(EncodedGraphQuery());
-            }
             if (!String.IsNullOrEmpty(this.Refiners))
                 uriBuilder.AppendFormat("&refiners='{0}'", UrlEncode(this.Refiners.Replace(" ","")));
 
@@ -199,32 +193,6 @@ namespace SearchQueryTool.Model
                 uriBuilder.AppendFormat("&properties='{0}'", string.Join(",", customPropertyParts));
             }
             return new Uri(uriBuilder.ToString());
-        }
-
-        private string EncodedGraphQuery()
-        {
-            var escapeQuery = this.GraphQuery;
-            MatchCollection matches = ReEscape.Matches(this.GraphQuery);
-            for (int i = matches.Count - 1; i >= 0; i--)
-            {
-                Capture c = matches[i].Groups["char"].Captures[0];
-                escapeQuery = escapeQuery.Insert(c.Index, "\\");
-            }
-
-            var props = "GraphQuery:" + escapeQuery;
-
-            if (!string.IsNullOrWhiteSpace(this.GraphRankingModel))
-            {
-                var escapeRankingModel = this.GraphRankingModel;
-                matches = ReEscape.Matches(this.GraphRankingModel);
-                for (int i = matches.Count - 1; i >= 0; i--)
-                {
-                    Capture c = matches[i].Groups["char"].Captures[0];
-                    escapeRankingModel = escapeRankingModel.Insert(c.Index, "\\");
-                }
-                props += ",GraphRankingModel:" + escapeRankingModel;
-            }
-            return props;
         }
 
         private void SetRankDetailProperties()
@@ -436,17 +404,7 @@ namespace SearchQueryTool.Model
             {
                 searchRequestBuilder.Append(
                     ", 'QueryTemplatePropertiesUrl':'spfile://webroot/queryparametertemplate.xml'");
-            }
-
-            if (!string.IsNullOrWhiteSpace(this.GraphQuery))
-            {
-                customPropertyParts.Add(GetPropertiesJSON("GraphQuery:" + this.GraphQuery));
-
-                if (!string.IsNullOrWhiteSpace(this.GraphRankingModel))
-                {
-                    customPropertyParts.Add(GetPropertiesJSON("GraphRankingModel:" + this.GraphRankingModel));
-                }                
-            }
+            }            
 
             if (customPropertyParts.Count > 0)
             {
