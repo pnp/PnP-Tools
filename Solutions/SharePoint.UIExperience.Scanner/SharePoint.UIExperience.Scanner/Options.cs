@@ -29,7 +29,7 @@ namespace SharePoint.UIExperience.Scanner
         [Option('t', "tenant", HelpText = "Tenant name, e.g. contoso when your sites are under https://contoso.sharepoint.com/sites. This is the recommended model for SharePoint Online MT as this way all site collections will be scanned")]
         public string Tenant { get; set; }
 
-        [Option('f', "file", HelpText = "CSV File Name which contains the list of site collection Urls that you want to scan")]
+        [Option('f', "file", HelpText = "CSV file name (e.g. input.csv) which contains the list of site collection urls that you want to scan")]
         public string File { get; set; }
 
         [OptionList('r', "urls", HelpText = "List of (wildcard) urls (e.g. https://contoso.sharepoint.com/*,https://contoso-my.sharepoint.com,https://contoso-my.sharepoint.com/personal/*) that you want to get scanned. When you specify the --tenant optoin then this parameter is ignored", Separator = ',')]

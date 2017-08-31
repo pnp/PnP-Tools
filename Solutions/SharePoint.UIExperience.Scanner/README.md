@@ -20,6 +20,7 @@ SharePoint.UIExperience.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.3 | August 31st 2017 | Added support to use a CSV file as input for the list of sites to scan
 1.2 | August 14th 2017 | Support for Announcement and Links lists is available, so don't mark it as a blocker (see https://techcommunity.microsoft.com/t5/SharePoint-Blog/Improving-SharePoint-Links-and-Announcements-lists/ba-p/92379)
 1.1 | June 1st 2017 | Managed metadata navigation support will be available (see https://techcommunity.microsoft.com/t5/SharePoint-Blog/SharePoint-filters-pane-updates-filtering-and-metadata/ba-p/74162), so don't mark it as a blocker
 1.0 | May 2nd 2017 | First main version
@@ -41,7 +42,7 @@ Using the reports you can streamline the "modern" experience in your tenant: you
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [UIExperience scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.UIExperience.Scanner/Releases/UI%20Experience%20scanner%20for%20SharePoint%20Online%20v1.2.zip?raw=true)
+ - [UIExperience scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.UIExperience.Scanner/Releases/UI%20Experience%20scanner%20for%20SharePoint%20Online%20v1.3.zip?raw=true)
 
 Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder containing the tool **UIExperienceScanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -392,12 +393,25 @@ To specify the url's you can use the -r parameter as shown below:
 uiexperiencescanner -r https://contoso.sharepoint.com/*,https://contoso.sharepoint.com/sites/mysite,https://contoso-my.sharepoint.com/personal/* 
 -c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 ```
+An alternative model is specifying the url's inside a CSV file and then using the -f parameter as shown below:
+
+```console
+uiexperiencescanner -f "c:\temp\files.csv" 
+-c 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
+```
+A sample file would look like this:
+
+```console
+https://contoso.sharepoint.com
+https://contoso.sharepoint.com/sites/test1
+https://contoso.sharepoint.com/sites/test2
+```
 
 
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
-SharePoint UI Experience Scanner tool 1.2.0.0
+SharePoint UI Experience Scanner tool 1.3.0.0
 Copyright (C) 2017 SharePoint PnP
 ==========================================================
 
@@ -442,6 +456,9 @@ https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd
   -t, --tenant                                Tenant name, e.g. contoso when your sites are under
                                               https://contoso.sharepoint.com/sites. This is the recommended model for
                                               SharePoint Online MT as this way all site collections will be scanned
+
+  -f, --file                                  CSV file name (e.g. input.csv) which contains the list of site collection
+                                              urls that you want to scan
 
   -r, --urls                                  List of (wildcard) urls (e.g.
                                               https://contoso.sharepoint.com/*,https://contoso-my.sharepoint.com,https:/

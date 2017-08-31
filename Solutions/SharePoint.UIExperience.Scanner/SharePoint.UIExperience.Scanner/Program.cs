@@ -75,7 +75,7 @@ namespace SharePoint.UIExperience.Scanner
             {
                 if(!System.IO.File.Exists(options.File))
                 {
-                    Console.WriteLine("Failed to find csv file with Urls. Please check file path provided.");
+                    Console.WriteLine("Failed to find csv file with urls. Please check file path provided.");
                     Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
                 }
             }
