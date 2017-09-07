@@ -192,6 +192,10 @@ PnPResponsiveApp.Main = (function () {
 
             /* Set up sidenav toggling */
             var topNav = document.getElementById('DeltaTopNavigation');
+
+            /* No Top Nav */
+            if (topNav == undefined) { return; }
+
             var topNavClone = topNav.cloneNode(true);
             topNavClone.className = topNavClone.className + ' mobile-only';
             topNavClone = cloneSPIdNodes(topNavClone);
