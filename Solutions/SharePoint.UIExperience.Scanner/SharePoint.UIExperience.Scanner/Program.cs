@@ -2,6 +2,8 @@
 using CommandLine;
 using System.Reflection;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SharePoint.UIExperience.Scanner
 {
@@ -69,6 +71,14 @@ namespace SharePoint.UIExperience.Scanner
                     Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
                 }
             }
+            if(!String.IsNullOrEmpty(options.File))
+            {
+                if(!System.IO.File.Exists(options.File))
+                {
+                    Console.WriteLine("Failed to find csv file with urls. Please check file path provided.");
+                    Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
+                }
+            }
 
             // Better support for running/testing the tool when SharePoint site certificate is not trusted on the box running the scan
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) =>
@@ -109,12 +119,20 @@ namespace SharePoint.UIExperience.Scanner
                 uiExpScanner.AddSite(string.Format("https://{0}.sharepoint.com/*", options.Tenant));
                 uiExpScanner.AddSite(string.Format("https://{0}-my.sharepoint.com/*", options.Tenant));
             }
-            else
+            else if(options.Urls != null && options.Urls.Count > 0)
             {
                 foreach (var url in options.Urls)
                 {
                     uiExpScanner.AddSite(url);
                 }
+            }
+            else
+            {
+                foreach(var row in LoadSitesFromCsv(options.File,options.Separator.ToCharArray().First()))
+                {
+                    uiExpScanner.AddSite(row[0]); //first column in the row contains url
+                }
+
             }
 
             DateTime start = DateTime.Now;
@@ -290,6 +308,20 @@ namespace SharePoint.UIExperience.Scanner
             {
                 return $"\"{value.Trim().Replace("\r\n", string.Empty).Replace("\"", "\"\"")}\"";
             }
+        }
+
+        /// <summary>
+        ///Load csv file and return data
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="separator"></param>
+        /// <returns></returns>
+        private static IEnumerable<string[]> LoadSitesFromCsv(string path, params char[] separator)
+        {
+            return from line in System.IO.File.ReadLines(path)
+                   let parts = (from p in line.Split(separator, StringSplitOptions.RemoveEmptyEntries)
+                                select p)
+                   select parts.ToArray();
         }
 
     }

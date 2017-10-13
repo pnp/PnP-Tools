@@ -141,7 +141,7 @@
         left: 0;
         height: 30px;
         width: 100%;
-        z-index: 1;
+        z-index: 101;
     }
 
         #suiteBar-rwd.mobile-only.ms-hide {
@@ -341,6 +341,21 @@
             #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.expand > button span::after {
                 transition-delay: 0s, 0.3s;
             }
+
+    /*
+     * PnP Fix : Note Board horizontal scroll
+     */
+    .ms-socialCommentItem .socialcomment-contents {
+        max-width: 100%;
+        width: auto;
+    }
+
+    #siteIcon #DeltaSiteLogo img {
+        height: auto !important;
+        max-height: 75px !important;
+        display: inline-block;
+        vertical-align: middle;
+    }
 }
 
 
@@ -535,6 +550,22 @@
         div#searchInputBox div.ms-srch-sb > a {
             float: right;
         }
+
+    /*
+     * Fix Search Tool bar width in WebPart Page
+     */
+    .ms-srch-sb-border,
+    .ms-srch-sb.ms-srch-sb-borderFocused {
+        width: 100%;
+        float: none;
+        margin: 10px 0;
+    }
+
+        .ms-srch-sb-border > a,
+        .ms-srch-sb.ms-srch-sb-borderFocused > a {
+            float: right;
+        }
+
     /* Title breadcrumb */
     #pageTitle #DeltaPlaceHolderPageTitleInTitleArea > span > span:not(:last-child-of-type) {
         font-size: .4em;
