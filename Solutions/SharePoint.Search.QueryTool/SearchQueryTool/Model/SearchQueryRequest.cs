@@ -205,20 +205,28 @@ namespace SearchQueryTool.Model
                 }
                 else
                 {
-                    var props = this.SelectProperties.ToLower().Split(',').ToList();
-                    if (!props.Exists(p => p.Equals("RankDetail", StringComparison.InvariantCultureIgnoreCase))) props.Add("RankDetail");
-                    if (!props.Exists(p => p.Equals("Title", StringComparison.InvariantCultureIgnoreCase))) props.Add("Title");
-                    if (!props.Exists(p => p.Equals("Path", StringComparison.InvariantCultureIgnoreCase))) props.Add("Path");
-                    if (!props.Exists(p => p.Equals("Language", StringComparison.InvariantCultureIgnoreCase))) props.Add("Language");
+                    var props = this.SelectProperties.Split(',').ToList();
+                    if (!props.Exists(p => p.Equals("RankDetail", StringComparison.InvariantCultureIgnoreCase)))
+                        props.Add("RankDetail");
+                    if (!props.Exists(p => p.Equals("Title", StringComparison.InvariantCultureIgnoreCase)))
+                        props.Add("Title");
+                    if (!props.Exists(p => p.Equals("Path", StringComparison.InvariantCultureIgnoreCase)))
+                        props.Add("Path");
+                    if (!props.Exists(p => p.Equals("Language", StringComparison.InvariantCultureIgnoreCase)))
+                        props.Add("Language");
                     this.SelectProperties = string.Join(",", props);
-
                 }
             }
-            //Todo why is this set to null?
-            //else
-            //{
-            //    this.SelectProperties = null;
-            //}
+            if (this.IncludeRankDetail.HasValue && !this.IncludeRankDetail.Value && !string.IsNullOrWhiteSpace(this.SelectProperties))
+            {
+                var props = this.SelectProperties.Split(',').ToList();
+                if (props.Exists(p => p.Equals("RankDetail", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    props.Remove("RankDetail");
+                    props.Remove("rankdetail");
+                    this.SelectProperties = string.Join(",", props);
+                }
+            }
         }
 
         public override Uri GenerateHttpPostUri()
