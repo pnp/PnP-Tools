@@ -161,7 +161,7 @@ Column | Description
 **Web Title** | Title of the Access App.
 **Web Template** | Web template of the Access App site.
 **App Created On** | Date when the Access App was created.
-**Access 2013 App Last Accessed On** | Date when the Access App was accessed the last time.
+**Access 2013 App Last Accessed On** | Date when the Access App was accessed the last time. If the value shown is ‘1/1/1753 12:00:00 AM’ then the Access App was never visited by a user, but could have been consumed by an external connection
 **Access 2010 App Last Modified By User On** | Date when the last user driven change was done. **Note:** this is an alternative solution for now, once the needed product changes are done the scanner will also list the last accessed date for Access 2010 Apps.
 **App Instance Status** | Status of the Access App (only relevant to Access 2013 Apps).
 **App Instance Id** | Id (guid) of the Access App (only relevant to Access 2013 Apps).
