@@ -1,7 +1,7 @@
 # SharePoint permissive file scanner #
 
 ### Summary ###
-Most of the SharePoint Online tenants handles the file open experience using the strict model. As a result, all files which can potentially cause harm (e.g. a html file having embedded script) are not executed in the browser but downloaded or shown as raw content (html preview in the modern user experience). If your tenant is configured using the permissive model then the file open experience will execute the file, for example a html file in a document library does get executed and page is shown in the browser.
+Most of the SharePoint Online tenants handles the file open experience using the strict model. As a result, all files which can potentially cause harm (e.g. a html file having embedded script) are not executed in the browser but downloaded or shown as raw content (html preview in the modern user experience). If your tenant is configured using the permissive model then the file open experience will execute the file, for example a html file in a document library does get executed and page is shown in the browser. Checkout the [Migrating from permissive to strict tenant setting](https://docs.microsoft.com/en-us/sharepoint/dev/solution-guidance/security-permissivesetting) article on docs.microsoft.com to learn more.
 
 Using this command line utility you can scan your tenant for files that would be impacted if your tenant switches from the permissive model to the strict model.
 
@@ -42,7 +42,10 @@ If this results in False then your tenant is using strict, if this is set to Tru
 You can download the tool from here:
  - [Permissive file scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.PermissiveFile.Scanner/Releases/SharePoint.PermissiveFile.Scanner%20v1.0.zip?raw=true)
 
-Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder containing the tool **SharePoint.PermissiveFile.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
+Once you've downloaded the tool you have a folder containing the tool **SharePoint.PermissiveFile.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
+
+> Note:
+> If you want to compile the tool yourself you'll also need to have the SharePoint.Scanning solution available as this tools depends on the SharePoint Scanner framework to compile.
 
 ## Using the scanner for SharePoint Online ##
 Since this tool needs to be able to scan all site collections it's recommended to use an app-only principal with tenant scoped permissions for the scan. This approach will ensure the tool has access, if you use an account (e.g. your SharePoint tenant admin account) then the tool can only access the sites where this user also has access. You can either use a an Azure AD application or a SharePoint app principal:
@@ -154,6 +157,21 @@ SharePoint.PermssiveFile.Scanner -a https://contoso-admin.contoso.com -i 7a5c161
                                  -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 ```
 
+## I want to use an Azure AD app to authenticate, how do I that?
+This scanner, like all scanners built using the SharePoint Scanner framework, do support Azure AD App-Only:
+
+```console
+SharePoint.PermssiveFile.Scanner -t <tenant> -i <Azure App ID> -z <Azure AD Domain> 
+                                 -f "<Path to PFX file holding your certificate" -x <Password for the PFX file>
+```
+
+A real life sample:
+
+```console
+SharePoint.PermssiveFile.Scanner -t contoso -i e4108e9b-9865-44a9-c6e1-9003db04a775 -z contoso.onmicrosoft.com  
+                                 -f "C:\scanning\AzureADAppOnlyScanning.pfx" -x pwd
+```
+
 ## I don't want to use app-only, can I use credentials? ##
 The best option is to use app-only since that will ensure that the tool can read all site collections but you can also run the tool using credentials.
 
@@ -166,32 +184,6 @@ A real life sample:
 ```console
 SharePoint.PermssiveFile.Scanner -t contoso -c admin@contoso.onmicrosoft.com -p mypassword
 ```
-
-## I only want to scan a few sites, can I do that? ##
-Using the urls command line switch you can control which sites are scanned. You can specify one or more url's which can have a wild card. Samples of valid url's are:
- - https://contoso.sharepoint.com/*
- - https://contoso.sharepoint.com/sites/mysite
- - https://contoso-my.sharepoint.com/personal/*
-
-To specify the url's you can use the -r parameter as shown below:
-
-```console
-SharePoint.PermssiveFile.Scanner -r https://contoso.sharepoint.com/*,https://contoso.sharepoint.com/sites/mysite,https://contoso-my.sharepoint.com/personal/* 
--i 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
-```
-An alternative model is specifying the url's inside a CSV file and then using the -f parameter as shown below:
-
-```console
-SharePoint.PermssiveFile.Scanner -f "c:\temp\files.csv" -i 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
-```
-A sample file would look like this:
-
-```console
-https://contoso.sharepoint.com
-https://contoso.sharepoint.com/sites/test1
-https://contoso.sharepoint.com/sites/test2
-```
-
 
 # Complete list of command line switches for the SharePoint Online version #
 
