@@ -59,6 +59,11 @@ namespace SharePoint.Scanning.ReferenceScanner
                 }
                 else
                 {
+                    if (string.IsNullOrEmpty(this.Tenant))
+                    {
+                        this.Tenant = new Uri(addedSites[0]).DnsSafeHost.Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries)[0];
+                    }
+
                     tenantAdmin = $"https://{this.Tenant}-admin.sharepoint.com";
                 }
 
@@ -132,6 +137,7 @@ namespace SharePoint.Scanning.ReferenceScanner
                 #endregion
 
                 #region Search based sample
+                /**
                 // Set the first site collection done flag + perform telemetry
                 SetFirstSiteCollectionDone(e.WebClientContext);
 
@@ -170,10 +176,10 @@ namespace SharePoint.Scanning.ReferenceScanner
                         this.ScanErrors.Push(error);
                     }
                 }
+                **/
                 #endregion
 
-                #region Sub site iteration sample
-                /***
+                #region Sub site iteration sample                
                 // Set the first site collection done flag + perform telemetry
                 SetFirstSiteCollectionDone(e.WebClientContext);
 
@@ -239,8 +245,7 @@ namespace SharePoint.Scanning.ReferenceScanner
                             this.ScanErrors.Push(error);
                         }
                     }
-                }
-                **/
+                }                
                 #endregion
             }
             catch (Exception ex)
