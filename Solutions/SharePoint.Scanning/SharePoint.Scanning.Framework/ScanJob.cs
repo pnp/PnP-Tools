@@ -215,14 +215,27 @@ namespace SharePoint.Scanning.Framework
         /// <param name="ccWeb">ClientContext of the rootweb of the first site collection</param>
         public void SetFirstSiteCollectionDone(ClientContext ccWeb)
         {
+            SetFirstSiteCollectionDone(ccWeb, "ScanningFramework");
+        }
+
+        /// <summary>
+        /// Triggers the steps needed once we're processing the first site collection
+        /// </summary>
+        /// <param name="ccWeb">ClientContext of the rootweb of the first site collection</param>
+        /// <param name="scannerName">Name of the scanner to log in telemetry. Leave empty to not log at all</param>
+        public void SetFirstSiteCollectionDone(ClientContext ccWeb, string scannerName)
+        {
             if (!firstSiteCollectionDone)
             {
                 firstSiteCollectionDone = true;
 
                 // Telemetry
-                ccWeb.ClientTag = $"SPDev:{this.Name}";
-                ccWeb.Load(ccWeb.Web, p => p.Description, p => p.Id);
-                ccWeb.ExecuteQuery();
+                if (!string.IsNullOrEmpty(scannerName))
+                {
+                    ccWeb.ClientTag = $"SPDev:{scannerName}";
+                    ccWeb.Load(ccWeb.Web, p => p.Description, p => p.Id);
+                    ccWeb.ExecuteQuery();
+                }
             }
         }
 
