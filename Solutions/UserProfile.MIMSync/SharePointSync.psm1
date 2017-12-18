@@ -211,21 +211,29 @@ function Start-SharePointSync
     (
         # Turn on Delta operations for the management agents
         [Switch]
-        $Delta
+        $Delta,
+        # Specify the name of an AD Management Agent
+        [String]
+        $ADMAName
     )
+
+    # If no AD Management Agent is specified, use the standard one (ADMA)
+    if (!($ADMAName)) {
+        $ADMAName = "ADMA"
+    }
 
 ### Run the connectors
 if ($Delta)
 {
-    Start-ManagementAgent -Name ADMA -RunProfile DELTAIMPORT
-    Start-ManagementAgent -Name ADMA -RunProfile DELTASYNC
+    Start-ManagementAgent -Name $ADMAName -RunProfile DELTAIMPORT
+    Start-ManagementAgent -Name $ADMAName -RunProfile DELTASYNC
     Start-ManagementAgent -Name SPMA -RunProfile DELTAIMPORT
     Start-ManagementAgent -Name SPMA -RunProfile DELTASYNC
 }
 else
 {
-    Start-ManagementAgent -Name ADMA -RunProfile FULLIMPORT
-    Start-ManagementAgent -Name ADMA -RunProfile FULLSYNC
+    Start-ManagementAgent -Name $ADMAName -RunProfile FULLIMPORT
+    Start-ManagementAgent -Name $ADMAName -RunProfile FULLSYNC
     Start-ManagementAgent -Name SPMA -RunProfile FULLIMPORT
     Start-ManagementAgent -Name SPMA -RunProfile FULLSYNC
 }
