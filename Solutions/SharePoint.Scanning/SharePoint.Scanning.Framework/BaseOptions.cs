@@ -238,7 +238,7 @@ namespace SharePoint.Scanning.Framework
         {
             if (url.StartsWith("file://"))
             {
-                return url.Replace("file:///", "").Replace("/", "\\");
+                return new Uri(url).LocalPath;
             }
             else
             {
