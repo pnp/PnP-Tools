@@ -16,6 +16,7 @@ SharePoint.PermissiveFile.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.1 | January 10th 2018 | Authenticode signed executable + using 2018 01 version of the scanning framework
 1.0 | December 10th 2017 | First main version
 
 ### Disclaimer ###
@@ -40,7 +41,7 @@ If this results in False then your tenant is using strict, if this is set to Tru
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [Permissive file scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.PermissiveFile.Scanner/Releases/SharePoint.PermissiveFile.Scanner%20v1.0.zip?raw=true)
+ - [Permissive file scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.PermissiveFile.Scanner/Releases/SharePoint.PermissiveFile.Scanner%20v1.1.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.PermissiveFile.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
