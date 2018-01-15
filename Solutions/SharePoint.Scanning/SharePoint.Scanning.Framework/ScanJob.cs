@@ -85,12 +85,16 @@ namespace SharePoint.Scanning.Framework
                     this.AddSite(url);
                 }
             }
-            else
+            else if (!String.IsNullOrEmpty(this.CsvFile))
             {
                 foreach (var row in LoadSitesFromCsv(this.CsvFile, this.Separator.ToCharArray().First()))
                 {
                     this.AddSite(row[0]); //first column in the row contains url
                 }
+            }
+            else
+            {
+                Console.WriteLine("No site selection specified, assume the job will use search to retrieve a list of sites");
             }
 
             this.StartTime = DateTime.Now;
@@ -321,8 +325,9 @@ namespace SharePoint.Scanning.Framework
 
                 int totalRows = 0;
 
+                Console.WriteLine($"Start search query {keywordQueryValue}");
                 totalRows = this.ProcessQuery(web, keywordQueryValue, propertiesToRetrieve, sites, keywordQuery);
-
+                Console.WriteLine($"Found {totalRows} rows...");
                 if (totalRows > 0)
                 {
                     while (totalRows > 0)
@@ -333,6 +338,7 @@ namespace SharePoint.Scanning.Framework
                         if (sites.Last().TryGetValue("IndexDocId", out lastIndexDocIdString))
                         {
                             lastIndexDocId = double.Parse(lastIndexDocIdString);
+                            Console.WriteLine($"Retrieving a batch of up to 500 search results");
                             totalRows = this.ProcessQuery(web, keywordQueryValue + " AND IndexDocId >" + lastIndexDocId, propertiesToRetrieve, sites, keywordQuery);// From the second Query get the next set (rowlimit) of search result based on IndexDocId
                         }
                     }
@@ -340,7 +346,7 @@ namespace SharePoint.Scanning.Framework
 
                 return sites;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // rethrow does lose one line of stack trace, but we want to log the error at the component boundary
                 throw;
@@ -351,7 +357,7 @@ namespace SharePoint.Scanning.Framework
         {
             int totalRows = 0;
             keywordQuery.QueryText = keywordQueryValue;
-            keywordQuery.RowLimit = 5;
+            keywordQuery.RowLimit = 500;
 
             // Make the query return the requested properties
             foreach (var property in propertiesToRetrieve)
