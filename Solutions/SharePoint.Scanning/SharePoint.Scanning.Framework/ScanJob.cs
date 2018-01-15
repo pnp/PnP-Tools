@@ -82,14 +82,14 @@ namespace SharePoint.Scanning.Framework
             {
                 foreach (var url in this.Urls)
                 {
-                    this.AddSite(url);
+                    this.AddSite(url.Trim());
                 }
             }
             else if (!String.IsNullOrEmpty(this.CsvFile))
             {
                 foreach (var row in LoadSitesFromCsv(this.CsvFile, this.Separator.ToCharArray().First()))
                 {
-                    this.AddSite(row[0]); //first column in the row contains url
+                    this.AddSite(row[0].Trim()); //first column in the row contains url
                 }
             }
             else
