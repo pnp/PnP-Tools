@@ -64,7 +64,7 @@ namespace SharePoint.PermissiveFile.Scanner
                 var scriptTags = doc.All.Where(p => p.LocalName == "script");
                 result.ScriptReferences = scriptTags.Count();
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 // Eat this exception as we don't want to stop to prevent logging this item if this part of the scan fails
             }
