@@ -149,17 +149,16 @@ Filter | Takeaway
 In SharePoint Online Dedicated one can have vanity url's like teams.contoso.com which implies that the tool cannot automatically determine the used url's and tenant admin center url. Using below command line switches you can specify the site url's to scan and the tenant admin center url. Note that the urls need to be separated by a comma.
 
 ```console
-SharePoint.PermssiveFile.Scanner -a <tenantadminsite> -t dummy -i <clientid> -s <clientsecret>
+SharePoint.PermssiveFile.Scanner -a <tenantadminsite> -i <clientid> -s <clientsecret>
 ```
 
 A real life sample:
 
 ```console
-SharePoint.PermssiveFile.Scanner -a https://contoso-admin.contoso.com -t dummy
+SharePoint.PermssiveFile.Scanner -a https://contoso-admin.contoso.com 
                                  -i 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 ```
 
-**Note:** the -t dummy is a temp workaround needed for DvNext customers
 
 ## I want to use an Azure AD app to authenticate, how do I that?
 This scanner, like all scanners built using the SharePoint Scanner framework, do support Azure AD App-Only:
