@@ -1318,7 +1318,7 @@ namespace SearchQueryTool
             };
 
             tb.AppendText(
-                $"HTTP/{searchResult.HttpProtocolVersion} {(int) searchResult.StatusCode} {searchResult.StatusDescription}\n");
+                $"HTTP/{searchResult.HttpProtocolVersion} {(int)searchResult.StatusCode} {searchResult.StatusDescription}\n");
             if (searchResult.StatusCode != HttpStatusCode.OK)
             {
                 tb.AppendText(searchResult.ResponseContent);
@@ -1574,7 +1574,7 @@ namespace SearchQueryTool
                                 Background = Brushes.Transparent,
                                 DataContext = item
                             };
-                            tb.PreviewMouseLeftButtonUp += tb_MouseLeftButtonUp;
+                            tb.PreviewMouseLeftButtonUp += rankDetail_MouseLeftButtonUp;
                             propdp.Children.Add(tb);
                         }
                         else
@@ -1780,6 +1780,7 @@ namespace SearchQueryTool
 
             sqr.SharePointSiteUrl = _searchQueryRequest.SharePointSiteUrl;
             sqr.Cookies = _searchQueryRequest.Cookies;
+            sqr.Token = _searchQueryRequest.Token;
             sqr.UserName = _searchQueryRequest.UserName;
             sqr.Password = _searchQueryRequest.Password;
             sqr.SecurePassword = _searchQueryRequest.SecurePassword;
@@ -1852,7 +1853,7 @@ namespace SearchQueryTool
             MarkRequestOperation(false, "Done");
         }
 
-        private void tb_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void rankDetail_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             TextBox tb = (TextBox)sender;
 
@@ -1883,7 +1884,8 @@ namespace SearchQueryTool
                     Cookies = _searchQueryRequest.Cookies,
                     UserName = _searchQueryRequest.UserName,
                     Password = _searchQueryRequest.Password,
-                    SecurePassword = _searchQueryRequest.SecurePassword
+                    SecurePassword = _searchQueryRequest.SecurePassword,
+                    Token = _searchQueryRequest.Token
                 };
                 if (!string.IsNullOrWhiteSpace(_searchQueryRequest.RefinementFilters))
                 {
