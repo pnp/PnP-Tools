@@ -1,0 +1,583 @@
+﻿<PageTransformation xmlns="http://schemas.dev.office.com/PnP/2018/01/PageTransformationSchema">
+    <!-- Information that applies to all web parts listed in this file -->
+    <BaseWebPart>
+      <Properties>
+        <Property Name="Title" Type="string" Transform=""/>
+        <Property Name="Description" Type="string" Transform=""/>
+        <Property Name="Width" Type="string" Transform=""/>
+        <Property Name="Height" Type="string" />
+      </Properties>
+    </BaseWebPart>
+    <WebParts>
+      <!-- Fake wiki text web part, not needed for scanning but needed for transformation -->
+      <WebPart Type="SharePointPnP.Modernization.WikiTextPart">
+        <Properties>
+          <Property Name="Text" Type="string" Transform="" />
+        </Properties>
+        <Mappings>
+          <Mapping Name="default" Default="true">
+            <ClientSideText Text="{Text}" Order="10" Mapping="" />
+          </Mapping>
+        </Mappings>
+      </WebPart>
+      <!-- XsltListView web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.XsltListViewWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="ViewContentTypeId" Type="string" />
+          <Property Name="XmlDefinitionLink" Type="string" />
+          <Property Name="ListUrl" Type="string" />
+          <Property Name="ListId" Type="guid" Transform=""/>
+          <Property Name="Direction" Type="string"/>
+          <Property Name="ViewFlags" Type="string" Transform=""/>
+          <Property Name="ViewFlag" Type="string"/>
+          <Property Name="AllowEdit" Type="bool" />
+          <Property Name="FireInitialRow" Type="bool"/>
+          <Property Name="Xsl" Type="string" />
+          <Property Name="JSLink" Type="string" />
+          <Property Name="PageSize" Type="integer" />
+          <Property Name="ShowTimelineIfAvailable" Type="bool"/>
+          <Property Name="DataFields" Type="string" />
+          <Property Name="PageType" Type="string" />
+          <Property Name="DataSourcesString" Type="string"/>
+          <Property Name="InplaceSearchEnabled" Type="bool" />
+          <Property Name="GhostedXslLink" Type="string" />
+          <Property Name="DisableViewSelectorMenu" Type="bool"/>
+          <Property Name="XmlDefinition" Type="string" />
+          <Property Name="DataSourceMode" Type="string" />
+          <Property Name="AutoRefreshInterval" Type="integer" />
+          <Property Name="AsyncRefresh" Type="bool" />
+          <Property Name="XslLink" Type="string" />
+          <Property Name="SelectParameters" Type="string"/>
+        </Properties>
+        <Mappings>
+          <Mapping Name="default" Default="true">
+            <ClientSideText Text="{Title}" Order="10" Mapping="" />
+            <ClientSideWebPart Type="List" JsonControlData="" Order="20" />
+          </Mapping>
+          <Mapping Name="Simple" Default="false">
+            <ClientSideWebPart Type="List" ControlId="{A71C1765-2243-46BB-B7AA-83C46AD74282}" JsonControlData="" Order="10" Mapping="" />
+          </Mapping>
+        </Mappings> 
+      </WebPart>
+      <!-- Site Feed Web part -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.SiteFeedWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+        </Properties>
+      </WebPart>
+      <!-- Content Editor web part-->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.ContentEditorWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="ContentLink" Type="string" />
+        </Properties>
+      </WebPart>
+      <!-- Script Editor web part-->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.ScriptEditorWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="Content" Type="string" />
+        </Properties>
+      </WebPart>
+      <!-- Image web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.ImageWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="ImageLink" Type="string" />
+          <Property Name="AlternativeText" Type="string"/>
+          <Property Name="VerticalAlignment" Type="string" />
+          <Property Name="HorizontalAlignment" Type="string" />
+          <Property Name="BackgroundColor" Type="string" />
+        </Properties>
+      </WebPart>
+      <!-- Content By Query web part -->
+      <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.ContentByQueryWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="FilterField1" Type="string" />
+          <Property Name="FilterOperator1" Type="string" />
+          <Property Name="FilterValue1" Type="string" />
+          <Property Name="FilterDisplayValue1" Type="string" />
+          <Property Name="Filter1ChainingOperator" Type="string" />
+          <Property Name="Filter1IsCustomValue" Type="bool" />
+          <Property Name="FilterIncludeChildren1" Type="bool" />
+          <Property Name="FilterType1" Type="string" />
+          <Property Name="FilterField2" Type="string" />
+          <Property Name="FilterOperator2" Type="string" />
+          <Property Name="FilterValue2" Type="string" />
+          <Property Name="FilterDisplayValue2" Type="string" />
+          <Property Name="Filter2ChainingOperator" Type="string" />
+          <Property Name="Filter2IsCustomValue" Type="bool" />
+          <Property Name="FilterIncludeChildren2" Type="bool" />
+          <Property Name="FilterType2" Type="string" />
+          <Property Name="FilterField3" Type="string" />
+          <Property Name="FilterOperator3" Type="string" />
+          <Property Name="FilterValue3" Type="string" />
+          <Property Name="FilterDisplayValue3" Type="string" />
+          <Property Name="Filter3ChainingOperator" Type="string" />
+          <Property Name="Filter3IsCustomValue" Type="bool" />
+          <Property Name="FilterType3" Type="string" />
+          <Property Name="FilterIncludeChildren3" Type="bool" />
+          <Property Name="SystemViewFields" Type="string"/>
+          <Property Name="PageSize" Type="string"/>
+          <Property Name="ViewContentTypeId" Type="string"/>
+          <Property Name="AdditionalFilterFields" Type="string"/>
+          <Property Name="DataMappingViewFields" Type="string"/>
+          <Property Name="XslLink" Type="string"/>
+          <Property Name="SortByFieldType" Type="string"/>
+          <Property Name="ItemStyle" Type="string"/>
+          <Property Name="ServerTemplate" Type="string"/>
+          <Property Name="XmlDefinitionLink" Type="string"/>
+          <Property Name="CommonViewFields" Type="string"/>
+          <Property Name="QueryOverride" Type="string"/>
+          <Property Name="ListGuid" Type="string" />
+          <Property Name="DataFields" Type="string" />
+          <Property Name="GroupByFieldType" Type="string" />
+          <Property Name="ViewFlags" Type="string" />
+          <Property Name="ContentTypeBeginsWithId" Type="string" />
+          <Property Name="SortBy" Type="string" />
+          <Property Name="ViewFlag" Type="string" />
+          <Property Name="Xsl" Type="string" />
+          <Property Name="AdditionalGroupAndSortFields" Type="string" />
+          <Property Name="DataMappings" Type="string" />
+          <Property Name="ShowUntargetedItems" Type="bool" />
+          <Property Name="GroupBy" Type="string" />
+          <Property Name="BaseType" Type="string" />
+          <Property Name="MainXslLink" Type="string" />
+          <Property Name="GroupStyle" Type="string" />
+          <Property Name="EnableOriginalValue" Type="bool" />
+          <Property Name="ItemLimit" Type="string" />
+          <Property Name="PageType" Type="string" />
+          <Property Name="FilterByAudience" Type="bool" />
+          <Property Name="ItemXslLink" Type="string" />
+          <Property Name="HeaderXslLink" Type="string" />
+          <Property Name="ListsOverride" Type="string" />
+          <Property Name="SortByDirection" Type="string" />
+          <Property Name="DisplayColumns" Type="integer" />
+          <Property Name="XmlDefinition" Type="string" />
+          <Property Name="ContentTypeName" Type="string" />
+          <Property Name="ViewFieldsOverride" Type="string" />
+        </Properties>
+      </WebPart>      
+      <!-- Search web parts -->
+      <WebPart Type="Microsoft.Office.Server.Search.WebControls.ContentBySearchWebPart, Microsoft.Office.Server.Search, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="BypassResultTypes" Type="bool"/>
+          <Property Name="ItemTemplateId" Type="string"/>
+          <Property Name="PropertyMappings" Type="string"/>
+          <Property Name="IncludeResultTypeConstraint" Type="bool"/>
+          <Property Name="StartingItemIndex" Type="integer"/>
+          <Property Name="ShowDefinitions" Type="bool"/>
+          <Property Name="HitHighlightedPropertiesJson" Type="string"/>
+          <Property Name="RepositionLanguageDropDown" Type="bool"/>
+          <Property Name="ItemBodyTemplateId" Type="string"/>
+          <Property Name="ShowAlertMe" Type="bool"/>
+          <Property Name="AddSEOPropertiesFromSearch" Type="bool"/>
+          <Property Name="ShowUpScopeMessage" Type="bool"/>
+          <Property Name="ShouldHideControlWhenEmpty" Type="bool"/>
+          <Property Name="ResultType" Type="string"/>
+          <Property Name="LogAnalyticsViewEvent" Type="bool"/>
+          <Property Name="MaxPagesAfterCurrent" Type="integer"/>
+          <Property Name="AdvancedSearchPageAddress" Type="string"/>
+          <Property Name="ShowBestBets" Type="bool"/>
+          <Property Name="NumberOfItems" Type="integer"/>
+          <Property Name="ShowPaging" Type="bool"/>
+          <Property Name="ShowViewDuplicates" Type="bool"/>
+          <Property Name="SelectedPropertiesJson" Type="string"/>
+          <Property Name="TargetResultTable" Type="string"/>
+          <Property Name="ShowXGeoOptions" Type="bool"/>
+          <Property Name="ShowPersonalFavorites" Type="string"/>
+          <Property Name="EnableXGeo3SForwarding" Type="string"/>
+          <Property Name="PreloadedItemTemplateIdsJson" Type="string"/>
+          <Property Name="ShowPreferencesLink" Type="bool"/>
+          <Property Name="ShowResultCount" Type="bool"/>
+          <Property Name="ResultsPerPage" Type="integer"/>
+          <Property Name="AvailableSortsJson" Type="string"/>
+          <Property Name="ShowResults" Type="bool"/>
+          <Property Name="ServerIncludeScriptsJson" Type="string"/>
+          <Property Name="SearchCenterXGeoLocations" Type="string"/>
+          <Property Name="DataProviderJSON" Type="string"/>
+          <Property Name="ShowAdvancedLink" Type="bool"/>
+          <Property Name="ShowDidYouMean" Type="bool"/>
+          <Property Name="GroupTemplateId" Type="string"/>
+          <Property Name="OverwriteResultPath" Type="bool"/>
+          <Property Name="MaxPagesBeforeCurrent" Type="integer"/>
+          <Property Name="XGeoTenantsInfo" Type="string"/>
+          <Property Name="ShowLanguageOptions" Type="bool"/>
+          <Property Name="ResultTypeId" Type="string"/>
+          <Property Name="RenderTemplateId" Type="string"/>
+          <Property Name="EmitStyleReference" Type="bool"/>
+          <Property Name="StatesJson" Type="string"/>
+          <Property Name="ShowSortOptions" Type="bool"/>
+        </Properties>
+      </WebPart>
+      <WebPart Type="Microsoft.Office.Server.Search.WebControls.ResultScriptWebPart, Microsoft.Office.Server.Search, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="StatesJson" Type="string"/>
+          <Property Name="ShowXGeoOptions" Type="string"/>
+          <Property Name="QueryGroupName" Type="string"/>
+          <Property Name="SelectedPropertiesJson" Type="string"/>
+          <Property Name="ShowAdvancedLink" Type="bool"/>
+          <Property Name="EmitStyleReference" Type="bool"/>
+          <Property Name="SearchCenterXGeoLocations" Type="string"/>
+          <Property Name="ShowPreferencesLink" Type="bool"/>
+          <Property Name="ServerIncludeScriptsJson" Type="string"/>
+          <Property Name="GroupTemplateId" Type="string"/>
+          <Property Name="ResultTypeId" Type="string"/>
+          <Property Name="ItemTemplateId" Type="string"/>
+          <Property Name="ResultsPerPage" Type="integer"/>
+          <Property Name="RenderTemplateId" Type="string"/>
+          <Property Name="AdvancedSearchPageAddress" Type="string"/>
+          <Property Name="HitHighlightedPropertiesJson" Type="string"/>
+          <Property Name="ShowPaging" Type="bool"/>
+          <Property Name="EmptyMessage" Type="string"/>
+          <Property Name="ShowBestBets" Type="bool"/>
+          <Property Name="BypassResultTypes" Type="bool"/>
+          <Property Name="ShowSortOptions" Type="bool"/>
+          <Property Name="ShowPersonalFavorites" Type="bool"/>
+          <Property Name="EnableXGeo3SForwarding" Type="bool"/>
+          <Property Name="AlternateErrorMessage" Type="string"/>
+          <Property Name="ItemBodyTemplateId" Type="string"/>
+          <Property Name="XGeoTenantsInfo" Type="string"/>
+          <Property Name="UseSimplifiedQueryBuilder" Type="bool"/>
+          <Property Name="ShowUpScopeMessage" Type="bool"/>
+          <Property Name="ShowDidYouMean" Type="bool"/>
+          <Property Name="RepositionLanguageDropDown" Type="bool"/>
+          <Property Name="ScrollToTopOnRedraw" Type="bool"/>
+          <Property Name="ShowResults" Type="bool"/>
+          <Property Name="ShowAlertMe" Type="bool"/>
+          <Property Name="PreloadedItemTemplateIdsJson" Type="string"/>
+          <Property Name="MaxPagesBeforeCurrent" Type="integer"/>
+          <Property Name="ShowDefinitions" Type="bool"/>
+          <Property Name="MaxPagesAfterCurrent" Type="integer"/>
+          <Property Name="ShowViewDuplicates" Type="bool"/>
+          <Property Name="ShowLanguageOptions" Type="bool"/>
+          <Property Name="AvailableSortsJson" Type="string"/>
+          <Property Name="DataProviderJSON" Type="string"/>
+          <Property Name="ShowResultCount" Type="bool"/>
+        </Properties>
+      </WebPart>    
+      <!-- Xml Web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.XmlWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+          <Property Name="XMLLink" Type="string"/>
+          <Property Name="XML" Type="string"/>
+          <Property Name="XSLLink" Type="string"/>
+          <Property Name="XSL" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- RSS aggregator -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.RSSAggregatorWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="ParameterBindings" Type="string"/>
+          <Property Name="XmlDefinitionLink" Type="string"/>
+          <Property Name="DataFields" Type="string"/>
+          <Property Name="FeedLimit" Type="integer"/>
+          <Property Name="NoDefaultStyle" Type="string"/>
+          <Property Name="XslLink" Type="string"/>
+          <Property Name="ViewFlag" Type="string"/>
+          <Property Name="Xsl" Type="string"/>
+          <Property Name="EnableOriginalValue" Type="bool"/>
+          <Property Name="ExpandFeed" Type="bool"/>
+          <Property Name="ListUrl" Type="string"/>
+          <Property Name="ViewFlags" Type="string"/>
+          <Property Name="ListId" Type="guid"/>
+          <Property Name="PageType" Type="string"/>
+          <Property Name="PageSize" Type="integer"/>
+          <Property Name="ViewContentTypeId" Type="string"/>
+          <Property Name="XmlDefinition" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Page viewer web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.PageViewerWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+          <Property Name="ContentLink" Type="string"/>
+          <Property Name="SourceType" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Media web part -->
+      <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.MediaWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="AutoPlay" Type="bool" />
+          <Property Name="MediaSource" Type="string" />
+          <Property Name="Loop" Type="bool" />
+          <Property Name="IsPreviewImageSourceOverridenForVideoSet" Type="bool" />
+          <Property Name="PreviewImageSource" Type="string" />
+          <Property Name="TemplateSource" Type="string" />
+          <Property Name="DisplayMode" Type="string" />
+          <Property Name="ShowEmbedControl" Type="bool" />
+          <Property Name="VideoSetEmbedCode" Type="string" />
+          <Property Name="VideoSetSource" Type="string" />
+          <Property Name="ConfigureFromContext" Type="bool" />
+        </Properties>
+      </WebPart>
+      <!-- Contact web part -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.ContactFieldControl, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+          <Property Name="CacheTimeout" Type="integer" />
+          <Property Name="ContactLoginName" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Excel web part -->
+      <WebPart Type="Microsoft.Office.Excel.WebUI.ExcelWebRenderer, Microsoft.Office.Excel.WebUI, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="AllowInExcelOperations" Type="bool"/>
+          <Property Name="ShowAgaveTaskPanes" Type="bool"/>
+          <Property Name="AllowInteractivity" Type="bool"/>
+          <Property Name="TypingAndFormulaEntry" Type="bool"/>
+          <Property Name="AutoGenerateTitle" Type="bool"/>
+          <Property Name="WorkbookUri" Type="string"/>
+          <Property Name="TitleUrl" Type="string"/>
+          <Property Name="AllowHyperlinks" Type="bool"/>
+          <Property Name="AutoGenerateDetailLink" Type="bool"/>
+          <Property Name="AllowSorting" Type="bool"/>
+          <Property Name="AllowPivotSpecificOperation" Type="bool"/>
+          <Property Name="AllowManualDataRefresh" Type="bool"/>
+          <Property Name="ToolbarStyle" Type="string"/>
+          <Property Name="ShowPivotFieldList" Type="bool"/>
+          <Property Name="AllowRecalculation" Type="bool"/>
+          <Property Name="AllowParameterModification" Type="bool"/>
+          <Property Name="ShowWorkbookParameters" Type="bool"/>
+          <Property Name="AllowPeriodicDataRefresh" Type="bool"/>
+          <Property Name="AllowFiltering" Type="bool"/>
+          <Property Name="VisibleItem" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Visio web part -->
+      <WebPart Type="Microsoft.Office.Visio.Server.WebControls.VisioWebAccess, Microsoft.Office.Visio.Server, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="ShapeDataNames" Type="string"/>
+          <Property Name="ShowBackground" Type="bool"/>
+          <Property Name="ShowShapeInfoButton" Type="bool"/>
+          <Property Name="ShowPageNavigation" Type="bool"/>
+          <Property Name="DisableSelection" Type="bool"/>
+          <Property Name="FitViewToShapes" Type="bool"/>
+          <Property Name="AlwaysRaster" Type="bool"/>
+          <Property Name="AutoRefreshInterval" Type="integer"/>
+          <Property Name="ShowRefresh" Type="bool"/>
+          <Property Name="DiagramPath" Type="string"/>
+          <Property Name="OverrideViewSettings" Type="bool"/>
+          <Property Name="ShowZoomControl" Type="bool"/>
+          <Property Name="ViewSettings" Type="string"/>
+          <Property Name="DisableZoom" Type="bool"/>
+          <Property Name="DefaultPageShown" Type="integer"/>
+          <Property Name="ShowOpenInVisio" Type="bool"/>
+          <Property Name="DisableHyperlink" Type="bool"/>
+        </Properties>
+      </WebPart>
+      <!-- Social comments web part -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.SocialCommentWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="WebPartPropertyDisplayItems" Type="integer"/>
+          <Property Name="WebPartPropertyAllowNewComment" Type="bool"/>
+          <Property Name="WebPartPropertySpecifiedAddress" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Org chart web part -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.ProfileBrowser, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+          <Property Name="OnlyShowHtmlView" Type="string"/>          
+        </Properties>
+      </WebPart>
+      <!-- User tasks web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.UserTasksWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+        </Properties>
+      </WebPart>
+      <!-- Picture library web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.PictureLibrarySlideshowWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="LibraryGuid" Type="guid"/>
+          <Property Name="Layout" Type="string"/>
+          <Property Name="Speed" Type="integer"/>
+          <Property Name="ShowToolbar" Type="bool"/>
+          <Property Name="ViewGuid" Type="guid"/>
+        </Properties>
+      </WebPart>
+      <!-- Silverlight viewer -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.SilverlightWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="MinRuntimeVersion" Type="string"/>
+          <Property Name="WindowlessMode" Type="bool"/>
+          <Property Name="CustomInitParameter" Type="string"/>
+          <Property Name="Url" Type="string"/>
+          <Property Name="ApplicationXml" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Html form web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.SimpleFormWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+          <Property Name="Content" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- InfoPath web part -->
+      <WebPart Type="Microsoft.Office.InfoPath.Server.Controls.WebUI.BrowserFormWebPart, Microsoft.Office.InfoPath.Server, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">        
+      </WebPart>
+      <!-- Timeline web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.SPTimelineWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="SourceSelection" Type="string"/>
+          <Property Name="TypeSelection" Type="string"/>
+          <Property Name="CurrentTaskListWebAddress" Type="string"/>
+          <Property Name="PageAddress" Type="string"/>
+          <Property Name="ListId" Type="string"/>
+          <Property Name="ViewName" Type="string"/>
+          <Property Name="TimelineType" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Taxonomy term web part -->
+      <WebPart Type="Microsoft.SharePoint.Taxonomy.TermProperty, Microsoft.SharePoint.Taxonomy, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="TermStoreID" Type="guid"/>
+          <Property Name="TermSetID" Type="guid"/>
+          <Property Name="TermID" Type="guid"/>
+        </Properties>
+      </WebPart>
+      <!-- User Documents web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.UserDocsWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+        </Properties>
+      </WebPart>      
+      <!-- Site documents web part -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.SiteDocuments, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+          <Property Name="_locDefinition" Type="string"/>
+          <Property Name="UserControlledNavigation" Type="bool"/>
+          <Property Name="ShowMemberships" Type="bool"/>
+          <Property Name="UserTabs" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Getting started web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.GettingStartedWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="BaseViewID" Type="string" Transform=""/>
+        </Properties>
+      </WebPart>
+      <!-- Tag cloud web part -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.TagCloudWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="MaxTerms" Type="integer"/>
+          <Property Name="ShowCount" Type="bool"/>
+          <Property Name="UserScope" Type="string"/>
+          <Property Name="DateRange" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Blog site web parts -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.BlogLinksWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="ListId" Type="guid"/>
+          <Property Name="HideAlertMeLink" Type="bool"/>
+        </Properties>
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.MembersWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+          <Property Name="DisplayType" Type="string"/>
+          <Property Name="MembershipGroupId" Type="integer"/>
+          <Property Name="Toolbar" Type="bool"/>
+        </Properties>        
+      </WebPart>
+      <!-- Project site web parts -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.ProjectSummaryWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="PrimaryTaskListUrl" Type="string" />
+          <Property Name="ListId" Type="guid"/>
+          <Property Name="ShowTimeline" Type="bool"/>
+          <Property Name="Panels" Type="string"/>
+        </Properties>
+      </WebPart>     
+      <!-- KPI web parts -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.IndicatorWebpart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IconPrefix" Type="string"/>
+          <Property Name="KpiItemID" Type="integer"/>
+          <Property Name="ListURL" Type="string"/>
+        </Properties>
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.KPIListWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="MultipleColumnsKpiId" Type="string"/>
+          <Property Name="ToolbarHidden" Type="bool"/>
+          <Property Name="MultipleColumnsMembers" Type="string"/>
+          <Property Name="MultipleColumnsHierarchyName" Type="string"/>
+          <Property Name="IconPrefix" Type="string"/>
+          <Property Name="DisplayMultipleColumns" Type="bool"/>
+          <Property Name="ShowOnlyProblems" Type="bool"/>
+          <Property Name="ListURL" Type="string"/>
+          <Property Name="ShowOnlyStatusIcon" Type="bool"/>
+          <Property Name="AlwaysShowFullToolbar" Type="bool"/>
+          <Property Name="MultipleColumnsColumnName" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Community site web parts -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.CommunityAdminWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.CommunityJoinWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.DashboardWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.AboutUsWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.MyMembershipWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      </WebPart>
+      <!-- Web parts that are compatible with modern client side pages -->
+      <!-- Modern ClientSide Web Part, no need to transform this -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.ClientSideWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="ClientSideWebPartId" Type="guid" />
+        </Properties>
+      </WebPart>
+      <!-- Add-In part (App Part), no need to transform this -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.ClientWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="FeatureId" Type="guid"/>
+          <Property Name="ProductWebId" Type="guid"/>
+          <Property Name="ProductId" Type="guid"/>
+        </Properties>
+      </WebPart>
+    </WebParts>
+</PageTransformation> 
