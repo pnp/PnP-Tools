@@ -16,6 +16,7 @@ SharePoint.PermissiveFile.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.3 | January 19th 2018 | Added usage information for the retrieved files
 1.2 | January 15th 2018 | Search performance improvement + increased logging
 1.1 | January 10th 2018 | Authenticode signed executable + using 2018 01 version of the scanning framework
 1.0 | December 10th 2017 | First main version
@@ -42,7 +43,7 @@ If this results in False then your tenant is using strict, if this is set to Tru
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [Permissive file scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.PermissiveFile.Scanner/Releases/SharePoint.PermissiveFile.Scanner%20v1.2.zip?raw=true)
+ - [Permissive file scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.PermissiveFile.Scanner/Releases/SharePoint.PermissiveFile.Scanner%20v1.3.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.PermissiveFile.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -132,6 +133,12 @@ Column | Description
 **Link count** | For html/html files only: shows the number of links in this file.
 **Embedded html link count** | For html/html files only: shows the number of local html/htm links in the file
 **Script tag count** | For html/html files only: shows the number of script tags in the file.
+**ModifiedBy** | Person that last modified this file
+**ModifiedAt** | Date and time of the last modification
+**ViewsRecent** | Views in the last 14 days
+**ViewsRecentUniqueUsers** | Unique viewers over the last 14 days
+**ViewsLifeTime** | Total views 
+**ViewsLifeTimeUniqueUsers** | Total unique viewers
 **Site admins and owners** | Email addresses of the site collection admins and site owners.
 
 ### Key takeaways from this report

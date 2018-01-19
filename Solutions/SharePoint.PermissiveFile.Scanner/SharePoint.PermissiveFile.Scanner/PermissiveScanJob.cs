@@ -112,7 +112,13 @@ namespace SharePoint.PermissiveFile.Scanner
                 {
                     "SPSiteUrl",
                     "FileExtension",
-                    "OriginalPath"
+                    "OriginalPath",
+                    "ViewsRecent",
+                    "ViewsRecentUniqueUsers",
+                    "ViewsLifeTime",
+                    "ViewsLifeTimeUniqueUsers",
+                    "LastModifiedTime",
+                    "ModifiedBy"
                 };
                 var searchResults = this.Search(e.SiteClientContext.Web, $"({this.GetBaseSearchQuery()} AND Path:{e.Url.TrimEnd('/')}/*)", propertiesToRetrieve);
                 foreach (var searchResult in searchResults)
@@ -122,7 +128,13 @@ namespace SharePoint.PermissiveFile.Scanner
                     {
                         SiteColUrl = e.Url,
                         FileName = searchResult["OriginalPath"],
-                        FileExtension = searchResult["FileExtension"]
+                        FileExtension = searchResult["FileExtension"],
+                        ViewsRecent = searchResult["ViewsRecent"].ToInt32(),
+                        ViewsRecentUniqueUsers = searchResult["ViewsRecentUniqueUsers"].ToInt32(),
+                        ViewsLifeTime = searchResult["ViewsLifeTime"].ToInt32(),
+                        ViewsLifeTimeUniqueUsers = searchResult["ViewsLifeTimeUniqueUsers"].ToInt32(),
+                        ModifiedAt = searchResult["LastModifiedTime"],
+                        ModifiedBy = searchResult["ModifiedBy"]
                     };
 
                     // Analyse the files
@@ -167,7 +179,6 @@ namespace SharePoint.PermissiveFile.Scanner
 
                         try
                         {
-                            // grab folks from the Access Web App site owners group
                             if (e.SiteClientContext.Web.AssociatedOwnerGroup != null && e.SiteClientContext.Web.AssociatedOwnerGroup.Users != null && e.SiteClientContext.Web.AssociatedOwnerGroup.Users.Count > 0)
                             {
                                 foreach (var owner in e.SiteClientContext.Web.AssociatedOwnerGroup.Users)
@@ -195,7 +206,7 @@ namespace SharePoint.PermissiveFile.Scanner
                         {
                             SiteURL = result.SiteURL,
                             SiteColUrl = e.Url,
-                            Error = "Could not add scan result for this web"
+                            Error = "Could not add scan result for this web"                           
                         };
                         this.ScanErrors.Push(error);
                     }
@@ -236,13 +247,18 @@ namespace SharePoint.PermissiveFile.Scanner
 
             // Handle the export of the job specific scanning data
             string outputfile = string.Format("{0}\\PermissiveScanResults.csv", this.OutputFolder);
-            string[] outputHeaders = new string[] { "Site Collection Url", "Site Url", "File extension", "File name", "Link count", "Embedded html link count", "Script tag count", "Site admins and owners" };
+            string[] outputHeaders = new string[] { "Site Collection Url", "Site Url", "File extension", "File name", "Link count", "Embedded html link count", "Script tag count",
+                                                    "ModifiedBy", "ModifiedAt",
+                                                    "ViewsRecent", "ViewsRecentUniqueUsers", "ViewsLifeTime", "ViewsLifeTimeUniqueUsers",
+                                                    "Site admins and owners" };
             Console.WriteLine("Outputting scan results to {0}", outputfile);
             System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
             foreach (var item in this.ScanResults)
             {
                 System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.FileExtension), ToCsv(item.Value.FileName), 
-                                                                                                              item.Value.EmbeddedLinkCount, item.Value.EmbeddedLocalHtmlLinkCount, item.Value.EmbeddedScriptTagCount, 
+                                                                                                              item.Value.EmbeddedLinkCount, item.Value.EmbeddedLocalHtmlLinkCount, item.Value.EmbeddedScriptTagCount,
+                                                                                                              ToCsv(item.Value.ModifiedBy), ToCsv(item.Value.ModifiedAt),
+                                                                                                              item.Value.ViewsRecent, item.Value.ViewsRecentUniqueUsers, item.Value.ViewsLifeTime, item.Value.ViewsLifeTimeUniqueUsers,
                                                                                                               ToCsv(item.Value.SiteAdmins))));
             }
 
