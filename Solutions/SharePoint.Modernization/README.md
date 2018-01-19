@@ -29,8 +29,8 @@ The main purpose of this tool is to give you a set of reports that you can use t
 
 # Quick start guide #
 ## Download the tool ##
-You can download the tool from here (TO UPDATE):
- - [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization.Scanner/Releases/SharePoint.Modernization.Scanner%20v1.0.zip?raw=true)
+You can download the tool from here:
+ - [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.0.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.Modernization.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
