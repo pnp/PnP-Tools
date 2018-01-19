@@ -296,7 +296,7 @@ Load the IgnoredCustomizations_CustomAction.csv into Microsoft Excel and use bel
 
 Filter | Takeaway
 ---------|----------
-**No filter** | Lists all the sites having a user custom action which is not going to work on "modern" pages. You need to assess how important these user custom actions are: if they are business critical it's better to either move the site back to "classic" or alternatively fix this [if Microsoft would offer the capabilities ](http://aka.ms/spfx-roadmap)for doing so in the future.
+**No filter** | Lists all the sites having a user custom action which is not going to work on "modern" pages. You need to assess how important these user custom actions are: if they are business critical it's better to either build an alternative [SharePoint Framework extension](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/extensions/overview-extensions) or move the site back to "classic".
 **Location = ScriptLink** | We often see customers using user custom actions to embed a JavaScript file on all their sites. Depending on what this JavaScript file is doing there might not be an impact for the "modern" experience. It's recommended to review what the embedded JavaScript is doing and if needed update the JavaScript.
 
 ## Understanding the IgnoredCustomizations_AlternateCSS.csv file
