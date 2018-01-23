@@ -20,7 +20,7 @@ SharePoint.UIExperience.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
-1.4 | January 23rd 2018 | Additional lists are supported in modern UI (Announcements, Links, Asset libraries, Promoted links, Forms libraries and Wiki page libraries) + Authenticode signing of the scanner .exe
+1.4 | January 23rd 2018 | Additional lists are supported in modern UI (Asset libraries, Promoted links, Forms libraries and Wiki page libraries) + Authenticode signing of the scanner .exe
 1.3 | August 31st 2017 | Added support to use a CSV file as input for the list of sites to scan
 1.2 | August 14th 2017 | Support for Announcement and Links lists is available, so don't mark it as a blocker (see https://techcommunity.microsoft.com/t5/SharePoint-Blog/Improving-SharePoint-Links-and-Announcements-lists/ba-p/92379)
 1.1 | June 1st 2017 | Managed metadata navigation support will be available (see https://techcommunity.microsoft.com/t5/SharePoint-Blog/SharePoint-filters-pane-updates-filtering-and-metadata/ba-p/74162), so don't mark it as a blocker
