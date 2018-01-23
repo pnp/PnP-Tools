@@ -82,6 +82,7 @@ namespace SharePoint.UIExperience.Scanner.Scanners
                     };
 
                     if (!(uca.Location.Equals("EditControlBlock", StringComparison.InvariantCultureIgnoreCase) ||
+                          uca.Location.StartsWith("ClientSideExtension.", StringComparison.InvariantCultureIgnoreCase) ||
                           uca.Location.Equals("CommandUI.Ribbon", StringComparison.InvariantCultureIgnoreCase) ))
                     {
                         add = true;
