@@ -26,19 +26,19 @@ Version  | Date | Comments
 # What will this tool do for you? #
 The main purpose of this tool is to give you a set of reports that you can use to:
 - Assess which sites are ready for "groupify": this report will give you "groupify" warnings and blockers which you can use to scope the sites to "groupify" and plan the needed remediation work
-- (Coming soon) Learn more about the site pages used in your tenant: knowing which pages you have and their characteristics (type, layout, web part data, usage) is important to prepare for modernizing (a subset of) these pages
+- Learn more about the site pages used in your tenant: knowing which pages you have and their characteristics (type, layout, web part data, usage) is important to prepare for modernizing (a subset of) these pages
 
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.0.zip?raw=true)
+ - [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.1.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.Modernization.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
 > Note:
 > If you want to compile the tool yourself you'll also need to have the SharePoint.Scanning solution available as this tools depends on the SharePoint Scanner framework to compile.
 
-## Using the scanner for SharePoint Online ##
+## Using the scanner for SharePoint Online##
 Since this tool needs to be able to scan all site collections it's recommended to use an app-only principal with tenant scoped permissions for the scan. This approach will ensure the tool has access, if you use an account (e.g. your SharePoint tenant admin account) then the tool can only access the sites where this user also has access. You can either use a an Azure AD application or a SharePoint app principal:
  - [Granting access via Azure AD App-Only](https://docs.microsoft.com/en-us/sharepoint/dev/solution-guidance/security-apponly-azuread)
  - [Granting access via SharePoint App-Only](https://docs.microsoft.com/en-us/sharepoint/dev/solution-guidance/security-apponly-azureacs)
@@ -46,7 +46,7 @@ Since this tool needs to be able to scan all site collections it's recommended t
 
 Once the preparation work is done, let's continue with doing a scan.
 
-### Scanning SharePoint Online environment ###
+### Scanning SharePoint Online environmen - Groupify scan only ###
 Below option is the typical usage of the tool for most customers: you specify the mode, your tenant name and the created client id and secret:
 
 ```console
@@ -94,11 +94,88 @@ After the run you'll find a new sub folder (e.g. 636519019371118441) which conta
 
 Report | Content
 ---------|----------
-**ModernizationSiteScanResults.csv** | The main "groupify" report contains one row per site collection epxlaining which sites are ready to "groupify" with which warnings. It will also tell which "groupify" blockers it found and provide extensive information on the applied permission model
-**ModernizationWebScanResults.csv** | Having subsites is a potential "groupify" warning and this report contains "groupify" relevant information about each web. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the found warnings/blockers
+**ModernizationSiteScanResults.csv** | The main "groupify" report contains one row per site collection epxlaining which sites are ready to "groupify" with which warnings. It will also tell which "groupify" blockers it found and provide extensive information on the applied permission model.
+**ModernizationWebScanResults.csv** | Having subsites is a potential "groupify" warning and this report contains "groupify" relevant information about each web. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the found warnings/blockers.
 **ModernizationUserCustomActionScanResults.csv** | When a site is "Groupified" it will get a "modern" home page...and  user custom actions that embed script do not work on modern pages. This report contains all the site/web scoped user custom actions that do not work on modern pages. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the actual found user custom actions
 **Error.csv** | If the scan tool encountered errors then these are logged in this file.
 **ScannerSummary.csv** | Logs the number of scanned site collections, webs and list. It will also contain information on scan duration and used scanner version.
+
+### Scanning SharePoint Online environment - Groupify + Pages scan ###
+Below option is the typical usage of the tool for most customers: you specify the mode, your tenant name and the created client id and secret:
+
+```console
+SharePoint.Modernization.Scanner.exe -t <tenant> -i <clientid> -s <clientsecret>
+```
+
+A real life sample:
+
+```console
+SharePoint.Modernization.Scanner.exe -t contoso -i 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
+```
+
+You'll see the following output during the run:
+
+```console
+=====================================================
+Scanning is starting...31/01/2018 14:03:19
+=====================================================
+Processing site https://bertonline.sharepoint.com/sites/espctest1...
+Processing site https://bertonline.sharepoint.com/sites/espctest2...
+Start search query path:https://bertonline.sharepoint.com/sites/espctest1 AND fileextension=aspx AND (contentclass=STS_ListItem_WebPageLibrary OR contentclass=STS_Site OR contentclass=STS_Web)
+Found 10 rows...
+Retrieving a batch of up to 500 search results
+Start search query path:https://bertonline.sharepoint.com/sites/espctest2 AND fileextension=aspx AND (contentclass=STS_ListItem_WebPageLibrary OR contentclass=STS_Site OR contentclass=STS_Web)
+Found 20 rows...
+Retrieving a batch of up to 500 search results
+Scan of page /sites/espctest1/SitePages/Home.aspx took 2 seconds
+Scan of page /sites/espctest2/SitePages/Home.aspx took 2 seconds
+Scan of page /sites/espctest2/SitePages/How To Use This Library.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/espc2017.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/simple.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/bert1234.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/Home2.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/webpartpage1.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/onecolwithsidebar.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/wp1.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/rightcolheaderfootertoprow3col.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/HeaderFooterThreeColumns.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/FullPageVertical.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/HeaderLeftColumnBody.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/HeaderRightColumnBody.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/HeaderFooter2Columns4Rows.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/HeaderFooter4ColumnsTopRow.aspx took 0 seconds
+Scan of page /sites/espctest1/SitePages/ContentRollup.aspx took 4 seconds
+Scan of page /sites/espctest2/SitePages/LeftColumnHeaderFooterTopRow3Columns.aspx took 0 seconds
+Scan of page /sites/espctest2/SitePages/sample_html.aspx took 0 seconds
+Processing site https://bertonline.sharepoint.com/sites/espctest2/sub1...
+...
+=====================================================
+Scanning is done...now dump the results to a CSV file
+=====================================================
+Outputting errors to 636530041937506713\errors.csv
+Outputting information over the done scan to 636530041937506713\ScannerSummary.csv
+Outputting scan results to 636530041937506713\ModernizationSiteScanResults.csv
+Outputting scan results to 636530041937506713\ModernizationWebScanResults.csv
+Outputting scan results to 636530041937506713\ModernizationUserCustomActionScanResults.csv
+Outputting scan results to 636530041937506713\PageScanResults.csv
+Outputting scan results to 636530041937506713\UniqueWebParts.csv
+=====================================================
+All done. Took 00:01:03.5211127 for 2 sites
+=====================================================
+```
+
+After the run you'll find a new sub folder (e.g. 636530041937506713) which contains the following:
+
+Report | Content
+---------|----------
+**ModernizationSiteScanResults.csv** | The main "groupify" report contains one row per site collection epxlaining which sites are ready to "groupify" with which warnings. It will also tell which "groupify" blockers it found and provide extensive information on the applied permission model.
+**ModernizationWebScanResults.csv** | Having subsites is a potential "groupify" warning and this report contains "groupify" relevant information about each web. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the found warnings/blockers.
+**ModernizationUserCustomActionScanResults.csv** | When a site is "Groupified" it will get a "modern" home page...and  user custom actions that embed script do not work on modern pages. This report contains all the site/web scoped user custom actions that do not work on modern pages. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the actual found user custom actions.
+**PageScanResults.csv** | Contains a row per page in the site pages library of the scanned sites. This contains a ton of details on the scanned page like type, used layout and detailed web part information.
+**UniqueWebParts.csv** | Contains a list of uniquely found web parts during the scan.
+**Error.csv** | If the scan tool encountered errors then these are logged in this file.
+**ScannerSummary.csv** | Logs the number of scanned site collections, webs and list. It will also contain information on scan duration and used scanner version.
+
 
 # Report details
 ## Understanding the ModernizationSiteScanResults.csv file
@@ -208,6 +285,121 @@ Filter | Takeaway
 ---------|----------
 **No filter** | Will give you one row per found incompatible user custom action. You need to assess how important these user custom actions are: if they are business critical it's better to either build an alternative [SharePoint Framework extension](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/extensions/overview-extensions) or move the site back to "classic"
 
+## Understanding the PageScanResults.csv file
+This report contains the following columns:
+
+Column | Description
+---------|----------
+**Site Collection Url** | Url of the scanned site collection.
+**Site Url** | Url of the scanned web.
+**PageUrl** | Server relative URL of the scanned page.
+**Library** | Server relative URL of the pages library holding the scanned page.
+**HomePage** | Is this a site's home page?.
+**Type** | Type of the page (`WikiPage`, `WebPartPage`, `ClientSidePage` or `AspxPage`).
+**Layout** | Standard layout of the found WikiPage or WebPartPage
+**ModifiedBy** | Last person that modified this page.
+**ModifiedAt** | Last modification date and time for this page.
+**ViewsRecent** | Number of views this page received in the last 14 days.
+**ViewsRecentUniqueUsers** | Number of unique visitors for this page in the last 14 days.
+**ViewsLifeTime** | Number of views this page received during it's lifetime.
+**ViewsLifeTimeUniqueUsers** | Number of unique visitors for this page during it's lifetime.
+**WPType1-30** | Up to 30 columns indicating the web part type.
+**WPTitle1-30** | Up to 30 columns indicating the web part title.
+**WPData1-30** | Up to 30 columns holding the exported web part data (see upcoming chapter for details).
+
+
+### Key takeaways from this report
+Load the PageScanResults.csv into Microsoft Excel and use below filters to analyze the received data
+
+Filter | Takeaway
+---------|----------
+**No filter** | Will give you one row per scanned page
+**HomePage = TRUE** | Gives you all the site home pages
+**Type = "WebPartPage"** | Gives you all the web part pages
+**ViewsRecent > 0** | Pages which have been recently accessed
+
+### WPData details
+For each exported web part the same base JSON structure is used as shown below. Important to note are:
+- The "Row" property indicates the row (=section) this web part should be added into in a new client side page (assuming the layout of the original page was detected)
+- The "Column" property indicates the column this web part should be added into in a new client side page (assuming the layout of the original page was detected)
+- The "Properties" property holds the web part specific properties
+
+```JSON
+{
+	"Type":"<fully qualified web part type>",
+	"Id":"6f930c6f-b7d5-44db-b6e7-55d375e4667d",
+	"ServerControlId":"6f930c6f-b7d5-44db-b6e7-55d375e4667d",
+	"ZoneId":"FullPage",
+	"Hidden":false,
+	"IsClosed":false,
+	"Title":"<web part title>",
+	"Row":1,
+	"Column":1,
+	"Order":0,
+	"ZoneIndex":0,
+	"Properties":{"<web part specific properties>"}
+}
+```
+
+Since each web part has different **relevant** properties the properties that are exported for a web part are defined in the `webpartmapping.xml` file: this allows you to add/remove properties based on your needs. Each defined property is exported and stored underneath the "Properties" property as shown in below complete example:
+
+```JSON
+{
+	"Type":"Microsoft.Office.Visio.Server.WebControls.VisioWebAccess, Microsoft.Office.Visio.Server, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c",
+	"Id":"6f930c6f-b7d5-44db-b6e7-55d375e4667d",
+	"ServerControlId":"6f930c6f-b7d5-44db-b6e7-55d375e4667d",
+	"ZoneId":"FullPage",
+	"Hidden":false,
+	"IsClosed":false,
+	"Title":"Visio Web Access",
+	"Row":1,
+	"Column":1,
+	"Order":0,
+	"ZoneIndex":0,
+	"Properties":
+	{
+		"Title":"Visio Web Access",
+		"Description":"Enables viewing and refreshing of Visio Web Drawings.", 
+		"Width":"", 
+		"Height":"400px", 
+		"ShapeDataNames":"", 
+		"ShowBackground":"True", 
+		"ShowShapeInfoButton":"True", 
+		"ShowPageNavigation":"True", 
+		"DisableSelection":"False", 
+		"FitViewToShapes":"False", 
+		"AlwaysRaster":"False", 
+		"AutoRefreshInterval":"0", 
+		"ShowRefresh":"True", 
+		"DiagramPath":"/sites/espctest1/Shared Documents/Drawing1.vsdx", 
+		"OverrideViewSettings":"True", 
+		"ShowZoomControl":"True", 
+		"ViewSettings":"", 
+		"DisableZoom":"False", 
+		"DefaultPageShown":"1", 
+		"ShowOpenInVisio":"True", 
+		"DisableHyperlink":"False"
+	}
+}
+```
+
+
+## Understanding the UniqueWebParts.csv file
+This report contains the following columns:
+
+Column | Description
+---------|----------
+**Type** | Fully qualified name of the web part.
+**InMappingFile** | Indicates if this web part is listed in the webpartmapping file.
+
+### Key takeaways from this report
+Load the UniqueWebParts.csv into Microsoft Excel and use below filters to analyze the received data
+
+Filter | Takeaway
+---------|----------
+**No filter** | Will give you one row per uniquely detected web part
+**InMappingFile = FALSE** | Gives you all the web parts which are not part of the webpartmapping.xml file. If these are important for you it's best to define these web parts with the properties you want to retrieve
+
 # Advanced topics #
 
 ## I'm running SharePoint Online dedicated, is this different? ##
@@ -215,6 +407,8 @@ In SharePoint Online Dedicated one can have vanity url's like teams.contoso.com 
 
 ```console
 SharePoint.Modernization.Scanner -m GroupifyOnly -a <tenantadminsite> -r <wildcard urls> -i <clientid> -s <clientsecret>
+
+SharePoint.Modernization.Scanner -a <tenantadminsite> -r <wildcard urls> -i <clientid> -s <clientsecret>
 ```
 
 A real life sample:
@@ -222,6 +416,10 @@ A real life sample:
 ```console
 SharePoint.Modernization.Scanner -m GroupifyOnly
                                  -a https://contoso-admin.contoso.com 
+                                 -r "https://teams.contoso.com/sites/*,https://portal.contoso.com/*"
+                                 -i 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
+
+SharePoint.Modernization.Scanner -a https://contoso-admin.contoso.com 
                                  -r "https://teams.contoso.com/sites/*,https://portal.contoso.com/*"
                                  -i 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 ```
@@ -233,12 +431,18 @@ This scanner, like all scanners built using the SharePoint Scanner framework, do
 ```console
 SharePoint.Modernization.Scanner -m GroupifyOnly -t <tenant> -i <Azure App ID> -z <Azure AD Domain> 
                                  -f "<Path to PFX file holding your certificate" -x <Password for the PFX file>
+
+SharePoint.Modernization.Scanner -t <tenant> -i <Azure App ID> -z <Azure AD Domain> 
+                                 -f "<Path to PFX file holding your certificate" -x <Password for the PFX file>
 ```
 
 A real life sample:
 
 ```console
 SharePoint.Modernization.Scanner -m GroupifyOnly -t contoso -i e4108e9b-9865-44a9-c6e1-9003db04a775 -z contoso.onmicrosoft.com  
+                                 -f "C:\scanning\AzureADAppOnlyScanning.pfx" -x pwd
+
+SharePoint.Modernization.Scanner -t contoso -i e4108e9b-9865-44a9-c6e1-9003db04a775 -z contoso.onmicrosoft.com  
                                  -f "C:\scanning\AzureADAppOnlyScanning.pfx" -x pwd
 ```
 
@@ -247,18 +451,22 @@ The best option is to use app-only since that will ensure that the tool can read
 
 ```console
 SharePoint.Modernization.Scanner -m GroupifyOnly -t <tenant> -u <user> -p <password>
+
+SharePoint.Modernization.Scanner -t <tenant> -u <user> -p <password>
 ```
 
 A real life sample:
 
 ```console
 SharePoint.Modernization.Scanner -m GroupifyOnly -t contoso -c admin@contoso.onmicrosoft.com -p mypassword
+
+SharePoint.Modernization.Scanner -t contoso -c admin@contoso.onmicrosoft.com -p mypassword
 ```
 
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
-SharePoint PnP Modernization scanner 0.1.0.2
+SharePoint PnP Modernization scanner 1.1.0.0
 Copyright (C) 2018 SharePoint PnP
 ==========================================================
 
