@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Net;
 using Microsoft.SharePoint.Client.Search.Query;
+using System.IO;
 
 namespace SharePoint.Scanning.Framework
 {
@@ -130,11 +131,14 @@ namespace SharePoint.Scanning.Framework
             string errorfile = string.Format("{0}\\errors.csv", this.OutputFolder);
             Console.WriteLine("Outputting errors to {0}", errorfile);
             outputHeaders = new string[] { "Site Url", "Site Collection Url", "Error", "Field1", "Field2", "Field3" };
-            System.IO.File.AppendAllText(errorfile, string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
-            ScanError error;
-            while (this.ScanErrors.TryPop(out error))
+            using (StreamWriter outfile = new StreamWriter(outputfile))
             {
-                System.IO.File.AppendAllText(errorfile, string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(error.SiteURL), ToCsv(error.SiteColUrl), ToCsv(error.Error), ToCsv(error.Field1), ToCsv(error.Field2), ToCsv(error.Field3))));
+                outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
+                ScanError error;
+                while (this.ScanErrors.TryPop(out error))
+                {
+                    outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(error.SiteURL), ToCsv(error.SiteColUrl), ToCsv(error.Error), ToCsv(error.Field1), ToCsv(error.Field2), ToCsv(error.Field3))));
+                }
             }
             #endregion
 
@@ -142,13 +146,16 @@ namespace SharePoint.Scanning.Framework
             outputfile = string.Format("{0}\\ScannerSummary.csv", this.OutputFolder);
             Console.WriteLine("Outputting information over the done scan to {0}", outputfile);
             outputHeaders = new string[] { "Site collections scanned", "Webs scanned", "List scanned", "Scan duration", "Scanner version" };
-            System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
+            using (StreamWriter outfile = new StreamWriter(outputfile))
+            {
+                outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
 
-            Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(BaseOptions.UrlToFileName(assembly.EscapedCodeBase));
-            string version = fvi.FileVersion;
-            TimeSpan ts = DateTime.Now.Subtract(this.StartTime);
-            System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, this.ScannedSites, this.ScannedWebs, this.ScannedLists, $"{ts.Days} days, {ts.Hours} hours, {ts.Minutes} minutes and {ts.Seconds} seconds", version)));
+                Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(BaseOptions.UrlToFileName(assembly.EscapedCodeBase));
+                string version = fvi.FileVersion;
+                TimeSpan ts = DateTime.Now.Subtract(this.StartTime);
+                outfile.Write(string.Format("{0}\r\n", ToCsv(string.Join(this.Separator, this.ScannedSites, this.ScannedWebs, this.ScannedLists, $"{ts.Days} days - {ts.Hours} hours - {ts.Minutes} minutes and {ts.Seconds} seconds", version))));
+            }
             #endregion
 
             return start;

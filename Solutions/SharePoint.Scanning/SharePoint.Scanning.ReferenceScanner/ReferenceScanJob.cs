@@ -17,7 +17,7 @@ namespace SharePoint.Scanning.ReferenceScanner
         internal List<Mode> ScanModes;
         internal bool UseSearchQuery = false;
         private Int32 SitesToScan = 0;
-        public ConcurrentDictionary<string, ScanResult> ScanResults = new ConcurrentDictionary<string, ScanResult>();
+        public ConcurrentDictionary<string, ScanResult> ScanResults;
         #endregion
 
         #region Construction
@@ -27,6 +27,7 @@ namespace SharePoint.Scanning.ReferenceScanner
             ScanModes = options.ScanModes;
             UseSearchQuery = !options.DontUseSearchQuery;
             ExpandSubSites = false; // false is default value, shown her for demo purposes
+            ScanResults = new ConcurrentDictionary<string, ScanResult>(options.Threads, 10000);
 
             // Connect the eventhandler
             TimerJobRun += ReferenceScanJob_TimerJobRun;
