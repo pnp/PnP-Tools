@@ -70,12 +70,6 @@ namespace SharePoint.Modernization.Framework.Pages
             
             if (webParts.Count() > 0)
             {
-                if (forceCheckout)
-                {
-                    wikiPage.CheckOut();
-                    cc.ExecuteQueryRetry();
-                }
-
                 foreach (var foundWebPart in webParts)
                 {
                     // Skip Microsoft.SharePoint.WebPartPages.TitleBarWebPart webpart in TitleBar zone
@@ -84,28 +78,21 @@ namespace SharePoint.Modernization.Framework.Pages
                         continue;
                     }
 
-                    var changed = false;
+                    string webPartXml = "";
+                    string webPartType = "";
                     var exportMode = foundWebPart.WebPart.ExportMode;
                     if (foundWebPart.WebPart.ExportMode != WebPartExportMode.All)
                     {
-                        foundWebPart.WebPart.ExportMode = WebPartExportMode.All;
-                        foundWebPart.SaveWebPartChanges();
-                        cc.ExecuteQueryRetry();
-                        changed = true;
+                        // Use different approach to determine type as we can't export the web part XML without indroducing a change
+                        webPartType = GetTypeFromProperties(foundWebPart.WebPart.Properties);
                     }
-
-                    var result = limitedWPManager.ExportWebPart(foundWebPart.Id);
-                    cc.ExecuteQueryRetry();
-                    string webPartXml = result.Value;
-
-                    if (changed)
+                    else
                     {
-                        foundWebPart.WebPart.ExportMode = exportMode;
-                        foundWebPart.SaveWebPartChanges();
+                        var result = limitedWPManager.ExportWebPart(foundWebPart.Id);
                         cc.ExecuteQueryRetry();
+                        webPartXml = result.Value;
+                        webPartType = GetType(webPartXml);
                     }
-
-                    string webPartType = GetType(webPartXml);
 
                     webparts.Add(new WebPartEntity()
                     {
@@ -122,12 +109,6 @@ namespace SharePoint.Modernization.Framework.Pages
                         Hidden = foundWebPart.WebPart.Hidden,
                         Properties = Properties(foundWebPart.WebPart.Properties, webPartType, webPartXml),
                     });
-                }
-
-                if (forceCheckout)
-                {
-                    wikiPage.UndoCheckOut();
-                    cc.ExecuteQueryRetry();
                 }
             }
 

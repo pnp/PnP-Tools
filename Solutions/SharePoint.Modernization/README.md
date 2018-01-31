@@ -14,6 +14,7 @@ SharePoint.Modernization.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.1 | January 31st 2018 | Performance and stability improvements + Page scanner component integrated
 1.0 | January 19th 2018 | First main version
 
 ### Disclaimer ###

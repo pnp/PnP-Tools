@@ -21,9 +21,9 @@ namespace SharePoint.Modernization.Scanner
         public Mode Mode;
         public string EveryoneExceptExternalUsersClaim = "";
         public readonly string EveryoneClaim = "c:0(.s|true";
-        public ConcurrentDictionary<string, WebScanResult> WebScanResults = new ConcurrentDictionary<string, WebScanResult>();
-        public ConcurrentDictionary<string, SiteScanResult> SiteScanResults = new ConcurrentDictionary<string, SiteScanResult>();
-        public ConcurrentDictionary<string, PageScanResult> PageScanResults = new ConcurrentDictionary<string, PageScanResult>();
+        public ConcurrentDictionary<string, WebScanResult> WebScanResults;
+        public ConcurrentDictionary<string, SiteScanResult> SiteScanResults;
+        public ConcurrentDictionary<string, PageScanResult> PageScanResults;
         public Tenant SPOTenant;
         public PageTransformation PageTransformation;
         #endregion
@@ -37,6 +37,10 @@ namespace SharePoint.Modernization.Scanner
         {
             ExpandSubSites = false;
             Mode = options.Mode;
+
+            this.WebScanResults = new ConcurrentDictionary<string, WebScanResult>(options.Threads, 50000);
+            this.SiteScanResults = new ConcurrentDictionary<string, SiteScanResult>(options.Threads, 10000);
+            this.PageScanResults = new ConcurrentDictionary<string, PageScanResult>(options.Threads, 1000000);
 
             this.TimerJobRun += ModernizationScanJob_TimerJobRun;
         }
@@ -256,26 +260,29 @@ namespace SharePoint.Modernization.Scanner
                                                     "Visitors", "VisitorsContainsEveryone(ExceptExternalUsers)Claim", "VisitorsContainsADGroups"
                                                   };
             Console.WriteLine("Outputting scan results to {0}", outputfile);
-            System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
-            foreach (var item in this.SiteScanResults)
+            using (StreamWriter outfile = new StreamWriter(outputfile))
             {
-                var groupifyBlockers = item.Value.GroupifyBlockers();
-                var groupifyWarnings = item.Value.GroupifyWarnings();
-                var modernWarnings = item.Value.ModernWarnings();
-                var groupSecurity = item.Value.PermissionModel(this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim);
+                outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
+                foreach (var item in this.SiteScanResults)
+                {
+                    var groupifyBlockers = item.Value.GroupifyBlockers();
+                    var groupifyWarnings = item.Value.GroupifyWarnings();
+                    var modernWarnings = item.Value.ModernWarnings();
+                    var groupSecurity = item.Value.PermissionModel(this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim);
 
-                System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL),
-                                                                                                              (groupifyBlockers.Count > 0 ? "FALSE" : "TRUE"), ToCsv(SiteScanResult.FormatList(groupifyBlockers)), ToCsv(SiteScanResult.FormatList(groupifyWarnings)), ToCsv(groupSecurity.Item1), ToCsv(SiteScanResult.FormatList(groupSecurity.Item2)),
-                                                                                                              item.Value.ModernHomePage, ToCsv(SiteScanResult.FormatList(modernWarnings)),
-                                                                                                              ToCsv(item.Value.WebTemplate), ToCsv(item.Value.Office365GroupId != Guid.Empty ? item.Value.Office365GroupId.ToString() : ""), item.Value.MasterPage, item.Value.AlternateCSS, ((item.Value.SiteUserCustomActions != null && item.Value.SiteUserCustomActions.Count > 0) || (item.Value.WebUserCustomActions != null && item.Value.WebUserCustomActions.Count > 0)),
-                                                                                                              item.Value.SubSites, item.Value.SubSitesWithBrokenPermissionInheritance, item.Value.ModernPageWebFeatureDisabled, item.Value.ModernPageFeatureWasEnabledBySPO,
-                                                                                                              item.Value.ModernListSiteBlockingFeatureEnabled, item.Value.ModernListWebBlockingFeatureEnabled, item.Value.SitePublishingFeatureEnabled, item.Value.WebPublishingFeatureEnabled,
-                                                                                                              item.Value.EveryoneClaimsGranted, item.Value.ContainsADGroup(), ToCsv(item.Value.SharingCapabilities),
-                                                                                                              ToCsv(SiteScanResult.FormatUserList(item.Value.Admins, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)), item.Value.HasClaim(item.Value.Admins, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim), item.Value.ContainsADGroup(item.Value.Admins), 
-                                                                                                              ToCsv(SiteScanResult.FormatUserList(item.Value.Owners, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)), item.Value.HasClaim(item.Value.Owners, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim), item.Value.ContainsADGroup(item.Value.Owners), 
-                                                                                                              ToCsv(SiteScanResult.FormatUserList(item.Value.Members, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)), item.Value.HasClaim(item.Value.Members, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim), item.Value.ContainsADGroup(item.Value.Members), 
-                                                                                                              ToCsv(SiteScanResult.FormatUserList(item.Value.Visitors, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)), item.Value.HasClaim(item.Value.Visitors, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim), item.Value.ContainsADGroup(item.Value.Visitors)
-                                            )));
+                    outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL),
+                                                                                       (groupifyBlockers.Count > 0 ? "FALSE" : "TRUE"), ToCsv(SiteScanResult.FormatList(groupifyBlockers)), ToCsv(SiteScanResult.FormatList(groupifyWarnings)), ToCsv(groupSecurity.Item1), ToCsv(SiteScanResult.FormatList(groupSecurity.Item2)),
+                                                                                       item.Value.ModernHomePage, ToCsv(SiteScanResult.FormatList(modernWarnings)),
+                                                                                       ToCsv(item.Value.WebTemplate), ToCsv(item.Value.Office365GroupId != Guid.Empty ? item.Value.Office365GroupId.ToString() : ""), item.Value.MasterPage, item.Value.AlternateCSS, ((item.Value.SiteUserCustomActions != null && item.Value.SiteUserCustomActions.Count > 0) || (item.Value.WebUserCustomActions != null && item.Value.WebUserCustomActions.Count > 0)),
+                                                                                       item.Value.SubSites, item.Value.SubSitesWithBrokenPermissionInheritance, item.Value.ModernPageWebFeatureDisabled, item.Value.ModernPageFeatureWasEnabledBySPO,
+                                                                                       item.Value.ModernListSiteBlockingFeatureEnabled, item.Value.ModernListWebBlockingFeatureEnabled, item.Value.SitePublishingFeatureEnabled, item.Value.WebPublishingFeatureEnabled,
+                                                                                       item.Value.EveryoneClaimsGranted, item.Value.ContainsADGroup(), ToCsv(item.Value.SharingCapabilities),
+                                                                                       ToCsv(SiteScanResult.FormatUserList(item.Value.Admins, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)), item.Value.HasClaim(item.Value.Admins, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim), item.Value.ContainsADGroup(item.Value.Admins),
+                                                                                       ToCsv(SiteScanResult.FormatUserList(item.Value.Owners, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)), item.Value.HasClaim(item.Value.Owners, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim), item.Value.ContainsADGroup(item.Value.Owners),
+                                                                                       ToCsv(SiteScanResult.FormatUserList(item.Value.Members, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)), item.Value.HasClaim(item.Value.Members, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim), item.Value.ContainsADGroup(item.Value.Members),
+                                                                                       ToCsv(SiteScanResult.FormatUserList(item.Value.Visitors, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)), item.Value.HasClaim(item.Value.Visitors, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim), item.Value.ContainsADGroup(item.Value.Visitors)
+                                                )));
+                }
             }
 
             outputfile = string.Format("{0}\\ModernizationWebScanResults.csv", this.OutputFolder);
@@ -288,17 +295,20 @@ namespace SharePoint.Modernization.Scanner
                                            "UniqueVisitors"
                                          };
             Console.WriteLine("Outputting scan results to {0}", outputfile);
-            System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
-            foreach (var item in this.WebScanResults)
+            using (StreamWriter outfile = new StreamWriter(outputfile))
             {
-                System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL),
-                                                                                                              ToCsv(item.Value.WebTemplate), item.Value.BrokenPermissionInheritance,item.Value.ModernPageWebFeatureDisabled, item.Value.ModernPageFeatureWasEnabledBySPO, item.Value.WebPublishingFeatureEnabled,
-                                                                                                              ToCsv(item.Value.MasterPage), ToCsv(item.Value.CustomMasterPage), ToCsv(item.Value.AlternateCSS), (item.Value.WebUserCustomActions.Count > 0),
-                                                                                                              item.Value.EveryoneClaimsGranted,
-                                                                                                              ToCsv(SiteScanResult.FormatUserList(item.Value.Owners, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)),
-                                                                                                              ToCsv(SiteScanResult.FormatUserList(item.Value.Members, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)),
-                                                                                                              ToCsv(SiteScanResult.FormatUserList(item.Value.Visitors, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim))
-                                            )));
+                outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
+                foreach (var item in this.WebScanResults)
+                {
+                    outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL),
+                                                                                       ToCsv(item.Value.WebTemplate), item.Value.BrokenPermissionInheritance, item.Value.ModernPageWebFeatureDisabled, item.Value.ModernPageFeatureWasEnabledBySPO, item.Value.WebPublishingFeatureEnabled,
+                                                                                       ToCsv(item.Value.MasterPage), ToCsv(item.Value.CustomMasterPage), ToCsv(item.Value.AlternateCSS), (item.Value.WebUserCustomActions.Count > 0),
+                                                                                       item.Value.EveryoneClaimsGranted,
+                                                                                       ToCsv(SiteScanResult.FormatUserList(item.Value.Owners, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)),
+                                                                                       ToCsv(SiteScanResult.FormatUserList(item.Value.Members, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)),
+                                                                                       ToCsv(SiteScanResult.FormatUserList(item.Value.Visitors, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim))
+                                                )));
+                }
             }
 
             outputfile = string.Format("{0}\\ModernizationUserCustomActionScanResults.csv", this.OutputFolder);
@@ -306,33 +316,36 @@ namespace SharePoint.Modernization.Scanner
                                            "Title", "Name", "Location", "RegistrationType", "RegistrationId", "Reason", "CommandAction", "ScriptBlock", "ScriptSrc"
                                          };
             Console.WriteLine("Outputting scan results to {0}", outputfile);
-            System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
-            foreach (var item in this.SiteScanResults)
+            using (StreamWriter outfile = new StreamWriter(outputfile))
             {
-                if (item.Value.SiteUserCustomActions == null || item.Value.SiteUserCustomActions.Count == 0)
+                outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
+                foreach (var item in this.SiteScanResults)
                 {
-                    continue;
-                }
-                
-                foreach(var uca in item.Value.SiteUserCustomActions)
-                {
-                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL),
-                                                                                                                  ToCsv(uca.Title), ToCsv(uca.Name), ToCsv(uca.Location), uca.RegistrationType, ToCsv(uca.RegistrationId), ToCsv(uca.Problem), ToCsv(uca.CommandAction), ToCsv(uca.ScriptBlock), ToCsv(uca.ScriptSrc)
-                                                 )));
-                }
-            }
-            foreach (var item in this.WebScanResults)
-            {
-                if (item.Value.WebUserCustomActions == null || item.Value.WebUserCustomActions.Count == 0)
-                {
-                    continue;
-                }
+                    if (item.Value.SiteUserCustomActions == null || item.Value.SiteUserCustomActions.Count == 0)
+                    {
+                        continue;
+                    }
 
-                foreach (var uca in item.Value.WebUserCustomActions)
+                    foreach (var uca in item.Value.SiteUserCustomActions)
+                    {
+                        outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL),
+                                                                                           ToCsv(uca.Title), ToCsv(uca.Name), ToCsv(uca.Location), uca.RegistrationType, ToCsv(uca.RegistrationId), ToCsv(uca.Problem), ToCsv(uca.CommandAction), ToCsv(uca.ScriptBlock), ToCsv(uca.ScriptSrc)
+                                                     )));
+                    }
+                }
+                foreach (var item in this.WebScanResults)
                 {
-                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL),
-                                                                                                                  ToCsv(uca.Title), ToCsv(uca.Name), ToCsv(uca.Location), uca.RegistrationType, ToCsv(uca.RegistrationId), ToCsv(uca.Problem), ToCsv(uca.CommandAction), ToCsv(uca.ScriptBlock), ToCsv(uca.ScriptSrc)
-                                                 )));
+                    if (item.Value.WebUserCustomActions == null || item.Value.WebUserCustomActions.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    foreach (var uca in item.Value.WebUserCustomActions)
+                    {
+                        outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL),
+                                                                                           ToCsv(uca.Title), ToCsv(uca.Name), ToCsv(uca.Location), uca.RegistrationType, ToCsv(uca.RegistrationId), ToCsv(uca.Problem), ToCsv(uca.CommandAction), ToCsv(uca.ScriptBlock), ToCsv(uca.ScriptSrc)
+                                                     )));
+                    }
                 }
             }
 
@@ -350,37 +363,43 @@ namespace SharePoint.Modernization.Scanner
                 {
                     header2 = header2 + $"{this.Separator}WPType{i}{this.Separator}WPTitle{i}{this.Separator}WPData{i}";
                 }
-                System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", header1 + header2));
 
                 List<string> UniqueWebParts = new List<string>();
-                foreach (var item in this.PageScanResults)
+                using (StreamWriter outfile = new StreamWriter(outputfile))
                 {
-                    var part1 = string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.PageUrl), ToCsv(item.Value.Library), item.Value.HomePage,
-                                                            ToCsv(item.Value.PageType), ToCsv(item.Value.Layout), ToCsv(item.Value.ModifiedBy), item.Value.ModifiedAt,
-                                                            item.Value.ViewsRecent, item.Value.ViewsRecentUniqueUsers, item.Value.ViewsLifeTime, item.Value.ViewsLifeTimeUniqueUsers);
-
-                    string part2 = "";
-                    if (item.Value.WebParts != null)
+                    outfile.Write(string.Format("{0}\r\n", header1 + header2));
+                    foreach (var item in this.PageScanResults)
                     {
-                        foreach (var webPart in item.Value.WebParts.OrderBy(p => p.Row).OrderBy(p => p.Column).OrderBy(p => p.Order))
+                        var part1 = string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.PageUrl), ToCsv(item.Value.Library), item.Value.HomePage,
+                                                                ToCsv(item.Value.PageType), ToCsv(item.Value.Layout), ToCsv(item.Value.ModifiedBy), item.Value.ModifiedAt,
+                                                                item.Value.ViewsRecent, item.Value.ViewsRecentUniqueUsers, item.Value.ViewsLifeTime, item.Value.ViewsLifeTimeUniqueUsers);
+
+                        string part2 = "";
+                        if (item.Value.WebParts != null)
                         {
-                            part2 = part2 + $"{this.Separator}{ToCsv(webPart.TypeShort())}{this.Separator}{ToCsv(webPart.Title)}{this.Separator}{ToCsv(webPart.Json())}";
-                            if (!UniqueWebParts.Contains(webPart.Type))
+                            foreach (var webPart in item.Value.WebParts.OrderBy(p => p.Row).OrderBy(p => p.Column).OrderBy(p => p.Order))
                             {
-                                UniqueWebParts.Add(webPart.Type);
+                                part2 = part2 + $"{this.Separator}{ToCsv(webPart.TypeShort())}{this.Separator}{ToCsv(webPart.Title)}{this.Separator}{ToCsv(webPart.Json())}";
+                                if (!UniqueWebParts.Contains(webPart.Type))
+                                {
+                                    UniqueWebParts.Add(webPart.Type);
+                                }
                             }
                         }
+                        outfile.Write(string.Format("{0}\r\n", part1 + (!string.IsNullOrEmpty(part2) ? part2 : "")));
                     }
-                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", part1 + (!string.IsNullOrEmpty(part2) ? part2 : "")));
                 }
 
                 outputfile = string.Format("{0}\\UniqueWebParts.csv", this.OutputFolder);
                 Console.WriteLine("Outputting scan results to {0}", outputfile);
-                System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", $"Type{this.Separator}InMappingFile"));
-                foreach (var type in UniqueWebParts)
+                using (StreamWriter outfile = new StreamWriter(outputfile))
                 {
-                    var found = this.PageTransformation.WebParts.Where(p => p.Type.Equals(type, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-                    System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", $"{ToCsv(type)}{this.Separator}{found != null}"));
+                    outfile.Write(string.Format("{0}\r\n", $"Type{this.Separator}InMappingFile"));
+                    foreach (var type in UniqueWebParts)
+                    {
+                        var found = this.PageTransformation.WebParts.Where(p => p.Type.Equals(type, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                        outfile.Write(string.Format("{0}\r\n", $"{ToCsv(type)}{this.Separator}{found != null}"));
+                    }
                 }
             }
 

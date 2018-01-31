@@ -68,7 +68,8 @@ namespace SharePoint.Modernization.Framework.Pages
 
             var rows = htmlDoc.All.Where(p => p.LocalName == "tr");
             int rowCount = 0;
-            foreach(var row in rows)
+
+            foreach (var row in rows)
             {
                 rowCount++;
                 var columns = row.Children.Where(p => p.LocalName == "td" && p.Parent == row);
@@ -77,7 +78,7 @@ namespace SharePoint.Modernization.Framework.Pages
                 foreach (var column in columns)
                 {
                     colCount++;
-                    var contentHost = column.Children.Where(p => p.LocalName == "div" && p.ClassName.Equals("ms-rte-layoutszone-outer", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                    var contentHost = column.Children.Where(p => p.LocalName == "div" && (p.ClassName != null && p.ClassName.Equals("ms-rte-layoutszone-outer", StringComparison.InvariantCultureIgnoreCase))).FirstOrDefault();
                     if (contentHost != null)
                     {
                         var content = contentHost.FirstElementChild;
@@ -146,14 +147,7 @@ namespace SharePoint.Modernization.Framework.Pages
 
             // Bulk load the needed web part information
             if (webPartsToRetrieve.Count > 0)
-            {
-                // If the library requires checking out files before a change then do it, might be needed to update the ExportMode
-                if (forceCheckout)
-                {
-                    wikiPage.CheckOut();
-                    cc.ExecuteQueryRetry();
-                }
-                
+            {                
                 // Load web parts on wiki page
                 var limitedWPManager = wikiPage.GetLimitedWebPartManager(PersonalizationScope.Shared);
                 cc.Load(limitedWPManager);
@@ -187,28 +181,23 @@ namespace SharePoint.Modernization.Framework.Pages
                             // Retry to load the properties, sometimes they're not retrieved
                             foundWebPart.EnsureProperties(wp => wp.Id, wp => wp.WebPart.ExportMode, wp => wp.WebPart.Title, wp => wp.WebPart.ZoneIndex, wp => wp.WebPart.IsClosed, wp => wp.WebPart.Hidden, wp => wp.WebPart.Properties);
 
-                            var changed = false;
+                            //var changed = false;
+                            string webPartXml = "";
+                            string webPartType = "";
                             var exportMode = foundWebPart.WebPart.ExportMode;
                             if (foundWebPart.WebPart.ExportMode != WebPartExportMode.All)
                             {
-                                foundWebPart.WebPart.ExportMode = WebPartExportMode.All;
-                                foundWebPart.SaveWebPartChanges();
-                                cc.ExecuteQueryRetry();
-                                changed = true;
+                                // Use different approach to determine type as we can't export the web part XML without indroducing a change
+                                webPartType = GetTypeFromProperties(foundWebPart.WebPart.Properties);
                             }
-
-                            var result = limitedWPManager.ExportWebPart(foundWebPart.Id);
-                            cc.ExecuteQueryRetry();
-                            string webPartXml = result.Value;
-
-                            if (changed)
+                            else
                             {
-                                foundWebPart.WebPart.ExportMode = exportMode;
-                                foundWebPart.SaveWebPartChanges();
-                                cc.ExecuteQueryRetry();
-                            }
 
-                            string webPartType = GetType(webPartXml);
+                                var result = limitedWPManager.ExportWebPart(foundWebPart.Id);
+                                cc.ExecuteQueryRetry();
+                                webPartXml = result.Value;
+                                webPartType = GetType(webPartXml);
+                            }
 
                             webparts.Add(new WebPartEntity()
                             {
@@ -231,12 +220,6 @@ namespace SharePoint.Modernization.Framework.Pages
                     {
                         //Eat exception because we've found a WebPart ID which is not available on the server-side
                     }
-                }
-
-                if (forceCheckout)
-                {
-                    wikiPage.UndoCheckOut();
-                    cc.ExecuteQueryRetry();
                 }
             }
 
