@@ -38,7 +38,7 @@ Once you've downloaded the tool you have a folder containing the tool **SharePoi
 > Note:
 > If you want to compile the tool yourself you'll also need to have the SharePoint.Scanning solution available as this tools depends on the SharePoint Scanner framework to compile.
 
-## Using the scanner for SharePoint Online##
+## Using the scanner for SharePoint Online ##
 Since this tool needs to be able to scan all site collections it's recommended to use an app-only principal with tenant scoped permissions for the scan. This approach will ensure the tool has access, if you use an account (e.g. your SharePoint tenant admin account) then the tool can only access the sites where this user also has access. You can either use a an Azure AD application or a SharePoint app principal:
  - [Granting access via Azure AD App-Only](https://docs.microsoft.com/en-us/sharepoint/dev/solution-guidance/security-apponly-azuread)
  - [Granting access via SharePoint App-Only](https://docs.microsoft.com/en-us/sharepoint/dev/solution-guidance/security-apponly-azureacs)
@@ -46,7 +46,7 @@ Since this tool needs to be able to scan all site collections it's recommended t
 
 Once the preparation work is done, let's continue with doing a scan.
 
-### Scanning SharePoint Online environmen - Groupify scan only ###
+### Scanning SharePoint Online environment - Groupify scan only ###
 Below option is the typical usage of the tool for most customers: you specify the mode, your tenant name and the created client id and secret:
 
 ```console
