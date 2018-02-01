@@ -131,7 +131,7 @@ namespace SharePoint.Scanning.Framework
             string errorfile = string.Format("{0}\\errors.csv", this.OutputFolder);
             Console.WriteLine("Outputting errors to {0}", errorfile);
             outputHeaders = new string[] { "Site Url", "Site Collection Url", "Error", "Field1", "Field2", "Field3" };
-            using (StreamWriter outfile = new StreamWriter(outputfile))
+            using (StreamWriter outfile = new StreamWriter(errorfile))
             {
                 outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
                 ScanError error;
