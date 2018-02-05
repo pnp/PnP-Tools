@@ -1,7 +1,10 @@
-# SharePoint Visio Web Access deprecation scanner #
+# SharePoint Online Visio Web Access deprecation scanner #
 
 ### Summary ###
 Visio Online replaces Visio Web Access (also called Visio Services) in SharePoint Online. Visio Online is the new way to view, create and share Visio diagrams in SharePoint Online. As part of the Office Online ecosystem, Visio Online includes a modern UI, introduces performance improvements and has richer capabilities that aren’t available in Visio Web Access (see https://blogs.msdn.microsoft.com/visio/2017/09/25/migrate-from-visio-web-access-to-visio-online) for more details. To help you find the relevant files and pages that require remediation work a scanner was developed, which is further explained in this article.
+
+> Important:
+> This deprecation only applies to SharePoint Online, SharePoint on-premises is not impacted.
 
 ### Applies to ###
 -  SharePoint Online
@@ -37,7 +40,7 @@ Once you've downloaded the tool you have a folder containing the tool **SharePoi
 > Note:
 > If you want to compile the tool yourself you'll also need to have the SharePoint.Scanning solution available as this tools depends on the SharePoint Scanner framework to compile.
 
-## Using the scanner for SharePoint Online##
+## Using the scanner for SharePoint Online ##
 Since this tool needs to be able to scan all site collections it's recommended to use an app-only principal with tenant scoped permissions for the scan. This approach will ensure the tool has access, if you use an account (e.g. your SharePoint tenant admin account) then the tool can only access the sites where this user also has access. You can either use a an Azure AD application or a SharePoint app principal:
  - [Granting access via Azure AD App-Only](https://docs.microsoft.com/en-us/sharepoint/dev/solution-guidance/security-apponly-azuread)
  - [Granting access via SharePoint App-Only](https://docs.microsoft.com/en-us/sharepoint/dev/solution-guidance/security-apponly-azureacs)
