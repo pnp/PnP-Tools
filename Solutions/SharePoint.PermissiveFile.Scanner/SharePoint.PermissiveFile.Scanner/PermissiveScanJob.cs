@@ -42,54 +42,63 @@ namespace SharePoint.PermissiveFile.Scanner
         /// <param name="addedSites">Collection of sites from the default resolving</param>
         /// <returns>Updated set of site collections, which will be processed by the scanner</returns>
         public override List<string> ResolveAddedSites(List<string> addedSites)
-        {           
-            try
+        {
+            if (addedSites != null && addedSites.Count > 0)
             {
-                // Use search approach to determine which sites to process
-                List<string> searchedSites = new List<string>(100);
-
-                string tenantAdmin = "";
-                if (!string.IsNullOrEmpty(this.TenantAdminSite))
+                var sites = base.ResolveAddedSites(addedSites);
+                this.SitesToScan = sites.Count;
+                return sites;
+            }
+            else
+            {
+                try
                 {
-                    tenantAdmin = this.TenantAdminSite;
-                }
-                else
-                {
-                    tenantAdmin = $"https://{this.Tenant}-admin.sharepoint.com";
-                }
+                    // Use search approach to determine which sites to process
+                    List<string> searchedSites = new List<string>(100);
 
-                this.Realm = GetRealmFromTargetUrl(new Uri(tenantAdmin));
+                    string tenantAdmin = "";
+                    if (!string.IsNullOrEmpty(this.TenantAdminSite))
+                    {
+                        tenantAdmin = this.TenantAdminSite;
+                    }
+                    else
+                    {
+                        tenantAdmin = $"https://{this.Tenant}-admin.sharepoint.com";
+                    }
+
+                    this.Realm = GetRealmFromTargetUrl(new Uri(tenantAdmin));
 
 
-                using (ClientContext ccAdmin = this.CreateClientContext(tenantAdmin))
-                {
-                    List<string> propertiesToRetrieve = new List<string>
+                    using (ClientContext ccAdmin = this.CreateClientContext(tenantAdmin))
+                    {
+                        List<string> propertiesToRetrieve = new List<string>
                     {
                         "SPSiteUrl",
                         "FileExtension",
                         "OriginalPath"
                     };
 
-                    // Get sites that contain a certain set of files, we'll only process these
-                    var results = this.Search(ccAdmin.Web, $"({this.GetBaseSearchQuery()})", propertiesToRetrieve);
-                    foreach (var site in results)
-                    {
-                        if (!string.IsNullOrEmpty(site["SPSiteUrl"]) && !searchedSites.Contains(site["SPSiteUrl"]))
+                        // Get sites that contain a certain set of files, we'll only process these
+                        var results = this.Search(ccAdmin.Web, $"({this.GetBaseSearchQuery()})", propertiesToRetrieve);
+                        foreach (var site in results)
                         {
-                            searchedSites.Add(site["SPSiteUrl"]);
+                            if (!string.IsNullOrEmpty(site["SPSiteUrl"]) && !searchedSites.Contains(site["SPSiteUrl"]))
+                            {
+                                searchedSites.Add(site["SPSiteUrl"]);
+                            }
                         }
                     }
-                }
 
-                this.SitesToScan = searchedSites.Count;
-                return searchedSites;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Probem during application initialization. Application will terminate.");
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.ToDetailedString());
-                Environment.Exit(1);
+                    this.SitesToScan = searchedSites.Count;
+                    return searchedSites;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Probem during application initialization. Application will terminate.");
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.ToDetailedString());
+                    Environment.Exit(1);
+                }
             }
 
             return null;
@@ -105,7 +114,7 @@ namespace SharePoint.PermissiveFile.Scanner
                 Console.WriteLine("Processing site {0}...", e.Url);
 
                 // Set the first site collection done flag + perform telemetry
-                SetFirstSiteCollectionDone(e.WebClientContext);
+                SetFirstSiteCollectionDone(e.WebClientContext, this.Name);
 
                 // Need to use search inside this site collection?
                 List<string> propertiesToRetrieve = new List<string>

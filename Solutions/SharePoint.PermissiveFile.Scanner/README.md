@@ -16,6 +16,7 @@ SharePoint.PermissiveFile.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.4 | February 5th 2018 | Allow site scoping via -r or -v parameter
 1.3 | January 19th 2018 | Added usage information for the retrieved files
 1.2 | January 15th 2018 | Search performance improvement + increased logging
 1.1 | January 10th 2018 | Authenticode signed executable + using 2018 01 version of the scanning framework
@@ -43,7 +44,7 @@ If this results in False then your tenant is using strict, if this is set to Tru
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [Permissive file scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.PermissiveFile.Scanner/Releases/SharePoint.PermissiveFile.Scanner%20v1.3.zip?raw=true)
+ - [Permissive file scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.PermissiveFile.Scanner/Releases/SharePoint.PermissiveFile.Scanner%20v1.4.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.PermissiveFile.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -157,12 +158,18 @@ In SharePoint Online Dedicated one can have vanity url's like teams.contoso.com 
 
 ```console
 SharePoint.PermssiveFile.Scanner -a <tenantadminsite> -i <clientid> -s <clientsecret>
+
+SharePoint.PermssiveFile.Scanner -r "<wildcard urls>" -a <tenantadminsite> -i <clientid> -s <clientsecret>
 ```
 
 A real life sample:
 
 ```console
 SharePoint.PermssiveFile.Scanner -a https://contoso-admin.contoso.com 
+                                 -i 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
+
+SharePoint.PermssiveFile.Scanner -r "https://team.contoso.com/sites/*,https://portal.contoso.com/sites/*"
+                                 -a https://contoso-admin.contoso.com 
                                  -i 7a5c1615-997a-4059-a784-db2245ec7cc1 -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 ```
 

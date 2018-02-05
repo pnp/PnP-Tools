@@ -29,18 +29,6 @@ namespace SharePoint.PermissiveFile.Scanner
                 Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
             }
 
-            //Check for presence of -r (urls) and -v (csvfile) arguments as these are not implemented in this scanner since we only acquire sites using search
-            for (int i = 0; i < args.Length; i++)
-            {
-                string arg = args[i].ToLower();
-
-                if (arg == "-r" || arg == "--urls" || arg == "-v" || arg == "--csvfile")
-                {
-                    Console.WriteLine("The use of -r (--urls) and -v (--csvfile) is not supported in this scanner implementation. This scanner will rely on search to obtain the needed sites.");
-                    Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
-                }
-            }
-
             // Perform base validation
             base.ValidateOptions(args);
         }
