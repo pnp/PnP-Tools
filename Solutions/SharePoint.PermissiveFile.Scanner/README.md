@@ -16,6 +16,7 @@ SharePoint.PermissiveFile.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.5 | February 10th 2018 | Improved output writing approach to increase performance
 1.4 | February 5th 2018 | Allow site scoping via -r or -v parameter
 1.3 | January 19th 2018 | Added usage information for the retrieved files
 1.2 | January 15th 2018 | Search performance improvement + increased logging

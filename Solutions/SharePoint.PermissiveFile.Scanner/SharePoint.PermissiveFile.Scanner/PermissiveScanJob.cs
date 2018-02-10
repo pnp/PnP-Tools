@@ -7,6 +7,7 @@ using SharePoint.Scanning.Framework;
 using System.Collections.Concurrent;
 using Microsoft.SharePoint.Client;
 using System.Threading;
+using System.IO;
 
 namespace SharePoint.PermissiveFile.Scanner
 {
@@ -260,15 +261,19 @@ namespace SharePoint.PermissiveFile.Scanner
                                                     "ModifiedBy", "ModifiedAt",
                                                     "ViewsRecent", "ViewsRecentUniqueUsers", "ViewsLifeTime", "ViewsLifeTimeUniqueUsers",
                                                     "Site admins and owners" };
+
             Console.WriteLine("Outputting scan results to {0}", outputfile);
-            System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
-            foreach (var item in this.ScanResults)
+            using (StreamWriter outfile = new StreamWriter(outputfile))
             {
-                System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.FileExtension), ToCsv(item.Value.FileName), 
-                                                                                                              item.Value.EmbeddedLinkCount, item.Value.EmbeddedLocalHtmlLinkCount, item.Value.EmbeddedScriptTagCount,
-                                                                                                              ToCsv(item.Value.ModifiedBy), ToCsv(item.Value.ModifiedAt),
-                                                                                                              item.Value.ViewsRecent, item.Value.ViewsRecentUniqueUsers, item.Value.ViewsLifeTime, item.Value.ViewsLifeTimeUniqueUsers,
-                                                                                                              ToCsv(item.Value.SiteAdmins))));
+                outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
+                foreach (var item in this.ScanResults)
+                {
+                    outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.FileExtension), ToCsv(item.Value.FileName),
+                                                                                       item.Value.EmbeddedLinkCount, item.Value.EmbeddedLocalHtmlLinkCount, item.Value.EmbeddedScriptTagCount,
+                                                                                       ToCsv(item.Value.ModifiedBy), ToCsv(item.Value.ModifiedAt),
+                                                                                       item.Value.ViewsRecent, item.Value.ViewsRecentUniqueUsers, item.Value.ViewsLifeTime, item.Value.ViewsLifeTimeUniqueUsers,
+                                                                                       ToCsv(item.Value.SiteAdmins))));
+                }
             }
 
             Console.WriteLine("=====================================================");
