@@ -214,7 +214,7 @@ namespace SearchQueryTool
         private async void RunButton_Click(object sender, RoutedEventArgs e)
         {
             string dc = (AuthenticationMethodComboBox.SelectedItem as ComboBoxItem).DataContext as string;
-            if (dc == "SPOAuth2")
+            if (AuthenticationTypeComboBox.SelectedIndex == 1 && dc == "SPOAuth2")
             {
                 await AdalLogin(false);
             }
