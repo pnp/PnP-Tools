@@ -15,6 +15,7 @@ SharePoint.Scanning | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.1 | March 7th 2018 | Using March PnP Sites Core version + improved reliability/output writing in sample scanner
 1.0 | December 10nd 2017 | First main version
 
 ### Disclaimer ###

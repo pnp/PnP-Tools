@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- SharePoint Scanning Framework: Using March PnP Sites Core version + improved reliability/output writing in sample scanner
+
 ### Deprecated
 
 ## [March 2018]
