@@ -107,6 +107,22 @@ namespace SharePoint.PermissiveFile.Scanner
 
         private void PermissiveScanJob_TimerJobRun(object sender, OfficeDevPnP.Core.Framework.TimerJobs.TimerJobRunEventArgs e)
         {
+            // Validate ClientContext objects
+            if (e.WebClientContext == null || e.SiteClientContext == null)
+            {
+                ScanError error = new ScanError()
+                {
+                    Error = "No valid ClientContext objects",
+                    SiteURL = e.Url,
+                    SiteColUrl = e.Url
+                };
+                this.ScanErrors.Push(error);
+                Console.WriteLine("Error for site {1}: {0}", "No valid ClientContext objects", e.Url);
+
+                // bail out
+                return;
+            }
+            
             // thread safe increase of the sites counter
             IncreaseScannedSites();
 
