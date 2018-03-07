@@ -18,6 +18,7 @@ SharePoint.Modernization.Scanner | Bert Jansen (**Microsoft**)
 
 Version  | Date | Comments
 ---------| -----| --------
+1.2 | March 7th 2018 | Reliability improvements
 1.1 | January 31st 2018 | Performance and stability improvements + Page scanner component integrated
 1.0 | January 19th 2018 | First main version
 
@@ -40,7 +41,7 @@ The main purpose of this tool is to give you a set of reports that you can use t
 
 You can download the tool from here:
 
-- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.1.zip?raw=true)
+- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.2.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.Modernization.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
