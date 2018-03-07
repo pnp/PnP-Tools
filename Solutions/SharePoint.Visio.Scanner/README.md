@@ -12,11 +12,12 @@ Visio Online replaces Visio Web Access (also called Visio Services) in SharePoin
 ### Solution ###
 Solution | Author(s)
 ---------|----------
-SharePoint.Modernization.Scanner | Bert Jansen (**Microsoft**)
+SharePointSharePoint.Visio.Scanner | Bert Jansen (**Microsoft**)
 
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.1 | March 7th 2018 | Also scan SiteAssets library for web part pages + reliability improvements
 1.0 | February 1st 2018 | First main version
 
 ### Disclaimer ###
@@ -33,7 +34,7 @@ The main purpose of this tool is to give you a set of reports that you can use t
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [Visio Web Access scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Visio.Scanner/Releases/SharePoint.Visio.Scanner%20v1.0.zip?raw=true)
+ - [Visio Web Access scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Visio.Scanner/Releases/SharePoint.Visio.Scanner%20v1.1.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.Visio.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 

@@ -57,23 +57,26 @@ namespace SharePoint.Visio.Scanner.Analyzers
                 var homePageUrl = web.RootFolder.WelcomePage;
                 var listsToScan = web.GetListsToScan();
                 var sitePagesLibraries = listsToScan.Where(p => p.BaseTemplate == (int)ListTemplateType.WebPageLibrary);
+                var assetLibraries = listsToScan.Where(p => p.IsSiteAssetsLibrary == true);
 
-                if (sitePagesLibraries.Count() > 0)
+                var librariesToScan = sitePagesLibraries.Union(assetLibraries);
+
+                if (librariesToScan.Count() > 0)
                 {
-                    foreach (var sitePagesLibrary in sitePagesLibraries)
+                    foreach (var libraryToScan in librariesToScan)
                     {
                         CamlQuery query = new CamlQuery
                         {
                             ViewXml = CAMLQueryByExtension
                         };
-                        var pages = sitePagesLibrary.GetItems(query);
+                        var pages = libraryToScan.GetItems(query);
                         web.Context.Load(pages);
                         web.Context.ExecuteQueryRetry();
 
                         if (pages.FirstOrDefault() != null)
                         {
                             DateTime start;
-                            bool forceCheckout = sitePagesLibrary.ForceCheckout;
+                            bool forceCheckout = libraryToScan.ForceCheckout;
                             foreach (var page in pages)
                             {
                                 string pageUrl = null;
@@ -108,7 +111,7 @@ namespace SharePoint.Visio.Scanner.Analyzers
                                                 SiteColUrl = this.SiteCollectionUrl,
                                                 SiteURL = this.SiteUrl,
                                                 PageUrl = pageUrl,
-                                                Library = sitePagesLibrary.RootFolder.ServerRelativeUrl,
+                                                Library = libraryToScan.RootFolder.ServerRelativeUrl,
                                                 WebParts = foundWebParts,
                                             };
 
