@@ -113,6 +113,12 @@ namespace SharePoint.Modernization.Scanner.Results
         
         public string SharingCapabilities { get; set; }
 
+        public int ViewsRecent { get; set; }
+        public int ViewsRecentUniqueUsers { get; set; }
+        public int ViewsLifeTime { get; set; }
+        public int ViewsLifeTimeUniqueUsers { get; set; }
+
+
         #region Cloning
         /// <summary>
         /// Clone this object, keep in sync when new props are added to this class
@@ -145,6 +151,10 @@ namespace SharePoint.Modernization.Scanner.Results
                 EveryoneClaimsGranted = this.EveryoneClaimsGranted,
                 Office365GroupId = this.Office365GroupId,
                 SharingCapabilities = this.SharingCapabilities,
+                ViewsLifeTime = this.ViewsLifeTime,
+                ViewsLifeTimeUniqueUsers = this.ViewsLifeTimeUniqueUsers,
+                ViewsRecent = this.ViewsRecent,
+                ViewsRecentUniqueUsers = this.ViewsRecentUniqueUsers,
             };
         }
         #endregion

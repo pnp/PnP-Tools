@@ -18,6 +18,7 @@ SharePoint.Modernization.Scanner | Bert Jansen (**Microsoft**)
 
 Version  | Date | Comments
 ---------| -----| --------
+1.3 | March 16th 2018 | Added site usage information
 1.2 | March 7th 2018 | Reliability improvements
 1.1 | January 31st 2018 | Performance and stability improvements + Page scanner component integrated
 1.0 | January 19th 2018 | First main version
@@ -41,7 +42,7 @@ The main purpose of this tool is to give you a set of reports that you can use t
 
 You can download the tool from here:
 
-- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.2.zip?raw=true)
+- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.3.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.Modernization.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -219,6 +220,10 @@ Column | Description
 **ModernListWebBlockingFeatureEnabled** | Was the modern UI for lists purposely blocked at web level?
 **SitePublishingFeatureEnabled** | Is site scoped publishing feature enabled?
 **WebPublishingFeatureEnabled** | Is web scoped publishing feature enabled?
+**ViewsRecent** | Number of views this site received in the last 14 days.
+**ViewsRecentUniqueUsers** | Number of unique visitors for this site in the last 14 days.
+**ViewsLifeTime** | Number of views this site received during it's lifetime.
+**ViewsLifeTimeUniqueUsers** | Number of unique visitors for this site during it's lifetime.
 **Everyone(ExceptExternalUsers)Claim** | Is the `everyone` or `everyone except external users` claim used at site level?
 **UsesADGroups** | Are there AD groups used to grant permissions?
 **ExternalSharing** | Lists the external sharing status of the site

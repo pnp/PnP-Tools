@@ -73,6 +73,24 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                 // Get site user custom actions
                 scanResult.SiteUserCustomActions = site.UserCustomActions.Analyze(this.SiteCollectionUrl, this.SiteUrl);
 
+                // Get site usage information
+                List<string> propertiesToRetrieve = new List<string>
+                    {
+                        "ViewsRecent",
+                        "ViewsRecentUniqueUsers",
+                        "ViewsLifeTime",
+                        "ViewsLifeTimeUniqueUsers"
+                    };
+
+                var results = this.ScanJob.Search(cc.Web, $"path:{this.SiteCollectionUrl} AND contentclass=STS_Site", propertiesToRetrieve);
+                if (results != null && results.Count == 1)
+                {
+                    scanResult.ViewsRecent = results[0]["ViewsRecent"].ToInt32();
+                    scanResult.ViewsRecentUniqueUsers = results[0]["ViewsRecentUniqueUsers"].ToInt32();
+                    scanResult.ViewsLifeTime = results[0]["ViewsLifeTime"].ToInt32();
+                    scanResult.ViewsLifeTimeUniqueUsers = results[0]["ViewsLifeTimeUniqueUsers"].ToInt32();
+                }
+
                 try
                 {
                     // Get tenant information
@@ -93,7 +111,7 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                 {
                     // Use search to retrieve all view information for the indexed webpart/wiki/clientside pages in this site collection
                     // Need to use search inside this site collection?
-                    List<string> propertiesToRetrieve = new List<string>
+                    List<string> propertiesToRetrieveForPage = new List<string>
                     {
                         "OriginalPath",
                         "ViewsRecent",
@@ -102,7 +120,7 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                         "ViewsLifeTimeUniqueUsers"
                     };
 
-                    this.PageSearchResults = this.ScanJob.Search(cc.Web, $"path:{this.SiteCollectionUrl} AND fileextension=aspx AND (contentclass=STS_ListItem_WebPageLibrary OR contentclass=STS_Site OR contentclass=STS_Web)", propertiesToRetrieve);
+                    this.PageSearchResults = this.ScanJob.Search(cc.Web, $"path:{this.SiteCollectionUrl} AND fileextension=aspx AND (contentclass=STS_ListItem_WebPageLibrary OR contentclass=STS_Site OR contentclass=STS_Web)", propertiesToRetrieveForPage);
                 }
 
                 if (!this.ScanJob.SiteScanResults.TryAdd(this.SiteCollectionUrl, scanResult))

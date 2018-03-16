@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- SharePoint.Modernization.Scanner v1.3: Site usage information being included
 - SharePoint.Modernization.Scanner v1.2: Reliability improvements
 - SharePoint.PermissiveFile.Scanner v1.6: Reliability improvements
 - SharePoint.Visio.Scanner v1.1: Also scan SiteAssets library for web part pages + reliability improvements
