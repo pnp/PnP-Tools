@@ -2,7 +2,7 @@
 
 ### Summary ###
 
-Using this scanner you can prepare your classic team sites for modernization via connecting these sites to an Office 365 group (the "groupify" process). This scanner is a key piece if you want to modernize your classic sites. Checkout the [Modernize your classic sites](https://docs.microsoft.com/en-us/sharepoint/dev/transform/modernize-classic-sites) article on docs.microsoft.com.
+Using this scanner you can prepare your classic team sites for modernization via connecting these sites to an Office 365 group (the "groupify" process). This scanner is a key piece if you want to modernize your classic sites. Checkout the [Modernize your classic sites](https://docs.microsoft.com/en-us/sharepoint/dev/transform/modernize-classic-sites) article on docs.microsoft.com to learn more.
 
 ### Applies to ###
 
