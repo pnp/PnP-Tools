@@ -398,9 +398,9 @@ function GroupifySite
 # MAIN section                                        #
 #######################################################
 # Tenant admin url
-$tenantAdminUrl = "https://a830edad9050849523e17050400-admin.sharepoint.com"
+$tenantAdminUrl = "https://contoso-admin.sharepoint.com"
 # If you use credential manager then specify the used credential manager entry, if left blank you'll be asked for a user/pwd
-$credentialManagerCredentialToUse = "pnpa830edad9050849523E17050400admin"
+$credentialManagerCredentialToUse = ""
 
 #region Setup Logging
 $date = Get-Date
