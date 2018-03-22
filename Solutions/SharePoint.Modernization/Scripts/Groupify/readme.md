@@ -19,3 +19,4 @@ Once connected to an Office 365 group the site behaves like a modern group conne
 
 ## Learn more about bulk "groupify"
 
+Checkout the [Connect to an Office 365 Group](https://docs.microsoft.com/en-us/sharepoint/dev/transform/modernize-connect-to-office365-group) article on docs.microsoft.com.

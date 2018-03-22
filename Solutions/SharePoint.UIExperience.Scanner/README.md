@@ -1,7 +1,7 @@
 # SharePoint "Modern" user interface experience scanner #
 
 ### Summary ###
-Using this command line utility you can scan your tenant for compatibility with the SharePoint Online "modern" user interface experience. The scanner will give you a detailed view of sites that are not using "modern" pages, lists and libraries that are rendered in "classic" mode and finally it will also give you a report of customizations which are simply ignored in the "modern" user interface. 
+Using this command line utility you can scan your tenant for compatibility with the SharePoint Online "modern" user interface experience. The scanner will give you a detailed view of sites that are not using "modern" pages, lists and libraries that are rendered in "classic" mode and finally it will also give you a report of customizations which are simply ignored in the "modern" user interface. This scanner is a key piece if you want to modernize your classic sites. Checkout the [Modernize your classic sites](https://docs.microsoft.com/en-us/sharepoint/dev/transform/modernize-classic-sites) article on docs.microsoft.com to learn more.
 
 If you want to learn more about the "modern" experiences then please checkout our [MSDN guidance](https://msdn.microsoft.com/en-us/pnp_articles/modern-experience-customizations):
 - [Customizing "modern" lists and libraries](https://msdn.microsoft.com/en-us/pnp_articles/modern-experience-customizations-customize-lists-and-libraries)
