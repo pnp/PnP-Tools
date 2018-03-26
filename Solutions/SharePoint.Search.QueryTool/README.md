@@ -26,6 +26,7 @@ Version  | Date | Comments
 ---------| -----| --------
 2.6 | May 31st 2017 | Moved to github
 2.7 | Aug 24th 2017 | Added new SPO login, removed GQL support
+2.8 | Mar 26th 2018 | Removed old SPO login as it fails too often. Fixed ADAL login for viewing all properties.
 
 ### Disclaimer ###
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
