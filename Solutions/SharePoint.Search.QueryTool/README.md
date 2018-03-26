@@ -40,7 +40,7 @@ This tool will help you test search against SharePoint as well as craft GET and 
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [SharePoint Search Query Tool](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Search.QueryTool/Releases/SearchQueryToolv2.7.zip?raw=true)
+ - [SharePoint Search Query Tool](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Search.QueryTool/Releases/SearchQueryToolv2.8.zip?raw=true)
 
 Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder containing the tool **SearchQueryTool.exe**. Double click the file to start it.
 
