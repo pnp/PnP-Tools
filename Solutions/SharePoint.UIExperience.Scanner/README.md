@@ -1,7 +1,7 @@
 # SharePoint "Modern" user interface experience scanner #
 
 ### Summary ###
-Using this command line utility you can scan your tenant for compatibility with the SharePoint Online "modern" user interface experience. The scanner will give you a detailed view of sites that are not using "modern" pages, lists and libraries that are rendered in "classic" mode and finally it will also give you a report of customizations which are simply ignored in the "modern" user interface. 
+Using this command line utility you can scan your tenant for compatibility with the SharePoint Online "modern" user interface experience. The scanner will give you a detailed view of sites that are not using "modern" pages, lists and libraries that are rendered in "classic" mode and finally it will also give you a report of customizations which are simply ignored in the "modern" user interface. This scanner is a key piece if you want to modernize your classic sites. Checkout the [Modernize your classic sites](https://docs.microsoft.com/en-us/sharepoint/dev/transform/modernize-classic-sites) article on docs.microsoft.com to learn more.
 
 If you want to learn more about the "modern" experiences then please checkout our [MSDN guidance](https://msdn.microsoft.com/en-us/pnp_articles/modern-experience-customizations):
 - [Customizing "modern" lists and libraries](https://msdn.microsoft.com/en-us/pnp_articles/modern-experience-customizations-customize-lists-and-libraries)
@@ -20,6 +20,8 @@ SharePoint.UIExperience.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.5 | March 1st 2018 | Reliability improvements + fix to always fill the list basetemplate value
+1.4 | January 23rd 2018 | Additional lists are supported in modern UI (Asset libraries, Promoted links, Forms libraries and Wiki page libraries) + Authenticode signing of the scanner .exe
 1.3 | August 31st 2017 | Added support to use a CSV file as input for the list of sites to scan
 1.2 | August 14th 2017 | Support for Announcement and Links lists is available, so don't mark it as a blocker (see https://techcommunity.microsoft.com/t5/SharePoint-Blog/Improving-SharePoint-Links-and-Announcements-lists/ba-p/92379)
 1.1 | June 1st 2017 | Managed metadata navigation support will be available (see https://techcommunity.microsoft.com/t5/SharePoint-Blog/SharePoint-filters-pane-updates-filtering-and-metadata/ba-p/74162), so don't mark it as a blocker
@@ -42,7 +44,7 @@ Using the reports you can streamline the "modern" experience in your tenant: you
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [UIExperience scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.UIExperience.Scanner/Releases/UI%20Experience%20scanner%20for%20SharePoint%20Online%20v1.3.zip?raw=true)
+ - [UIExperience scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.UIExperience.Scanner/Releases/UI%20Experience%20scanner%20for%20SharePoint%20Online%20v1.5.zip?raw=true)
 
 Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder containing the tool **UIExperienceScanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -296,7 +298,7 @@ Load the IgnoredCustomizations_CustomAction.csv into Microsoft Excel and use bel
 
 Filter | Takeaway
 ---------|----------
-**No filter** | Lists all the sites having a user custom action which is not going to work on "modern" pages. You need to assess how important these user custom actions are: if they are business critical it's better to either move the site back to "classic" or alternatively fix this [if Microsoft would offer the capabilities ](http://aka.ms/spfx-roadmap)for doing so in the future.
+**No filter** | Lists all the sites having a user custom action which is not going to work on "modern" pages. You need to assess how important these user custom actions are: if they are business critical it's better to either build an alternative [SharePoint Framework extension](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/extensions/overview-extensions) or move the site back to "classic".
 **Location = ScriptLink** | We often see customers using user custom actions to embed a JavaScript file on all their sites. Depending on what this JavaScript file is doing there might not be an impact for the "modern" experience. It's recommended to review what the embedded JavaScript is doing and if needed update the JavaScript.
 
 ## Understanding the IgnoredCustomizations_AlternateCSS.csv file

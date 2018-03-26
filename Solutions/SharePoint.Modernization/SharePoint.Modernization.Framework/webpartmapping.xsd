@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema  targetNamespace="http://schemas.dev.office.com/PnP/2018/01/PageTransformationSchema" 
+            elementFormDefault="qualified" 
+            xmlns="http://schemas.dev.office.com/PnP/2018/01/PageTransformationSchema"  
+            xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- The main element -->
+  <xs:element name="PageTransformation" type="PageTransformation">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        This is the base element of a page transformation file.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  
+  <xs:complexType name="Property">
+    <xs:attribute name="Name" type="xs:string" use="required" />
+    <xs:attribute name="Type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="string" />
+          <xs:enumeration value="bool" />
+          <xs:enumeration value="guid" />
+          <xs:enumeration value="integer" />
+          <xs:enumeration value="datetime" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="Transform" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="ClientSideText">
+    <xs:attribute name="Text" type="xs:string" use="required"/>
+    <xs:attribute name="Order" type="xs:integer" use="optional" />
+    <xs:attribute name="Mapping" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <xs:simpleType name="GUID">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        The description of a Global Unique IDentifier
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(\{)?[a-fA-F0-9]{8}(-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}(\})?"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="ClientSideWebPart">
+    <xs:attribute name="Type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Custom" />
+          <xs:enumeration value="Text" />
+          <xs:enumeration value="ContentRollup" />
+          <xs:enumeration value="BingMap" />
+          <xs:enumeration value="ContentEmbed" />
+          <xs:enumeration value="DocumentEmbed" />
+          <xs:enumeration value="Image" />
+          <xs:enumeration value="ImageGallery" />
+          <xs:enumeration value="LinkPreview" />
+          <xs:enumeration value="NewsFeed" />
+          <xs:enumeration value="NewsReel" />
+          <xs:enumeration value="PowerBIReportEmbed" />
+          <xs:enumeration value="QuickChart" />
+          <xs:enumeration value="SiteActivity" />
+          <xs:enumeration value="VideoEmbed" />
+          <xs:enumeration value="YammerEmbed" />
+          <xs:enumeration value="Events" />
+          <xs:enumeration value="GroupCalendar" />
+          <xs:enumeration value="Hero" />
+          <xs:enumeration value="List" />
+          <xs:enumeration value="PageTitle" />
+          <xs:enumeration value="People" />
+          <xs:enumeration value="QuickLinks" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="ControlId" type="GUID" use="optional"/>
+    <xs:attribute name="JsonControlData" type="xs:string" use="required"/>
+    <xs:attribute name="Order" type="xs:integer" use="optional" />
+    <xs:attribute name="Mapping" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="Properties">
+    <xs:sequence>
+      <xs:element name="Property" type="Property" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Mapping">
+    <xs:sequence>
+      <xs:element name="ClientSideText" type="ClientSideText" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="ClientSideWebPart" type="ClientSideWebPart" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string" use="required" />
+    <xs:attribute name="Default" type="xs:boolean" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="Mappings">
+    <xs:sequence>
+      <xs:element name="Mapping" type="Mapping" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="WebPart">
+    <xs:sequence>
+      <xs:element name="Properties" type="Properties" minOccurs="0" maxOccurs="1" />
+      <xs:element name="Mappings" type="Mappings" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="Type" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="WebParts">
+    <xs:sequence>
+      <xs:element name="WebPart" type="WebPart" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="BaseWebPart">
+    <xs:sequence>
+      <xs:element name="Properties" type="Properties" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PageTransformation">
+    <xs:sequence>
+      <xs:element name="BaseWebPart" type="BaseWebPart" minOccurs="1" maxOccurs="1" />
+      <xs:element name="WebParts" type="WebParts" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  
+</xs:schema>

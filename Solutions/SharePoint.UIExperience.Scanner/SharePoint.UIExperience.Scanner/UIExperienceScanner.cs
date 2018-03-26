@@ -64,6 +64,22 @@ namespace SharePoint.UIExperience.Scanner
         /// </summary>
         private void UIExperienceScanner_TimerJobRun(object sender, TimerJobRunEventArgs e)
         {
+            // Validate ClientContext objects
+            if (e.WebClientContext == null || e.SiteClientContext == null)
+            {
+                UIExperienceScanError error = new UIExperienceScanError()
+                {
+                    Error = "No valid ClientContext objects",
+                    SiteURL = e.Url,
+                    SiteColUrl = e.Url
+                };
+                this.UIExpScanErrors.Push(error);
+                Console.WriteLine("Error for site {1}: {0}", "No valid ClientContext objects", e.Url);
+                
+                // bail out
+                return;
+            }
+
             // Get all the sub sites in the site we're processing
             IEnumerable<string> expandedSites = GetAllSubSites(e.SiteClientContext.Site);
 

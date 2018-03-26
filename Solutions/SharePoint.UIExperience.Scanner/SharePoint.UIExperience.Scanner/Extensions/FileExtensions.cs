@@ -77,6 +77,8 @@ namespace Microsoft.SharePoint.Client
             // List
             list.EnsureProperties(p => p.ListExperienceOptions, p => p.UserCustomActions, p => p.BaseTemplate);
             result.ListExperience = list.ListExperienceOptions;
+            result.XsltViewWebPartCompatibility.ListBaseTemplate = list.BaseTemplate;
+
             if (list.ListExperienceOptions == ListExperience.ClassicExperience)
             {
                 result.BlockedAtListLevel = true;

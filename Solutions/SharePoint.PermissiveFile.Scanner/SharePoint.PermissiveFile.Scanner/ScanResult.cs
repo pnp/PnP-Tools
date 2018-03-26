@@ -32,6 +32,14 @@ namespace SharePoint.PermissiveFile.Scanner
         /// Number of links in this file
         /// </summary>
         public int EmbeddedLinkCount { get; set; }
+        
+        // Page modification information
+        public string ModifiedAt { get; set; }
+        public string ModifiedBy { get; set; }
+        public int ViewsRecent { get; set; }
+        public int ViewsRecentUniqueUsers { get; set; }
+        public int ViewsLifeTime { get; set; }
+        public int ViewsLifeTimeUniqueUsers { get; set; }
         /// <summary>
         /// Site administrators/owners
         /// </summary>

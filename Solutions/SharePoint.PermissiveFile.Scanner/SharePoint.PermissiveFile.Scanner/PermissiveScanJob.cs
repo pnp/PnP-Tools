@@ -7,6 +7,7 @@ using SharePoint.Scanning.Framework;
 using System.Collections.Concurrent;
 using Microsoft.SharePoint.Client;
 using System.Threading;
+using System.IO;
 
 namespace SharePoint.PermissiveFile.Scanner
 {
@@ -42,54 +43,63 @@ namespace SharePoint.PermissiveFile.Scanner
         /// <param name="addedSites">Collection of sites from the default resolving</param>
         /// <returns>Updated set of site collections, which will be processed by the scanner</returns>
         public override List<string> ResolveAddedSites(List<string> addedSites)
-        {           
-            try
+        {
+            if (addedSites != null && addedSites.Count > 0)
             {
-                // Use search approach to determine which sites to process
-                List<string> searchedSites = new List<string>(100);
-
-                string tenantAdmin = "";
-                if (!string.IsNullOrEmpty(this.TenantAdminSite))
+                var sites = base.ResolveAddedSites(addedSites);
+                this.SitesToScan = sites.Count;
+                return sites;
+            }
+            else
+            {
+                try
                 {
-                    tenantAdmin = this.TenantAdminSite;
-                }
-                else
-                {
-                    tenantAdmin = $"https://{this.Tenant}-admin.sharepoint.com";
-                }
+                    // Use search approach to determine which sites to process
+                    List<string> searchedSites = new List<string>(100);
 
-                this.Realm = GetRealmFromTargetUrl(new Uri(tenantAdmin));
+                    string tenantAdmin = "";
+                    if (!string.IsNullOrEmpty(this.TenantAdminSite))
+                    {
+                        tenantAdmin = this.TenantAdminSite;
+                    }
+                    else
+                    {
+                        tenantAdmin = $"https://{this.Tenant}-admin.sharepoint.com";
+                    }
+
+                    this.Realm = GetRealmFromTargetUrl(new Uri(tenantAdmin));
 
 
-                using (ClientContext ccAdmin = this.CreateClientContext(tenantAdmin))
-                {
-                    List<string> propertiesToRetrieve = new List<string>
+                    using (ClientContext ccAdmin = this.CreateClientContext(tenantAdmin))
+                    {
+                        List<string> propertiesToRetrieve = new List<string>
                     {
                         "SPSiteUrl",
                         "FileExtension",
                         "OriginalPath"
                     };
 
-                    // Get sites that contain a certain set of files, we'll only process these
-                    var results = this.Search(ccAdmin.Web, $"({this.GetBaseSearchQuery()})", propertiesToRetrieve);
-                    foreach (var site in results)
-                    {
-                        if (!string.IsNullOrEmpty(site["SPSiteUrl"]) && !searchedSites.Contains(site["SPSiteUrl"]))
+                        // Get sites that contain a certain set of files, we'll only process these
+                        var results = this.Search(ccAdmin.Web, $"({this.GetBaseSearchQuery()})", propertiesToRetrieve);
+                        foreach (var site in results)
                         {
-                            searchedSites.Add(site["SPSiteUrl"]);
+                            if (!string.IsNullOrEmpty(site["SPSiteUrl"]) && !searchedSites.Contains(site["SPSiteUrl"]))
+                            {
+                                searchedSites.Add(site["SPSiteUrl"]);
+                            }
                         }
                     }
-                }
 
-                this.SitesToScan = searchedSites.Count;
-                return searchedSites;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Probem during application initialization. Application will terminate.");
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.ToDetailedString());
-                Environment.Exit(1);
+                    this.SitesToScan = searchedSites.Count;
+                    return searchedSites;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Probem during application initialization. Application will terminate.");
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.ToDetailedString());
+                    Environment.Exit(1);
+                }
             }
 
             return null;
@@ -97,6 +107,22 @@ namespace SharePoint.PermissiveFile.Scanner
 
         private void PermissiveScanJob_TimerJobRun(object sender, OfficeDevPnP.Core.Framework.TimerJobs.TimerJobRunEventArgs e)
         {
+            // Validate ClientContext objects
+            if (e.WebClientContext == null || e.SiteClientContext == null)
+            {
+                ScanError error = new ScanError()
+                {
+                    Error = "No valid ClientContext objects",
+                    SiteURL = e.Url,
+                    SiteColUrl = e.Url
+                };
+                this.ScanErrors.Push(error);
+                Console.WriteLine("Error for site {1}: {0}", "No valid ClientContext objects", e.Url);
+
+                // bail out
+                return;
+            }
+            
             // thread safe increase of the sites counter
             IncreaseScannedSites();
 
@@ -105,14 +131,20 @@ namespace SharePoint.PermissiveFile.Scanner
                 Console.WriteLine("Processing site {0}...", e.Url);
 
                 // Set the first site collection done flag + perform telemetry
-                SetFirstSiteCollectionDone(e.WebClientContext);
+                SetFirstSiteCollectionDone(e.WebClientContext, this.Name);
 
                 // Need to use search inside this site collection?
                 List<string> propertiesToRetrieve = new List<string>
                 {
                     "SPSiteUrl",
                     "FileExtension",
-                    "OriginalPath"
+                    "OriginalPath",
+                    "ViewsRecent",
+                    "ViewsRecentUniqueUsers",
+                    "ViewsLifeTime",
+                    "ViewsLifeTimeUniqueUsers",
+                    "LastModifiedTime",
+                    "ModifiedBy"
                 };
                 var searchResults = this.Search(e.SiteClientContext.Web, $"({this.GetBaseSearchQuery()} AND Path:{e.Url.TrimEnd('/')}/*)", propertiesToRetrieve);
                 foreach (var searchResult in searchResults)
@@ -122,7 +154,13 @@ namespace SharePoint.PermissiveFile.Scanner
                     {
                         SiteColUrl = e.Url,
                         FileName = searchResult["OriginalPath"],
-                        FileExtension = searchResult["FileExtension"]
+                        FileExtension = searchResult["FileExtension"],
+                        ViewsRecent = searchResult["ViewsRecent"].ToInt32(),
+                        ViewsRecentUniqueUsers = searchResult["ViewsRecentUniqueUsers"].ToInt32(),
+                        ViewsLifeTime = searchResult["ViewsLifeTime"].ToInt32(),
+                        ViewsLifeTimeUniqueUsers = searchResult["ViewsLifeTimeUniqueUsers"].ToInt32(),
+                        ModifiedAt = searchResult["LastModifiedTime"],
+                        ModifiedBy = searchResult["ModifiedBy"]
                     };
 
                     // Analyse the files
@@ -167,7 +205,6 @@ namespace SharePoint.PermissiveFile.Scanner
 
                         try
                         {
-                            // grab folks from the Access Web App site owners group
                             if (e.SiteClientContext.Web.AssociatedOwnerGroup != null && e.SiteClientContext.Web.AssociatedOwnerGroup.Users != null && e.SiteClientContext.Web.AssociatedOwnerGroup.Users.Count > 0)
                             {
                                 foreach (var owner in e.SiteClientContext.Web.AssociatedOwnerGroup.Users)
@@ -195,7 +232,7 @@ namespace SharePoint.PermissiveFile.Scanner
                         {
                             SiteURL = result.SiteURL,
                             SiteColUrl = e.Url,
-                            Error = "Could not add scan result for this web"
+                            Error = "Could not add scan result for this web"                           
                         };
                         this.ScanErrors.Push(error);
                     }
@@ -236,14 +273,23 @@ namespace SharePoint.PermissiveFile.Scanner
 
             // Handle the export of the job specific scanning data
             string outputfile = string.Format("{0}\\PermissiveScanResults.csv", this.OutputFolder);
-            string[] outputHeaders = new string[] { "Site Collection Url", "Site Url", "File extension", "File name", "Link count", "Embedded html link count", "Script tag count", "Site admins and owners" };
+            string[] outputHeaders = new string[] { "Site Collection Url", "Site Url", "File extension", "File name", "Link count", "Embedded html link count", "Script tag count",
+                                                    "ModifiedBy", "ModifiedAt",
+                                                    "ViewsRecent", "ViewsRecentUniqueUsers", "ViewsLifeTime", "ViewsLifeTimeUniqueUsers",
+                                                    "Site admins and owners" };
+
             Console.WriteLine("Outputting scan results to {0}", outputfile);
-            System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
-            foreach (var item in this.ScanResults)
+            using (StreamWriter outfile = new StreamWriter(outputfile))
             {
-                System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.FileExtension), ToCsv(item.Value.FileName), 
-                                                                                                              item.Value.EmbeddedLinkCount, item.Value.EmbeddedLocalHtmlLinkCount, item.Value.EmbeddedScriptTagCount, 
-                                                                                                              ToCsv(item.Value.SiteAdmins))));
+                outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
+                foreach (var item in this.ScanResults)
+                {
+                    outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.FileExtension), ToCsv(item.Value.FileName),
+                                                                                       item.Value.EmbeddedLinkCount, item.Value.EmbeddedLocalHtmlLinkCount, item.Value.EmbeddedScriptTagCount,
+                                                                                       ToCsv(item.Value.ModifiedBy), ToCsv(item.Value.ModifiedAt),
+                                                                                       item.Value.ViewsRecent, item.Value.ViewsRecentUniqueUsers, item.Value.ViewsLifeTime, item.Value.ViewsLifeTimeUniqueUsers,
+                                                                                       ToCsv(item.Value.SiteAdmins))));
+                }
             }
 
             Console.WriteLine("=====================================================");

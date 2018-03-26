@@ -1,0 +1,1 @@
+﻿xsd.exe webpartmapping.xsd /c /n:SharePoint.Modernization.Framework

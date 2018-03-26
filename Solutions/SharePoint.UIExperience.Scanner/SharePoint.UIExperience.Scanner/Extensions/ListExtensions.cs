@@ -18,6 +18,11 @@ namespace Microsoft.SharePoint.Client
                 list.BaseTemplate == (int)ListTemplateType.DocumentLibrary ||
                 list.BaseTemplate == (int)ListTemplateType.PictureLibrary ||
                 list.BaseTemplate == (int)ListTemplateType.WebPageLibrary ||
+                list.BaseTemplate == (int)ListTemplateType.Announcements ||
+                list.BaseTemplate == (int)ListTemplateType.Links ||
+                list.BaseTemplate == 851 || // Assets
+                list.BaseTemplate == 170 || // Promoted Links
+                list.BaseTemplate == (int)ListTemplateType.XMLForm ||
                 list.BaseTemplate == (int)ListTemplateType.GenericList)
             {
                 return true;

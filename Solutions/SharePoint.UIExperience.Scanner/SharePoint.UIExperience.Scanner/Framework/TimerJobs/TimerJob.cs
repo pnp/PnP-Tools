@@ -301,7 +301,10 @@ namespace SharePoint.UIExperience.Scanner.Framework.TimerJobs
                 // Call our work routine per site in the passed batch of sites
                 foreach (string site in sites)
                 {
-                    DoWork(site);
+                    if (!string.IsNullOrEmpty(site))
+                    {
+                        DoWork(site);
+                    }
                 }
             }
             finally
@@ -325,34 +328,44 @@ namespace SharePoint.UIExperience.Scanner.Framework.TimerJobs
             string rootSite = GetRootSite(site);
 
             // Instantiate the needed ClientContext objects
-            ClientContext ccWeb = CreateClientContext(site);
+            ClientContext ccWeb = null;
             ClientContext ccSite = null;
+            ClientContext ccTenant = null;
 
-            if (rootSite.Equals(site, StringComparison.InvariantCultureIgnoreCase))
+            try
             {
-                ccSite = ccWeb;
-            }
-            else
-            {
-                ccSite = CreateClientContext(rootSite);
-            }
+                ccWeb = CreateClientContext(site);
+                
+                if (rootSite.Equals(site, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    ccSite = ccWeb;
+                }
+                else
+                {
+                    ccSite = CreateClientContext(rootSite);
+                }
 
 #if !ONPREMISES
-            // Instantiate ClientContext against tenant admin site, this is needed to operate using the Tenant API
-            string tenantAdminSiteUrl = tenantAdminSite;
-            if (string.IsNullOrEmpty(tenantAdminSiteUrl))
-            {
-                tenantAdminSiteUrl = GetTenantAdminSite(site);
-            }
-            ClientContext ccTenant = CreateClientContext(tenantAdminSiteUrl);
+                // Instantiate ClientContext against tenant admin site, this is needed to operate using the Tenant API
+                string tenantAdminSiteUrl = tenantAdminSite;
+                if (string.IsNullOrEmpty(tenantAdminSiteUrl))
+                {
+                    tenantAdminSiteUrl = GetTenantAdminSite(site);
+                }
+                ccTenant = CreateClientContext(tenantAdminSiteUrl);
 #else
-            // No easy way to detect tenant admin site in on-premises, so uses has to specify it
-            ClientContext ccTenant = null;
-            if (!String.IsNullOrEmpty(tenantAdminSite))
-            {
-                ccTenant = CreateClientContext(tenantAdminSite);
-            }
+                // No easy way to detect tenant admin site in on-premises, so uses has to specify it            
+                if (!String.IsNullOrEmpty(tenantAdminSite))
+                {
+                    ccTenant = CreateClientContext(tenantAdminSite);
+                }
 #endif
+            }
+            catch(Exception ex)
+            {
+                // Sometimes getting a valid clientcontext fails due to auth reasons (e.g. Azure ACS random outages)...don't break the provisioning job 
+                // but provide null values in the timer job event so that each implementation can decide how to handle this
+            }
 
             // Prepare the timerjob callback event arguments
             TimerJobRunEventArgs e = new TimerJobRunEventArgs(site, ccSite, ccWeb, ccTenant, null, null, "", new Dictionary<string, string>(), this.ConfigurationData);

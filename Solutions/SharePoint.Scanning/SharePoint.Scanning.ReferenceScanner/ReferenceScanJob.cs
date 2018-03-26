@@ -4,6 +4,7 @@ using SharePoint.Scanning.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 
 namespace SharePoint.Scanning.ReferenceScanner
@@ -17,7 +18,7 @@ namespace SharePoint.Scanning.ReferenceScanner
         internal List<Mode> ScanModes;
         internal bool UseSearchQuery = false;
         private Int32 SitesToScan = 0;
-        public ConcurrentDictionary<string, ScanResult> ScanResults = new ConcurrentDictionary<string, ScanResult>();
+        public ConcurrentDictionary<string, ScanResult> ScanResults;
         #endregion
 
         #region Construction
@@ -27,6 +28,7 @@ namespace SharePoint.Scanning.ReferenceScanner
             ScanModes = options.ScanModes;
             UseSearchQuery = !options.DontUseSearchQuery;
             ExpandSubSites = false; // false is default value, shown her for demo purposes
+            ScanResults = new ConcurrentDictionary<string, ScanResult>(options.Threads, 10000);
 
             // Connect the eventhandler
             TimerJobRun += ReferenceScanJob_TimerJobRun;
@@ -100,6 +102,22 @@ namespace SharePoint.Scanning.ReferenceScanner
 
         private void ReferenceScanJob_TimerJobRun(object sender, TimerJobRunEventArgs e)
         {
+            // Validate ClientContext objects
+            if (e.WebClientContext == null || e.SiteClientContext == null)
+            {
+                ScanError error = new ScanError()
+                {
+                    Error = "No valid ClientContext objects",
+                    SiteURL = e.Url,
+                    SiteColUrl = e.Url
+                };
+                this.ScanErrors.Push(error);
+                Console.WriteLine("Error for site {1}: {0}", "No valid ClientContext objects", e.Url);
+
+                // bail out
+                return;
+            }
+            
             // thread safe increase of the sites counter
             IncreaseScannedSites();
 
@@ -283,10 +301,14 @@ namespace SharePoint.Scanning.ReferenceScanner
             string outputfile = string.Format("{0}\\ReferenceScanResults.csv", this.OutputFolder);
             string[] outputHeaders = new string[] {"Site Collection Url", "Site Url", "Title", "File name" };
             Console.WriteLine("Outputting reference scan results to {0}", outputfile);
-            System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
-            foreach (var item in this.ScanResults)
+
+            using (StreamWriter outfile = new StreamWriter(outputfile))
             {
-                System.IO.File.AppendAllText(outputfile, string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.SiteTitle), ToCsv(item.Value.FileName))));
+                outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
+                foreach (var item in this.ScanResults)
+                {
+                    outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.SiteTitle), ToCsv(item.Value.FileName))));
+                }
             }
 
             Console.WriteLine("=====================================================");
