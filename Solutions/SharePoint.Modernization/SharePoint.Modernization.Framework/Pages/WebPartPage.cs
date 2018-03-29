@@ -45,8 +45,9 @@ namespace SharePoint.Modernization.Framework.Pages
         /// <summary>
         /// Analyses a webpart page
         /// </summary>
+        /// <param name="includeTitleBarWebPart">Include the TitleBar web part</param>
         /// <returns>Information about the analyzed webpart page</returns>
-        public Tuple<string, List<WebPartEntity>> Analyze()
+        public Tuple<string, List<WebPartEntity>> Analyze(bool includeTitleBarWebPart = false)
         {
             List<WebPartEntity> webparts = new List<WebPartEntity>();
 
@@ -75,7 +76,10 @@ namespace SharePoint.Modernization.Framework.Pages
                     // Skip Microsoft.SharePoint.WebPartPages.TitleBarWebPart webpart in TitleBar zone
                     if (foundWebPart.ZoneId.Equals("TitleBar", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        continue;
+                        if (!includeTitleBarWebPart)
+                        {
+                            continue;
+                        }
                     }
 
                     string webPartXml = "";

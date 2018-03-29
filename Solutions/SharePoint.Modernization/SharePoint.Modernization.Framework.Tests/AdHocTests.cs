@@ -7,15 +7,17 @@ namespace SharePoint.Modernization.Framework.Tests
     [TestClass]
     public class AdHocTests
     {
+
         [TestMethod]
         public void TestMethod1()
         {
-            using (var cc = TestCommon.CreateClientContext("https://bertonline.sharepoint.com/sites/bert1"))
+            using (var cc = TestCommon.CreateClientContext())
             {
-                cc.Web.EnsureProperty(p => p.Description);
-                Assert.IsNotNull(cc.Web.Description);
-            }
+                var pages = cc.Web.GetPages("Header");
 
+                Assert.IsTrue(pages.Count > 0);
+
+            }
         }
     }
 }

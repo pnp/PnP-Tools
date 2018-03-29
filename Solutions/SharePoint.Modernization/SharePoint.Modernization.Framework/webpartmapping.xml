@@ -905,6 +905,15 @@
           <Property Name="ErrorType" Type="string" />        
         </Properties>
       </WebPart>
+      <!-- PageTitle web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.TitleBarWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="HeaderTitle" Type="string" />
+          <Property Name="HeaderCaption" Type="string" />
+          <Property Name="HeaderDescription" Type="string" />
+          <Property Name="Image" Type="string" />
+        </Properties>
+      </WebPart>
       <!-- App catalog web parts -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.GettingStartedWithAppCatalogSiteWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>

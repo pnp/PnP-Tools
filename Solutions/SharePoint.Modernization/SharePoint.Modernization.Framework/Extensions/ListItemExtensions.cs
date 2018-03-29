@@ -1,6 +1,7 @@
 ﻿using SharePoint.Modernization.Framework;
 using SharePoint.Modernization.Framework.Entities;
 using SharePoint.Modernization.Framework.Pages;
+using SharePoint.Modernization.Framework.Transform;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace Microsoft.SharePoint.Client
         private const string ClientSideApplicationId = "ClientSideApplicationId";
         private static readonly Guid FeatureId_Web_ModernPage = new Guid("B6917CB1-93A0-4B97-A84D-7CF49975D4EC");
 
+        #region Analyze page
         /// <summary>
         /// Determines the type of page
         /// </summary>
@@ -75,7 +77,9 @@ namespace Microsoft.SharePoint.Client
 
             return null;
         }
+        #endregion
 
+        #region Page usage information
         /// <summary>
         /// Get's the page last modified date time
         /// </summary>
@@ -114,11 +118,21 @@ namespace Microsoft.SharePoint.Client
 
             return "";
         }
+        #endregion
 
-        private static bool FieldExistsAndUsed(ListItem item, string fieldName)
+        #region Transform page
+        public static void Transform(this ListItem item, ClientContext clientContext)
+        {
+            new PageTransformator(clientContext).Transform(item);
+        }
+        #endregion
+
+        #region helper methods
+        public static bool FieldExistsAndUsed(this ListItem item, string fieldName)
         {
             return (item.FieldValues.ContainsKey(fieldName) && item[fieldName] != null);
         }
+        #endregion
 
     }
 }
