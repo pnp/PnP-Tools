@@ -158,7 +158,7 @@ namespace SharePoint.UIExperience.Scanner
                 // output summary report
                 outputfile = string.Format("{0}\\ModernListBlocked.csv", uiExpScanner.OutputFolder);
                 Console.WriteLine("Outputting list scan results to {0}", outputfile);
-                outputHeaders = new string[] { "Url", "Site Url", "Site Collection Url", "List Title", "Only blocked by OOB reaons",
+                outputHeaders = new string[] { "Url", "Site Url", "Site Collection Url", "List Title", "Only blocked by OOB reasons",
                                                "Blocked at site level", "Blocked at web level", "Blocked at list level", "List page render type", "List experience", "Blocked by not being able to load Page", "Blocked by not being able to load page exception",
                                                "Blocked by managed metadata navigation", "Blocked by view type", "View type", "Blocked by list base template", "List base template",
                                                "Blocked by zero or multiple web parts", "Blocked by JSLink", "JSLink", "Blocked by XslLink", "XslLink", "Blocked by Xsl", 
