@@ -116,11 +116,10 @@ namespace Microsoft.SharePoint.Client
         #endregion
 
         #region Transform page
-        public static void Transform(this ListItem item, ClientContext clientContext, 
-                                     Func<string, string> pageTitleOverride = null,
-                                     Func<ClientSidePage, ILayoutTransformator> layoutTransformatorOverride = null)
+        public static void Transform(this ListItem sourcePage, PageTransformationInformation pageTransformationInformation, ClientContext clientContext)
         {
-            new PageTransformator(clientContext).Transform(item, pageTitleOverride, layoutTransformatorOverride);
+            pageTransformationInformation.SourcePage = sourcePage;
+            new PageTransformator(clientContext).Transform(pageTransformationInformation);
         }
         #endregion
 

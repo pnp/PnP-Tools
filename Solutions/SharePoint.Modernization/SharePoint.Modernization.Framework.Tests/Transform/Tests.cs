@@ -27,18 +27,18 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {           
-            using (var cc = TestCommon.CreateClientContext())
-            {
-                // Clean all migrated pages before next run
-                var pages = cc.Web.GetPages("Migrated_");
+            //using (var cc = TestCommon.CreateClientContext())
+            //{
+            //    // Clean all migrated pages before next run
+            //    var pages = cc.Web.GetPages("Migrated_");
 
-                foreach (var page in pages.ToList())
-                {
-                    page.DeleteObject();
-                }
+            //    foreach (var page in pages.ToList())
+            //    {
+            //        page.DeleteObject();
+            //    }
 
-                cc.ExecuteQueryRetry();
-            }
+            //    cc.ExecuteQueryRetry();
+            //}
         }
 
         [ClassCleanup()]
@@ -64,13 +64,20 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
 
             using (var cc = TestCommon.CreateClientContext())
             {
-                var pages = cc.Web.GetPages("Header");
+                var pageTransformator = new PageTransformator(cc);
+
+                var pages = cc.Web.GetPages("webpartpage1");
 
                 foreach (var page in pages)
-                {
-                    //page.Transform(cc, pageTitleOverride:titleOverride);
-                    //page.Transform(cc, layoutTransformatorOverride: layoutOverride);
-                    page.Transform(cc);
+                {                    
+                    PageTransformationInformation pti = new PageTransformationInformation(page)
+                    {
+                        Overwrite = true,
+                        //PageTitleOverride = titleOverride,
+                        //LayoutTransformatorOverride = layoutOverride,
+                    };
+
+                    pageTransformator.Transform(pti);
                 }
 
             }

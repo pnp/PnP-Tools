@@ -160,9 +160,13 @@
     <Compile Include="Pages\WebPartPage.cs" />
     <Compile Include="Pages\WikiPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Transform\ContentTransformator.cs" />
+    <Compile Include="Transform\IContentTransformator.cs" />
     <Compile Include="Transform\ILayoutTransformator.cs" />
     <Compile Include="Transform\LayoutTransformator.cs" />
+    <Compile Include="Transform\PageTransformationInformation.cs" />
     <Compile Include="Transform\PageTransformator.cs" />
+    <Compile Include="Transform\TokenParser.cs" />
     <Compile Include="webpartmapping.cs">
       <DependentUpon>webpartmapping.xsd</DependentUpon>
     </Compile>

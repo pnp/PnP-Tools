@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OfficeDevPnP.Core.Pages;
+﻿using OfficeDevPnP.Core.Pages;
 using SharePoint.Modernization.Framework.Pages;
 
 namespace SharePoint.Modernization.Framework.Transform

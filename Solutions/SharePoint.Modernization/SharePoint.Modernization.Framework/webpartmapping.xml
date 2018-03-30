@@ -60,7 +60,7 @@
             <ClientSideWebPart Type="List" JsonControlData="" Order="20" />
           </Mapping>
           <Mapping Name="Simple" Default="false">
-            <ClientSideWebPart Type="List" ControlId="{A71C1765-2243-46BB-B7AA-83C46AD74282}" JsonControlData="" Order="10" Mapping="" />
+            <ClientSideWebPart Type="List" JsonControlData="" Order="10" Mapping="" />
           </Mapping>
         </Mappings> 
       </WebPart>
