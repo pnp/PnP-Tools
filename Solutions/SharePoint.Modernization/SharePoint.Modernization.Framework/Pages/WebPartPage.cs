@@ -14,22 +14,6 @@ namespace SharePoint.Modernization.Framework.Pages
     /// </summary>
     public class WebPartPage: BasePage
     {
-
-        private enum WebPartPageLayout
-        {
-            HeaderFooterThreeColumns,
-            FullPageVertical,
-            HeaderLeftColumnBody,
-            HeaderRightColumnBody,
-            HeaderFooter2Columns4Rows,
-            HeaderFooter4ColumnsTopRow,
-            LeftColumnHeaderFooterTopRow3Columns,
-            RightColumnHeaderFooterTopRow3Columns,
-            Custom
-        }
-
-        private const string FileRefField = "FileRef";
-
         #region construction
         /// <summary>
         /// 
@@ -47,12 +31,12 @@ namespace SharePoint.Modernization.Framework.Pages
         /// </summary>
         /// <param name="includeTitleBarWebPart">Include the TitleBar web part</param>
         /// <returns>Information about the analyzed webpart page</returns>
-        public Tuple<string, List<WebPartEntity>> Analyze(bool includeTitleBarWebPart = false)
+        public Tuple<PageLayout, List<WebPartEntity>> Analyze(bool includeTitleBarWebPart = false)
         {
             List<WebPartEntity> webparts = new List<WebPartEntity>();
 
             //Load the page
-            var wikiPageUrl = page[FileRefField].ToString();
+            var wikiPageUrl = page[Constants.FileRefField].ToString();
             var wikiPage = cc.Web.GetFileByServerRelativeUrl(wikiPageUrl);
 
             // Load page properties
@@ -116,7 +100,7 @@ namespace SharePoint.Modernization.Framework.Pages
                 }
             }
 
-            return new Tuple<string, List<WebPartEntity>>(layout.ToString(), webparts);
+            return new Tuple<PageLayout, List<WebPartEntity>>(layout, webparts);
         }
 
         /// <summary>
@@ -125,11 +109,11 @@ namespace SharePoint.Modernization.Framework.Pages
         /// <param name="zoneId">Web part zone id</param>
         /// <param name="layout">Layout of the web part page</param>
         /// <returns>Column value</returns>
-        private int GetColumn(string zoneId, WebPartPageLayout layout)
+        private int GetColumn(string zoneId, PageLayout layout)
         {
             switch (layout)
             {
-                case WebPartPageLayout.HeaderFooterThreeColumns:
+                case PageLayout.WebPart_HeaderFooterThreeColumns:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase) ||
                             zoneId.Equals("LeftColumn", StringComparison.InvariantCultureIgnoreCase) ||
@@ -147,11 +131,11 @@ namespace SharePoint.Modernization.Framework.Pages
                         }
                         break;
                     }
-                case WebPartPageLayout.FullPageVertical:
+                case PageLayout.WebPart_FullPageVertical:
                     {
                         return 1;
                     }
-                case WebPartPageLayout.HeaderLeftColumnBody:
+                case PageLayout.WebPart_HeaderLeftColumnBody:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase) ||
                             zoneId.Equals("LeftColumn", StringComparison.InvariantCultureIgnoreCase))
@@ -164,7 +148,7 @@ namespace SharePoint.Modernization.Framework.Pages
                         }
                         break;
                     }
-                case WebPartPageLayout.HeaderRightColumnBody:
+                case PageLayout.WebPart_HeaderRightColumnBody:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase) ||
                             zoneId.Equals("Body", StringComparison.InvariantCultureIgnoreCase))
@@ -177,7 +161,7 @@ namespace SharePoint.Modernization.Framework.Pages
                         }
                         break;
                     }
-                case WebPartPageLayout.HeaderFooter2Columns4Rows:
+                case PageLayout.WebPart_HeaderFooter2Columns4Rows:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase) ||
                             zoneId.Equals("Footer", StringComparison.InvariantCultureIgnoreCase) ||
@@ -198,7 +182,7 @@ namespace SharePoint.Modernization.Framework.Pages
                         }
                         break;
                     }
-                case WebPartPageLayout.HeaderFooter4ColumnsTopRow:
+                case PageLayout.WebPart_HeaderFooter4ColumnsTopRow:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase) ||
                             zoneId.Equals("Footer", StringComparison.InvariantCultureIgnoreCase) ||
@@ -218,7 +202,7 @@ namespace SharePoint.Modernization.Framework.Pages
                         }
                         break;
                     }
-                case WebPartPageLayout.LeftColumnHeaderFooterTopRow3Columns:
+                case PageLayout.WebPart_LeftColumnHeaderFooterTopRow3Columns:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase) ||
                             zoneId.Equals("LeftColumn", StringComparison.InvariantCultureIgnoreCase) ||
@@ -238,7 +222,7 @@ namespace SharePoint.Modernization.Framework.Pages
                         }                        
                         break;
                     }
-                case WebPartPageLayout.RightColumnHeaderFooterTopRow3Columns:
+                case PageLayout.WebPart_RightColumnHeaderFooterTopRow3Columns:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase) ||
                             zoneId.Equals("RightColumn", StringComparison.InvariantCultureIgnoreCase) ||
@@ -258,7 +242,7 @@ namespace SharePoint.Modernization.Framework.Pages
                         }
                         break;
                     }
-                case WebPartPageLayout.Custom:
+                case PageLayout.WebPart_Custom:
                     {
                         return 1;
                     }
@@ -275,11 +259,11 @@ namespace SharePoint.Modernization.Framework.Pages
         /// <param name="zoneId">Web part zone id</param>
         /// <param name="layout">Layout of the web part page</param>
         /// <returns>Row value</returns>
-        private int GetRow(string zoneId, WebPartPageLayout layout)
+        private int GetRow(string zoneId, PageLayout layout)
         {
             switch (layout)
             {
-                case WebPartPageLayout.HeaderFooterThreeColumns:
+                case PageLayout.WebPart_HeaderFooterThreeColumns:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase))
                         {
@@ -297,11 +281,11 @@ namespace SharePoint.Modernization.Framework.Pages
                         }
                         break;
                     }
-                case WebPartPageLayout.FullPageVertical:
+                case PageLayout.WebPart_FullPageVertical:
                     {
                         return 1;                        
                     }
-                case WebPartPageLayout.HeaderLeftColumnBody:
+                case PageLayout.WebPart_HeaderLeftColumnBody:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase))
                         {
@@ -314,7 +298,7 @@ namespace SharePoint.Modernization.Framework.Pages
                         }
                         break;
                     }
-                case WebPartPageLayout.HeaderRightColumnBody:
+                case PageLayout.WebPart_HeaderRightColumnBody:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase))
                         {
@@ -327,7 +311,7 @@ namespace SharePoint.Modernization.Framework.Pages
                         }
                         break;
                     }
-                case WebPartPageLayout.HeaderFooter2Columns4Rows:
+                case PageLayout.WebPart_HeaderFooter2Columns4Rows:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase))
                         {
@@ -357,7 +341,7 @@ namespace SharePoint.Modernization.Framework.Pages
                         }
                         break;
                     }
-                case WebPartPageLayout.HeaderFooter4ColumnsTopRow:
+                case PageLayout.WebPart_HeaderFooter4ColumnsTopRow:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase))
                         {
@@ -380,7 +364,7 @@ namespace SharePoint.Modernization.Framework.Pages
                         }
                         break;
                     }
-                case WebPartPageLayout.LeftColumnHeaderFooterTopRow3Columns:
+                case PageLayout.WebPart_LeftColumnHeaderFooterTopRow3Columns:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase) ||
                             zoneId.Equals("LeftColumn", StringComparison.InvariantCultureIgnoreCase))
@@ -403,7 +387,7 @@ namespace SharePoint.Modernization.Framework.Pages
                         }
                         break;
                     }
-                case WebPartPageLayout.RightColumnHeaderFooterTopRow3Columns:
+                case PageLayout.WebPart_RightColumnHeaderFooterTopRow3Columns:
                     {
                         if (zoneId.Equals("Header", StringComparison.InvariantCultureIgnoreCase) ||
                             zoneId.Equals("RightColumn", StringComparison.InvariantCultureIgnoreCase))
@@ -426,7 +410,7 @@ namespace SharePoint.Modernization.Framework.Pages
                         }
                         break;
                     }
-                case WebPartPageLayout.Custom:
+                case PageLayout.WebPart_Custom:
                     {
                         return 1;
                     }
@@ -442,7 +426,7 @@ namespace SharePoint.Modernization.Framework.Pages
         /// </summary>
         /// <param name="pageProperties">Properties of the web part page file</param>
         /// <returns>Used layout</returns>
-        private WebPartPageLayout GetLayout(PropertyValues pageProperties)
+        private PageLayout GetLayout(PropertyValues pageProperties)
         {
             if (pageProperties.FieldValues.ContainsKey("vti_setuppath"))
             {
@@ -451,40 +435,40 @@ namespace SharePoint.Modernization.Framework.Pages
                 {
                     if (setupPath.Equals(@"1033\STS\doctemp\smartpgs\spstd1.aspx", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return WebPartPageLayout.FullPageVertical;
+                        return PageLayout.WebPart_FullPageVertical;
                     }
                     else if (setupPath.Equals(@"1033\STS\doctemp\smartpgs\spstd2.aspx", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return WebPartPageLayout.HeaderFooterThreeColumns; 
+                        return PageLayout.WebPart_HeaderFooterThreeColumns; 
                     }
                     else if (setupPath.Equals(@"1033\STS\doctemp\smartpgs\spstd3.aspx", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return WebPartPageLayout.HeaderLeftColumnBody;
+                        return PageLayout.WebPart_HeaderLeftColumnBody;
                     }
                     else if (setupPath.Equals(@"1033\STS\doctemp\smartpgs\spstd4.aspx", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return WebPartPageLayout.HeaderRightColumnBody;
+                        return PageLayout.WebPart_HeaderRightColumnBody;
                     }
                     else if (setupPath.Equals(@"1033\STS\doctemp\smartpgs\spstd5.aspx", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return WebPartPageLayout.HeaderFooter2Columns4Rows;
+                        return PageLayout.WebPart_HeaderFooter2Columns4Rows;
                     }
                     else if (setupPath.Equals(@"1033\STS\doctemp\smartpgs\spstd6.aspx", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return WebPartPageLayout.HeaderFooter4ColumnsTopRow;
+                        return PageLayout.WebPart_HeaderFooter4ColumnsTopRow;
                     }
                     else if (setupPath.Equals(@"1033\STS\doctemp\smartpgs\spstd7.aspx", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return WebPartPageLayout.LeftColumnHeaderFooterTopRow3Columns;
+                        return PageLayout.WebPart_LeftColumnHeaderFooterTopRow3Columns;
                     }
                     else if (setupPath.Equals(@"1033\STS\doctemp\smartpgs\spstd8.aspx", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return WebPartPageLayout.RightColumnHeaderFooterTopRow3Columns;
+                        return PageLayout.WebPart_RightColumnHeaderFooterTopRow3Columns;
                     }
                 }
             }
 
-            return WebPartPageLayout.Custom;
+            return PageLayout.WebPart_Custom;
         }
 
     }

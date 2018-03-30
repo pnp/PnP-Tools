@@ -150,20 +150,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="Entities\WebPartEntity.cs" />
     <Compile Include="Extensions\ListItemExtensions.cs" />
     <Compile Include="Extensions\SiteExtensions.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
     <Compile Include="Pages\BasePage.cs" />
+    <Compile Include="Pages\PageLayout.cs" />
     <Compile Include="Pages\WebPartPage.cs" />
     <Compile Include="Pages\WikiPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Transform\IPageTransformator.cs" />
+    <Compile Include="Transform\ILayoutTransformator.cs" />
     <Compile Include="Transform\LayoutTransformator.cs" />
     <Compile Include="Transform\PageTransformator.cs" />
     <Compile Include="webpartmapping.cs">
       <DependentUpon>webpartmapping.xsd</DependentUpon>
     </Compile>
+    <Compile Include="WebParts.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -30,8 +30,6 @@ namespace SharePoint.Modernization.Framework.Pages
             public int Order { get; set; }
         }
 
-        private const string FileRefField = "FileRef";
-        private const string WikiField = "WikiField";
         private HtmlParser parser;
 
         #region construction
@@ -45,23 +43,23 @@ namespace SharePoint.Modernization.Framework.Pages
         /// Analyses a wiki page
         /// </summary>
         /// <returns>Information about the analyzed wiki page</returns>
-        public Tuple<string,List<WebPartEntity>> Analyze()
+        public Tuple<PageLayout,List<WebPartEntity>> Analyze()
         {
             List<WebPartEntity> webparts = new List<WebPartEntity>();
 
             //Load the page
-            var wikiPageUrl = page[FileRefField].ToString();
+            var wikiPageUrl = page[Constants.FileRefField].ToString();
             var wikiPage = cc.Web.GetFileByServerRelativeUrl(wikiPageUrl);
             cc.Load(wikiPage);
             cc.ExecuteQueryRetry();
 
             // Load wiki content in HTML parser
-            var pageContents = page.FieldValues[WikiField].ToString();
+            var pageContents = page.FieldValues[Constants.WikiField].ToString();
             var htmlDoc = parser.Parse(pageContents);
             var layout = GetLayout(htmlDoc);
             if (string.IsNullOrEmpty(pageContents))
             {
-                layout = "OneColumn";
+                layout = PageLayout.Wiki_OneColumn;
             }
 
             List<WebPartPlaceHolder> webPartsToRetrieve = new List<WebPartPlaceHolder>();
@@ -229,7 +227,7 @@ namespace SharePoint.Modernization.Framework.Pages
                 webparts.Add(CreateWikiTextPart(htmlDoc.Source.Text, 1, 1, 1));
             }
 
-            return new Tuple<string, List<WebPartEntity>>(layout, webparts);
+            return new Tuple<PageLayout, List<WebPartEntity>>(layout, webparts);
         }
 
         /// <summary>
@@ -281,7 +279,7 @@ namespace SharePoint.Modernization.Framework.Pages
         /// </summary>
         /// <param name="doc">html object</param>
         /// <returns>Layout of the wiki page</returns>
-        private string GetLayout(IHtmlDocument doc)
+        private PageLayout GetLayout(IHtmlDocument doc)
         {
             string spanValue = "";
             var spanTags = doc.All.Where(p => p.LocalName == "span" && p.HasAttribute("id"));
@@ -295,7 +293,7 @@ namespace SharePoint.Modernization.Framework.Pages
 
                         if (spanValue == "false,false,1")
                         {
-                            return "OneColumn";
+                            return PageLayout.Wiki_OneColumn;
                         }
                         else if (spanValue == "false,false,2")
                         {
@@ -304,33 +302,33 @@ namespace SharePoint.Modernization.Framework.Pages
                             {
                                 if (tdTag.GetAttribute("style").Equals("width:49.95%;", StringComparison.InvariantCultureIgnoreCase))
                                 {
-                                    return "TwoColumns";
+                                    return PageLayout.Wiki_TwoColumns;
                                 }
                                 else if (tdTag.GetAttribute("style").Equals("width:66.6%;", StringComparison.InvariantCultureIgnoreCase))
                                 {
-                                    return "TwoColumnsWithSidebar";
+                                    return PageLayout.Wiki_TwoColumnsWithSidebar;
                                 }
                             }
                         }
                         else if (spanValue == "true,false,2")
                         {
-                            return "TwoColumnsWithHeader";
+                            return PageLayout.Wiki_TwoColumnsWithHeader;
                         }
                         else if (spanValue == "true,true,2")
                         {
-                            return "TwoColumnsWithHeaderAndFooter";
+                            return PageLayout.Wiki_TwoColumnsWithHeaderAndFooter;
                         }
                         else if (spanValue == "false,false,3")
                         {
-                            return "ThreeColumns";
+                            return PageLayout.Wiki_ThreeColumns;
                         }
                         else if (spanValue == "true,false,3")
                         {
-                            return "ThreeColumnsWithHeader";
+                            return PageLayout.Wiki_ThreeColumnsWithHeader;
                         }
                         else if (spanValue == "true,true,3")
                         {
-                            return "ThreeColumnsWithHeaderAndFooter";
+                            return PageLayout.Wiki_ThreeColumnsWithHeaderAndFooter;
                         }
                     }
                 }
@@ -345,49 +343,49 @@ namespace SharePoint.Modernization.Framework.Pages
                 {
                     if (tdTags.Count() == 1)
                     {
-                        return "OneColumn";
+                        return PageLayout.Wiki_OneColumn;
                     }
                     else if (tdTags.Count() == 2)
                     {
                         if (tdTags.First().GetAttribute("style").Equals("width:49.95%;", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            return "TwoColumns";
+                            return PageLayout.Wiki_TwoColumns;
                         }
                         else if (tdTags.First().GetAttribute("style").Equals("width:66.6%;", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            return "TwoColumnsWithSidebar";
+                            return PageLayout.Wiki_TwoColumnsWithSidebar;
                         }
                     }
                     else if (tdTags.Count() == 3)
                     {
-                        return "ThreeColumns";
+                        return PageLayout.Wiki_ThreeColumns;
                     }
                 }
                 else if (spanValue.StartsWith("true,true,"))
                 {
                     if (tdTags.Count() == 2)
                     {
-                        return "TwoColumnsWithHeaderAndFooter";
+                        return PageLayout.Wiki_TwoColumnsWithHeaderAndFooter;
                     }
                     else if (tdTags.Count() == 3)
                     {
-                        return "ThreeColumnsWithHeaderAndFooter";
+                        return PageLayout.Wiki_ThreeColumnsWithHeaderAndFooter;
                     }
                 }
                 else if (spanValue.StartsWith("true,false,"))
                 {
                     if (tdTags.Count() == 2)
                     {
-                        return "TwoColumnsWithHeader";
+                        return PageLayout.Wiki_TwoColumnsWithHeader;
                     }
                     else if (tdTags.Count() == 3)
                     {
-                        return "ThreeColumnsWithHeader";
+                        return PageLayout.Wiki_ThreeColumnsWithHeader;
                     }
                 }
             }
 
-            return "Custom";
+            return PageLayout.Wiki_Custom;
         }
 
     }

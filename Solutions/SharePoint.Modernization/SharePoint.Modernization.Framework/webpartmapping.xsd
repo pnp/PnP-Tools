@@ -120,6 +120,7 @@
   <xs:complexType name="BaseWebPart">
     <xs:sequence>
       <xs:element name="Properties" type="Properties" minOccurs="1" maxOccurs="1" />
+      <xs:element name="Mappings" type="Mappings" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
 

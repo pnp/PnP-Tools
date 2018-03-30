@@ -112,7 +112,7 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                                     var pageAnalysis = page.WebParts(this.ScanJob.PageTransformation);
                                     if (pageAnalysis != null)
                                     {
-                                        pageResult.Layout = pageAnalysis.Item1;
+                                        pageResult.Layout = pageAnalysis.Item1.ToString().Replace("Wiki_", "").Replace("WebPart_", "");
                                         pageResult.WebParts = pageAnalysis.Item2;
                                     }
 

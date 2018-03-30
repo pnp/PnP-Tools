@@ -1,4 +1,4 @@
-﻿using Microsoft.SharePoint.Client;
+﻿using SharePoint.Modernization.Framework.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace SharePoint.Modernization.Framework.Transform
 {
-    interface IPageTransformator
+    public interface ILayoutTransformator
     {
-        void Transform(ListItem sourcePage, string targetPageName);
-
+        void ApplyLayout(PageLayout layout);
     }
 }

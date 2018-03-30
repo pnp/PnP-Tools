@@ -5,12 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.SharePoint.Client;
+using SharePoint.Modernization.Framework.Transform;
+using OfficeDevPnP.Core.Pages;
+using SharePoint.Modernization.Framework.Pages;
 
 namespace SharePoint.Modernization.Framework.Tests.Transform
 {
     [TestClass]
     public class Tests
     {
+        class TestLayout : ILayoutTransformator
+        {
+            public void ApplyLayout(PageLayout layout)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
 
         #region Test initialization
         [ClassInitialize()]
@@ -40,12 +51,25 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
         [TestMethod]
         public void TransformPagesTest()
         {
+            // Local functions
+            string titleOverride(string title)
+            {
+                return $"{title}_1";
+            }
+
+            ILayoutTransformator layoutOverride(ClientSidePage cp)
+            {
+                return new TestLayout();
+            }
+
             using (var cc = TestCommon.CreateClientContext())
             {
                 var pages = cc.Web.GetPages("Header");
 
                 foreach (var page in pages)
                 {
+                    //page.Transform(cc, pageTitleOverride:titleOverride);
+                    //page.Transform(cc, layoutTransformatorOverride: layoutOverride);
                     page.Transform(cc);
                 }
 

@@ -12,13 +12,8 @@ using OfficeDevPnP.Core.Pages;
 
 namespace SharePoint.Modernization.Framework.Transform
 {
-    public class PageTransformator : IPageTransformator
+    public class PageTransformator
     {
-        private const string FileRefField = "FileRef";
-        private const string FileLeafRefField = "FileLeafRef";
-        private const string FileTitle = "Title";
-        private const string ClientSideApplicationId = "ClientSideApplicationId";
-        private static readonly Guid FeatureId_Web_ModernPage = new Guid("B6917CB1-93A0-4B97-A84D-7CF49975D4EC");
 
         private ClientContext clientContext;
         private PageTransformation pageTransformation;
@@ -42,20 +37,32 @@ namespace SharePoint.Modernization.Framework.Transform
         }
         #endregion
 
-        public void Transform(ListItem sourcePage)
+        public void Transform(ListItem sourcePage, 
+                              Func<string,string> pageTitleOverride = null,
+                              Func<ClientSidePage, ILayoutTransformator> layoutTransformatorOverride = null)
         {
-            Transform(sourcePage, null);
+            Transform(sourcePage, null, false, pageTitleOverride, layoutTransformatorOverride);
         }
 
-        public void Transform(ListItem sourcePage, string targetPageName)
+        public void Transform(ListItem sourcePage, bool overwrite, 
+                              Func<string, string> pageTitleOverride = null,
+                              Func<ClientSidePage, ILayoutTransformator> layoutTransformatorOverride = null)
         {
+            Transform(sourcePage, null, overwrite, pageTitleOverride, layoutTransformatorOverride);
+        }
+
+        public void Transform(ListItem sourcePage, string targetPageName, bool overwrite, 
+                              Func<string, string> pageTitleOverride = null,
+                              Func<ClientSidePage, ILayoutTransformator> layoutTransformatorOverride = null)
+        {
+            #region Input validation
             if (sourcePage == null)
             {
                 throw new ArgumentNullException("SourcePage cannot be null");
             }
 
             // Validate page and it's eligibility for transformation
-            if (!sourcePage.FieldExistsAndUsed(FileRefField) || !sourcePage.FieldExistsAndUsed(FileLeafRefField))
+            if (!sourcePage.FieldExistsAndUsed(Constants.FileRefField) || !sourcePage.FieldExistsAndUsed(Constants.FileLeafRefField))
             {
                 throw new ArgumentException("Page is not valid due to missing FileRef or FileLeafRef value");
             }
@@ -71,15 +78,46 @@ namespace SharePoint.Modernization.Framework.Transform
             {
                 throw new ArgumentException("Page is an basic aspx page...can't transform that one, sorry!");
             }
+            #endregion
 
+            #region Page creation
             // If no targetname specified then we'll come up with one
             if (string.IsNullOrEmpty(targetPageName))
             {
-                targetPageName = $"Migrated_{sourcePage[FileLeafRefField].ToString()}";
+                targetPageName = $"Migrated_{sourcePage[Constants.FileLeafRefField].ToString()}";
             }
 
-            // Analyze the page
-            Tuple<string, List<WebPartEntity>> pageData = null;
+            // Check if page name is free to use
+            bool pageExists = false;
+            ClientSidePage targetPage = null;
+            try
+            {
+                targetPage = clientContext.Web.LoadClientSidePage(targetPageName);
+                pageExists = true;
+            }
+            catch (ArgumentException) { }
+
+            if (pageExists)
+            {
+                if (!overwrite)
+                {
+                    throw new ArgumentException($"There already exists a page with name {targetPageName}.");
+                }
+                else
+                {
+                    targetPage.ClearPage();
+                }
+            }
+            else
+            {
+                // Create a new client side page
+                targetPage = clientContext.Web.AddClientSidePage(targetPageName);
+            }
+            #endregion
+
+            #region Analysis of the source page
+            // Analyze the source page
+            Tuple<PageLayout, List<WebPartEntity>> pageData = null;
 
             if (pageType.Equals("WikiPage", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -89,18 +127,17 @@ namespace SharePoint.Modernization.Framework.Transform
             {
                 pageData = new WebPartPage(sourcePage, pageTransformation).Analyze(true);
             }
+            #endregion
 
-            // Create a new client side page
-            ClientSidePage targetPage = clientContext.Web.AddClientSidePage(targetPageName);
-
-            // Set title
-            if (pageType.Equals("WikiPage", StringComparison.InvariantCultureIgnoreCase) && sourcePage.FieldExistsAndUsed(FileTitle))
+            #region Page title configuration
+            // Set page title
+            if (pageType.Equals("WikiPage", StringComparison.InvariantCultureIgnoreCase) && sourcePage.FieldExistsAndUsed(Constants.FileTitleField))
             {
-                targetPage.PageTitle = sourcePage[FileTitle].ToString();
+                targetPage.PageTitle = sourcePage[Constants.FileTitleField].ToString();
             }
             else if (pageType.Equals("WebPartPage"))
             {
-                var titleBarWebPart = pageData.Item2.Where(p => p.Type == "Microsoft.SharePoint.WebPartPages.TitleBarWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c").FirstOrDefault();
+                var titleBarWebPart = pageData.Item2.Where(p => p.Type == WebParts.TitleBar).FirstOrDefault();
                 if (titleBarWebPart != null)
                 {
                     if (titleBarWebPart.Properties.ContainsKey("HeaderTitle") && !string.IsNullOrEmpty(titleBarWebPart.Properties["HeaderTitle"]))
@@ -110,17 +147,36 @@ namespace SharePoint.Modernization.Framework.Transform
                 }
             }
 
-            // Configure the page layout
-            LayoutTransformator layoutTransformator = new LayoutTransformator(targetPage);
-            layoutTransformator.ApplyLayout(pageData.Item1);
+            if (pageTitleOverride != null)
+            {
+                targetPage.PageTitle = pageTitleOverride(targetPage.PageTitle);
+            }
+            #endregion
 
+            #region Page layout configuration
+            // Use the default layout transformator
+            ILayoutTransformator layoutTransformator = new LayoutTransformator(targetPage);
+
+            // Do we have an override?
+            if (layoutTransformatorOverride != null)
+            {
+                layoutTransformator = layoutTransformatorOverride(targetPage);
+            }
+            
+            // Apply the layout to the page
+            layoutTransformator.ApplyLayout(pageData.Item1);
+            #endregion
+
+            #region Page contents transformation
             // Transform the page contents
 
+            #endregion
+
+            #region Page persisting
             // Persist the client side page
             targetPage.Save(targetPageName);
             targetPage.Publish();
+            #endregion
         }
-
-
     }
 }

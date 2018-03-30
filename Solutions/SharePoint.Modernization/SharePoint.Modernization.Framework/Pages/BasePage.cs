@@ -73,70 +73,70 @@ namespace SharePoint.Modernization.Framework.Pages
             string[] xsltWebPart = new string[] { "ListUrl", "ListId", "Xsl", "JSLink", "ShowTimelineIfAvailable" };                        
             if (CheckWebPartProperties(xsltWebPart, properties))
             {
-                return "Microsoft.SharePoint.WebPartPages.XsltListViewWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
+                return WebParts.XsltListView;
             }
 
             // Check for ListView web part
             string[] listWebPart = new string[] { "ListViewXml", "ListName", "ListId", "ViewContentTypeId", "PageType" };
             if (CheckWebPartProperties(listWebPart, properties))
             {
-                return "Microsoft.SharePoint.WebPartPages.ListViewWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
+                return WebParts.ListView;
             }
 
             // check for Media web part
             string[] mediaWebPart = new string[] { "AutoPlay", "MediaSource", "Loop", "IsPreviewImageSourceOverridenForVideoSet", "PreviewImageSource" };
             if (CheckWebPartProperties(mediaWebPart, properties))
             {
-                return "Microsoft.SharePoint.Publishing.WebControls.MediaWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
+                return WebParts.Media;
             }
 
             // check for SlideShow web part
             string[] slideShowWebPart = new string[] { "LibraryGuid", "Layout", "Speed", "ShowToolbar", "ViewGuid" };
             if (CheckWebPartProperties(slideShowWebPart, properties))
             {
-                return "Microsoft.SharePoint.WebPartPages.PictureLibrarySlideshowWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
+                return WebParts.PictureLibrarySlideshow;
             }
 
             // check for Chart web part
             string[] chartWebPart = new string[] { "ConnectionPointEnabled", "ChartXml", "DataBindingsString", "DesignerChartTheme" };
             if (CheckWebPartProperties(chartWebPart, properties))
             {
-                return "Microsoft.Office.Server.WebControls.ChartWebPart, Microsoft.Office.Server.Chart, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
+                return WebParts.Chart;
             }
 
             // check for Site Members web part
             string[] membersWebPart = new string[] { "NumberLimit", "DisplayType", "MembershipGroupId", "Toolbar" };
             if (CheckWebPartProperties(membersWebPart, properties))
             {
-                return "Microsoft.SharePoint.WebPartPages.MembersWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
+                return WebParts.Members;
             }
 
             // check for Silverlight web part
             string[] silverlightWebPart = new string[] { "MinRuntimeVersion", "WindowlessMode", "CustomInitParameters", "Url", "ApplicationXml" };
             if (CheckWebPartProperties(silverlightWebPart, properties))
             {
-                return "Microsoft.SharePoint.WebPartPages.SilverlightWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
+                return WebParts.Silverlight;
             }
 
             // check for Add-in Part web part
             string[] addinPartWebPart = new string[] { "FeatureId", "ProductWebId", "ProductId" };
             if (CheckWebPartProperties(addinPartWebPart, properties))
             {
-                return "Microsoft.SharePoint.WebPartPages.ClientWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
+                return WebParts.Client;
             }
 
             // check for Script Editor web part
             string[] scriptEditorWebPart = new string[] { "Content"};
             if (CheckWebPartProperties(scriptEditorWebPart, properties))
             {
-                return "Microsoft.SharePoint.WebPartPages.ScriptEditorWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
+                return WebParts.ScriptEditor;
             }
 
             // This needs to be last, but we still pages with sandbox user code web parts on them
             string[] sandboxWebPart = new string[] { "CatalogIconImageUrl", "AllowEdit", "TitleIconImageUrl", "ExportMode" };
             if (CheckWebPartProperties(sandboxWebPart, properties))
             {
-                return "Microsoft.SharePoint.WebPartPages.SPUserCodeWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
+                return WebParts.SPUserCode;
             }
 
             return "NonExportable_Unidentified";

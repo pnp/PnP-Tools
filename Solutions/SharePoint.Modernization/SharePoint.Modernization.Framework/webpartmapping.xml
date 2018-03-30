@@ -7,6 +7,11 @@
         <Property Name="Width" Type="string" Transform=""/>
         <Property Name="Height" Type="string" />
       </Properties>
+      <Mappings>
+        <Mapping Name="default" Default="true">
+          <ClientSideText Text="***Web part {Title} was not transformed***" Order="10" Mapping="" />
+        </Mapping>
+      </Mappings>
     </BaseWebPart>
     <WebParts>
       <!-- Fake wiki text web part, not needed for scanning but needed for transformation -->

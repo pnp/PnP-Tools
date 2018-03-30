@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OfficeDevPnP.Core.Pages;
 
 namespace Microsoft.SharePoint.Client
 {
@@ -15,12 +16,6 @@ namespace Microsoft.SharePoint.Client
     /// </summary>
     public static class ListItemExtensions
     {
-        private const string HtmlFileTypeField = "HTML_x0020_File_x0020_Type";
-        private const string WikiField = "WikiField";
-        private const string ModifiedField = "Modified";
-        private const string ModifiedByField = "Editor";
-        private const string ClientSideApplicationId = "ClientSideApplicationId";
-        private static readonly Guid FeatureId_Web_ModernPage = new Guid("B6917CB1-93A0-4B97-A84D-7CF49975D4EC");
 
         #region Analyze page
         /// <summary>
@@ -30,25 +25,25 @@ namespace Microsoft.SharePoint.Client
         /// <returns>Type of page</returns>
         public static string PageType(this ListItem item)
         {
-            if (FieldExistsAndUsed(item, HtmlFileTypeField) && !String.IsNullOrEmpty(item[HtmlFileTypeField].ToString()))
+            if (FieldExistsAndUsed(item, Constants.HtmlFileTypeField) && !String.IsNullOrEmpty(item[Constants.HtmlFileTypeField].ToString()))
             {
-                if (item[HtmlFileTypeField].ToString().Equals("SharePoint.WebPartPage.Document", StringComparison.InvariantCultureIgnoreCase))
+                if (item[Constants.HtmlFileTypeField].ToString().Equals("SharePoint.WebPartPage.Document", StringComparison.InvariantCultureIgnoreCase))
                 {
                     return "WebPartPage";
                 }
             }
 
-            if (FieldExistsAndUsed(item, WikiField) && !String.IsNullOrEmpty(item[WikiField].ToString()))
+            if (FieldExistsAndUsed(item, Constants.WikiField) && !String.IsNullOrEmpty(item[Constants.WikiField].ToString()))
             {
                 return "WikiPage";
             }
 
-            if (FieldExistsAndUsed(item, ClientSideApplicationId) && item[ClientSideApplicationId].ToString().Equals(FeatureId_Web_ModernPage.ToString(), StringComparison.InvariantCultureIgnoreCase))
+            if (FieldExistsAndUsed(item, Constants.ClientSideApplicationIdField) && item[Constants.ClientSideApplicationIdField].ToString().Equals(Constants.FeatureId_Web_ModernPage.ToString(), StringComparison.InvariantCultureIgnoreCase))
             {
                 return "ClientSidePage";
             }
 
-            if (FieldExistsAndUsed(item, WikiField))
+            if (FieldExistsAndUsed(item, Constants.WikiField))
             {
                 return "WikiPage";
             }
@@ -62,7 +57,7 @@ namespace Microsoft.SharePoint.Client
         /// <param name="item">Page list item</param>
         /// <param name="pageTransformation">PageTransformation model loaded from XML</param>
         /// <returns>Page layout + collection of web parts on the page</returns>
-        public static Tuple<string, List<WebPartEntity>> WebParts(this ListItem item, PageTransformation pageTransformation)
+        public static Tuple<PageLayout, List<WebPartEntity>> WebParts(this ListItem item, PageTransformation pageTransformation)
         {
             string pageType = item.PageType();
 
@@ -87,10 +82,10 @@ namespace Microsoft.SharePoint.Client
         /// <returns>DateTime of the last modification</returns>
         public static DateTime LastModifiedDateTime(this ListItem item)
         {
-            if (FieldExistsAndUsed(item, ModifiedField) && !String.IsNullOrEmpty(item[ModifiedField].ToString()))
+            if (FieldExistsAndUsed(item, Constants.ModifiedField) && !String.IsNullOrEmpty(item[Constants.ModifiedField].ToString()))
             {
                 DateTime dt;
-                if (DateTime.TryParse(item[ModifiedField].ToString(), out dt))
+                if (DateTime.TryParse(item[Constants.ModifiedField].ToString(), out dt))
                 {
                     return dt;
                 }
@@ -106,12 +101,12 @@ namespace Microsoft.SharePoint.Client
         /// <returns>Last modified by user/account</returns>
         public static string LastModifiedBy(this ListItem item)
         {
-            if (FieldExistsAndUsed(item, ModifiedByField) && !String.IsNullOrEmpty(item[ModifiedByField].ToString()))
+            if (FieldExistsAndUsed(item, Constants.ModifiedByField) && !String.IsNullOrEmpty(item[Constants.ModifiedByField].ToString()))
             {
-                string lastModifiedBy = ((FieldUserValue)item[ModifiedByField]).Email;
+                string lastModifiedBy = ((FieldUserValue)item[Constants.ModifiedByField]).Email;
                 if (string.IsNullOrEmpty(lastModifiedBy))
                 {
-                    lastModifiedBy = ((FieldUserValue)item[ModifiedByField]).LookupValue;
+                    lastModifiedBy = ((FieldUserValue)item[Constants.ModifiedByField]).LookupValue;
                 }
                 return lastModifiedBy;
             }
@@ -121,9 +116,11 @@ namespace Microsoft.SharePoint.Client
         #endregion
 
         #region Transform page
-        public static void Transform(this ListItem item, ClientContext clientContext)
+        public static void Transform(this ListItem item, ClientContext clientContext, 
+                                     Func<string, string> pageTitleOverride = null,
+                                     Func<ClientSidePage, ILayoutTransformator> layoutTransformatorOverride = null)
         {
-            new PageTransformator(clientContext).Transform(item);
+            new PageTransformator(clientContext).Transform(item, pageTitleOverride, layoutTransformatorOverride);
         }
         #endregion
 
