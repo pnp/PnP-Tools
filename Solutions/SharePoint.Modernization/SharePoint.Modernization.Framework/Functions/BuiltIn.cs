@@ -22,6 +22,42 @@ namespace SharePoint.Modernization.Framework.Functions
         #endregion
 
         #region List functions
+        public string ListSelectorListLibrary(Guid listId)
+        {
+            if (listId == Guid.Empty)
+            {
+                return "";
+            }
+            else
+            {
+                var list = this.clientContext.Web.GetListById(listId);
+                list.EnsureProperties(p => p.BaseType);
+
+                if (list.BaseType == BaseType.DocumentLibrary)
+                {
+                    return "Library";
+                }
+                else if (list.BaseType == BaseType.GenericList)
+                {
+                    return "List";
+                }
+                else if (list.BaseType == BaseType.Issue)
+                {
+                    return "Issue";
+                }
+                else if (list.BaseType == BaseType.DiscussionBoard)
+                {
+                    return "DiscussionBoard";
+                }
+                else if (list.BaseType == BaseType.Survey)
+                {
+                    return "Survey";
+                }
+
+                return "Undefined";
+            }
+        }
+
         public string ListAddServerRelativeUrl(Guid listId)
         {
             if (listId == Guid.Empty)

@@ -26,6 +26,8 @@ namespace SharePoint.Modernization.Framework {
         
         private BaseWebPart baseWebPartField;
         
+        private AddOn[] addOnsField;
+        
         private WebPart[] webPartsField;
         
         /// <remarks/>
@@ -35,6 +37,17 @@ namespace SharePoint.Modernization.Framework {
             }
             set {
                 this.baseWebPartField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
+        public AddOn[] AddOns {
+            get {
+                return this.addOnsField;
+            }
+            set {
+                this.addOnsField = value;
             }
         }
         
@@ -60,7 +73,7 @@ namespace SharePoint.Modernization.Framework {
         
         private Property[] propertiesField;
         
-        private Mapping[] mappingsField;
+        private Mappings mappingsField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
@@ -74,8 +87,7 @@ namespace SharePoint.Modernization.Framework {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
-        public Mapping[] Mappings {
+        public Mappings Mappings {
             get {
                 return this.mappingsField;
             }
@@ -165,7 +177,7 @@ namespace SharePoint.Modernization.Framework {
         
         private Property[] propertiesField;
         
-        private Mapping[] mappingsField;
+        private Mappings mappingsField;
         
         private string typeField;
         
@@ -181,8 +193,7 @@ namespace SharePoint.Modernization.Framework {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
-        public Mapping[] Mappings {
+        public Mappings Mappings {
             get {
                 return this.mappingsField;
             }
@@ -199,6 +210,41 @@ namespace SharePoint.Modernization.Framework {
             }
             set {
                 this.typeField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2018/01/PageTransformationSchema")]
+    public partial class Mappings {
+        
+        private Mapping[] mappingField;
+        
+        private string selectorField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Mapping")]
+        public Mapping[] Mapping {
+            get {
+                return this.mappingField;
+            }
+            set {
+                this.mappingField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Selector {
+            get {
+                return this.selectorField;
+            }
+            set {
+                this.selectorField = value;
             }
         }
     }
@@ -460,5 +506,40 @@ namespace SharePoint.Modernization.Framework {
         
         /// <remarks/>
         QuickLinks,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2018/01/PageTransformationSchema")]
+    public partial class AddOn {
+        
+        private string nameField;
+        
+        private string assemblyField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Assembly {
+            get {
+                return this.assemblyField;
+            }
+            set {
+                this.assemblyField = value;
+            }
+        }
     }
 }

@@ -23,6 +23,9 @@ Page transformation file. Describes:
         </Mapping>
       </Mappings>
     </BaseWebPart>
+    <AddOns>
+      <AddOn Name="Custom" Assembly="" />
+    </AddOns>
     <WebParts>
       <!-- Fake wiki text web part, not needed for scanning but needed for transformation -->
       <WebPart Type="SharePointPnP.Modernization.WikiTextPart">
@@ -66,14 +69,14 @@ Page transformation file. Describes:
           <Property Name="SelectParameters" Type="string"/>
         </Properties>
         <!-- <Mappings Selector="MyFunc({ListId})"> -->
-        <Mappings>
-          <Mapping Name="default" Default="true">
+        <Mappings Selector="ListSelectorListLibrary({ListId})">
+          <Mapping Name="List" Default="true">
             <ClientSideText Text="{Title}" Order="10" Mapping="" />
             <!-- {"serverProcessedContent":{"htmlStrings":{},"searchablePlainTexts":{},"imageSources":{},"links":{}},"dataVersion":"1.0","properties":{"isDocumentLibrary":false,"selectedListId":"{ListId}","listTitle":"{Title}","selectedListUrl":"/sites/espctest2/Lists/Simple list","webRelativeListUrl":"/Lists/Simple list","webpartHeightKey":4,"selectedViewId":"{ViewContentTypeId}"}} -->
             <ClientSideWebPart Type="List" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;false,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ViewContentTypeId}&quot;&#125;&#125;" Order="20" />
           </Mapping>
-          <Mapping Name="Simple" Default="false">
-            <ClientSideWebPart Type="List" JsonControlData="" Order="10" Mapping="" />
+          <Mapping Name="Library" Default="false">
+            <ClientSideText Text="{Title}" Order="10" Mapping="" />
           </Mapping>
         </Mappings> 
       </WebPart>

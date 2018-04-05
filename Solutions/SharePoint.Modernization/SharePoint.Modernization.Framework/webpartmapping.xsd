@@ -88,6 +88,17 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="AddOn">
+    <xs:attribute name="Name" type="xs:string" use="required" />
+    <xs:attribute name="Assembly" type="xs:string" use="required" />
+  </xs:complexType>
+  
+  <xs:complexType name="AddOns">
+    <xs:sequence>
+      <xs:element name="AddOn" type="AddOn" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:complexType name="Mapping">
     <xs:sequence>
       <xs:element name="ClientSideText" type="ClientSideText" minOccurs="0" maxOccurs="unbounded" />
@@ -101,6 +112,7 @@
     <xs:sequence>
       <xs:element name="Mapping" type="Mapping" minOccurs="1" maxOccurs="unbounded" />
     </xs:sequence>
+    <xs:attribute name="Selector" type="xs:string" use="optional" />
   </xs:complexType>
 
   <xs:complexType name="WebPart">
@@ -127,6 +139,7 @@
   <xs:complexType name="PageTransformation">
     <xs:sequence>
       <xs:element name="BaseWebPart" type="BaseWebPart" minOccurs="1" maxOccurs="1" />
+      <xs:element name="AddOns" type="AddOns" minOccurs="0" maxOccurs="1" />
       <xs:element name="WebParts" type="WebParts" minOccurs="1" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>

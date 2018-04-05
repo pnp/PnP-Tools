@@ -41,7 +41,7 @@ namespace SharePoint.Modernization.Framework.Transform
                 return;
             }
 
-            var defaultMapping = pageTransformation.BaseWebPart.Mappings.Where(p => p.Default == true).FirstOrDefault();
+            var defaultMapping = pageTransformation.BaseWebPart.Mappings.Mapping.Where(p => p.Default == true).FirstOrDefault();
             if (defaultMapping == null)
             {
                 throw new Exception("No default mapping was found int the provided mapping file");
@@ -70,17 +70,23 @@ namespace SharePoint.Modernization.Framework.Transform
                 if (webPartData != null && webPartData.Mappings != null)
                 {
                     // Process the functions inside the mapping definition
-                    functionProcessor.Process(ref webPartData, webPart);
+                    var selectorResult = functionProcessor.Process(ref webPartData, webPart);
 
-                    var webPartMapping = webPartData.Mappings.Where(p => p.Default == true).FirstOrDefault();
+                    Mapping webPartMapping = null;
+                    if (!string.IsNullOrEmpty(selectorResult))
+                    {
+                        webPartMapping = webPartData.Mappings.Mapping.Where(p => p.Name.Equals(selectorResult, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                    }
+                    else
+                    {
+                        webPartMapping = webPartData.Mappings.Mapping.Where(p => p.Default == true).FirstOrDefault();
+                    }
+
                     if (webPartMapping != null)
                     {
                         mapping = webPartMapping;
                     }
                 }
-
-                
-
 
                 // Use the mapping data => make one list of Text and WebParts to allow for correct ordering
                 combinedMappinglist = new List<CombinedMapping>();

@@ -45,11 +45,12 @@ namespace SharePoint.Modernization.Framework.Functions
         #endregion
 
         #region Public methods
-        public void Process(ref WebPart webPartData, WebPartEntity webPart)
+        public string Process(ref WebPart webPartData, WebPartEntity webPart)
         {
 
             var builtInFunctions = Activator.CreateInstance(typeof(BuiltIn), this.page.Context);
 
+            // First process the transform functions
             foreach (var property in webPartData.Properties.ToList())
             {
                 if (string.IsNullOrEmpty(property.Transform))
@@ -67,79 +68,7 @@ namespace SharePoint.Modernization.Framework.Functions
                     MethodInfo methodInfo = typeof(BuiltIn).GetMethod(functionDefinition.Name);
                     if (methodInfo != null)
                     {
-                        object result = null;
-                        ParameterInfo[] parameters = methodInfo.GetParameters();
-
-                        if (parameters.Length == 0)
-                        {
-                            result = methodInfo.Invoke(builtInFunctions, null);
-                        }
-                        else
-                        {
-                            List<object> paramInput = new List<object>(functionDefinition.Input.Count);
-                            foreach(var param in functionDefinition.Input)
-                            {
-                                switch(param.Type)
-                                {
-                                    case FunctionType.String:
-                                        {
-                                            paramInput.Add(param.Value);
-                                            break;
-                                        }
-                                    case FunctionType.Integer:
-                                        {
-                                            if (Int32.TryParse(param.Value, out Int32 i))
-                                            {
-                                                paramInput.Add(i);
-                                            }
-                                            else
-                                            {
-                                                paramInput.Add(Int32.MinValue);
-                                            }                                            
-                                            break;
-                                        }
-                                    case FunctionType.Guid:
-                                        {
-                                            if (Guid.TryParse(param.Value, out Guid g))
-                                            {
-                                                paramInput.Add(g);
-                                            }
-                                            else
-                                            {
-                                                paramInput.Add(Guid.Empty);
-                                            }
-                                            break;
-                                        }
-                                    case FunctionType.DateTime:
-                                        {
-                                            if (DateTime.TryParse(param.Value, out DateTime d))
-                                            {
-                                                paramInput.Add(d);
-                                            }
-                                            else
-                                            {
-                                                paramInput.Add(DateTime.MinValue);
-                                            }
-                                            break;
-                                        }
-                                    case FunctionType.Bool:
-                                        {
-                                            if (bool.TryParse(param.Value, out bool b))
-                                            {
-                                                paramInput.Add(b);
-                                            }
-                                            else
-                                            {
-                                                paramInput.Add(false);
-                                            }
-                                            break;
-                                        }
-                                }
-                                
-                            }
-
-                            result = methodInfo.Invoke(builtInFunctions, paramInput.ToArray());
-                        }
+                        object result = ExecuteMethod(builtInFunctions, functionDefinition, methodInfo);
 
                         if (webPart.Properties.Keys.Contains<string>(functionDefinition.Output.Name))
                         {
@@ -154,7 +83,23 @@ namespace SharePoint.Modernization.Framework.Functions
                 }
             }
 
+            // Process the selector function
+            if (!string.IsNullOrEmpty(webPartData.Mappings.Selector))
+            {
+                FunctionDefinition functionDefinition = ParseFunctionDefinition(webPartData.Mappings.Selector, null, webPartData, webPart);
+
+                // Execute function
+                MethodInfo methodInfo = typeof(BuiltIn).GetMethod(functionDefinition.Name);
+                if (methodInfo != null)
+                {
+                    object result = ExecuteMethod(builtInFunctions, functionDefinition, methodInfo);
+                    return result.ToString();
+                }
+            }
+
+            return null;
         }
+
         #endregion
 
         #region Helper methods
@@ -187,8 +132,8 @@ namespace SharePoint.Modernization.Framework.Functions
             {
                 FunctionParameter output = new FunctionParameter()
                 {
-                    Name = property.Name,
-                    Type = MapType(property.Type.ToString())
+                    Name = property != null ? property.Name : "SelectedMapping",
+                    Type = FunctionType.String
                 };
 
                 def.Output = output;
@@ -253,6 +198,84 @@ namespace SharePoint.Modernization.Framework.Functions
             return FunctionType.String;
         }
 
+        private static object ExecuteMethod(object functionClassInstance, FunctionDefinition functionDefinition, MethodInfo methodInfo)
+        {
+            object result = null;
+            ParameterInfo[] parameters = methodInfo.GetParameters();
+
+            if (parameters.Length == 0)
+            {
+                result = methodInfo.Invoke(functionClassInstance, null);
+            }
+            else
+            {
+                List<object> paramInput = new List<object>(functionDefinition.Input.Count);
+                foreach (var param in functionDefinition.Input)
+                {
+                    switch (param.Type)
+                    {
+                        case FunctionType.String:
+                            {
+                                paramInput.Add(param.Value);
+                                break;
+                            }
+                        case FunctionType.Integer:
+                            {
+                                if (Int32.TryParse(param.Value, out Int32 i))
+                                {
+                                    paramInput.Add(i);
+                                }
+                                else
+                                {
+                                    paramInput.Add(Int32.MinValue);
+                                }
+                                break;
+                            }
+                        case FunctionType.Guid:
+                            {
+                                if (Guid.TryParse(param.Value, out Guid g))
+                                {
+                                    paramInput.Add(g);
+                                }
+                                else
+                                {
+                                    paramInput.Add(Guid.Empty);
+                                }
+                                break;
+                            }
+                        case FunctionType.DateTime:
+                            {
+                                if (DateTime.TryParse(param.Value, out DateTime d))
+                                {
+                                    paramInput.Add(d);
+                                }
+                                else
+                                {
+                                    paramInput.Add(DateTime.MinValue);
+                                }
+                                break;
+                            }
+                        case FunctionType.Bool:
+                            {
+                                if (bool.TryParse(param.Value, out bool b))
+                                {
+                                    paramInput.Add(b);
+                                }
+                                else
+                                {
+                                    paramInput.Add(false);
+                                }
+                                break;
+                            }
+                    }
+
+                }
+
+                result = methodInfo.Invoke(functionClassInstance, paramInput.ToArray());
+            }
+
+            return result;
+        }
         #endregion
 
     }
