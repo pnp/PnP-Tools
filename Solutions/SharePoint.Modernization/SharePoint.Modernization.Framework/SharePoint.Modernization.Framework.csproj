@@ -155,6 +155,9 @@
     <Compile Include="Extensions\ListItemExtensions.cs" />
     <Compile Include="Extensions\SiteExtensions.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
+    <Compile Include="Functions\BuiltIn.cs" />
+    <Compile Include="Functions\FunctionProcessor.cs" />
+    <Compile Include="Functions\FunctionsBase.cs" />
     <Compile Include="Pages\BasePage.cs" />
     <Compile Include="Pages\PageLayout.cs" />
     <Compile Include="Pages\WebPartPage.cs" />
@@ -191,5 +194,6 @@
     </Content>
     <Content Include="xsd.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,14 @@
-﻿<PageTransformation xmlns="http://schemas.dev.office.com/PnP/2018/01/PageTransformationSchema">
+﻿<!--
+Page transformation file. Describes: 
+ - Key web part attributes that will be used by either the scanner or the page transformation engine
+ - One or more mappings from source web part to client side target text part(s) and/or web part(s):
+  - Engine will take the default mapping unless specified otherwise
+  - A mapping can go from one source web part to multiple target web part(s) and/or client text(s)
+  - You canuse any listed web part property as input for the configuration of the target (e.g. {Text}
+  - To not map a web part (so drop it on the source page) use an empty mapping node (e.g. <Mapping Name="default" Default="true" />)
+  - If no mapping specified (so no explicit and no empty one) then the default mapping will be taken
+-->
+<PageTransformation xmlns="http://schemas.dev.office.com/PnP/2018/01/PageTransformationSchema">
     <!-- Information that applies to all web parts listed in this file -->
     <BaseWebPart>
       <Properties>
@@ -28,10 +38,11 @@
       <!-- XsltListView web part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.XsltListViewWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
-          <Property Name="ViewContentTypeId" Type="string" />
+          <!-- {ViewId} = EncodeGuid({ViewContentTypeId});{ViewId2} = EncodeGuid2({ViewContentTypeId}, {PageType}); DoublePageSize({PageSize}) -->
+          <Property Name="ViewContentTypeId" Type="string" Transform="" />
           <Property Name="XmlDefinitionLink" Type="string" />
           <Property Name="ListUrl" Type="string" />
-          <Property Name="ListId" Type="guid" Transform=""/>
+          <Property Name="ListId" Type="guid" Transform="{ListWebRelativeUrl} = ListAddWebRelativeUrl({ListId}); {ListServerRelativeUrl} = ListAddServerRelativeUrl({ListId})"/>
           <Property Name="Direction" Type="string"/>
           <Property Name="ViewFlags" Type="string" Transform=""/>
           <Property Name="ViewFlag" Type="string"/>
@@ -39,7 +50,7 @@
           <Property Name="FireInitialRow" Type="bool"/>
           <Property Name="Xsl" Type="string" />
           <Property Name="JSLink" Type="string" />
-          <Property Name="PageSize" Type="integer" />
+          <Property Name="PageSize" Type="integer" Transform="" />
           <Property Name="ShowTimelineIfAvailable" Type="bool"/>
           <Property Name="DataFields" Type="string" />
           <Property Name="PageType" Type="string" />
@@ -54,10 +65,12 @@
           <Property Name="XslLink" Type="string" />
           <Property Name="SelectParameters" Type="string"/>
         </Properties>
+        <!-- <Mappings Selector="MyFunc({ListId})"> -->
         <Mappings>
           <Mapping Name="default" Default="true">
             <ClientSideText Text="{Title}" Order="10" Mapping="" />
-            <ClientSideWebPart Type="List" JsonControlData="" Order="20" />
+            <!-- {"serverProcessedContent":{"htmlStrings":{},"searchablePlainTexts":{},"imageSources":{},"links":{}},"dataVersion":"1.0","properties":{"isDocumentLibrary":false,"selectedListId":"{ListId}","listTitle":"{Title}","selectedListUrl":"/sites/espctest2/Lists/Simple list","webRelativeListUrl":"/Lists/Simple list","webpartHeightKey":4,"selectedViewId":"{ViewContentTypeId}"}} -->
+            <ClientSideWebPart Type="List" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;false,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ViewContentTypeId}&quot;&#125;&#125;" Order="20" />
           </Mapping>
           <Mapping Name="Simple" Default="false">
             <ClientSideWebPart Type="List" JsonControlData="" Order="10" Mapping="" />
@@ -80,6 +93,10 @@
           <Property Name="ContentLink" Type="string" />
           <Property Name="Content" Type="string"/>
         </Properties>
+        <Mappings>
+          <!-- Adding an empty mapping node means results in the web part being excluded from the target page -->
+          <Mapping Name="default" Default="true" />
+        </Mappings>
       </WebPart>
       <!-- Script Editor web part-->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.ScriptEditorWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
