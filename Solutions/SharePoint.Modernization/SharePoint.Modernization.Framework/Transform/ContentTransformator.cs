@@ -29,7 +29,7 @@ namespace SharePoint.Modernization.Framework.Transform
         {
             this.page = page ?? throw new ArgumentException("Page cannot be null");
             this.pageTransformation = pageTransformation ?? throw new ArgumentException("pageTransformation cannot be null");
-            this.functionProcessor = new FunctionProcessor(this.page);
+            this.functionProcessor = new FunctionProcessor(this.page, this.pageTransformation);
             this.siteTokens = CreateSiteTokenList(page.Context);
         }
 

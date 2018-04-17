@@ -29,27 +29,65 @@ namespace SharePoint.Modernization.Framework.Functions
 
         class FunctionDefinition
         {
+            public string AddOn { get; set; }
             public string Name { get;set;}
             public FunctionParameter Output { get; set; }
             public List<FunctionParameter> Input { get; set; }
         }
 
+        class AddOnType
+        {
+            public string Name { get; set; }
+            public object Instance { get; set; }
+            public Assembly Assembly { get; set; }
+            public Type Type { get; set; }
+        }
 
         private ClientSidePage page;
+        private PageTransformation pageTransformation;
+        private List<AddOnType> addOnTypes;
+        private object builtInFunctions;
 
         #region Construction
-        public FunctionProcessor(ClientSidePage page)
+        public FunctionProcessor(ClientSidePage page, PageTransformation pageTransformation)
         {
             this.page = page;
+            this.pageTransformation = pageTransformation;
+
+            // instantiate default built in functions class
+            this.addOnTypes = new List<AddOnType>();
+            this.builtInFunctions = Activator.CreateInstance(typeof(BuiltIn), this.page.Context);
+
+            // instantiate the custom function classes (if there are)
+            foreach (var addOn in this.pageTransformation.AddOns)
+            {
+                try
+                {
+                    string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, addOn.Assembly);
+                    var assembly = Assembly.LoadFile(path);
+                    var customType = assembly.GetType(addOn.Type);
+                    var instance = Activator.CreateInstance(customType, this.page.Context);
+
+                    this.addOnTypes.Add(new AddOnType()
+                    {
+                        Name = addOn.Name,
+                        Assembly = assembly,
+                        Instance = instance,
+                        Type = customType,
+                    });
+                }
+                catch(Exception ex)
+                {
+                    // TODO: Add logging
+                    throw;
+                }
+            }
         }
         #endregion
 
         #region Public methods
         public string Process(ref WebPart webPartData, WebPartEntity webPart)
         {
-
-            var builtInFunctions = Activator.CreateInstance(typeof(BuiltIn), this.page.Context);
-
             // First process the transform functions
             foreach (var property in webPartData.Properties.ToList())
             {
@@ -59,16 +97,33 @@ namespace SharePoint.Modernization.Framework.Functions
                 }
 
                 var functionsToProcess = property.Transform.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-                foreach(var function in functionsToProcess)
-                {                   
+                foreach (var function in functionsToProcess)
+                {
                     // Parse the function
                     FunctionDefinition functionDefinition = ParseFunctionDefinition(function, property, webPartData, webPart);
 
                     // Execute function
-                    MethodInfo methodInfo = typeof(BuiltIn).GetMethod(functionDefinition.Name);
+                    MethodInfo methodInfo = null;
+                    object functionClassInstance = null;
+
+                    if (string.IsNullOrEmpty(functionDefinition.AddOn))
+                    {
+                        methodInfo = typeof(BuiltIn).GetMethod(functionDefinition.Name);
+                        functionClassInstance = this.builtInFunctions;
+                    }
+                    else
+                    {
+                        var addOn = this.addOnTypes.Where(p => p.Name.Equals(functionDefinition.AddOn, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                        if (addOn != null)
+                        {
+                            methodInfo = addOn.Type.GetMethod(functionDefinition.Name);
+                            functionClassInstance = addOn.Instance;
+                        }
+                    }
+
                     if (methodInfo != null)
                     {
-                        object result = ExecuteMethod(builtInFunctions, functionDefinition, methodInfo);
+                        object result = ExecuteMethod(functionClassInstance, functionDefinition, methodInfo);
 
                         if (webPart.Properties.Keys.Contains<string>(functionDefinition.Output.Name))
                         {
@@ -89,10 +144,27 @@ namespace SharePoint.Modernization.Framework.Functions
                 FunctionDefinition functionDefinition = ParseFunctionDefinition(webPartData.Mappings.Selector, null, webPartData, webPart);
 
                 // Execute function
-                MethodInfo methodInfo = typeof(BuiltIn).GetMethod(functionDefinition.Name);
+                MethodInfo methodInfo = null;
+                object functionClassInstance = null;
+
+                if (string.IsNullOrEmpty(functionDefinition.AddOn))
+                {
+                    methodInfo = typeof(BuiltIn).GetMethod(functionDefinition.Name);
+                    functionClassInstance = this.builtInFunctions;
+                }
+                else
+                {
+                    var addOn = this.addOnTypes.Where(p => p.Name.Equals(functionDefinition.AddOn, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                    if (addOn != null)
+                    {
+                        methodInfo = addOn.Type.GetMethod(functionDefinition.Name);
+                        functionClassInstance = addOn.Instance;
+                    }
+                }
+
                 if (methodInfo != null)
                 {
-                    object result = ExecuteMethod(builtInFunctions, functionDefinition, methodInfo);
+                    object result = ExecuteMethod(functionClassInstance, functionDefinition, methodInfo);
                     return result.ToString();
                 }
             }
@@ -140,7 +212,21 @@ namespace SharePoint.Modernization.Framework.Functions
                 functionString = function.Trim();
             }
 
-            def.Name = functionString.Substring(0, functionString.IndexOf("("));
+
+            string functionName = functionString.Substring(0, functionString.IndexOf("("));
+            if (functionName.IndexOf(".") > -1)
+            {
+                // This is a custom function
+                def.AddOn = functionName.Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries)[0];
+                def.Name = functionName.Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries)[1];
+            }
+            else
+            {
+                // this is an BuiltIn function
+                def.AddOn = "";
+                def.Name = functionString.Substring(0, functionString.IndexOf("("));
+            }
+            
             def.Input = new List<FunctionParameter>();
 
             var functionParameters = functionString.Substring(functionString.IndexOf("(") + 1).Replace(")", "").Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);

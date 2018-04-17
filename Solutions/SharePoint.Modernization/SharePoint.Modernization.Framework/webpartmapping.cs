@@ -518,6 +518,8 @@ namespace SharePoint.Modernization.Framework {
         
         private string nameField;
         
+        private string typeField;
+        
         private string assemblyField;
         
         /// <remarks/>
@@ -528,6 +530,17 @@ namespace SharePoint.Modernization.Framework {
             }
             set {
                 this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Type {
+            get {
+                return this.typeField;
+            }
+            set {
+                this.typeField = value;
             }
         }
         

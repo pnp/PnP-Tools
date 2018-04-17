@@ -88,27 +88,5 @@ namespace SharePoint.Modernization.Framework.Functions
         }
         #endregion
 
-
-
-        public string EncodeGuid(string viewContentTypeId)
-        {
-            return $"Hi there {viewContentTypeId}";
-        }
-
-        public string EncodeGuid2(string viewContentTypeId, string pageType)
-        {
-            return $"Hi there {viewContentTypeId} - {pageType}";
-        }
-
-        public string EncodeGuid3(Guid viewContentTypeId)
-        {
-            return $"ok";
-        }
-
-        public string DoublePageSize(int pageSize)
-        {
-            return (pageSize * 2).ToString();
-        }
-
     }
 }

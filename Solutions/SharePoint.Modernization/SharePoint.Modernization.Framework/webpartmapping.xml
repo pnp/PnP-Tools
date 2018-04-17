@@ -24,7 +24,7 @@ Page transformation file. Describes:
       </Mappings>
     </BaseWebPart>
     <AddOns>
-      <AddOn Name="Custom" Assembly="" />
+      <AddOn Name="Custom" Type="SharePoint.Modernization.Framework.SampleAddOn.MyCustomFunctions" Assembly="SharePoint.Modernization.Framework.SampleAddOn.dll" />
     </AddOns>
     <WebParts>
       <!-- Fake wiki text web part, not needed for scanning but needed for transformation -->
@@ -45,7 +45,7 @@ Page transformation file. Describes:
           <Property Name="ViewContentTypeId" Type="string" Transform="" />
           <Property Name="XmlDefinitionLink" Type="string" />
           <Property Name="ListUrl" Type="string" />
-          <Property Name="ListId" Type="guid" Transform="{ListWebRelativeUrl} = ListAddWebRelativeUrl({ListId}); {ListServerRelativeUrl} = ListAddServerRelativeUrl({ListId})"/>
+          <Property Name="ListId" Type="guid" Transform="{ListWebRelativeUrl} = ListAddWebRelativeUrl({ListId}); {ListServerRelativeUrl} = Custom.MyListAddServerRelativeUrl({ListId})"/>
           <Property Name="Direction" Type="string"/>
           <Property Name="ViewFlags" Type="string" Transform=""/>
           <Property Name="ViewFlag" Type="string"/>

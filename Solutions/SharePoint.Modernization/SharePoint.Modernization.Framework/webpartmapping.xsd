@@ -90,6 +90,7 @@
 
   <xs:complexType name="AddOn">
     <xs:attribute name="Name" type="xs:string" use="required" />
+    <xs:attribute name="Type" type="xs:string" use="required" />
     <xs:attribute name="Assembly" type="xs:string" use="required" />
   </xs:complexType>
   
