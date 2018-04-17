@@ -1,16 +1,19 @@
 ﻿using Microsoft.SharePoint.Client;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharePoint.Modernization.Framework.Functions
 {
+    /// <summary>
+    /// Set of native, builtin, functions
+    /// </summary>
     public class BuiltIn: FunctionsBase
     {
 
         #region Construction
+        /// <summary>
+        /// Instantiates the base builtin function library
+        /// </summary>
+        /// <param name="clientContext">ClientContext object for the site holding the page being transformed</param>
         public BuiltIn(ClientContext clientContext): base(clientContext)
         {
         }
@@ -21,7 +24,12 @@ namespace SharePoint.Modernization.Framework.Functions
         #region Generic functions
         #endregion
 
-        #region List functions
+        #region List functions, used by XsltListViewWebPart
+        /// <summary>
+        /// Selector that returns the base type of the list as input for selecting the correct mapping
+        /// </summary>
+        /// <param name="listId">Id of the list</param>
+        /// <returns>Mapping to be used for the given list</returns>
         public string ListSelectorListLibrary(Guid listId)
         {
             if (listId == Guid.Empty)
@@ -58,6 +66,11 @@ namespace SharePoint.Modernization.Framework.Functions
             }
         }
 
+        /// <summary>
+        /// Function that returns the server relative url of the given list
+        /// </summary>
+        /// <param name="listId">Id of the list</param>
+        /// <returns>Server relative url of the list</returns>
         public string ListAddServerRelativeUrl(Guid listId)
         {
             if (listId == Guid.Empty)
@@ -72,6 +85,11 @@ namespace SharePoint.Modernization.Framework.Functions
             }
         }
 
+        /// <summary>
+        /// Function that returns the web relative url of the given list
+        /// </summary>
+        /// <param name="listId">Id of the list</param>
+        /// <returns>Web relative url of the list</returns>
         public string ListAddWebRelativeUrl(Guid listId)
         {
             if (listId == Guid.Empty)

@@ -32,7 +32,6 @@
   <xs:complexType name="ClientSideText">
     <xs:attribute name="Text" type="xs:string" use="required"/>
     <xs:attribute name="Order" type="xs:integer" use="optional" />
-    <xs:attribute name="Mapping" type="xs:string" use="optional" />
   </xs:complexType>
 
   <xs:simpleType name="GUID">
@@ -73,13 +72,15 @@
           <xs:enumeration value="PageTitle" />
           <xs:enumeration value="People" />
           <xs:enumeration value="QuickLinks" />
+          <xs:enumeration value="Divider" />
+          <xs:enumeration value="MicrosoftForms" />
+          <xs:enumeration value="Spacer" />
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
     <xs:attribute name="ControlId" type="GUID" use="optional"/>
     <xs:attribute name="JsonControlData" type="xs:string" use="required"/>
     <xs:attribute name="Order" type="xs:integer" use="optional" />
-    <xs:attribute name="Mapping" type="xs:string" use="optional" />
   </xs:complexType>
 
   <xs:complexType name="Properties">

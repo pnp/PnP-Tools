@@ -12,16 +12,29 @@ using OfficeDevPnP.Core.Pages;
 
 namespace SharePoint.Modernization.Framework.Transform
 {
+
+    /// <summary>
+    /// Transforms a classic wiki/webpart page into a modern client side page
+    /// </summary>
     public class PageTransformator
     {
         private ClientContext clientContext;
         private PageTransformation pageTransformation;
 
         #region Construction
+        /// <summary>
+        /// Creates a page transformator instance
+        /// </summary>
+        /// <param name="clientContext">ClientContext of the site holding the page</param>
         public PageTransformator(ClientContext clientContext): this(clientContext, "webpartmapping.xml")
         {
         }
 
+        /// <summary>
+        /// Creates a page transformator instance
+        /// </summary>
+        /// <param name="clientContext">ClientContext of the site holding the page</param>
+        /// <param name="pageTransformationFile">Used page mapping file</param>
         public PageTransformator(ClientContext clientContext, string pageTransformationFile)
         {
             this.clientContext = clientContext;
@@ -35,6 +48,10 @@ namespace SharePoint.Modernization.Framework.Transform
         }
         #endregion
 
+        /// <summary>
+        /// Transform the page
+        /// </summary>
+        /// <param name="pageTransformationInformation">Information about the page to transform</param>
         public void Transform(PageTransformationInformation pageTransformationInformation)
         {
             #region Input validation
@@ -146,7 +163,7 @@ namespace SharePoint.Modernization.Framework.Transform
             }
             
             // Apply the layout to the page
-            layoutTransformator.ApplyLayout(pageData.Item1);
+            layoutTransformator.Transform(pageData.Item1);
             #endregion
 
             #region Content transformation

@@ -16,7 +16,7 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
     {
         class TestLayout : ILayoutTransformator
         {
-            public void ApplyLayout(PageLayout layout)
+            public void Transform(PageLayout layout)
             {
                 throw new NotImplementedException();
             }

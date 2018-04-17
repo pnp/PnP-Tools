@@ -1,15 +1,20 @@
 ﻿using SharePoint.Modernization.Framework.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace SharePoint.Modernization.Framework.Transform
 {
+    /// <summary>
+    /// Resolves tokens by their actual representation
+    /// </summary>
     public static class TokenParser
     {
+
+        /// <summary>
+        /// Replaces the tokens in the provided input string with their values
+        /// </summary>
+        /// <param name="input">String with tokens</param>
+        /// <param name="webPartData">Web part information holding all possible tokens for this web part</param>
+        /// <returns>A string with tokens replaced by actual values</returns>
         public static string ReplaceTokens(string input, WebPartEntity webPartData)
         {
             if (string.IsNullOrWhiteSpace(input))

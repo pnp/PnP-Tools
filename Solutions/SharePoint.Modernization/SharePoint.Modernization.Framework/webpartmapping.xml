@@ -18,14 +18,17 @@ Page transformation file. Describes:
         <Property Name="Height" Type="string" />
       </Properties>
       <Mappings>
+        <!-- This mapping is used in case there was no mapping specified for the web part -->
         <Mapping Name="default" Default="true">
-          <ClientSideText Text="***Web part {Title} was not transformed***" Order="10" Mapping="" />
+          <ClientSideText Text="***Web part {Title} was not transformed***" Order="10" />
         </Mapping>
       </Mappings>
     </BaseWebPart>
+    <!-- List of assemblies and Types that contain custom transform or selector functions -->
     <AddOns>
       <AddOn Name="Custom" Type="SharePoint.Modernization.Framework.SampleAddOn.MyCustomFunctions" Assembly="SharePoint.Modernization.Framework.SampleAddOn.dll" />
     </AddOns>
+    <!-- Web parts with their property definition and mappings to client side web parts --> 
     <WebParts>
       <!-- Fake wiki text web part, not needed for scanning but needed for transformation -->
       <WebPart Type="SharePointPnP.Modernization.WikiTextPart">
@@ -34,7 +37,7 @@ Page transformation file. Describes:
         </Properties>
         <Mappings>
           <Mapping Name="default" Default="true">
-            <ClientSideText Text="{Text}" Order="10" Mapping="" />
+            <ClientSideText Text="{Text}" Order="10" />
           </Mapping>
         </Mappings>
       </WebPart>
@@ -71,12 +74,13 @@ Page transformation file. Describes:
         <!-- <Mappings Selector="MyFunc({ListId})"> -->
         <Mappings Selector="ListSelectorListLibrary({ListId})">
           <Mapping Name="List" Default="true">
-            <ClientSideText Text="{Title}" Order="10" Mapping="" />
+            <ClientSideText Text="{Title}" Order="10" />
             <!-- {"serverProcessedContent":{"htmlStrings":{},"searchablePlainTexts":{},"imageSources":{},"links":{}},"dataVersion":"1.0","properties":{"isDocumentLibrary":false,"selectedListId":"{ListId}","listTitle":"{Title}","selectedListUrl":"/sites/espctest2/Lists/Simple list","webRelativeListUrl":"/Lists/Simple list","webpartHeightKey":4,"selectedViewId":"{ViewContentTypeId}"}} -->
             <ClientSideWebPart Type="List" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;false,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ViewContentTypeId}&quot;&#125;&#125;" Order="20" />
           </Mapping>
           <Mapping Name="Library" Default="false">
-            <ClientSideText Text="{Title}" Order="10" Mapping="" />
+            <ClientSideText Text="{Title}" Order="10" />
+            <ClientSideWebPart Type="Custom" ControlId="AC10EA3D-B8E7-443D-8015-BDD579F8C60A" JsonControlData="&#123;&quot;&#123;&quot;"/>
           </Mapping>
         </Mappings> 
       </WebPart>
@@ -97,7 +101,7 @@ Page transformation file. Describes:
           <Property Name="Content" Type="string"/>
         </Properties>
         <Mappings>
-          <!-- Adding an empty mapping node means results in the web part being excluded from the target page -->
+          <!-- Adding an empty mapping node results in the web part being excluded from the target page -->
           <Mapping Name="default" Default="true" />
         </Mappings>
       </WebPart>

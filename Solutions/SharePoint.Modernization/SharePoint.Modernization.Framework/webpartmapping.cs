@@ -322,8 +322,6 @@ namespace SharePoint.Modernization.Framework {
         
         private string orderField;
         
-        private string mappingField;
-        
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Text {
@@ -345,17 +343,6 @@ namespace SharePoint.Modernization.Framework {
                 this.orderField = value;
             }
         }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string Mapping {
-            get {
-                return this.mappingField;
-            }
-            set {
-                this.mappingField = value;
-            }
-        }
     }
     
     /// <remarks/>
@@ -373,8 +360,6 @@ namespace SharePoint.Modernization.Framework {
         private string jsonControlDataField;
         
         private string orderField;
-        
-        private string mappingField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -417,17 +402,6 @@ namespace SharePoint.Modernization.Framework {
             }
             set {
                 this.orderField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string Mapping {
-            get {
-                return this.mappingField;
-            }
-            set {
-                this.mappingField = value;
             }
         }
     }
@@ -506,6 +480,15 @@ namespace SharePoint.Modernization.Framework {
         
         /// <remarks/>
         QuickLinks,
+        
+        /// <remarks/>
+        Divider,
+        
+        /// <remarks/>
+        MicrosoftForms,
+        
+        /// <remarks/>
+        Spacer,
     }
     
     /// <remarks/>

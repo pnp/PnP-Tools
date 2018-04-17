@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using OfficeDevPnP.Core.Pages;
 using SharePoint.Modernization.Framework.Entities;
 
 namespace SharePoint.Modernization.Framework.Functions
 {
+    /// <summary>
+    /// Class that executes functions and selectors defined in the mapping 
+    /// </summary>
     public class FunctionProcessor
     {
         enum FunctionType
@@ -49,6 +50,11 @@ namespace SharePoint.Modernization.Framework.Functions
         private object builtInFunctions;
 
         #region Construction
+        /// <summary>
+        /// Instantiates the function processor. Also loads the defined add-ons
+        /// </summary>
+        /// <param name="page">Client side page for which we're executing the functions/selectors as part of the mapping</param>
+        /// <param name="pageTransformation">Webpart mapping information</param>
         public FunctionProcessor(ClientSidePage page, PageTransformation pageTransformation)
         {
             this.page = page;
@@ -86,17 +92,27 @@ namespace SharePoint.Modernization.Framework.Functions
         #endregion
 
         #region Public methods
+        /// <summary>
+        /// Executes the defined functions and selectors in the provided web part
+        /// </summary>
+        /// <param name="webPartData">Web Part mapping data</param>
+        /// <param name="webPart">Definition of the web part to be transformed</param>
+        /// <returns>The ouput of the mapping selector if there was one executed, null otherwise</returns>
         public string Process(ref WebPart webPartData, WebPartEntity webPart)
         {
             // First process the transform functions
             foreach (var property in webPartData.Properties.ToList())
             {
+                // No function defined, so skip
                 if (string.IsNullOrEmpty(property.Transform))
                 {
                     continue;
                 }
 
+                // Multiple functions can be specified using ; as delimiter
                 var functionsToProcess = property.Transform.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+
+                // Process each function
                 foreach (var function in functionsToProcess)
                 {
                     // Parse the function
@@ -108,11 +124,13 @@ namespace SharePoint.Modernization.Framework.Functions
 
                     if (string.IsNullOrEmpty(functionDefinition.AddOn))
                     {
+                        // Native builtin function
                         methodInfo = typeof(BuiltIn).GetMethod(functionDefinition.Name);
                         functionClassInstance = this.builtInFunctions;
                     }
                     else
                     {
+                        // Function specified via addon
                         var addOn = this.addOnTypes.Where(p => p.Name.Equals(functionDefinition.AddOn, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
                         if (addOn != null)
                         {
@@ -123,8 +141,10 @@ namespace SharePoint.Modernization.Framework.Functions
 
                     if (methodInfo != null)
                     {
+                        // Execute the function
                         object result = ExecuteMethod(functionClassInstance, functionDefinition, methodInfo);
 
+                        // Update the existing web part property of add a new one
                         if (webPart.Properties.Keys.Contains<string>(functionDefinition.Output.Name))
                         {
                             webPart.Properties[functionDefinition.Output.Name] = result.ToString();
@@ -149,11 +169,13 @@ namespace SharePoint.Modernization.Framework.Functions
 
                 if (string.IsNullOrEmpty(functionDefinition.AddOn))
                 {
+                    // Native builtin function
                     methodInfo = typeof(BuiltIn).GetMethod(functionDefinition.Name);
                     functionClassInstance = this.builtInFunctions;
                 }
                 else
                 {
+                    // Function specified via addon
                     var addOn = this.addOnTypes.Where(p => p.Name.Equals(functionDefinition.AddOn, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
                     if (addOn != null)
                     {

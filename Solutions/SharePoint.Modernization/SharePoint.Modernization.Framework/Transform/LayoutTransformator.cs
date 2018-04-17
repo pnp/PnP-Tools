@@ -3,16 +3,30 @@ using SharePoint.Modernization.Framework.Pages;
 
 namespace SharePoint.Modernization.Framework.Transform
 {
+
+    /// <summary>
+    /// Transforms the layout of a classic wiki/webpart page into a modern client side page using sections and columns
+    /// </summary>
     public class LayoutTransformator: ILayoutTransformator
     {
         private ClientSidePage page;
 
+        #region Construction
+        /// <summary>
+        /// Creates a layout transformator instance
+        /// </summary>
+        /// <param name="page">Client side page that will be receive the created layout</param>
         public LayoutTransformator(ClientSidePage page)
         {
             this.page = page;
         }
+        #endregion
 
-        public virtual void ApplyLayout(PageLayout layout)
+        /// <summary>
+        /// Transforms a classic wiki/webpart page layout into a modern client side page layout
+        /// </summary>
+        /// <param name="layout">Source wiki/webpart page layout</param>
+        public virtual void Transform(PageLayout layout)
         {
             switch (layout)
             {
