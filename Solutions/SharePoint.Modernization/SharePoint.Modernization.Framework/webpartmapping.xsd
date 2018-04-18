@@ -26,7 +26,7 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="Transform" type="xs:string" use="optional" />
+    <xs:attribute name="Functions" type="xs:string" use="optional" />
   </xs:complexType>
 
   <xs:complexType name="ClientSideText">

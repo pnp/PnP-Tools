@@ -1,14 +1,12 @@
 ﻿using Microsoft.SharePoint.Client;
+using OfficeDevPnP.Core.Pages;
 using SharePoint.Modernization.Framework.Entities;
 using SharePoint.Modernization.Framework.Pages;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using OfficeDevPnP.Core.Pages;
 
 namespace SharePoint.Modernization.Framework.Transform
 {

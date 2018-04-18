@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.SharePoint.Client;
+﻿using Microsoft.SharePoint.Client;
 using OfficeDevPnP.Core.Pages;
 using SharePoint.Modernization.Framework.Entities;
 using SharePoint.Modernization.Framework.Functions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SharePoint.Modernization.Framework.Transform
 {

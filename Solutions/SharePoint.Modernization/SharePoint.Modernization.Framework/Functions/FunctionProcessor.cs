@@ -12,6 +12,9 @@ namespace SharePoint.Modernization.Framework.Functions
     /// </summary>
     public class FunctionProcessor
     {
+        /// <summary>
+        /// Allowed function parameter types
+        /// </summary>
         enum FunctionType
         {
             String = 0,
@@ -21,26 +24,68 @@ namespace SharePoint.Modernization.Framework.Functions
             DateTime = 4
         }
 
+        /// <summary>
+        /// Definition of a function parameter
+        /// </summary>
         class FunctionParameter
         {
+            /// <summary>
+            /// Name of the parameter
+            /// </summary>
             public string Name { get; set; }
+            /// <summary>
+            /// Type if the parameter
+            /// </summary>
             public FunctionType Type { get; set; }
+            /// <summary>
+            /// Value of the parameter
+            /// </summary>
             public string Value { get; set; }
         }
 
+        /// <summary>
+        /// Definition of a function or selector
+        /// </summary>
         class FunctionDefinition
         {
+            /// <summary>
+            /// AddOn hosting the function/selector. Empty value means the function is hosted by the internal builtin functions library
+            /// </summary>
             public string AddOn { get; set; }
+            /// <summary>
+            /// Name of the function/selector
+            /// </summary>
             public string Name { get;set;}
+            /// <summary>
+            /// Parameter specifying the function result
+            /// </summary>
             public FunctionParameter Output { get; set; }
+            /// <summary>
+            /// List of input parameter used to call the function
+            /// </summary>
             public List<FunctionParameter> Input { get; set; }
         }
 
+        /// <summary>
+        /// Defines a loaded AddOn function/selector class instance
+        /// </summary>
         class AddOnType
         {
+            /// <summary>
+            /// Name of the addon. The name is used to link the determine which class instance needs to be used to execute a function
+            /// </summary>
             public string Name { get; set; }
+            /// <summary>
+            /// Instance of the class that holds the functions/selectors
+            /// </summary>
             public object Instance { get; set; }
+            /// <summary>
+            /// Assembly holding the functions/selector class
+            /// </summary>
             public Assembly Assembly { get; set; }
+            /// <summary>
+            /// Type of the functions/selector class
+            /// </summary>
             public Type Type { get; set; }
         }
 
@@ -104,13 +149,13 @@ namespace SharePoint.Modernization.Framework.Functions
             foreach (var property in webPartData.Properties.ToList())
             {
                 // No function defined, so skip
-                if (string.IsNullOrEmpty(property.Transform))
+                if (string.IsNullOrEmpty(property.Functions))
                 {
                     continue;
                 }
 
                 // Multiple functions can be specified using ; as delimiter
-                var functionsToProcess = property.Transform.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+                var functionsToProcess = property.Functions.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
 
                 // Process each function
                 foreach (var function in functionsToProcess)
@@ -144,7 +189,7 @@ namespace SharePoint.Modernization.Framework.Functions
                         // Execute the function
                         object result = ExecuteMethod(functionClassInstance, functionDefinition, methodInfo);
 
-                        // Update the existing web part property of add a new one
+                        // Update the existing web part property or add a new one
                         if (webPart.Properties.Keys.Contains<string>(functionDefinition.Output.Name))
                         {
                             webPart.Properties[functionDefinition.Output.Name] = result.ToString();
@@ -186,6 +231,7 @@ namespace SharePoint.Modernization.Framework.Functions
 
                 if (methodInfo != null)
                 {
+                    // Execute the selector
                     object result = ExecuteMethod(functionClassInstance, functionDefinition, methodInfo);
                     return result.ToString();
                 }
@@ -201,10 +247,12 @@ namespace SharePoint.Modernization.Framework.Functions
         {
             // Supported function syntax: 
             // - EncodeGuid()
+            // - MyLib.EncodeGuid()
             // - EncodeGuid({ListId})
             // - EncodeGuid({ListId}, {Param2})
             // - {ViewId} = EncodeGuid()
             // - {ViewId} = EncodeGuid({ListId})
+            // - {ViewId} = MyLib.EncodeGuid({ListId})
             // - {ViewId} = EncodeGuid({ListId}, {Param2})
 
             FunctionDefinition def = new FunctionDefinition();
@@ -259,9 +307,11 @@ namespace SharePoint.Modernization.Framework.Functions
                     Name = functionParameter.Replace("{", "").Replace("}", "").Trim(),
                 };
 
+                // Populate the function parameter with a value coming from the analyzed web part
                 var wpProp = webPartData.Properties.Where(p => p.Name.Equals(input.Name, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
                 if (wpProp != null)
                 {
+                    // Map types used in the model to types used in function processor
                     input.Type = MapType(wpProp.Type.ToString());
 
                     var wpInstanceProp = webPart.Properties.Where(p => p.Key.Equals(input.Name, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
@@ -313,10 +363,12 @@ namespace SharePoint.Modernization.Framework.Functions
 
             if (parameters.Length == 0)
             {
+                // Call the method without parameters
                 result = methodInfo.Invoke(functionClassInstance, null);
             }
             else
             {
+                // Method requires input, so fill the parameters
                 List<object> paramInput = new List<object>(functionDefinition.Input.Count);
                 foreach (var param in functionDefinition.Input)
                 {
@@ -379,9 +431,11 @@ namespace SharePoint.Modernization.Framework.Functions
 
                 }
 
+                // Call the method with parameters
                 result = methodInfo.Invoke(functionClassInstance, paramInput.ToArray());
             }
 
+            // Return the method invocation result
             return result;
         }
         #endregion

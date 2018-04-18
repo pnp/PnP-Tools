@@ -116,14 +116,37 @@ namespace Microsoft.SharePoint.Client
         #endregion
 
         #region Transform page
-        public static void Transform(this ListItem sourcePage, PageTransformationInformation pageTransformationInformation, ClientContext clientContext)
+        /// <summary>
+        /// Transforms a classic wiki/webpart page into a modern page, using the default page transformation model (webpartmapping.xml)
+        /// </summary>
+        /// <param name="sourcePage">ListItem for the classic wiki/webpart page</param>
+        /// <param name="pageTransformationInformation">Information to drive the page transformation process</param>
+        public static void Transform(this ListItem sourcePage, PageTransformationInformation pageTransformationInformation)
         {
             pageTransformationInformation.SourcePage = sourcePage;
-            new PageTransformator(clientContext).Transform(pageTransformationInformation);
+            new PageTransformator(sourcePage.Context as ClientContext).Transform(pageTransformationInformation);
+        }
+
+        /// <summary>
+        /// Transforms a classic wiki/webpart page into a modern page using a custom transformation model
+        /// </summary>
+        /// <param name="sourcePage">ListItem for the classic wiki/webpart page</param>
+        /// <param name="pageTransformationInformation">Information to drive the page transformation process</param>
+        /// <param name="pageTransformationFile">Page transformation model to be used</param>
+        public static void Transform(this ListItem sourcePage, PageTransformationInformation pageTransformationInformation, string pageTransformationFile)
+        {
+            pageTransformationInformation.SourcePage = sourcePage;
+            new PageTransformator(sourcePage.Context as ClientContext, pageTransformationFile).Transform(pageTransformationInformation);
         }
         #endregion
 
         #region helper methods
+        /// <summary>
+        /// Checks if a listitem contains a field with a value
+        /// </summary>
+        /// <param name="item">List item to check</param>
+        /// <param name="fieldName">Name of the field to check</param>
+        /// <returns></returns>
         public static bool FieldExistsAndUsed(this ListItem item, string fieldName)
         {
             return (item.FieldValues.ContainsKey(fieldName) && item[fieldName] != null);

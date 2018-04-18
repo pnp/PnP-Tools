@@ -109,7 +109,7 @@ namespace SharePoint.Modernization.Framework {
         
         private PropertyType typeField;
         
-        private string transformField;
+        private string functionsField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -135,12 +135,12 @@ namespace SharePoint.Modernization.Framework {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string Transform {
+        public string Functions {
             get {
-                return this.transformField;
+                return this.functionsField;
             }
             set {
-                this.transformField = value;
+                this.functionsField = value;
             }
         }
     }

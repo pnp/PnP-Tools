@@ -4,8 +4,6 @@ using SharePoint.Modernization.Framework.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharePoint.Modernization.Framework.Pages
 {
@@ -16,11 +14,10 @@ namespace SharePoint.Modernization.Framework.Pages
     {
         #region construction
         /// <summary>
-        /// 
+        /// Instantiates a web part page object
         /// </summary>
-        /// <param name="page"></param>
-        /// <param name="pageTransformation"></param>
-        /// <param name="forceCheckout"></param>
+        /// <param name="page">ListItem holding the page to analyze</param>
+        /// <param name="pageTransformation">Page transformation information</param>
         public WebPartPage(ListItem page, PageTransformation pageTransformation) : base(page, pageTransformation)
         {
         }

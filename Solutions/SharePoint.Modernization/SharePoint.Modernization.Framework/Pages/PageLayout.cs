@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SharePoint.Modernization.Framework.Pages
+﻿namespace SharePoint.Modernization.Framework.Pages
 {
+    /// <summary>
+    /// Possible layouts used by wiki or webpart pages
+    /// </summary>
     public enum PageLayout
     {
         Wiki_OneColumn = 0,

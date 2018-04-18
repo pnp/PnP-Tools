@@ -1,10 +1,6 @@
 ﻿using Microsoft.SharePoint.Client;
 using SharePoint.Modernization.Framework.Functions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharePoint.Modernization.Framework.SampleAddOn
 {

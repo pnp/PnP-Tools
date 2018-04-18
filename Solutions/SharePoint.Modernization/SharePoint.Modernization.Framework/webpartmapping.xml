@@ -12,9 +12,9 @@ Page transformation file. Describes:
     <!-- Information that applies to all web parts listed in this file -->
     <BaseWebPart>
       <Properties>
-        <Property Name="Title" Type="string" Transform=""/>
-        <Property Name="Description" Type="string" Transform=""/>
-        <Property Name="Width" Type="string" Transform=""/>
+        <Property Name="Title" Type="string" Functions=""/>
+        <Property Name="Description" Type="string" Functions=""/>
+        <Property Name="Width" Type="string" Functions=""/>
         <Property Name="Height" Type="string" />
       </Properties>
       <Mappings>
@@ -33,7 +33,7 @@ Page transformation file. Describes:
       <!-- Fake wiki text web part, not needed for scanning but needed for transformation -->
       <WebPart Type="SharePointPnP.Modernization.WikiTextPart">
         <Properties>
-          <Property Name="Text" Type="string" Transform="" />
+          <Property Name="Text" Type="string" Functions="" />
         </Properties>
         <Mappings>
           <Mapping Name="default" Default="true">
@@ -45,18 +45,18 @@ Page transformation file. Describes:
       <WebPart Type="Microsoft.SharePoint.WebPartPages.XsltListViewWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
           <!-- {ViewId} = EncodeGuid({ViewContentTypeId});{ViewId2} = EncodeGuid2({ViewContentTypeId}, {PageType}); DoublePageSize({PageSize}) -->
-          <Property Name="ViewContentTypeId" Type="string" Transform="" />
+          <Property Name="ViewContentTypeId" Type="string" Functions="" />
           <Property Name="XmlDefinitionLink" Type="string" />
           <Property Name="ListUrl" Type="string" />
-          <Property Name="ListId" Type="guid" Transform="{ListWebRelativeUrl} = ListAddWebRelativeUrl({ListId}); {ListServerRelativeUrl} = Custom.MyListAddServerRelativeUrl({ListId})"/>
+          <Property Name="ListId" Type="guid" Functions="{ListWebRelativeUrl} = ListAddWebRelativeUrl({ListId}); {ListServerRelativeUrl} = Custom.MyListAddServerRelativeUrl({ListId})"/>
           <Property Name="Direction" Type="string"/>
-          <Property Name="ViewFlags" Type="string" Transform=""/>
+          <Property Name="ViewFlags" Type="string" Functions=""/>
           <Property Name="ViewFlag" Type="string"/>
           <Property Name="AllowEdit" Type="bool" />
           <Property Name="FireInitialRow" Type="bool"/>
           <Property Name="Xsl" Type="string" />
           <Property Name="JSLink" Type="string" />
-          <Property Name="PageSize" Type="integer" Transform="" />
+          <Property Name="PageSize" Type="integer" Functions="" />
           <Property Name="ShowTimelineIfAvailable" Type="bool"/>
           <Property Name="DataFields" Type="string" />
           <Property Name="PageType" Type="string" />
@@ -71,7 +71,7 @@ Page transformation file. Describes:
           <Property Name="XslLink" Type="string" />
           <Property Name="SelectParameters" Type="string"/>
         </Properties>
-        <!-- <Mappings Selector="MyFunc({ListId})"> -->
+        <!-- This selector outputs: Library, List, Issue, DiscussionBoard, Survey or Undefined  -->
         <Mappings Selector="ListSelectorListLibrary({ListId})">
           <Mapping Name="List" Default="true">
             <ClientSideText Text="{Title}" Order="10" />
@@ -660,7 +660,7 @@ Page transformation file. Describes:
       <!-- Getting started web part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.GettingStartedWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
-          <Property Name="BaseViewID" Type="string" Transform=""/>
+          <Property Name="BaseViewID" Type="string" Functions=""/>
         </Properties>
       </WebPart>
       <!-- Tag cloud web part -->

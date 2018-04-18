@@ -8,9 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using System.Xml.XPath;
 
 namespace SharePoint.Modernization.Framework.Pages
 {
@@ -33,6 +30,11 @@ namespace SharePoint.Modernization.Framework.Pages
         private HtmlParser parser;
 
         #region construction
+        /// <summary>
+        /// Instantiates a wiki page object
+        /// </summary>
+        /// <param name="page">ListItem holding the page to analyze</param>
+        /// <param name="pageTransformation">Page transformation information</param>
         public WikiPage(ListItem page, PageTransformation pageTransformation): base(page, pageTransformation)
         {
             this.parser = new HtmlParser();
