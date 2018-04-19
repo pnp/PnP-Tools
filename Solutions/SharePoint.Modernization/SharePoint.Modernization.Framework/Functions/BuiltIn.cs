@@ -1,5 +1,8 @@
 ﻿using Microsoft.SharePoint.Client;
+using SharePoint.Modernization.Framework.Transform;
 using System;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace SharePoint.Modernization.Framework.Functions
 {
@@ -22,6 +25,18 @@ namespace SharePoint.Modernization.Framework.Functions
         // All functions return a single string, allowed input types are string, int, bool, DateTime and Guid
 
         #region Generic functions
+        #endregion
+
+        #region Text functions
+        public string TextCleanup(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return "";
+            }
+
+            return new HtmlTransformator().Transform(text);
+        }
         #endregion
 
         #region List functions, used by XsltListViewWebPart
@@ -104,6 +119,91 @@ namespace SharePoint.Modernization.Framework.Functions
                 return list.RootFolder.ServerRelativeUrl.Replace(this.clientContext.Web.ServerRelativeUrl.TrimEnd('/'), "");
             }
         }
+
+        /// <summary>
+        /// Tries to find the id of the view used to configure the web part
+        /// </summary>
+        /// <param name="listId">Id of the list</param>
+        /// <param name="xmlDefinition">Webpart view definition</param>
+        /// <returns>Id of the detected view if found or otherwise the id of the default list view</returns>
+        public string ListDetectUsedView(Guid listId, string xmlDefinition)
+        {
+            if (listId == Guid.Empty || string.IsNullOrEmpty(xmlDefinition))
+            {
+                return "";
+            }
+
+            // Grab the list and the needed properties
+            var list = this.clientContext.Web.GetListById(listId);
+            list.EnsureProperties(l=>l.DefaultView, l => l.Views.Include(v => v.Hidden, v => v.Id, v => v.ListViewXml));
+
+            // Get the "identifying" elements from the webpart view xml definition
+            var webPartViewElement = XElement.Parse(xmlDefinition);
+
+            // Analyze the views in the list to determine a possible mapping
+            foreach (var view in list.Views.AsEnumerable().Where(view => !view.Hidden && view.ListViewXml != null))
+            {
+                var viewElement = XElement.Parse(view.ListViewXml);
+
+                // Compare Query
+                if (webPartViewElement.Descendants("Query").FirstOrDefault() != null && viewElement.Descendants("Query").FirstOrDefault() != null)
+                {
+                    var equalNodes = XmlComparer.AreEqual(webPartViewElement.Descendants("Query").FirstOrDefault(), viewElement.Descendants("Query").FirstOrDefault());
+                    if (!equalNodes.Success)
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (!(webPartViewElement.Descendants("Query").FirstOrDefault() == null && viewElement.Descendants("Query").FirstOrDefault() != null))
+                    {
+                        continue;
+                    }
+                }
+
+                // Compare viewFields
+                if (webPartViewElement.Descendants("ViewFields").FirstOrDefault() != null && viewElement.Descendants("ViewFields").FirstOrDefault() != null)
+                {
+                    var equalNodes = XmlComparer.AreEqual(webPartViewElement.Descendants("ViewFields").FirstOrDefault(), viewElement.Descendants("ViewFields").FirstOrDefault());
+                    if (!equalNodes.Success)
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (!(webPartViewElement.Descendants("ViewFields").FirstOrDefault() == null && viewElement.Descendants("ViewFields").FirstOrDefault() != null))
+                    {
+                        continue;
+                    }
+                }
+
+                // Compare RowLimit
+                if (webPartViewElement.Descendants("RowLimit").FirstOrDefault() != null && viewElement.Descendants("RowLimit").FirstOrDefault() != null)
+                {
+                    var equalNodes = XmlComparer.AreEqual(webPartViewElement.Descendants("RowLimit").FirstOrDefault(), viewElement.Descendants("RowLimit").FirstOrDefault());
+                    if (!equalNodes.Success)
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (!(webPartViewElement.Descendants("RowLimit").FirstOrDefault() == null && viewElement.Descendants("RowLimit").FirstOrDefault() != null))
+                    {
+                        continue;
+                    }
+                }
+
+                // Yeah, we're still here so we found the matching view!
+                return view.Id.ToString();
+            }
+
+            // No matching view found, so proceed with the default view
+            return list.DefaultView.Id.ToString();
+        }
+
         #endregion
 
     }

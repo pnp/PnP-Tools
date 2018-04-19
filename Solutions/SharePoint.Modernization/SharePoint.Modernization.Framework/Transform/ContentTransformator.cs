@@ -64,7 +64,7 @@ namespace SharePoint.Modernization.Framework.Transform
             var componentsToAdd = page.AvailableClientSideComponents().ToList();
 
             // Iterate over the web parts, important to order them by row, column and zoneindex
-            foreach (var webPart in webParts.OrderBy(p => p.Row).OrderBy(p => p.Column).OrderBy(p =>p.ZoneIndex))
+            foreach (var webPart in webParts.OrderBy(p => p.Row).OrderBy(p => p.Column).OrderBy(p =>p.Order))
             {
                 // Title bar will never be migrated
                 if (webPart.Type == WebParts.TitleBar)

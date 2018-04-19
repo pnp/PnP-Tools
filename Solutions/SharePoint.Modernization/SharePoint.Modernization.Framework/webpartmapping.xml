@@ -33,18 +33,17 @@ Page transformation file. Describes:
       <!-- Fake wiki text web part, not needed for scanning but needed for transformation -->
       <WebPart Type="SharePointPnP.Modernization.WikiTextPart">
         <Properties>
-          <Property Name="Text" Type="string" Functions="" />
+          <Property Name="Text" Type="string" Functions="{CleanedText} = TextCleanup({Text})" />
         </Properties>
         <Mappings>
           <Mapping Name="default" Default="true">
-            <ClientSideText Text="{Text}" Order="10" />
+            <ClientSideText Text="{CleanedText}" Order="10" />
           </Mapping>
         </Mappings>
       </WebPart>
       <!-- XsltListView web part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.XsltListViewWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
-          <!-- {ViewId} = EncodeGuid({ViewContentTypeId});{ViewId2} = EncodeGuid2({ViewContentTypeId}, {PageType}); DoublePageSize({PageSize}) -->
           <Property Name="ViewContentTypeId" Type="string" Functions="" />
           <Property Name="XmlDefinitionLink" Type="string" />
           <Property Name="ListUrl" Type="string" />
@@ -64,7 +63,7 @@ Page transformation file. Describes:
           <Property Name="InplaceSearchEnabled" Type="bool" />
           <Property Name="GhostedXslLink" Type="string" />
           <Property Name="DisableViewSelectorMenu" Type="bool"/>
-          <Property Name="XmlDefinition" Type="string" />
+          <Property Name="XmlDefinition" Type="string" Functions="{ListViewId} = ListDetectUsedView({ListId},{XmlDefinition})"/>
           <Property Name="DataSourceMode" Type="string" />
           <Property Name="AutoRefreshInterval" Type="integer" />
           <Property Name="AsyncRefresh" Type="bool" />
@@ -76,11 +75,11 @@ Page transformation file. Describes:
           <Mapping Name="List" Default="true">
             <ClientSideText Text="{Title}" Order="10" />
             <!-- {"serverProcessedContent":{"htmlStrings":{},"searchablePlainTexts":{},"imageSources":{},"links":{}},"dataVersion":"1.0","properties":{"isDocumentLibrary":false,"selectedListId":"{ListId}","listTitle":"{Title}","selectedListUrl":"/sites/espctest2/Lists/Simple list","webRelativeListUrl":"/Lists/Simple list","webpartHeightKey":4,"selectedViewId":"{ViewContentTypeId}"}} -->
-            <ClientSideWebPart Type="List" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;false,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ViewContentTypeId}&quot;&#125;&#125;" Order="20" />
+            <ClientSideWebPart Type="List" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;false,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" Order="20" />
+            <!--<ClientSideWebPart Type="Custom" ControlId="AC10EA3D-B8E7-443D-8015-BDD579F8C60A" JsonControlData="&#123;&quot;&#123;&quot;"/>-->
           </Mapping>
           <Mapping Name="Library" Default="false">
-            <ClientSideText Text="{Title}" Order="10" />
-            <ClientSideWebPart Type="Custom" ControlId="AC10EA3D-B8E7-443D-8015-BDD579F8C60A" JsonControlData="&#123;&quot;&#123;&quot;"/>
+            <ClientSideWebPart Type="List" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;true,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" Order="10" />
           </Mapping>
         </Mappings> 
       </WebPart>

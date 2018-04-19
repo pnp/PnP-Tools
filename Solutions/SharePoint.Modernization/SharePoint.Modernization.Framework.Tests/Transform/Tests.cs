@@ -66,7 +66,7 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
             {
                 var pageTransformator = new PageTransformator(cc);
 
-                var pages = cc.Web.GetPages("wiki_l");
+                var pages = cc.Web.GetPages("wikitext");
 
                 foreach (var page in pages)
                 {                    

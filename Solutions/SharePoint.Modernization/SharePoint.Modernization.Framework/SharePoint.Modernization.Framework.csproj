@@ -158,6 +158,8 @@
     <Compile Include="Functions\BuiltIn.cs" />
     <Compile Include="Functions\FunctionProcessor.cs" />
     <Compile Include="Functions\FunctionsBase.cs" />
+    <Compile Include="Functions\XmlCompare.cs" />
+    <Compile Include="Functions\XmlEqualityResult.cs" />
     <Compile Include="Pages\BasePage.cs" />
     <Compile Include="Pages\PageLayout.cs" />
     <Compile Include="Pages\WebPartPage.cs" />
@@ -166,9 +168,11 @@
     <Compile Include="Transform\ContentTransformator.cs" />
     <Compile Include="Transform\IContentTransformator.cs" />
     <Compile Include="Transform\ILayoutTransformator.cs" />
+    <Compile Include="Transform\IHtmlTransformator.cs" />
     <Compile Include="Transform\LayoutTransformator.cs" />
     <Compile Include="Transform\PageTransformationInformation.cs" />
     <Compile Include="Transform\PageTransformator.cs" />
+    <Compile Include="Transform\HtmlTransformator.cs" />
     <Compile Include="Transform\TokenParser.cs" />
     <Compile Include="webpartmapping.cs">
       <DependentUpon>webpartmapping.xsd</DependentUpon>
@@ -189,6 +193,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Functions\sourcetext.html" />
+    <Content Include="Functions\targettext.html" />
     <Content Include="webpartmapping.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
