@@ -27,8 +27,9 @@ namespace SharePoint.Modernization.Framework.Transform
         /// Transforms the passed html to be usable by the client side text part
         /// </summary>
         /// <param name="text">Html to be transformed</param>
+        /// <param name="usePlaceHolder">Insert placeholders for images and iframe tags</param>
         /// <returns>Html that can be used and edited via the client side text part</returns>
-        public string Transform(string text)
+        public string Transform(string text, bool usePlaceHolder)
         {
             using (var document = this.parser.Parse(text))
             {
@@ -48,7 +49,10 @@ namespace SharePoint.Modernization.Framework.Transform
                 TransformBlockQuotes(document.QuerySelectorAll("blockquote"), document);
 
                 // Process image and iframes ==> put a place holder text as these will be dropped by RTE on edit mode
-                ImageIFramePlaceHolders(document);
+                if (usePlaceHolder)
+                {
+                    ImageIFramePlaceHolders(document);
+                }
 
                 // Return the transformed html
                 if (document.DocumentElement.Children.Count() > 1)

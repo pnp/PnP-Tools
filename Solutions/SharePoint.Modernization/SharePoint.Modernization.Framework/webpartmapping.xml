@@ -33,7 +33,8 @@ Page transformation file. Describes:
       <!-- Fake wiki text web part, not needed for scanning but needed for transformation -->
       <WebPart Type="SharePointPnP.Modernization.WikiTextPart">
         <Properties>
-          <Property Name="Text" Type="string" Functions="{CleanedText} = TextCleanup({Text})" />
+          <!-- To turn off placeholders set the UsePlaceHolders property to false via the ReturnFalse() function. Set to true using the ReturnTrue() function -->          
+          <Property Name="Text" Type="string" Functions="{UsePlaceHolders} = ReturnTrue(); {CleanedText} = TextCleanup({Text},{UsePlaceHolders})" />
         </Properties>
         <Mappings>
           <Mapping Name="default" Default="true">

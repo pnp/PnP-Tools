@@ -69,10 +69,11 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
                 var pages = cc.Web.GetPages("complexwiki");
 
                 foreach (var page in pages)
-                {                    
+                {
                     PageTransformationInformation pti = new PageTransformationInformation(page)
                     {
                         Overwrite = true,
+                        //HandleWikiImagesAndVideos = false,
                         //PageTitleOverride = titleOverride,
                         //LayoutTransformatorOverride = layoutOverride,
                     };

@@ -56,22 +56,46 @@ namespace SharePoint.Modernization.Framework.Functions
 
             return System.Web.HttpUtility.HtmlEncode(text).Replace("&quot;", @"\&quot;").Replace(":", "&#58;");
         }
+
+        /// <summary>
+        /// Return true
+        /// </summary>
+        /// <returns>True</returns>
+        public string ReturnTrue()
+        {
+            return "true";
+        }
+
+        /// <summary>
+        /// Return false
+        /// </summary>
+        /// <returns>False</returns>
+        public string ReturnFalse()
+        {
+            return "false";
+        }
         #endregion
 
         #region Text functions
+
+
         /// <summary>
         /// Wiki html rewrite to work in RTE
         /// </summary>
         /// <param name="text">Wiki html to rewrite</param>
         /// <returns>Html that's compatible with RTE</returns>
-        public string TextCleanup(string text)
+        public string TextCleanup(string text, string usePlaceHolders)
         {
             if (string.IsNullOrEmpty(text))
             {
                 return "";
             }
 
-            return new HtmlTransformator().Transform(text);
+            bool usePlaceHolder = true;
+
+            bool.TryParse(usePlaceHolders, out usePlaceHolder);
+
+            return new HtmlTransformator().Transform(text, usePlaceHolder);
         }
         #endregion
 

@@ -204,16 +204,7 @@ namespace SharePoint.Modernization.Framework.Functions
                             // Add results from the function evaluation to the web part properties mapping data so that upcoming functions can use these new properties
                             if (Array.FindIndex<Property>(webPartData.Properties, p => p.Name.Equals(functionDefinition.Output.Name, StringComparison.InvariantCultureIgnoreCase)) < 0)
                             {
-                                List<Property> tempList = new List<Property>();
-                                tempList.AddRange(webPartData.Properties);
-                                tempList.Add(new Property()
-                                {
-                                    Functions = "",
-                                    Name = functionDefinition.Output.Name,
-                                    Type = PropertyType.@string
-                                });
-
-                                webPartData.Properties = tempList.ToArray();
+                                UpdateWebPartDataProperties(webPartData, functionDefinition.Output.Name);
                             }
                         }
                         else if (result is Dictionary<string,string>)
@@ -236,16 +227,7 @@ namespace SharePoint.Modernization.Framework.Functions
                                     // Add results from the function evaluation to the web part properties mapping data so that upcoming functions can use these new properties
                                     if (Array.FindIndex<Property>(webPartData.Properties, p => p.Name.Equals(param.Key, StringComparison.InvariantCultureIgnoreCase)) < 0)
                                     {
-                                        List<Property> tempList = new List<Property>();
-                                        tempList.AddRange(webPartData.Properties);
-                                        tempList.Add(new Property()
-                                        {
-                                            Functions = "",
-                                            Name = param.Key,
-                                            Type = PropertyType.@string
-                                        });
-
-                                        webPartData.Properties = tempList.ToArray();
+                                        UpdateWebPartDataProperties(webPartData, param.Key);
                                     }
                                 }
                             }
@@ -291,10 +273,23 @@ namespace SharePoint.Modernization.Framework.Functions
 
             return null;
         }
-
         #endregion
 
         #region Helper methods
+        private static void UpdateWebPartDataProperties(WebPart webPartData, string functionDefinitionName)
+        {
+            List<Property> tempList = new List<Property>();
+            tempList.AddRange(webPartData.Properties);
+            tempList.Add(new Property()
+            {
+                Functions = "",
+                Name = functionDefinitionName,
+                Type = PropertyType.@string
+            });
+
+            webPartData.Properties = tempList.ToArray();
+        }
+
         private static FunctionDefinition ParseFunctionDefinition(string function, Property property, WebPart webPartData, WebPartEntity webPart)
         {
             // Supported function syntax: 
