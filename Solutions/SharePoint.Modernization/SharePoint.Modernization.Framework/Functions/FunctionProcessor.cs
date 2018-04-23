@@ -189,14 +189,66 @@ namespace SharePoint.Modernization.Framework.Functions
                         // Execute the function
                         object result = ExecuteMethod(functionClassInstance, functionDefinition, methodInfo);
 
-                        // Update the existing web part property or add a new one
-                        if (webPart.Properties.Keys.Contains<string>(functionDefinition.Output.Name))
+                        if (result is string)
                         {
-                            webPart.Properties[functionDefinition.Output.Name] = result.ToString();
+                            // Update the existing web part property or add a new one
+                            if (webPart.Properties.Keys.Contains<string>(functionDefinition.Output.Name))
+                            {
+                                webPart.Properties[functionDefinition.Output.Name] = result.ToString();
+                            }
+                            else
+                            {
+                                webPart.Properties.Add(functionDefinition.Output.Name, result.ToString());
+                            }
+
+                            // Add results from the function evaluation to the web part properties mapping data so that upcoming functions can use these new properties
+                            if (Array.FindIndex<Property>(webPartData.Properties, p => p.Name.Equals(functionDefinition.Output.Name, StringComparison.InvariantCultureIgnoreCase)) < 0)
+                            {
+                                List<Property> tempList = new List<Property>();
+                                tempList.AddRange(webPartData.Properties);
+                                tempList.Add(new Property()
+                                {
+                                    Functions = "",
+                                    Name = functionDefinition.Output.Name,
+                                    Type = PropertyType.@string
+                                });
+
+                                webPartData.Properties = tempList.ToArray();
+                            }
                         }
-                        else
+                        else if (result is Dictionary<string,string>)
                         {
-                            webPart.Properties.Add(functionDefinition.Output.Name, result.ToString());
+                            if (result != null)
+                            {
+                                var parameters = result as Dictionary<string, string>;
+                                foreach (var param in parameters)
+                                {
+                                    // Update the existing web part property or add a new one
+                                    if (webPart.Properties.Keys.Contains<string>(param.Key))
+                                    {
+                                        webPart.Properties[param.Key] = result.ToString();
+                                    }
+                                    else
+                                    {
+                                        webPart.Properties.Add(param.Key, param.Value);
+                                    }
+
+                                    // Add results from the function evaluation to the web part properties mapping data so that upcoming functions can use these new properties
+                                    if (Array.FindIndex<Property>(webPartData.Properties, p => p.Name.Equals(param.Key, StringComparison.InvariantCultureIgnoreCase)) < 0)
+                                    {
+                                        List<Property> tempList = new List<Property>();
+                                        tempList.AddRange(webPartData.Properties);
+                                        tempList.Add(new Property()
+                                        {
+                                            Functions = "",
+                                            Name = param.Key,
+                                            Type = PropertyType.@string
+                                        });
+
+                                        webPartData.Properties = tempList.ToArray();
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -313,16 +365,14 @@ namespace SharePoint.Modernization.Framework.Functions
                 {
                     // Map types used in the model to types used in function processor
                     input.Type = MapType(wpProp.Type.ToString());
-
                     var wpInstanceProp = webPart.Properties.Where(p => p.Key.Equals(input.Name, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
                     input.Value = wpInstanceProp.Value;
+                    def.Input.Add(input);
                 }
                 else
                 {
                     throw new Exception($"Parameter {input.Name} was used but is not listed as a web part property that can be used.");
                 }
-
-                def.Input.Add(input);
             }
 
             return def;

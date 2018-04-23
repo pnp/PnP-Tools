@@ -1,6 +1,7 @@
 ﻿using Microsoft.SharePoint.Client;
 using SharePoint.Modernization.Framework.Transform;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -255,12 +256,14 @@ namespace SharePoint.Modernization.Framework.Functions
             return imagePath.Replace(host, "");
         }
 
-        public string ImageListId(string serverRelativeImagePath)
+        public Dictionary<string,string> ImageLookup(string serverRelativeImagePath)
         {
             if (string.IsNullOrEmpty(serverRelativeImagePath))
             {
-                return "";
+                return null;
             }
+
+            Dictionary<string, string> results = new Dictionary<string, string>();
 
             try
             {
@@ -268,8 +271,9 @@ namespace SharePoint.Modernization.Framework.Functions
                 this.clientContext.Load(pageHeaderImage, p => p.UniqueId, p => p.ListId);
                 this.clientContext.ExecuteQueryRetry();
 
-                return pageHeaderImage.ListId.ToString();
-                //this.uniqueId = pageHeaderImage.UniqueId;                
+                results.Add("ImageListId", pageHeaderImage.ListId.ToString());
+                results.Add("ImageUniqueId", pageHeaderImage.UniqueId.ToString());
+                return results;
             }
             catch (ServerException ex)
             {
@@ -277,38 +281,7 @@ namespace SharePoint.Modernization.Framework.Functions
                 {
                     // provided file link does not exist...we're eating the exception and the page will end up with a default page header
                     //TODO: log error
-                    return "";
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        public string ImageUniqueId(string serverRelativeImagePath)
-        {
-            if (string.IsNullOrEmpty(serverRelativeImagePath))
-            {
-                return "";
-            }
-
-            try
-            {
-                var pageHeaderImage = this.clientContext.Web.GetFileByServerRelativeUrl(serverRelativeImagePath);
-                this.clientContext.Load(pageHeaderImage, p => p.UniqueId, p => p.ListId);
-                this.clientContext.ExecuteQueryRetry();
-
-                //return pageHeaderImage.ListId.ToString();
-                return pageHeaderImage.UniqueId.ToString(); 
-            }
-            catch (ServerException ex)
-            {
-                if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
-                {
-                    // provided file link does not exist...we're eating the exception and the page will end up with a default page header
-                    //TODO: log error
-                    return "";
+                    return null;
                 }
                 else
                 {

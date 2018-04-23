@@ -44,8 +44,8 @@ Page transformation file. Describes:
       <!-- Fake wiki image web part, used to handle images embedded in wiki text -->
       <WebPart Type="SharePointPnP.Modernization.WikiImagePart">
         <Properties>
-          <Property Name="ImageUrl" Type="string" Functions="{serverRelativeFileName} = ImageServerRelativePath({ImageUrl});{ImageListId} = ImageListId({ImageUrl})"/>
-          <Property Name="AlternativeText" Type="string" Functions="{ImageUniqueId} = ImageUniqueId({ImageUrl});{FileName} = ImageFileName(ImageUrl)"/>
+          <Property Name="ImageUrl" Type="string" Functions="{serverRelativeFileName} = ImageServerRelativePath({ImageUrl});ImageLookup({serverRelativeFileName});{FileName} = ImageFileName(ImageUrl)"/>
+          <Property Name="AlternativeText" Type="string"/>
         </Properties>
         <Mappings>
           <Mapping Default="true" Name="default">
@@ -100,7 +100,6 @@ Page transformation file. Describes:
         <Mappings Selector="ListSelectorListLibrary({ListId})">
           <Mapping Name="List" Default="true">
             <ClientSideText Text="{Title}" Order="10" />
-            <!-- {"serverProcessedContent":{"htmlStrings":{},"searchablePlainTexts":{},"imageSources":{},"links":{}},"dataVersion":"1.0","properties":{"isDocumentLibrary":false,"selectedListId":"{ListId}","listTitle":"{Title}","selectedListUrl":"/sites/espctest2/Lists/Simple list","webRelativeListUrl":"/Lists/Simple list","webpartHeightKey":4,"selectedViewId":"{ViewContentTypeId}"}} -->
             <ClientSideWebPart Type="List" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;false,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" Order="20" />
             <!--<ClientSideWebPart Type="Custom" ControlId="AC10EA3D-B8E7-443D-8015-BDD579F8C60A" JsonControlData="&#123;&quot;&#123;&quot;"/>-->
           </Mapping>
@@ -139,8 +138,8 @@ Page transformation file. Describes:
       <!-- Image web part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.ImageWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
-          <Property Name="ImageLink" Type="string" Functions="{serverRelativeFileName} = ImageServerRelativePath({ImageLink});{ImageListId} = ImageListId({ImageLink})"/>
-          <Property Name="AlternativeText" Type="string" Functions="{ImageUniqueId} = ImageUniqueId({ImageLink});{FileName} = ImageFileName(ImageLink)"/>
+          <Property Name="ImageLink" Type="string" Functions="{serverRelativeFileName} = ImageServerRelativePath({ImageUrl});ImageLookup({serverRelativeFileName});{FileName} = ImageFileName(ImageUrl)"/>
+          <Property Name="AlternativeText" Type="string" />
           <Property Name="VerticalAlignment" Type="string" />
           <Property Name="HorizontalAlignment" Type="string" />
           <Property Name="BackgroundColor" Type="string" />
