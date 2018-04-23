@@ -16,12 +16,16 @@ namespace SharePoint.Modernization.Framework.Transform
     {
         private HtmlParser parser;
 
+        #region Construction
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public HtmlTransformator()
         {
             // Instantiate the AngleSharp Html parser
             parser = new HtmlParser(new HtmlParserOptions() { IsEmbedded = true });
         }
-
+        #endregion
 
         /// <summary>
         /// Transforms the passed html to be usable by the client side text part
@@ -54,6 +58,8 @@ namespace SharePoint.Modernization.Framework.Transform
                     ImageIFramePlaceHolders(document);
                 }
 
+                // TODO: table processing
+
                 // Return the transformed html
                 if (document.DocumentElement.Children.Count() > 1)
                 {
@@ -64,6 +70,30 @@ namespace SharePoint.Modernization.Framework.Transform
                     return text;
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns true is the passed html is "empty"
+        /// </summary>
+        /// <param name="text">Html to verify</param>
+        /// <returns>True if considered empty, false otherwise</returns>
+        public bool IsEmptyParagraph(string text)
+        {
+            // Check for empty text or "Zero width space"
+            if (string.IsNullOrEmpty(text) || (text.Length == 1 && text[0] == '\u200B'))
+            {
+                return true;
+            }
+
+            using (var document = this.parser.Parse(text))
+            {
+                if (document.Body.InnerHtml.Equals("<p>​</p>", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         protected virtual void ImageIFramePlaceHolders(IHtmlDocument document)

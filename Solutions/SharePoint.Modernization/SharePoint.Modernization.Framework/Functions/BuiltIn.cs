@@ -77,7 +77,29 @@ namespace SharePoint.Modernization.Framework.Functions
         #endregion
 
         #region Text functions
+        /// <summary>
+        /// Selector to allow to embed a spacer instead of an empty text
+        /// </summary>
+        /// <param name="text">Text to evaluate</param>
+        /// <returns>Text if text needs to be inserted, Spacer if text was empty and you want a spacer</returns>
+        public string TextSelector(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return "Text";
+            }
 
+            var empty = new HtmlTransformator().IsEmptyParagraph(text);
+
+            if (empty)
+            {
+                return "Spacer";
+            }
+            else
+            {
+                return "Text";
+            }
+        }
 
         /// <summary>
         /// Wiki html rewrite to work in RTE

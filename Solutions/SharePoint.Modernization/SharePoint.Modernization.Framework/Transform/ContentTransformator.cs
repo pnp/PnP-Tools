@@ -324,10 +324,10 @@ namespace SharePoint.Modernization.Framework.Transform
             cc.Web.EnsureProperties(p => p.Url, p => p.ServerRelativeUrl, p => p.Id);
             cc.Site.EnsureProperties(p => p.RootWeb.ServerRelativeUrl, p => p.Id);
 
-            siteTokens.Add("web", cc.Web.ServerRelativeUrl.TrimEnd('/'));
-            siteTokens.Add("sitecollection", cc.Site.RootWeb.ServerRelativeUrl.TrimEnd('/'));
-            siteTokens.Add("webId", cc.Web.Id.ToString());
-            siteTokens.Add("siteId", cc.Site.Id.ToString());
+            siteTokens.Add("Web", cc.Web.ServerRelativeUrl.TrimEnd('/'));
+            siteTokens.Add("Sitecollection", cc.Site.RootWeb.ServerRelativeUrl.TrimEnd('/'));
+            siteTokens.Add("WebId", cc.Web.Id.ToString());
+            siteTokens.Add("SiteId", cc.Site.Id.ToString());
 
             return siteTokens;
         }

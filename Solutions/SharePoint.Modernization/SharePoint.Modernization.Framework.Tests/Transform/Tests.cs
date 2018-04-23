@@ -66,7 +66,11 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
             {
                 var pageTransformator = new PageTransformator(cc);
 
-                var pages = cc.Web.GetPages("complexwiki");
+                //complexwiki
+                //demo1
+                //wikitext
+                //wiki_li
+                var pages = cc.Web.GetPages("wiki_l");
 
                 foreach (var page in pages)
                 {
