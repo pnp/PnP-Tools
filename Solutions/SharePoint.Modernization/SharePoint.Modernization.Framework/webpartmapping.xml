@@ -41,6 +41,32 @@ Page transformation file. Describes:
           </Mapping>
         </Mappings>
       </WebPart>
+      <!-- Fake wiki image web part, used to handle images embedded in wiki text -->
+      <WebPart Type="SharePointPnP.Modernization.WikiImagePart">
+        <Properties>
+          <Property Name="ImageUrl" Type="string" Functions="{serverRelativeFileName} = ImageServerRelativePath({ImageUrl});{ImageListId} = ImageListId({ImageUrl})"/>
+          <Property Name="AlternativeText" Type="string" Functions="{ImageUniqueId} = ImageUniqueId({ImageUrl});{FileName} = ImageFileName(ImageUrl)"/>
+        </Properties>
+        <Mappings>
+          <Mapping Default="true" Name="default">
+            <ClientSideWebPart Type="Image" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;captionText&quot;&#58;&quot;&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&quot;imageSource&quot;&#58;&quot;{serverRelativeFileName}&quot;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.8&quot;,&quot;properties&quot;&#58;&#123;&quot;imageSourceType&quot;&#58;2,&quot;altText&quot;&#58;&quot;{AlternativeText}&quot;,&quot;fileName&quot;&#58;&quot;{FileName}&quot;,&quot;siteId&quot;&#58;&quot;{siteId}&quot;,&quot;webId&quot;&#58;&quot;{webId}&quot;,&quot;listId&quot;&#58;&quot;{ImageListId}&quot;,&quot;uniqueId&quot;&#58;&quot;{ImageUniqueId}&quot;,&quot;useParallax&quot;&#58;false&#125;&#125;"/>
+          </Mapping> 
+        </Mappings>
+      </WebPart>
+      <!-- Fake wiki video web part, used to handle videos embedded in wiki text -->
+      <WebPart Type="SharePointPnP.Modernization.WikiVideoPart">
+        <Properties>
+          <Property Name="Source" Type="string"/>
+          <Property Name="IFrameEmbed" Type="string" Functions="HtmlEncodeForJson(IFrameEmbed)"/>
+          <Property Name="AllowFullScreen" Type="bool"/>
+        </Properties>
+        <Mappings>
+          <Mapping Default="true" Name="default">
+            <!--<ClientSideWebPart Type="VideoEmbed" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;captionText&quot;&#58;&quot;My cool video!&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&quot;videoSource&quot;&#58;&quot;{Source}&quot;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;showInfo&quot;&#58;true,&quot;embedCode&quot;&#58;&quot;{IFrameEmbed}&quot;,&quot;isStream&quot;&#58;false,&quot;thumbnailUrl&quot;&#58;&quot;{web}/_layouts/15/images/VIDEOPREVIEW.PNG&quot;&#125;&#125;"/>-->
+            <ClientSideWebPart Type="ContentEmbed" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;captionText&quot;&#58;&quot;&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;embedCode&quot;&#58;&quot;{IFrameEmbed}&quot;,&quot;cachedEmbedCode&quot;&#58;&quot;{IFrameEmbed}&quot;,&quot;shouldScaleWidth&quot;&#58;true,&quot;tempState&quot;&#58;&#123;&#125;&#125;&#125;"/>
+          </Mapping>
+        </Mappings>
+      </WebPart>
       <!-- XsltListView web part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.XsltListViewWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -113,12 +139,17 @@ Page transformation file. Describes:
       <!-- Image web part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.ImageWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
-          <Property Name="ImageLink" Type="string" />
-          <Property Name="AlternativeText" Type="string"/>
+          <Property Name="ImageLink" Type="string" Functions="{serverRelativeFileName} = ImageServerRelativePath({ImageLink});{ImageListId} = ImageListId({ImageLink})"/>
+          <Property Name="AlternativeText" Type="string" Functions="{ImageUniqueId} = ImageUniqueId({ImageLink});{FileName} = ImageFileName(ImageLink)"/>
           <Property Name="VerticalAlignment" Type="string" />
           <Property Name="HorizontalAlignment" Type="string" />
           <Property Name="BackgroundColor" Type="string" />
         </Properties>
+        <Mappings>
+          <Mapping Default="true" Name="default">
+            <ClientSideWebPart Type="Image" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;captionText&quot;&#58;&quot;&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&quot;imageSource&quot;&#58;&quot;{serverRelativeFileName}&quot;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.8&quot;,&quot;properties&quot;&#58;&#123;&quot;imageSourceType&quot;&#58;2,&quot;altText&quot;&#58;&quot;{AlternativeText}&quot;,&quot;fileName&quot;&#58;&quot;{FileName}&quot;,&quot;siteId&quot;&#58;&quot;{siteId}&quot;,&quot;webId&quot;&#58;&quot;{webId}&quot;,&quot;listId&quot;&#58;&quot;{ImageListId}&quot;,&quot;uniqueId&quot;&#58;&quot;{ImageUniqueId}&quot;,&quot;useParallax&quot;&#58;false&#125;&#125;"/>
+          </Mapping> 
+        </Mappings>
       </WebPart>
       <!-- Content By Query web part -->
       <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.ContentByQueryWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">

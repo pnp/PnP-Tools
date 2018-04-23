@@ -1,6 +1,7 @@
 ﻿using Microsoft.SharePoint.Client;
 using SharePoint.Modernization.Framework.Transform;
 using System;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -25,9 +26,43 @@ namespace SharePoint.Modernization.Framework.Functions
         // All functions return a single string, allowed input types are string, int, bool, DateTime and Guid
 
         #region Generic functions
+        /// <summary>
+        /// Html encodes a string
+        /// </summary>
+        /// <param name="text">Text to html encode</param>
+        /// <returns>Html encoded string</returns>
+        public string HtmlEncode(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return "";
+            }
+
+            return System.Web.HttpUtility.HtmlEncode(text);
+        }
+
+        /// <summary>
+        /// Html encodes string for inclusion in JSON
+        /// </summary>
+        /// <param name="text">Text to html encode</param>
+        /// <returns>Html encoded string for inclusion in JSON</returns>
+        public string HtmlEncodeForJson(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return "";
+            }
+
+            return System.Web.HttpUtility.HtmlEncode(text).Replace("&quot;", @"\&quot;").Replace(":", "&#58;");
+        }
         #endregion
 
         #region Text functions
+        /// <summary>
+        /// Wiki html rewrite to work in RTE
+        /// </summary>
+        /// <param name="text">Wiki html to rewrite</param>
+        /// <returns>Html that's compatible with RTE</returns>
         public string TextCleanup(string text)
         {
             if (string.IsNullOrEmpty(text))
@@ -206,5 +241,92 @@ namespace SharePoint.Modernization.Framework.Functions
 
         #endregion
 
+        #region Image functions
+        public string ImageServerRelativePath(string imagePath)
+        {
+            if (string.IsNullOrEmpty(imagePath))
+            {
+                return "";
+            }
+
+            var hostUri = new Uri(this.clientContext.Web.Url);
+            string host = $"{hostUri.Scheme}://{hostUri.DnsSafeHost}";
+
+            return imagePath.Replace(host, "");
+        }
+
+        public string ImageListId(string serverRelativeImagePath)
+        {
+            if (string.IsNullOrEmpty(serverRelativeImagePath))
+            {
+                return "";
+            }
+
+            try
+            {
+                var pageHeaderImage = this.clientContext.Web.GetFileByServerRelativeUrl(serverRelativeImagePath);
+                this.clientContext.Load(pageHeaderImage, p => p.UniqueId, p => p.ListId);
+                this.clientContext.ExecuteQueryRetry();
+
+                return pageHeaderImage.ListId.ToString();
+                //this.uniqueId = pageHeaderImage.UniqueId;                
+            }
+            catch (ServerException ex)
+            {
+                if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
+                {
+                    // provided file link does not exist...we're eating the exception and the page will end up with a default page header
+                    //TODO: log error
+                    return "";
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        public string ImageUniqueId(string serverRelativeImagePath)
+        {
+            if (string.IsNullOrEmpty(serverRelativeImagePath))
+            {
+                return "";
+            }
+
+            try
+            {
+                var pageHeaderImage = this.clientContext.Web.GetFileByServerRelativeUrl(serverRelativeImagePath);
+                this.clientContext.Load(pageHeaderImage, p => p.UniqueId, p => p.ListId);
+                this.clientContext.ExecuteQueryRetry();
+
+                //return pageHeaderImage.ListId.ToString();
+                return pageHeaderImage.UniqueId.ToString(); 
+            }
+            catch (ServerException ex)
+            {
+                if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
+                {
+                    // provided file link does not exist...we're eating the exception and the page will end up with a default page header
+                    //TODO: log error
+                    return "";
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        public string ImageFileName(string serverRelativeImagePath)
+        {
+            if (string.IsNullOrEmpty(serverRelativeImagePath))
+            {
+                return "";
+            }
+
+            return Path.GetFileName(serverRelativeImagePath);
+
+        }
+        #endregion  
     }
 }

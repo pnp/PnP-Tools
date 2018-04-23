@@ -47,6 +47,9 @@ namespace SharePoint.Modernization.Framework.Transform
                 // Process blockquotes
                 TransformBlockQuotes(document.QuerySelectorAll("blockquote"), document);
 
+                // Process image and iframes ==> put a place holder text as these will be dropped by RTE on edit mode
+                ImageIFramePlaceHolders(document);
+
                 // Return the transformed html
                 if (document.DocumentElement.Children.Count() > 1)
                 {
@@ -55,6 +58,44 @@ namespace SharePoint.Modernization.Framework.Transform
                 else
                 {
                     return text;
+                }
+            }
+        }
+
+        protected virtual void ImageIFramePlaceHolders(IHtmlDocument document)
+        {
+            var images = document.QuerySelectorAll("img");
+            var iframes = document.QuerySelectorAll("iframe");
+            var elements = images.Union(iframes);
+
+            foreach(var element in elements)
+            {
+                // Add a text content in place of the element
+                string webPartType = "";
+                string sourceValue = "";
+                var source = element.Attributes.Where(p => p.Name.Equals("src", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                if (source != null)
+                {
+                    sourceValue = source.Value;
+                }
+                if (element is IHtmlImageElement)
+                {
+                    webPartType = "Image";
+                }
+                else if (element is IHtmlInlineFrameElement)
+                {
+                    webPartType = "IFrame";
+                }
+
+                string placeHolder = $"***{webPartType} placeholder for source {sourceValue}***";
+
+                // Create P element and insert it just before our current image or iframe element
+                var newElement = document.CreateElement($"P");
+                newElement.TextContent = placeHolder;
+
+                if (element.Parent != null)
+                {
+                    element.Parent.InsertBefore(newElement, element);
                 }
             }
         }
@@ -77,9 +118,9 @@ namespace SharePoint.Modernization.Framework.Transform
                     else
                     {
                         var newElement = document.CreateElement($"p");
-                        // Drop P
+                        // Drop P as nested P is not allowed in clean html
                         // TODO: do this in a better way
-                        newElement.InnerHtml = blockQuote.InnerHtml.Replace("<p>", "").Replace("</p>", "");
+                        newElement.InnerHtml = blockQuote.InnerHtml.Replace("<p>", "").Replace("</p>", "").Replace("<P>", "").Replace("</P>", "");
                         newElement.SetAttribute($"style", $"margin-left:{level * 40}px;");
 
                         switch (level)
@@ -96,12 +137,12 @@ namespace SharePoint.Modernization.Framework.Transform
                                 }
                             case 3:
                                 {
-                                    blockParent.Parent.ReplaceChild(newElement, blockParent);
+                                    blockParent.Parent.Parent.ReplaceChild(newElement, blockParent.Parent);
                                     break;
                                 }
                             case 4:
                                 {
-                                    blockParent.Parent.ReplaceChild(newElement, blockParent);
+                                    blockParent.Parent.Parent.Parent.ReplaceChild(newElement, blockParent.Parent.Parent);
                                     break;
                                 }
                         }

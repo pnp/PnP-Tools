@@ -5,6 +5,7 @@ using SharePoint.Modernization.Framework.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace SharePoint.Modernization.Framework.Transform
 {
@@ -296,10 +297,11 @@ namespace SharePoint.Modernization.Framework.Transform
                         // If we found the web part as a possible candidate to use then add it
                         if (baseControl != null)
                         {
+                            var jsonDecoded = WebUtility.HtmlDecode(TokenParser.ReplaceTokens(map.ClientSideWebPart.JsonControlData, webPart));
                             OfficeDevPnP.Core.Pages.ClientSideWebPart myWebPart = new OfficeDevPnP.Core.Pages.ClientSideWebPart(baseControl)
                             {
                                 Order = map.Order,
-                                PropertiesJson = TokenParser.ReplaceTokens(map.ClientSideWebPart.JsonControlData, webPart)
+                                PropertiesJson = jsonDecoded
                             };
 
                             page.AddControl(myWebPart, page.Sections[webPart.Row - 1].Columns[webPart.Column - 1], order);
@@ -319,11 +321,13 @@ namespace SharePoint.Modernization.Framework.Transform
         {
             Dictionary<string, string> siteTokens = new Dictionary<string, string>(5);
 
-            cc.Web.EnsureProperties(p => p.Url, p => p.ServerRelativeUrl);
-            cc.Site.EnsureProperties(p => p.RootWeb.ServerRelativeUrl);
+            cc.Web.EnsureProperties(p => p.Url, p => p.ServerRelativeUrl, p => p.Id);
+            cc.Site.EnsureProperties(p => p.RootWeb.ServerRelativeUrl, p => p.Id);
 
-            siteTokens.Add("site", cc.Web.ServerRelativeUrl.TrimEnd('/'));
+            siteTokens.Add("web", cc.Web.ServerRelativeUrl.TrimEnd('/'));
             siteTokens.Add("sitecollection", cc.Site.RootWeb.ServerRelativeUrl.TrimEnd('/'));
+            siteTokens.Add("webId", cc.Web.Id.ToString());
+            siteTokens.Add("siteId", cc.Site.Id.ToString());
 
             return siteTokens;
         }
