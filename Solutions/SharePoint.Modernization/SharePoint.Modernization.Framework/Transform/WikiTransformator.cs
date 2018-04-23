@@ -10,16 +10,29 @@ using System.Threading.Tasks;
 
 namespace SharePoint.Modernization.Framework.Transform
 {
+    /// <summary>
+    /// Transforms images/iframe elements embedded in wiki text into separate "fake" web parts
+    /// </summary>
     public class WikiTransformator
     {
         private HtmlParser parser;
 
+        #region Construction
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public WikiTransformator()
         {
             // Instantiate the AngleSharp Html parser
             parser = new HtmlParser(new HtmlParserOptions() { IsEmbedded = true });
         }
+        #endregion
 
+        /// <summary>
+        /// Replaces embedded images and iframes with respective "fake" image and video web parts. Later on these web parts will be transformed to client side web parts
+        /// </summary>
+        /// <param name="wikiPageWebParts"></param>
+        /// <returns></returns>
         public List<WebPartEntity> Transform(List<WebPartEntity> wikiPageWebParts)
         {
             List<WebPartEntity> updatedWebParts = new List<WebPartEntity>(wikiPageWebParts.Count + 10);

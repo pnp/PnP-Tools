@@ -38,6 +38,7 @@ namespace SharePoint.Modernization.Framework.Transform
             SourcePage = sourcePage;
             TargetPageName = targetPageName;
             Overwrite = overwrite;
+            HandleWikiImagesAndVideos = true;
         }
         #endregion
 
@@ -54,6 +55,11 @@ namespace SharePoint.Modernization.Framework.Transform
         /// Overwrite the target page if it already exists?
         /// </summary>
         public bool Overwrite { get; set; }
+
+        /// <summary>
+        /// If true images and videos embedded in wiki text will get a placeholder + a configured image/video client side web part at the end of the page
+        /// </summary>
+        public bool HandleWikiImagesAndVideos { get; set; }
         #endregion
 
         #region Override properties
