@@ -55,7 +55,8 @@ namespace SharePoint.Modernization.Framework.Transform
                     ImageIFramePlaceHolders(document);
                 }
 
-                // TODO: table processing
+                // Process tables
+                TransformTables(document.QuerySelectorAll("table"), document);
 
                 // Return the transformed html
                 if (document.DocumentElement.Children.Count() > 1)
@@ -91,6 +92,118 @@ namespace SharePoint.Modernization.Framework.Transform
             }
 
             return false;
+        }
+
+        protected virtual void TransformTables(IHtmlCollection<IElement> tables, IHtmlDocument document)
+        {
+            foreach(var table in tables)
+            {
+                // <div class="canvasRteResponsiveTable">
+                var newTableElement = document.CreateElement($"div");
+                newTableElement.ClassName = "canvasRteResponsiveTable";
+
+                // <div class="tableCenterAlign tableWrapper">
+                var innerDiv = document.CreateElement("div");
+                // Possible alignments: tableLeftAlign, tableCenterAlign and tableRightAlign, since wiki does not have this option default to left align
+                innerDiv.ClassList.Add(new string[] { "tableLeftAlign", "tableWrapper" });
+                newTableElement.AppendChild(innerDiv);
+
+                // <table class="bandedRowTableStyleNeutral" title="Table">
+                var tableElement = document.CreateElement("table");
+                //ms-rteTable-default: basic grid lines
+                string tableClassName = "simpleTableStyleNeutral";
+                if (!string.IsNullOrEmpty(table.ClassName))
+                {
+                    if (table.ClassName.Equals("ms-rteTable-default", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        tableClassName = "simpleTableStyleNeutral";
+                    }
+                    else
+                    {
+                        if (int.TryParse(table.ClassName.ToLower().Replace("ms-rtetable-", ""), out int tableStyleCode))
+                        {
+                            tableClassName = TableStyleCodeToName(tableStyleCode);
+                        }
+                    }
+                }
+
+                tableElement.ClassName = tableClassName;
+                tableElement.SetAttribute("title", "Table");
+                innerDiv.AppendChild(tableElement);
+
+                // <tbody>
+                var tableBody = document.CreateElement("tbody");
+                tableElement.AppendChild(tableBody);
+
+                // Iterate the table rows
+                var tableBodyElement = (table as IHtmlTableElement).Bodies[0];
+                var rows = tableBodyElement.Children.Where(p => p.TagName.Equals("tr", StringComparison.InvariantCultureIgnoreCase));
+                if (rows != null && rows.Count() > 0)
+                {
+                    // TODO: col and row spans are not yet supported in RTE but do seem to work...verify
+                    foreach(var row in rows)
+                    {
+                        var newRow = document.CreateElement("tr");
+
+                        // check for table headers
+                        var tableHeaders = row.Children.Where(p => p.TagName.Equals("th", StringComparison.InvariantCultureIgnoreCase));
+                        if (tableHeaders != null && tableHeaders.Count() > 0)
+                        {
+                            foreach(var tableHeader in tableHeaders)
+                            {
+                                var tableHeaderValue = document.CreateElement("strong");
+                                tableHeaderValue.TextContent = tableHeader.TextContent;
+
+                                var tableHeaderCell = document.CreateElement("td");
+                                tableHeaderCell.AppendChild(tableHeaderValue);
+
+                                // take over row and col spans
+                                var rowSpan = tableHeader.GetAttribute("rowspan");
+                                if (!string.IsNullOrEmpty(rowSpan) && rowSpan != "1")
+                                {
+                                    tableHeaderCell.SetAttribute("rowspan", rowSpan);
+                                }
+                                var colSpan = tableHeader.GetAttribute("colspan");
+                                if (!string.IsNullOrEmpty(colSpan) && colSpan != "1")
+                                {
+                                    tableHeaderCell.SetAttribute("colspan", colSpan);
+                                }
+
+                                newRow.AppendChild(tableHeaderCell);
+                            }
+                        }
+
+                        // check for table cells
+                        var tableCells = row.Children.Where(p => p.TagName.Equals("td", StringComparison.InvariantCultureIgnoreCase));
+                        if (tableCells != null && tableCells.Count() > 0)
+                        {
+                            foreach (var tableCell in tableCells)
+                            {
+                                var newTableCell = document.CreateElement("td");
+                                newTableCell.TextContent = tableCell.TextContent;
+
+                                // take over row and col spans
+                                var rowSpan = tableCell.GetAttribute("rowspan");
+                                if (!string.IsNullOrEmpty(rowSpan) && rowSpan != "1")
+                                {
+                                    newTableCell.SetAttribute("rowspan", rowSpan);
+                                }
+                                var colSpan = tableCell.GetAttribute("colspan");
+                                if (!string.IsNullOrEmpty(colSpan) && colSpan != "1")
+                                {
+                                    newTableCell.SetAttribute("colspan", colSpan);
+                                }
+
+                                newRow.AppendChild(newTableCell);
+                            }
+                        }
+                        tableBody.AppendChild(newRow);
+                    }
+                }
+
+                // Swap old table with new table
+                table.Parent.ReplaceChild(newTableElement, table);
+            }
         }
 
         protected virtual void ImageIFramePlaceHolders(IHtmlDocument document)
@@ -252,6 +365,7 @@ namespace SharePoint.Modernization.Framework.Transform
                 // ================================
                 // rewrite colors
                 // ================================
+                // TODO: map theme fore and back colors
                 // <span class="ms-rteThemeForeColor-5-0">red</span>
                 if (span.ClassName != null && (span.ClassName.ToLower().StartsWith("ms-rtethemeforecolor-") || span.ClassName.ToLower().StartsWith("ms-rtethemebackcolor-")))
                 {
@@ -272,10 +386,9 @@ namespace SharePoint.Modernization.Framework.Transform
                     // Green, Light Blue, Blue, Dark Blue, Purple
 
                     string newClass = null;
-                    int colorCode = 0;
-                    if (int.TryParse(span.ClassName.ToLower().Replace("ms-rteforecolor-", ""), out colorCode))
-                    {                        
-                        string colorName = ColorCodeToName(colorCode);
+                    if (int.TryParse(span.ClassName.ToLower().Replace("ms-rteforecolor-", ""), out int colorCode))
+                    {
+                        string colorName = ColorCodeToForegroundColorName(colorCode);
                         if (!string.IsNullOrEmpty(colorName))
                         {
                             newClass = $"fontColor{colorName}";
@@ -303,10 +416,9 @@ namespace SharePoint.Modernization.Framework.Transform
                     // Green, Light Blue, Blue, Dark Blue, Purple
 
                     string newClass = null;
-                    int colorCode = 0;
-                    if (int.TryParse(span.ClassName.ToLower().Replace("ms-rtebackcolor-", ""), out colorCode))
+                    if (int.TryParse(span.ClassName.ToLower().Replace("ms-rtebackcolor-", ""), out int colorCode))
                     {
-                        string colorName = ColorCodeToBackGroundColorName(colorCode);
+                        string colorName = ColorCodeToBackgroundColorName(colorCode);
                         if (!string.IsNullOrEmpty(colorName))
                         {
                             newClass = $"highlightColor{colorName}";
@@ -337,8 +449,7 @@ namespace SharePoint.Modernization.Framework.Transform
                     // Green, Light Blue, Blue, Dark Blue, Purple
 
                     string newClass = null;
-                    int fontsizeCode = 0;
-                    if (int.TryParse(span.ClassName.ToLower().Replace("ms-rtefontsize-", ""), out fontsizeCode))
+                    if (int.TryParse(span.ClassName.ToLower().Replace("ms-rtefontsize-", ""), out int fontsizeCode))
                     {
                         string fontSize = FontCodeToName(fontsizeCode);
                         if (!string.IsNullOrEmpty(fontSize))
@@ -355,7 +466,7 @@ namespace SharePoint.Modernization.Framework.Transform
                     }
                     else
                     {
-                        // Let's go to default...meaning font size info
+                        // Let's go to default...meaning font size info will be dropped
                         ReplaceChildElementByText(parent, span, document);
                         continue;
                     }
@@ -363,6 +474,60 @@ namespace SharePoint.Modernization.Framework.Transform
             }
         }
 
+        public static string TableStyleCodeToName(int tableStyleCode)
+        {
+            //ms-rteTable-default: basic grid lines
+            //ms-rteTable-0: no grid
+            //ms-rteTable-1: table style 2, light banded: no header, alternating light gray rows, no grid
+            //ms-rteTable-2: table style 4, light lines: header, no alternating rows, no grid
+            //ms-rteTable-3: table style 5, grid: no header, no alternating rows, grid
+            //ms-rteTable-4: table style 6, Accent 1: header, no alternating rows, grid, blue colors
+            //ms-rteTable-5: table style 7, Accent 2: header, no alternating rows, grid, light blue colors
+            //ms-rteTable-6: table style 3, medium two tones: header with alternating blue colors, no grid
+            //ms-rteTable-7: table style 8, Accent 3: header, no alternating rows, grid, green colors
+            //ms-rteTable-8: table style 9, Accent 4: header, no alternating rows, grid, brownish colors
+            //ms-rteTable-9: table style 10, Accent 5: header, no alternating rows, grid, red colors
+            //ms-rteTable-10: table style 11, Accent 6: header, no alternating rows, grid, purple colors
+
+            switch (tableStyleCode)
+            {
+                case 0:
+                case 3:
+                    {
+                        return "simpleTableStyleNeutral";
+                    }
+                case 1:
+                    {
+                        return "bandedRowTableStyleNeutral";
+                    }
+                case 2:
+                    {
+                        return "filledHeaderTableStyleNeutral";
+                    }
+                case 4:
+                case 5:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                    {
+                        return "filledHeaderTableStyleTheme";
+                    }
+                case 6:
+                    {
+                        return "bandedRowTableStyleTheme";
+                    }
+            }
+
+            return "simpleTableStyleNeutral";
+        }
+
+
+        /// <summary>
+        /// Translates SharePoint wiki font size (e.g. ms-rtefontsize-3 means font size 3) to RTE font size name
+        /// </summary>
+        /// <param name="fontCode">Wiki font size code</param>
+        /// <returns>RTE font size name</returns>
         public static string FontCodeToName(int fontCode)
         {
             switch (fontCode)
@@ -405,8 +570,12 @@ namespace SharePoint.Modernization.Framework.Transform
             return null;
         }
 
-
-        public static string ColorCodeToName(int colorCode)
+        /// <summary>
+        /// Translated SharePoint Wiki foreground color number (ms-rteforecolor-2 means number 2 is used) to RTE compatible color name
+        /// </summary>
+        /// <param name="colorCode">Used color number</param>
+        /// <returns>RTE color string</returns>
+        public static string ColorCodeToForegroundColorName(int colorCode)
         {
             switch (colorCode)
             {
@@ -455,7 +624,12 @@ namespace SharePoint.Modernization.Framework.Transform
             return null;
         }
 
-        public static string ColorCodeToBackGroundColorName(int colorCode)
+        /// <summary>
+        /// Translated SharePoint Wiki background color number (ms-rtebackcolor-5 means number 5 is used) to RTE compatible color name
+        /// </summary>
+        /// <param name="colorCode">Used color number</param>
+        /// <returns>RTE color string</returns>
+        public static string ColorCodeToBackgroundColorName(int colorCode)
         {
             switch (colorCode)
             {
@@ -504,6 +678,7 @@ namespace SharePoint.Modernization.Framework.Transform
             return null;
         }
 
+        #region Helper methods
         private void ReplaceChildElementByText(INode parent, IElement child, IHtmlDocument document)
         {
             if (!string.IsNullOrEmpty(child.TextContent))
@@ -518,6 +693,6 @@ namespace SharePoint.Modernization.Framework.Transform
                 parent.RemoveChild(child);
             }
         }
-
+        #endregion
     }
 }
