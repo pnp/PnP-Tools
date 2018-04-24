@@ -64,6 +64,20 @@ namespace SharePoint.Modernization.Framework.Transform
             // Load existing available controls
             var componentsToAdd = page.AvailableClientSideComponents().ToList();
 
+            // Normalize row numbers as there can be gaps if the analyzed page contained wiki tables
+            int newRowOrder = 0;
+            int lastExistingRowOrder = -1;
+            foreach (var webPart in webParts.OrderBy(p => p.Row))
+            {
+                if (lastExistingRowOrder < webPart.Row)
+                {
+                    newRowOrder++;
+                    lastExistingRowOrder = webPart.Row;
+                }
+
+                webPart.Row = newRowOrder;
+            }
+
             // Iterate over the web parts, important to order them by row, column and zoneindex
             foreach (var webPart in webParts.OrderBy(p => p.Row).OrderBy(p => p.Column).OrderBy(p =>p.Order))
             {
@@ -158,7 +172,7 @@ namespace SharePoint.Modernization.Framework.Transform
 
                         if (map.ClientSideWebPart.Type == ClientSideWebPartType.Custom)
                         {
-                            baseControl = componentsToAdd.FirstOrDefault(p => p.Id.Equals(map.ClientSideWebPart.ControlId, StringComparison.InvariantCultureIgnoreCase));
+                            baseControl = componentsToAdd.FirstOrDefault(p => p.Id.Equals($"{{{map.ClientSideWebPart.ControlId}}}", StringComparison.InvariantCultureIgnoreCase));
                         }
                         else
                         {

@@ -77,6 +77,9 @@ namespace SharePoint.Modernization.Framework.Transform
         /// <returns>True if considered empty, false otherwise</returns>
         public bool IsEmptyParagraph(string text)
         {
+            // Remove the "Zero width space" chars
+            text = text.Replace("\u200B", "");
+
             // Check for empty text or "Zero width space"
             if (string.IsNullOrEmpty(text) || (text.Length == 1 && text[0] == '\u200B'))
             {
@@ -85,10 +88,10 @@ namespace SharePoint.Modernization.Framework.Transform
 
             using (var document = this.parser.Parse(text))
             {
-                if (document.Body.InnerHtml.Equals("<p>​</p>", StringComparison.InvariantCultureIgnoreCase))
+                if (document.Body.InnerHtml.ToLower() == "<p></p>")
                 {
                     return true;
-                }
+                }                
             }
 
             return false;

@@ -41,6 +41,7 @@ Page transformation file. Describes:
             <ClientSideText Text="{CleanedText}" Order="10" />
           </Mapping>
           <Mapping Name="Spacer" Default="false">
+            <!-- drop empty parts by commenting the clientsidewebpart or uncomment to add a spacer control -->
             <ClientSideWebPart Type="Spacer" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;autoHide&quot;&#58;true,&quot;height&quot;&#58;20&#125;&#125;"/>
           </Mapping>
         </Mappings>
@@ -148,8 +149,13 @@ Page transformation file. Describes:
       <!-- Script Editor web part-->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.ScriptEditorWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
-          <Property Name="Content" Type="string" />
+          <Property Name="Content" Type="string" Functions="{Script} = HtmlEncodeForJson({Content})" />
         </Properties>
+        <Mappings>
+          <Mapping Name="PuzzlePartScriptEditor" Default="true">
+            <ClientSideWebPart Type="Custom" ControlId="3a328f0a-99c4-4b28-95ab-fe0847f657a3" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;script&quot;&#58;&quot;{Script}&quot;,&quot;title&quot;&#58;&quot;{Title}&quot;,&quot;removePadding&quot;&#58;false,&quot;spPageContextInfo&quot;&#58;false&#125;&#125;"/>
+          </Mapping>
+        </Mappings>
       </WebPart>
       <!-- Image web part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.ImageWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
