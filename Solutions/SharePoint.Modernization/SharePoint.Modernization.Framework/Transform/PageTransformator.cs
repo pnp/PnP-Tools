@@ -44,6 +44,17 @@ namespace SharePoint.Modernization.Framework.Transform
                 this.pageTransformation = (PageTransformation)xmlMapping.Deserialize(stream);
             }
         }
+
+        /// <summary>
+        /// Creates a page transformator instance
+        /// </summary>
+        /// <param name="clientContext">ClientContext of the site holding the page</param>
+        /// <param name="pageTransformationModel">Page transformation model</param>
+        public PageTransformator(ClientContext clientContext, PageTransformation pageTransformationModel)
+        {
+            this.clientContext = clientContext;
+            this.pageTransformation = pageTransformationModel;
+        }
         #endregion
 
         /// <summary>
@@ -75,6 +86,12 @@ namespace SharePoint.Modernization.Framework.Transform
             {
                 throw new ArgumentException("Page is an basic aspx page...can't transform that one, sorry!");
             }
+            #endregion
+
+            #region Telemetry
+            clientContext.ClientTag = $"SPDev:PageTransformator";
+            clientContext.Load(clientContext.Web, p => p.Description, p => p.Id);
+            clientContext.ExecuteQuery();
             #endregion
 
             #region Page creation
@@ -190,5 +207,21 @@ namespace SharePoint.Modernization.Framework.Transform
             targetPage.Publish();
             #endregion
         }
+
+        /// <summary>
+        /// Loads a page transformation model from file
+        /// </summary>
+        /// <param name="pageTransformationFile">File holding the page transformation model</param>
+        /// <returns>Page transformation model</returns>
+        public static PageTransformation LoadPageTransformationModel(string pageTransformationFile)
+        {
+            // Load xml mapping data
+            XmlSerializer xmlMapping = new XmlSerializer(typeof(PageTransformation));
+            using (var stream = new FileStream(pageTransformationFile, FileMode.Open))
+            {
+                return (PageTransformation)xmlMapping.Deserialize(stream);
+            }
+        }
+
     }
 }

@@ -110,6 +110,18 @@ Page transformation file. Describes:
           <Mapping Name="Library" Default="false">
             <ClientSideWebPart Type="List" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;true,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" Order="10" />
           </Mapping>
+          <Mapping Name="Issue" Default="false">            
+            <ClientSideText Text="Mapping for web part {Title} still to be defined" Order="10"/>
+          </Mapping>
+          <Mapping Name="DiscussionBoard" Default="false">            
+            <ClientSideText Text="Mapping for web part {Title} still to be defined" Order="10"/>
+          </Mapping>
+          <Mapping Name="Survey" Default="false">            
+            <ClientSideText Text="Mapping for web part {Title} still to be defined" Order="10"/>
+          </Mapping>
+          <Mapping Name="Undefined" Default="false">
+            <ClientSideText Text="No mapping possible for web part {Title}" Order="10"/>
+          </Mapping>
         </Mappings> 
       </WebPart>
       <!-- Site Feed Web part -->

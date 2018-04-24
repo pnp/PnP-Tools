@@ -1,12 +1,9 @@
-﻿using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
+﻿using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
 using SharePoint.Modernization.Framework.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharePoint.Modernization.Framework.Transform
 {
