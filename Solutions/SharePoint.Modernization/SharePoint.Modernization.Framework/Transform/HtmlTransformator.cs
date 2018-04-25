@@ -478,6 +478,11 @@ namespace SharePoint.Modernization.Framework.Transform
             }
         }
 
+        /// <summary>
+        /// Map wiki table style to a RTE compatible style
+        /// </summary>
+        /// <param name="tableStyleCode">Code used for the wiki table style</param>
+        /// <returns>RTE compatible table style</returns>
         public static string TableStyleCodeToName(int tableStyleCode)
         {
             //ms-rteTable-default: basic grid lines
@@ -525,7 +530,6 @@ namespace SharePoint.Modernization.Framework.Transform
 
             return "simpleTableStyleNeutral";
         }
-
 
         /// <summary>
         /// Translates SharePoint wiki font size (e.g. ms-rtefontsize-3 means font size 3) to RTE font size name
