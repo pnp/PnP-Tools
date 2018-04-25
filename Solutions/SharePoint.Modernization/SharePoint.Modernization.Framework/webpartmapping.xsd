@@ -78,7 +78,7 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="ControlId" type="GUID" use="optional"/>
+    <xs:attribute name="ControlId" type="xs:string" use="optional"/>
     <xs:attribute name="JsonControlData" type="xs:string" use="required"/>
     <xs:attribute name="Order" type="xs:integer" use="optional" />
   </xs:complexType>

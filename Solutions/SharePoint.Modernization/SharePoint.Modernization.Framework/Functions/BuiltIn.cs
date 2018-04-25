@@ -1,4 +1,5 @@
-﻿using Microsoft.SharePoint.Client;
+﻿using AngleSharp.Parser.Html;
+using Microsoft.SharePoint.Client;
 using SharePoint.Modernization.Framework.Transform;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace SharePoint.Modernization.Framework.Functions
     /// <summary>
     /// Set of native, builtin, functions
     /// </summary>
-    public class BuiltIn: FunctionsBase
+    public partial class BuiltIn: FunctionsBase
     {
 
         #region Construction
@@ -427,6 +428,31 @@ namespace SharePoint.Modernization.Framework.Functions
                 }
             }
         }
-        #endregion  
+        #endregion
+
+        #region First party web parts hosted on classic pages
+        /// <summary>
+        /// Extracts the client side web part properties so they can be reused
+        /// </summary>
+        /// <param name="clientSideWebPartHtml">Html defining the client side web part hosted on a classic page</param>
+        /// <returns>Client side web part properties ready for reuse</returns>
+        [FunctionDocumentation(Description = "Extracts the client side web part properties so they can be reused.",
+                               Example = "{JsonProperties} = ExtractWebpartProperties({ClientSideWebPartData})")]
+        [InputDocumentation(Name = "{ClientSideWebPartData}", Description = "Web part data defining the client side web part configuration")]
+        [OutputDocumentation(Name = "{JsonProperties}", Description = "Json properties to configure the client side web part")]
+        public string ExtractWebpartProperties(string clientSideWebPartHtml)
+        {
+            if (string.IsNullOrEmpty(clientSideWebPartHtml))
+            {
+                return "{}";
+            }
+
+            HtmlParser parser = new HtmlParser(new HtmlParserOptions() { IsEmbedded = true });
+            using (var document = parser.Parse(clientSideWebPartHtml))
+            {
+                return document.Body.FirstElementChild.GetAttribute("data-sp-webpartdata");
+            }
+        }
+        #endregion
     }
 }

@@ -1018,13 +1018,19 @@ Page transformation file. Describes:
         </Properties>
       </WebPart>
       <!-- Web parts that are compatible with modern client side pages -->
-      <!-- Modern ClientSide Web Part, no need to transform this -->
+      <!-- Modern ClientSide Web Part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.ClientSideWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
           <Property Name="ClientSideWebPartId" Type="guid" />
+          <Property Name="ClientSideWebPartData" Type="string" Functions="{JsonProperties} = ExtractWebpartProperties({ClientSideWebPartData})"/>
         </Properties>
+        <Mappings>
+          <Mapping Name="default" Default="true">
+            <ClientSideWebPart Type="Custom" ControlId="{ClientSideWebPartId}" Order="10" JsonControlData="{JsonProperties}"/>
+          </Mapping>
+        </Mappings>
       </WebPart>
-      <!-- Add-In part (App Part), no need to transform this -->
+      <!-- Add-In part (App Part) -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.ClientWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
           <Property Name="FeatureId" Type="guid"/>
