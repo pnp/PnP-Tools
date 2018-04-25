@@ -156,6 +156,7 @@
     <Compile Include="Extensions\SiteExtensions.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
     <Compile Include="Functions\BuiltIn.cs" />
+    <Compile Include="Functions\DocumentationAttributes.cs" />
     <Compile Include="Functions\FunctionProcessor.cs" />
     <Compile Include="Functions\FunctionsBase.cs" />
     <Compile Include="Functions\XmlCompare.cs" />

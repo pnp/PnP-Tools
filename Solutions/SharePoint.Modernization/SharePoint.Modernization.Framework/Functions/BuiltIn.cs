@@ -24,7 +24,8 @@ namespace SharePoint.Modernization.Framework.Functions
         }
         #endregion
 
-        // All functions return a single string, allowed input types are string, int, bool, DateTime and Guid
+        // All functions return either a single string or a Dictionary<string,string> with key value pairs. 
+        // Allowed input parameter types are string, int, bool, DateTime and Guid
 
         #region Generic functions
         /// <summary>
@@ -32,6 +33,10 @@ namespace SharePoint.Modernization.Framework.Functions
         /// </summary>
         /// <param name="text">Text to html encode</param>
         /// <returns>Html encoded string</returns>
+        [FunctionDocumentation(Description = "Returns the html encoded value of this string.",
+                               Example = "{EncodedText} = HtmlEncode({Text})")]
+        [InputDocumentation(Name = "{Text}", Description = "Text to html encode")]
+        [OutputDocumentation(Name = "{EncodedText}", Description = "Html encoded text")]
         public string HtmlEncode(string text)
         {
             if (string.IsNullOrEmpty(text))
@@ -47,6 +52,10 @@ namespace SharePoint.Modernization.Framework.Functions
         /// </summary>
         /// <param name="text">Text to html encode</param>
         /// <returns>Html encoded string for inclusion in JSON</returns>
+        [FunctionDocumentation(Description = "Returns the json html encoded value of this string.",
+                               Example = "{JsonEncodedText} = HtmlEncodeForJson({Text})")]
+        [InputDocumentation(Name = "{Text}", Description = "Text to html encode for inclusion in json")]
+        [OutputDocumentation(Name = "{JsonEncodedText}", Description = "Html encoded text for inclusion in json file")]
         public string HtmlEncodeForJson(string text)
         {
             if (string.IsNullOrEmpty(text))
@@ -61,6 +70,9 @@ namespace SharePoint.Modernization.Framework.Functions
         /// Return true
         /// </summary>
         /// <returns>True</returns>
+        [FunctionDocumentation(Description = "Simply returns the string true.",
+                               Example = "{UsePlaceHolders} = ReturnTrue()")]
+        [OutputDocumentation(Name = "{UsePlaceHolders}", Description = "Value true")]
         public string ReturnTrue()
         {
             return "true";
@@ -70,9 +82,53 @@ namespace SharePoint.Modernization.Framework.Functions
         /// Return false
         /// </summary>
         /// <returns>False</returns>
+        [FunctionDocumentation(Description = "Simply returns the string false.", 
+                               Example = "{UsePlaceHolders} = ReturnFalse()")]
+        [OutputDocumentation(Name = "{UsePlaceHolders}", Description = "Value false")]
         public string ReturnFalse()
         {
             return "false";
+        }
+
+        /// <summary>
+        /// Transforms the incoming path into a server relative path
+        /// </summary>
+        /// <param name="path">Path to transform</param>
+        /// <returns>Server relative path</returns>
+        [FunctionDocumentation(Description = "Transforms the incoming path into a server relative path.",
+                               Example = "{ServerRelativePath} = ReturnServerRelativePath({Path})")]
+        [InputDocumentation(Name = "{Path}", Description = "Path to transform")]
+        [OutputDocumentation(Name = "{ServerRelativePath}", Description = "Server relative path")]
+        public string ReturnServerRelativePath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return "";
+            }
+
+            var hostUri = new Uri(this.clientContext.Web.Url);
+            string host = $"{hostUri.Scheme}://{hostUri.DnsSafeHost}";
+
+            return path.Replace(host, "");
+        }
+
+        /// <summary>
+        /// Returns the filename of the given path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>File name</returns>
+        [FunctionDocumentation(Description = "Returns the filename of the given path.",
+                               Example = "{FileName} = ReturnFileName({Path})")]
+        [InputDocumentation(Name = "{Path}", Description = "Path to analyze")]
+        [OutputDocumentation(Name = "{FileName}", Description = "File name with extension from the given path")]
+        public string ReturnFileName(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return "";
+            }
+
+            return Path.GetFileName(path);
         }
         #endregion
 
@@ -82,6 +138,12 @@ namespace SharePoint.Modernization.Framework.Functions
         /// </summary>
         /// <param name="text">Text to evaluate</param>
         /// <returns>Text if text needs to be inserted, Spacer if text was empty and you want a spacer</returns>
+        [SelectorDocumentation(TargetWebPart = ClientSideWebPartType.Text,
+                               Description = "Allows for option to include a spacer for empty text wiki text parts.",
+                               Example = "TextSelector({CleanedText})")]
+        [InputDocumentation(Name = "{CleanedText}", Description = "Client side text part compliant html (cleaned via TextCleanup function)")]
+        [OutputDocumentation(Name = "Text", Description = "Will be output if the provided wiki text was not considered empty" )]
+        [OutputDocumentation(Name = "Spacer", Description = "Will be output if the provided wiki text was considered empty")]
         public string TextSelector(string text)
         {
             if (string.IsNullOrEmpty(text))
@@ -106,6 +168,12 @@ namespace SharePoint.Modernization.Framework.Functions
         /// </summary>
         /// <param name="text">Wiki html to rewrite</param>
         /// <returns>Html that's compatible with RTE</returns>
+        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.Text, 
+                               Description = "Rewrites wiki page html to be compliant with the html supported by the client side text part.",
+                               Example = "{CleanedText} = TextCleanup({Text},{UsePlaceHolders})")]
+        [InputDocumentation(Name = "{Text}", Description = "Original wiki html content")]
+        [InputDocumentation(Name = "{UsePlaceHolders}", Description = "Parameter indicating if placeholders must be included for unsupported img/iframe elements inside wiki html")]
+        [OutputDocumentation(Name = "{CleanedText}", Description = "Html compliant with client side text part")]
         public string TextCleanup(string text, string usePlaceHolders)
         {
             if (string.IsNullOrEmpty(text))
@@ -127,6 +195,16 @@ namespace SharePoint.Modernization.Framework.Functions
         /// </summary>
         /// <param name="listId">Id of the list</param>
         /// <returns>Mapping to be used for the given list</returns>
+        [SelectorDocumentation(TargetWebPart = ClientSideWebPartType.List,
+                               Description = "Analyzes a list and returns the list base type.",
+                               Example = "ListSelectorListLibrary({ListId})")]
+        [InputDocumentation(Name = "{ListId}", Description = "Guid of the list to use")]
+        [OutputDocumentation(Name = "Library", Description = "The list is a document library")]
+        [OutputDocumentation(Name = "List", Description = "The list is a document list")]
+        [OutputDocumentation(Name = "Issue", Description = "The list is an issue list")]
+        [OutputDocumentation(Name = "DiscussionBoard", Description = "The list is a discussion board")]
+        [OutputDocumentation(Name = "Survey", Description = "The list is a survey")]
+        [OutputDocumentation(Name = "Undefined", Description = "The list base type is undefined")]
         public string ListSelectorListLibrary(Guid listId)
         {
             if (listId == Guid.Empty)
@@ -168,6 +246,11 @@ namespace SharePoint.Modernization.Framework.Functions
         /// </summary>
         /// <param name="listId">Id of the list</param>
         /// <returns>Server relative url of the list</returns>
+        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.List,
+                               Description = "Returns the server relative url of a list.",
+                               Example = "{ListServerRelativeUrl} = ListAddServerRelativeUrl({ListId})")]
+        [InputDocumentation(Name = "{ListId}", Description = "Guid of the list to use")]
+        [OutputDocumentation(Name = "{ListServerRelativeUrl}", Description = "Server relative url of the list")]
         public string ListAddServerRelativeUrl(Guid listId)
         {
             if (listId == Guid.Empty)
@@ -187,6 +270,11 @@ namespace SharePoint.Modernization.Framework.Functions
         /// </summary>
         /// <param name="listId">Id of the list</param>
         /// <returns>Web relative url of the list</returns>
+        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.List,
+                               Description = "Returns the web relative url of a list.",
+                               Example = "{ListWebRelativeUrl} = ListAddWebRelativeUrl({ListId})")]
+        [InputDocumentation(Name = "{ListId}", Description = "Guid of the list to use")]
+        [OutputDocumentation(Name = "{ListWebRelativeUrl}", Description = "Web relative url of the list")]
         public string ListAddWebRelativeUrl(Guid listId)
         {
             if (listId == Guid.Empty)
@@ -208,6 +296,12 @@ namespace SharePoint.Modernization.Framework.Functions
         /// <param name="listId">Id of the list</param>
         /// <param name="xmlDefinition">Webpart view definition</param>
         /// <returns>Id of the detected view if found or otherwise the id of the default list view</returns>
+        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.List,
+                               Description = "Detects the list view id that was used by the webpart by mapping the web part xmldefinition to the list views. If no view found the list default view id is returned.",
+                               Example = "{ListViewId} = ListDetectUsedView({ListId},{XmlDefinition})")]
+        [InputDocumentation(Name = "{ListId}", Description = "Guid of the list to analyze")]
+        [InputDocumentation(Name = "{XmlDefinition}", Description = "XmlDefinition attribute of the XSLTListViewWebPart")]
+        [OutputDocumentation(Name = "{ListViewId}", Description = "Id of the view to be used")]
         public string ListDetectUsedView(Guid listId, string xmlDefinition)
         {
             if (listId == Guid.Empty || string.IsNullOrEmpty(xmlDefinition))
@@ -289,19 +383,17 @@ namespace SharePoint.Modernization.Framework.Functions
         #endregion
 
         #region Image functions
-        public string ImageServerRelativePath(string imagePath)
-        {
-            if (string.IsNullOrEmpty(imagePath))
-            {
-                return "";
-            }
-
-            var hostUri = new Uri(this.clientContext.Web.Url);
-            string host = $"{hostUri.Scheme}://{hostUri.DnsSafeHost}";
-
-            return imagePath.Replace(host, "");
-        }
-
+        /// <summary>
+        /// Does return image properties based on given server relative image path
+        /// </summary>
+        /// <param name="serverRelativeImagePath">Server relative path of the image</param>
+        /// <returns>A set of image properties</returns>
+        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.Image,
+                               Description = "Does lookup a file based on the given server relative path and return needed properties of the file. Returns null if file was not found.",
+                               Example = "ImageLookup({ServerRelativeFileName})")]
+        [InputDocumentation(Name = "{ServerRelativeFileName}", Description = "Server relative file name of the image")]
+        [OutputDocumentation(Name = "{ImageListId}", Description = "Id of the list holding the file")]
+        [OutputDocumentation(Name = "{ImageUniqueId}", Description = "UniqueId of the file")]
         public Dictionary<string,string> ImageLookup(string serverRelativeImagePath)
         {
             if (string.IsNullOrEmpty(serverRelativeImagePath))
@@ -334,17 +426,6 @@ namespace SharePoint.Modernization.Framework.Functions
                     throw;
                 }
             }
-        }
-
-        public string ImageFileName(string serverRelativeImagePath)
-        {
-            if (string.IsNullOrEmpty(serverRelativeImagePath))
-            {
-                return "";
-            }
-
-            return Path.GetFileName(serverRelativeImagePath);
-
         }
         #endregion  
     }

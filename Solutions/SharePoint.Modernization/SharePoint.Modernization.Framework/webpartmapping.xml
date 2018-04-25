@@ -4,8 +4,8 @@ Page transformation file. Describes:
  - One or more mappings from source web part to client side target text part(s) and/or web part(s):
   - Engine will take the default mapping unless specified otherwise
   - A mapping can go from one source web part to multiple target web part(s) and/or client text(s)
-  - You canuse any listed web part property as input for the configuration of the target (e.g. {Text}
-  - To not map a web part (so drop it on the source page) use an empty mapping node (e.g. <Mapping Name="default" Default="true" />)
+  - You can use any listed web part property as input for the configuration of the target (e.g. {Text}
+  - To not map a web part (so drop it on the target page) use an empty mapping node (e.g. <Mapping Name="default" Default="true" />)
   - If no mapping specified (so no explicit and no empty one) then the default mapping will be taken
 -->
 <PageTransformation xmlns="http://schemas.dev.office.com/PnP/2018/01/PageTransformationSchema">
@@ -49,7 +49,12 @@ Page transformation file. Describes:
       <!-- Fake wiki image web part, used to handle images embedded in wiki text -->
       <WebPart Type="SharePointPnP.Modernization.WikiImagePart">
         <Properties>
-          <Property Name="ImageUrl" Type="string" Functions="{serverRelativeFileName} = ImageServerRelativePath({ImageUrl});ImageLookup({serverRelativeFileName});{FileName} = ImageFileName(ImageUrl)"/>
+          <!-- Functions are executed in web part property order using the order they're listed in the functions attribute.
+               This implies that {serverRelativeFileName} as function output can be used in any function executed after the ReturnServerRelativePath function
+               Note that ImageLookup returns a Dictionary<string,string> with a collection of output parameters. Although these output parameters are not named 
+               in the model you can still use them. Consult the function documentation to understand the output parameters.
+          -->
+          <Property Name="ImageUrl" Type="string" Functions="{ServerRelativeFileName} = ReturnServerRelativePath({ImageUrl});ImageLookup({ServerRelativeFileName});{FileName} = ReturnFileName({ImageUrl})"/>
           <Property Name="AlternativeText" Type="string"/>
         </Properties>
         <Mappings>
@@ -105,11 +110,10 @@ Page transformation file. Describes:
         <Mappings Selector="ListSelectorListLibrary({ListId})">
           <Mapping Name="List" Default="true">
             <ClientSideText Text="You can map a source web part ({Title}) to a combination of client side controls :-)" Order="10" />
-            <ClientSideWebPart Type="List" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;false,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" Order="20" />
-            <!--<ClientSideWebPart Type="Custom" ControlId="AC10EA3D-B8E7-443D-8015-BDD579F8C60A" JsonControlData="&#123;&quot;&#123;&quot;"/>-->
+            <ClientSideWebPart Type="List" Order="20" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;false,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" />
           </Mapping>
           <Mapping Name="Library" Default="false">
-            <ClientSideWebPart Type="List" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;true,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" Order="10" />
+            <ClientSideWebPart Type="List" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;true,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" />
           </Mapping>
           <Mapping Name="Issue" Default="false">            
             <ClientSideText Text="Mapping for web part {Title} still to be defined" Order="10"/>
@@ -160,7 +164,7 @@ Page transformation file. Describes:
       <!-- Image web part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.ImageWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
-          <Property Name="ImageLink" Type="string" Functions="{serverRelativeFileName} = ImageServerRelativePath({ImageLink});ImageLookup({serverRelativeFileName});{FileName} = ImageFileName(ImageLink)"/>
+          <Property Name="ImageLink" Type="string" Functions="{ServerRelativeFileName} = ReturnServerRelativePath({ImageLink});ImageLookup({ServerRelativeFileName});{FileName} = ReturnFileName({ImageLink})"/>
           <Property Name="AlternativeText" Type="string" />
           <Property Name="VerticalAlignment" Type="string" />
           <Property Name="HorizontalAlignment" Type="string" />

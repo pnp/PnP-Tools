@@ -99,6 +99,7 @@ namespace SharePoint.Modernization.Framework.Transform
 
         protected virtual void TransformTables(IHtmlCollection<IElement> tables, IHtmlDocument document)
         {
+            // TODO: what about nested tables?
             foreach(var table in tables)
             {
                 // <div class="canvasRteResponsiveTable">
