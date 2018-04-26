@@ -489,6 +489,9 @@ namespace SharePoint.Modernization.Framework {
         
         /// <remarks/>
         Spacer,
+        
+        /// <remarks/>
+        ClientWebPart,
     }
     
     /// <remarks/>

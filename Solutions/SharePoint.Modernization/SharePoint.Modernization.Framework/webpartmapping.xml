@@ -1037,6 +1037,11 @@ Page transformation file. Describes:
           <Property Name="ProductWebId" Type="guid"/>
           <Property Name="ProductId" Type="guid"/>
         </Properties>
+        <Mappings>
+          <Mapping Name="default" Default="true">
+            <ClientSideWebPart Type="ClientWebPart" Order="10" JsonControlData="{}"/>
+          </Mapping>
+        </Mappings>
       </WebPart>
     </WebParts>
 </PageTransformation> 

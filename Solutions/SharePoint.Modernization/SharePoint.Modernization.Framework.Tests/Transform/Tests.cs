@@ -70,7 +70,7 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
                 //demo1
                 //wikitext
                 //wiki_li
-                var pages = cc.Web.GetPages("demo1");
+                var pages = cc.Web.GetPages("demo4");
 
                 foreach (var page in pages)
                 {

@@ -175,12 +175,23 @@ namespace SharePoint.Modernization.Framework.Pages
 
             if (string.IsNullOrEmpty(webPartXml))
             {
-                // Special case where we did not have export rights for the web part XML, assume this is a V3 web part
-                foreach (var property in propertiesToRetrieve)
+                if (webPartType == WebParts.Client)
                 {
-                    if (!string.IsNullOrEmpty(property.Name) && properties.FieldValues.ContainsKey(property.Name))
+                    // Special case since we don't know upfront which properties are relevant here...so let's take them all
+                    foreach(var prop in properties.FieldValues)
                     {
-                        propertiesToKeep.Add(property.Name, properties[property.Name] != null ? properties[property.Name].ToString() : "");
+                        propertiesToKeep.Add(prop.Key, prop.Value != null ? prop.Value.ToString() : "");
+                    }
+                }
+                else
+                {
+                    // Special case where we did not have export rights for the web part XML, assume this is a V3 web part
+                    foreach (var property in propertiesToRetrieve)
+                    {
+                        if (!string.IsNullOrEmpty(property.Name) && properties.FieldValues.ContainsKey(property.Name))
+                        {
+                            propertiesToKeep.Add(property.Name, properties[property.Name] != null ? properties[property.Name].ToString() : "");
+                        }
                     }
                 }
             }
@@ -190,12 +201,23 @@ namespace SharePoint.Modernization.Framework.Pages
                 var xmlns = xml.XPathSelectElement("*").GetDefaultNamespace();
                 if (xmlns.NamespaceName.Equals("http://schemas.microsoft.com/WebPart/v3", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    // the retrieved properties are sufficient
-                    foreach (var property in propertiesToRetrieve)
+                    if (webPartType == WebParts.Client)
                     {
-                        if (!string.IsNullOrEmpty(property.Name) && properties.FieldValues.ContainsKey(property.Name))
+                        // Special case since we don't know upfront which properties are relevant here...so let's take them all
+                        foreach (var prop in properties.FieldValues)
                         {
-                            propertiesToKeep.Add(property.Name, properties[property.Name] != null ? properties[property.Name].ToString() : "");
+                            propertiesToKeep.Add(prop.Key, prop.Value != null ? prop.Value.ToString() : "");
+                        }
+                    }
+                    else
+                    {
+                        // the retrieved properties are sufficient
+                        foreach (var property in propertiesToRetrieve)
+                        {
+                            if (!string.IsNullOrEmpty(property.Name) && properties.FieldValues.ContainsKey(property.Name))
+                            {
+                                propertiesToKeep.Add(property.Name, properties[property.Name] != null ? properties[property.Name].ToString() : "");
+                            }
                         }
                     }
                 }

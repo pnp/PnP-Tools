@@ -75,6 +75,7 @@
           <xs:enumeration value="Divider" />
           <xs:enumeration value="MicrosoftForms" />
           <xs:enumeration value="Spacer" />
+          <xs:enumeration value="ClientWebPart" />
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.SharePoint.Client;
+using Newtonsoft.Json.Linq;
 using OfficeDevPnP.Core.Pages;
 using SharePoint.Modernization.Framework.Entities;
 using SharePoint.Modernization.Framework.Functions;
@@ -302,13 +303,46 @@ namespace SharePoint.Modernization.Framework.Transform
                                         webPartName = ClientSidePage.ClientSideWebPartEnumToName(DefaultClientSideWebParts.Spacer);
                                         break;
                                     }
+                                case ClientSideWebPartType.ClientWebPart:
+                                    {
+                                        //TODO: replace with call once we've released the May PnP nuget
+                                        webPartName = "243166f5-4dc3-4fe2-9df2-a7971b546a0a";
+                                        break;
+                                    }
                                 default:
                                     {
                                         break;
                                     }
                             }
 
-                            baseControl = componentsToAdd.FirstOrDefault(p => p.Name.Equals(webPartName, StringComparison.InvariantCultureIgnoreCase));
+                            // SharePoint add-ins can be added on client side pages...all add-ins are added via the client web part, so we need additional logic to find the one we need
+                            if (map.ClientSideWebPart.Type == ClientSideWebPartType.ClientWebPart)
+                            {
+                                var addinComponents = componentsToAdd.Where(p => p.Name.Equals(webPartName, StringComparison.InvariantCultureIgnoreCase));
+                                foreach(var addin in addinComponents)
+                                {
+                                    // Find the right add-in web part via title matching...maybe not bullet proof but did find anything better for now
+                                    JObject wpJObject = JObject.Parse(addin.Manifest);
+                                    if (wpJObject["preconfiguredEntries"][0]["title"]["default"].Value<string>() == webPart.Title)
+                                    {
+                                        baseControl = addin;
+
+                                        var jsonProperties = wpJObject["preconfiguredEntries"][0];
+
+                                        // Fill custom web part properties in this json. Custom properties are listed as child elements under clientWebPartProperties, 
+                                        // replace their "default" value with the value we got from the web part's properties
+                                        jsonProperties = PopulateAddInProperties(jsonProperties, webPart);
+
+                                        // Override the JSON data we read from the model as this is fully dynamic due to the nature of the add-in client part
+                                        map.ClientSideWebPart.JsonControlData = jsonProperties.ToString(Newtonsoft.Json.Formatting.None);
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                baseControl = componentsToAdd.FirstOrDefault(p => p.Name.Equals(webPartName, StringComparison.InvariantCultureIgnoreCase));
+                            }
                         }
 
                         // If we found the web part as a possible candidate to use then add it
@@ -334,6 +368,31 @@ namespace SharePoint.Modernization.Framework.Transform
         }
 
         #region Helper methods
+        private JToken PopulateAddInProperties(JToken jsonProperties, WebPartEntity webpart)
+        {
+            foreach(JToken property in jsonProperties["properties"]["clientWebPartProperties"])
+            {
+                var wpProp = property["name"].Value<string>();
+                if (!string.IsNullOrEmpty(wpProp))
+                {
+                    if (webpart.Properties.ContainsKey(wpProp))
+                    {
+                        if (jsonProperties["properties"]["userDefinedProperties"][wpProp] != null)
+                        {
+                            jsonProperties["properties"]["userDefinedProperties"][wpProp] = webpart.Properties[wpProp].ToString();
+                        }
+                        else
+                        {
+                            JToken newProp = JObject.Parse($"{{\"{wpProp}\": \"{webpart.Properties[wpProp].ToString()}\"}}");
+                            (jsonProperties["properties"]["userDefinedProperties"] as JObject).Merge(newProp);
+                        }
+                    }
+                }
+            }
+
+            return jsonProperties;
+        }
+
         private Dictionary<string, string> CreateSiteTokenList(ClientContext cc)
         {
             Dictionary<string, string> siteTokens = new Dictionary<string, string>(5);
