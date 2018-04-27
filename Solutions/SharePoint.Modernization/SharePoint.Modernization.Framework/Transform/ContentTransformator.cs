@@ -113,7 +113,15 @@ namespace SharePoint.Modernization.Framework.Transform
                     }
                     else
                     {
-                        webPartMapping = webPartData.Mappings.Mapping.Where(p => p.Default == true).FirstOrDefault();
+                        // If there's only one mapping let's take that one, even if not specified as default
+                        if (webPartData.Mappings.Mapping.Length == 1)
+                        {
+                            webPartMapping = webPartData.Mappings.Mapping[0];
+                        }
+                        else
+                        {
+                            webPartMapping = webPartData.Mappings.Mapping.Where(p => p.Default == true).FirstOrDefault();
+                        }
                     }
 
                     if (webPartMapping != null)
