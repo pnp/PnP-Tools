@@ -176,6 +176,33 @@ Page transformation file. Describes:
           </Mapping> 
         </Mappings>
       </WebPart>
+      <!-- Web parts that are compatible with modern client side pages -->
+      <!-- Modern ClientSide Web Part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.ClientSideWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="ClientSideWebPartId" Type="guid" />
+          <Property Name="ClientSideWebPartData" Type="string" Functions="{JsonProperties} = ExtractWebpartProperties({ClientSideWebPartData})"/>
+        </Properties>
+        <Mappings>
+          <Mapping Name="default" Default="true">
+            <ClientSideWebPart Type="Custom" ControlId="{ClientSideWebPartId}" Order="10" JsonControlData="{JsonProperties}"/>
+          </Mapping>
+        </Mappings>
+      </WebPart>
+      <!-- Add-In part (App Part) -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.ClientWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="FeatureId" Type="guid"/>
+          <Property Name="ProductWebId" Type="guid"/>
+          <Property Name="ProductId" Type="guid"/>
+        </Properties>
+        <Mappings>
+          <Mapping Name="default" Default="true">
+            <!-- Due to the dynamic nature of the client web part (it's hosting any add-in with their respecitive parameters) the JsonControlData is generated at runtime -->
+            <ClientSideWebPart Type="ClientWebPart" Order="10" JsonControlData="{}"/>
+          </Mapping>
+        </Mappings>
+      </WebPart>      
       <!-- Content By Query web part -->
       <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.ContentByQueryWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -1016,32 +1043,6 @@ Page transformation file. Describes:
           <Property Name="SolutionId" Type="string" />
           <Property Name="TypeFullName" Type="string" />
         </Properties>
-      </WebPart>
-      <!-- Web parts that are compatible with modern client side pages -->
-      <!-- Modern ClientSide Web Part -->
-      <WebPart Type="Microsoft.SharePoint.WebPartPages.ClientSideWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="ClientSideWebPartId" Type="guid" />
-          <Property Name="ClientSideWebPartData" Type="string" Functions="{JsonProperties} = ExtractWebpartProperties({ClientSideWebPartData})"/>
-        </Properties>
-        <Mappings>
-          <Mapping Name="default" Default="true">
-            <ClientSideWebPart Type="Custom" ControlId="{ClientSideWebPartId}" Order="10" JsonControlData="{JsonProperties}"/>
-          </Mapping>
-        </Mappings>
-      </WebPart>
-      <!-- Add-In part (App Part) -->
-      <WebPart Type="Microsoft.SharePoint.WebPartPages.ClientWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="FeatureId" Type="guid"/>
-          <Property Name="ProductWebId" Type="guid"/>
-          <Property Name="ProductId" Type="guid"/>
-        </Properties>
-        <Mappings>
-          <Mapping Name="default" Default="true">
-            <ClientSideWebPart Type="ClientWebPart" Order="10" JsonControlData="{}"/>
-          </Mapping>
-        </Mappings>
       </WebPart>
     </WebParts>
 </PageTransformation> 
