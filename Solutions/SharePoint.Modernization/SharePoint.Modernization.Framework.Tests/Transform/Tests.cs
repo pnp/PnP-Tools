@@ -70,13 +70,14 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
                 //demo1
                 //wikitext
                 //wiki_li
-                var pages = cc.Web.GetPages("demo1");
+                var pages = cc.Web.GetPages("home.aspx");
 
                 foreach (var page in pages)
                 {
                     PageTransformationInformation pti = new PageTransformationInformation(page)
                     {
                         Overwrite = true,
+                        //ReplaceHomePageWithDefaultHomePage = true,
                         //HandleWikiImagesAndVideos = false,
                         //PageTitleOverride = titleOverride,
                         //LayoutTransformatorOverride = layoutOverride,

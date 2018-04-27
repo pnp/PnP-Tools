@@ -60,6 +60,11 @@ namespace SharePoint.Modernization.Framework.Transform
         /// If true images and videos embedded in wiki text will get a placeholder + a configured image/video client side web part at the end of the page
         /// </summary>
         public bool HandleWikiImagesAndVideos { get; set; }
+
+        /// <summary>
+        /// If the page to be transformed is the web's home page then replace with stock modern home page instead of transforming it
+        /// </summary>
+        public bool ReplaceHomePageWithDefaultHomePage { get; set; }
         #endregion
 
         #region Override properties

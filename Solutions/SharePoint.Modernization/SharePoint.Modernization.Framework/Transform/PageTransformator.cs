@@ -129,76 +129,98 @@ namespace SharePoint.Modernization.Framework.Transform
             }
             #endregion
 
-            #region Analysis of the source page
-            // Analyze the source page
-            Tuple<PageLayout, List<WebPartEntity>> pageData = null;
-
-            if (pageType.Equals("WikiPage", StringComparison.InvariantCultureIgnoreCase))
+            #region Home page handling
+            bool replacedByOOBHomePage = false;
+            // Check if the transformed page is the web's home page
+            clientContext.Web.EnsureProperties(w => w.RootFolder.WelcomePage);
+            var homePageUrl = clientContext.Web.RootFolder.WelcomePage;
+            var homepageName = Path.GetFileName(clientContext.Web.RootFolder.WelcomePage);
+            if (homepageName.Equals(pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString(), StringComparison.InvariantCultureIgnoreCase))
             {
-                pageData = new WikiPage(pageTransformationInformation.SourcePage, pageTransformation).Analyze();
-
-                // Wiki pages can contain embedded images and videos, which is not supported by the target RTE...split wiki text blocks so the transformator can handle the images and videos as separate web parts
-                if (pageTransformationInformation.HandleWikiImagesAndVideos)
+                targetPage.LayoutType = ClientSidePageLayoutType.Home;
+                if (pageTransformationInformation.ReplaceHomePageWithDefaultHomePage)
                 {
-                    pageData = new Tuple<PageLayout, List<WebPartEntity>>(pageData.Item1, new WikiTransformator().Transform(pageData.Item2));
+                    targetPage.KeepDefaultWebParts = true;
+                    replacedByOOBHomePage = true;
                 }
-            }
-            else if (pageType.Equals("WebPartPage", StringComparison.InvariantCultureIgnoreCase))
-            {
-                pageData = new WebPartPage(pageTransformationInformation.SourcePage, pageTransformation).Analyze(true);
             }
             #endregion
 
-            #region Page title configuration
-            // Set page title
-            if (pageType.Equals("WikiPage", StringComparison.InvariantCultureIgnoreCase) && pageTransformationInformation.SourcePage.FieldExistsAndUsed(Constants.FileTitleField))
+            #region Article page handling
+            if (!replacedByOOBHomePage)
             {
-                targetPage.PageTitle = pageTransformationInformation.SourcePage[Constants.FileTitleField].ToString();
-            }
-            else if (pageType.Equals("WebPartPage"))
-            {
-                var titleBarWebPart = pageData.Item2.Where(p => p.Type == WebParts.TitleBar).FirstOrDefault();
-                if (titleBarWebPart != null)
+                #region Analysis of the source page
+                // Analyze the source page
+                Tuple<PageLayout, List<WebPartEntity>> pageData = null;
+
+                if (pageType.Equals("WikiPage", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (titleBarWebPart.Properties.ContainsKey("HeaderTitle") && !string.IsNullOrEmpty(titleBarWebPart.Properties["HeaderTitle"]))
+                    pageData = new WikiPage(pageTransformationInformation.SourcePage, pageTransformation).Analyze();
+
+                    // Wiki pages can contain embedded images and videos, which is not supported by the target RTE...split wiki text blocks so the transformator can handle the images and videos as separate web parts
+                    if (pageTransformationInformation.HandleWikiImagesAndVideos)
                     {
-                        targetPage.PageTitle = titleBarWebPart.Properties["HeaderTitle"];
+                        pageData = new Tuple<PageLayout, List<WebPartEntity>>(pageData.Item1, new WikiTransformator().Transform(pageData.Item2));
                     }
                 }
+                else if (pageType.Equals("WebPartPage", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    pageData = new WebPartPage(pageTransformationInformation.SourcePage, pageTransformation).Analyze(true);
+                }
+                #endregion
+
+                #region Page title configuration
+                // Set page title
+                if (pageType.Equals("WikiPage", StringComparison.InvariantCultureIgnoreCase) && pageTransformationInformation.SourcePage.FieldExistsAndUsed(Constants.FileTitleField))
+                {
+                    targetPage.PageTitle = pageTransformationInformation.SourcePage[Constants.FileTitleField].ToString();
+                }
+                else if (pageType.Equals("WebPartPage"))
+                {
+                    var titleBarWebPart = pageData.Item2.Where(p => p.Type == WebParts.TitleBar).FirstOrDefault();
+                    if (titleBarWebPart != null)
+                    {
+                        if (titleBarWebPart.Properties.ContainsKey("HeaderTitle") && !string.IsNullOrEmpty(titleBarWebPart.Properties["HeaderTitle"]))
+                        {
+                            targetPage.PageTitle = titleBarWebPart.Properties["HeaderTitle"];
+                        }
+                    }
+                }
+
+                if (pageTransformationInformation.PageTitleOverride != null)
+                {
+                    targetPage.PageTitle = pageTransformationInformation.PageTitleOverride(targetPage.PageTitle);
+                }
+                #endregion
+
+                #region Page layout configuration
+                // Use the default layout transformator
+                ILayoutTransformator layoutTransformator = new LayoutTransformator(targetPage);
+
+                // Do we have an override?
+                if (pageTransformationInformation.LayoutTransformatorOverride != null)
+                {
+                    layoutTransformator = pageTransformationInformation.LayoutTransformatorOverride(targetPage);
+                }
+
+                // Apply the layout to the page
+                layoutTransformator.Transform(pageData.Item1);
+                #endregion
+
+                #region Content transformation
+                // Use the default content transformator
+                IContentTransformator contentTransformator = new ContentTransformator(targetPage, pageTransformation);
+
+                // Do we have an override?
+                if (pageTransformationInformation.ContentTransformatorOverride != null)
+                {
+                    contentTransformator = pageTransformationInformation.ContentTransformatorOverride(targetPage, pageTransformation);
+                }
+
+                // Run the content transformator
+                contentTransformator.Transform(pageData.Item2);
+                #endregion
             }
-
-            if (pageTransformationInformation.PageTitleOverride != null)
-            {
-                targetPage.PageTitle = pageTransformationInformation.PageTitleOverride(targetPage.PageTitle);
-            }
-            #endregion
-
-            #region Page layout configuration
-            // Use the default layout transformator
-            ILayoutTransformator layoutTransformator = new LayoutTransformator(targetPage);
-
-            // Do we have an override?
-            if (pageTransformationInformation.LayoutTransformatorOverride != null)
-            {
-                layoutTransformator = pageTransformationInformation.LayoutTransformatorOverride(targetPage);
-            }
-            
-            // Apply the layout to the page
-            layoutTransformator.Transform(pageData.Item1);
-            #endregion
-
-            #region Content transformation
-            // Use the default content transformator
-            IContentTransformator contentTransformator = new ContentTransformator(targetPage, pageTransformation);
-
-            // Do we have an override?
-            if (pageTransformationInformation.ContentTransformatorOverride != null)
-            {
-                contentTransformator = pageTransformationInformation.ContentTransformatorOverride(targetPage, pageTransformation);
-            }
-
-            // Run the content transformator
-            contentTransformator.Transform(pageData.Item2);
             #endregion
 
             #region Page persisting

@@ -87,18 +87,15 @@ namespace SharePoint.Modernization.Framework.Transform
                 {
                     continue;
                 }
-
-                // Add site level (e.g. site) tokens to the web part properties so they can be used in the same manner as a web part property
-                foreach (var token in this.siteTokens)
-                {
-                    webPart.Properties.Add(token.Key, token.Value);
-                }
-
+                
                 Mapping mapping = defaultMapping;
                 // Does the web part have a mapping defined?
                 var webPartData = pageTransformation.WebParts.Where(p => p.Type == webPart.Type).FirstOrDefault();
                 if (webPartData != null && webPartData.Mappings != null)
                 {
+                    // Add site level (e.g. site) tokens to the web part properties and model so they can be used in the same manner as a web part property
+                    UpdateWebPartDataProperties(webPart, webPartData, this.siteTokens);
+
                     // The mapping can have a selector function defined, is so it will be executed. If a selector was executed the selectorResult will contain the name of the mapping to use
                     var selectorResult = functionProcessor.Process(ref webPartData, webPart);
 
@@ -376,6 +373,27 @@ namespace SharePoint.Modernization.Framework.Transform
         }
 
         #region Helper methods
+        private static void UpdateWebPartDataProperties(WebPartEntity webPart, WebPart webPartData, Dictionary<string,string> globalProperties)
+        {
+            List<Property> tempList = new List<Property>();
+
+            foreach (var token in globalProperties)
+            {
+                // Add property to web part
+                webPart.Properties.Add(token.Key, token.Value);
+
+                // Add parameter to model
+                tempList.AddRange(webPartData.Properties);
+                tempList.Add(new Property()
+                {
+                    Functions = "",
+                    Name = token.Key,
+                    Type = PropertyType.@string
+                });
+            }
+            webPartData.Properties = tempList.ToArray();
+        }
+
         private JToken PopulateAddInProperties(JToken jsonProperties, WebPartEntity webpart)
         {
             foreach(JToken property in jsonProperties["properties"]["clientWebPartProperties"])
@@ -408,6 +426,8 @@ namespace SharePoint.Modernization.Framework.Transform
             cc.Web.EnsureProperties(p => p.Url, p => p.ServerRelativeUrl, p => p.Id);
             cc.Site.EnsureProperties(p => p.RootWeb.ServerRelativeUrl, p => p.Id);
 
+            Uri hostUri = new Uri(cc.Web.Url);
+            siteTokens.Add("Host", $"{hostUri.Scheme}://{hostUri.DnsSafeHost}");
             siteTokens.Add("Web", cc.Web.ServerRelativeUrl.TrimEnd('/'));
             siteTokens.Add("Sitecollection", cc.Site.RootWeb.ServerRelativeUrl.TrimEnd('/'));
             siteTokens.Add("WebId", cc.Web.Id.ToString());
