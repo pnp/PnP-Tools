@@ -12,6 +12,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{9B8FFE29-4905-4F4D-B52D-ED1FB777341C}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		TransformationModel.md = TransformationModel.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePoint.Modernization.Framework.Tests", "SharePoint.Modernization.Framework.Tests\SharePoint.Modernization.Framework.Tests.csproj", "{07492D38-21DE-4D09-A07D-AA1369819464}"

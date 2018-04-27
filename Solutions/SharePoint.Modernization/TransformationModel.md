@@ -52,7 +52,14 @@ For each web part the model defines the properties that might be useful to confi
 {Output} = FunctionName({Input1}, {Input2})
 ```
 
-A function can have one or more input values which are properties defined on this web part (e.g. {ListId}), properties defined on the base web part (e.g. {Title}) or properties that were the output of previous function executions (e.g. {ListWebRelativeUrl}). When a function runs it's output will either be:
+A function can have one or more input values which can be:
+
+- Properties defined on this web part (e.g. {ListId})
+- Properties defined on the base web part (e.g. {Title})
+- Properties that were the output of previous function executions (e.g. {ListWebRelativeUrl})
+- Default site scoped properties: {Host}, {Web}, {Site}, {WebId}, {SiteId}
+
+When a function runs it's output will either be:
 
 - A single string value: this value ({Output} in the presented model) will be added to the list of web part properties with name "Output" and value the value that was returned from running `FunctionName`.
 - A list of key/value pairs (Dictionary<string,string>): in this case each returned key/value pair is added to the list of web part properties
