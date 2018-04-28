@@ -541,5 +541,24 @@ namespace SharePoint.Modernization.Framework.Functions
             }
         }
         #endregion
+
+        #region Content Embed functions
+        [SelectorDocumentation(TargetWebPart = ClientSideWebPartType.ContentEmbed,
+                               Description = "Analyzes sourcetype and return recommended mapping.",
+                               Example = "ContentEmbedSelectorSourceType({SourceType})")]
+        [InputDocumentation(Name = "{SourceType}", Description = "Sourcetype of the viewed page in pageviewerwebpart")]
+        [OutputDocumentation(Name = "WebPage", Description = "The embedded content is a page")]
+        [OutputDocumentation(Name = "ServerFolderOrFile", Description = "The embedded content points to a server folder or file")]
+        public string ContentEmbedSelectorSourceType(string sourceType)
+        {
+            if (sourceType == "4")
+            {
+                return "WebPage";
+            }
+
+            return "ServerFolderOrFile";
+        }
+        #endregion
+
     }
 }

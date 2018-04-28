@@ -390,6 +390,28 @@ Page transformation file. Describes:
           </Mapping>
         </Mappings>
       </WebPart>
+      <!-- Page viewer web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.PageViewerWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+          <Property Name="ContentLink" Type="string" Functions="{ServerRelativeContent} = ReturnServerRelativePath({ContentLink}); {FullPath} = Concatenate({Host}, {ServerRelativeContent});{EncodedContentLink} = HtmlEncodeForJson({FullPath})"/>
+          <Property Name="SourceType" Type="string"/>
+        </Properties>
+        <!-- Selector returns WebPage for sourcetype=4, ServerFolderOrFile else -->
+        <Mappings Selector="ContentEmbedSelectorSourceType({SourceType})">
+          <Mapping Name="WebPage" Default="true">
+            <!-- Web page can be shown using content embed -->
+            <ClientSideWebPart Type="ContentEmbed" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;captionText&quot;&#58;&quot;&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;embedCode&quot;&#58;&quot;&lt;iframe width=\&quot;100%\&quot; height=\&quot;70%\&quot; src=\&quot;{EncodedContentLink}\&quot; allowfullscreen=\&quot;\&quot;&gt;&lt;/iframe&gt;&quot;,&quot;cachedEmbedCode&quot;&#58;&quot;{IFrameEmbed}&quot;,&quot;shouldScaleWidth&quot;&#58;true,&quot;tempState&quot;&#58;&#123;&#125;&#125;&#125;"/>
+          </Mapping>
+          <!-- Showing server folder / file did not work anyhow, so no point in mapping it -->
+          <Mapping Name="ServerFolderOrFile" Default="false">            
+          </Mapping>
+        </Mappings>
+      </WebPart>
       <!-- UserCode web part (sandbox web part)-->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.SPUserCodeWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -668,18 +690,6 @@ Page transformation file. Describes:
       <WebPart Type="Microsoft.SharePoint.WebPartPages.WikiContentWebpart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
           <Property Name="Content" Type="string"/>
-        </Properties>
-      </WebPart>
-      <!-- Page viewer web part -->
-      <WebPart Type="Microsoft.SharePoint.WebPartPages.PageViewerWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="IsIncluded" Type="bool"/>
-          <Property Name="Dir" Type="string"/>
-          <Property Name="PartImageSmall" Type="string"/>
-          <Property Name="PartImageLarge" Type="string"/>
-          <Property Name="IsIncludedFilter" Type="bool"/>
-          <Property Name="ContentLink" Type="string"/>
-          <Property Name="SourceType" Type="string"/>
         </Properties>
       </WebPart>
       <!-- Table of Contents web part -->
