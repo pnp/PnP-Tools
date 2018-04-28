@@ -187,7 +187,6 @@ Page transformation file. Describes:
           </Mapping> 
         </Mappings>
       </WebPart>
-      <!-- Web parts that are compatible with modern client side pages -->
       <!-- Modern ClientSide Web Part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.ClientSideWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -412,6 +411,22 @@ Page transformation file. Describes:
           </Mapping>
         </Mappings>
       </WebPart>
+      <!-- Picture library web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.PictureLibrarySlideshowWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="LibraryGuid" Type="guid"/>
+          <Property Name="Layout" Type="string"/>
+          <Property Name="Speed" Type="integer"/>
+          <Property Name="ShowToolbar" Type="bool"/>
+          <Property Name="ViewGuid" Type="guid"/>
+        </Properties>
+        <Mappings>
+          <Mapping Default="true" Name="default">
+            <!-- PictureLibrarySlideShow depends on PictureLibrary which cannot be configured in the UI...but this does work with the imagegallery web part -->
+            <ClientSideWebPart Type="ImageGallery" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;,&quot;componentDependencies&quot;&#58;&#123;&quot;layoutComponentId&quot;&#58;&quot;8ac0c53c-e8d0-4e3e-87d0-7449eb0d4027&quot;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.7&quot;,&quot;properties&quot;&#58;&#123;&quot;layout&quot;&#58;1,&quot;carouselSettings&quot;&#58;&#123;&quot;autoplay&quot;&#58;true,&quot;autoplaySpeed&quot;&#58;7,&quot;dots&quot;&#58;false,&quot;lazyLoad&quot;&#58;true,&quot;metadata&quot;&#58;true,&quot;swipe&quot;&#58;true&#125;,&quot;gridSettings&quot;&#58;&#123;&quot;imageSize&quot;&#58;2,&quot;imageCropping&quot;&#58;1,&quot;imageAspectRatio&quot;&#58;1,&quot;lightbox&quot;&#58;false&#125;,&quot;imageSourceType&quot;&#58;2,&quot;isRecursive&quot;&#58;false,&quot;isCdnEnabledForList&quot;&#58;false,&quot;hasDynamicModeEnabled&quot;&#58;true,&quot;maxImagesCount&quot;&#58;10,&quot;images&quot;&#58;[],&quot;listId&quot;&#58;&quot;{LibraryGuid}&quot;&#125;&#125;"/>
+          </Mapping>
+        </Mappings>
+      </WebPart>
       <!-- UserCode web part (sandbox web part)-->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.SPUserCodeWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -424,6 +439,19 @@ Page transformation file. Describes:
           <Mapping Default="true" Name="default"></Mapping>
         </Mappings>
       </WebPart>      
+      <!-- PageTitle web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.TitleBarWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="HeaderTitle" Type="string" />
+          <Property Name="HeaderCaption" Type="string" />
+          <Property Name="HeaderDescription" Type="string" />
+          <Property Name="Image" Type="string" />
+        </Properties>
+        <Mappings>
+          <!-- Empty mapping as this will never be mapped / it's also excluded by the engine -->
+          <Mapping Default="true" Name="default"></Mapping>
+        </Mappings>
+      </WebPart>
       <!-- Search web parts -->
       <WebPart Type="Microsoft.Office.Server.Search.WebControls.ContentBySearchWebPart, Microsoft.Office.Server.Search, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -737,16 +765,6 @@ Page transformation file. Describes:
           <Property Name="PartImageSmall" Type="string"/>
           <Property Name="PartImageLarge" Type="string"/>
           <Property Name="IsIncludedFilter" Type="bool"/>
-        </Properties>
-      </WebPart>
-      <!-- Picture library web part -->
-      <WebPart Type="Microsoft.SharePoint.WebPartPages.PictureLibrarySlideshowWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="LibraryGuid" Type="guid"/>
-          <Property Name="Layout" Type="string"/>
-          <Property Name="Speed" Type="integer"/>
-          <Property Name="ShowToolbar" Type="bool"/>
-          <Property Name="ViewGuid" Type="guid"/>
         </Properties>
       </WebPart>
       <!-- Html form web part -->
@@ -1074,15 +1092,6 @@ Page transformation file. Describes:
         <Properties>
           <Property Name="ErrorMessage" Type="string" />
           <Property Name="ErrorType" Type="string" />        
-        </Properties>
-      </WebPart>
-      <!-- PageTitle web part -->
-      <WebPart Type="Microsoft.SharePoint.WebPartPages.TitleBarWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="HeaderTitle" Type="string" />
-          <Property Name="HeaderCaption" Type="string" />
-          <Property Name="HeaderDescription" Type="string" />
-          <Property Name="Image" Type="string" />
         </Properties>
       </WebPart>
       <!-- App catalog web parts -->
