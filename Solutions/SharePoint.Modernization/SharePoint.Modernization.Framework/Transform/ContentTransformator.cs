@@ -376,6 +376,7 @@ namespace SharePoint.Modernization.Framework.Transform
         private static void UpdateWebPartDataProperties(WebPartEntity webPart, WebPart webPartData, Dictionary<string,string> globalProperties)
         {
             List<Property> tempList = new List<Property>();
+            tempList.AddRange(webPartData.Properties);
 
             foreach (var token in globalProperties)
             {
@@ -383,7 +384,6 @@ namespace SharePoint.Modernization.Framework.Transform
                 webPart.Properties.Add(token.Key, token.Value);
 
                 // Add parameter to model
-                tempList.AddRange(webPartData.Properties);
                 tempList.Add(new Property()
                 {
                     Functions = "",

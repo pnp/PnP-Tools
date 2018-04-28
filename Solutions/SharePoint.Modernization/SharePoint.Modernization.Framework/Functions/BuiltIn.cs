@@ -64,7 +64,7 @@ namespace SharePoint.Modernization.Framework.Functions
                 return "";
             }
 
-            return System.Web.HttpUtility.HtmlEncode(text).Replace("&quot;", @"\&quot;").Replace(":", "&#58;");
+            return System.Web.HttpUtility.HtmlEncode(text).Replace("&quot;", @"\&quot;").Replace(":", "&#58;").Replace("@", "%40");
         }
 
         /// <summary>
@@ -130,6 +130,25 @@ namespace SharePoint.Modernization.Framework.Functions
             }
 
             return Path.GetFileName(path);
+        }
+
+        [FunctionDocumentation(Description = "Concatenates 2 strings.",
+                               Example = "{CompleteString} = Concatenate({String1},{String2})")]
+        [InputDocumentation(Name = "{String1}", Description = "First string")]
+        [InputDocumentation(Name = "{String2}", Description = "Second string")]
+        [OutputDocumentation(Name = "{CompleteString}", Description = "Concatenation of the passed strings")]
+        public string Concatenate(string string1, string string2)
+        {
+            if (string1 == null)
+            {
+                string1 = "";
+            }
+            if (string2 == null)
+            {
+                string2 = "";
+            }
+
+            return string1 + string2;
         }
         #endregion
 
@@ -451,6 +470,55 @@ namespace SharePoint.Modernization.Framework.Functions
             using (var document = parser.Parse(clientSideWebPartHtml))
             {
                 return document.Body.FirstElementChild.GetAttribute("data-sp-webpartdata");
+            }
+        }
+        #endregion
+
+        #region DocumentEmbed functions
+        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.DocumentEmbed,
+                               Description = "Does lookup a file based on the given server relative path and return needed properties of the file. Returns null if file was not found.",
+                               Example = "DocumentEmbedLookup({ServerRelativeFileName})")]
+        [InputDocumentation(Name = "{ServerRelativeFileName}", Description = "Server relative file name")]
+        [OutputDocumentation(Name = "{DocumentListId}", Description = "Id of the list holding the file")]
+        [OutputDocumentation(Name = "{DocumentUniqueId}", Description = "UniqueId of the file")]
+        [OutputDocumentation(Name = "{DocumentAuthor}", Description = "User principal name of the document author")]
+        [OutputDocumentation(Name = "{DocumentAuthorName}", Description = "Name of the file author")]
+        public Dictionary<string,string> DocumentEmbedLookup(string serverRelativeUrl)
+        {
+            if (string.IsNullOrEmpty(serverRelativeUrl))
+            {
+                return null;
+            }
+
+            Dictionary<string, string> results = new Dictionary<string, string>();
+
+            try
+            {
+                var document = this.clientContext.Web.GetFileByServerRelativeUrl(serverRelativeUrl);
+                this.clientContext.Load(document, p => p.UniqueId, p => p.ListId, p => p.Author /*, p => p.TimeLastModified*/);
+                this.clientContext.ExecuteQueryRetry();
+
+                string[] authorParts = document.Author.LoginName.Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+
+                results.Add("DocumentListId", document.ListId.ToString());
+                results.Add("DocumentUniqueId", document.UniqueId.ToString());
+                results.Add("DocumentAuthor", authorParts.Length == 3 ? authorParts[2] : "");
+                results.Add("DocumentAuthorName", document.Author.Title);
+
+                return results;
+            }
+            catch (ServerException ex)
+            {
+                if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
+                {
+                    // provided file link does not exist...we're eating the exception and the page will end up with a default page header
+                    //TODO: log error
+                    return null;
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
         #endregion

@@ -35,13 +35,15 @@ Page transformation file. Describes:
         <Properties>
           <!-- To turn off placeholders set the UsePlaceHolders property to false via the ReturnFalse() function. Set to true using the ReturnTrue() function -->          
           <Property Name="Text" Type="string" Functions="{UsePlaceHolders} = ReturnTrue(); {CleanedText} = TextCleanup({Text},{UsePlaceHolders})" />
-        </Properties>
+        </Properties>        
+        <!-- TextSelector does check the received html and if it's considered empty (e.g. <p></p>) it returns the value "Spacer", else "Text" is returned -->
         <Mappings Selector="TextSelector({CleanedText})">
           <Mapping Name="Text" Default="true">
             <ClientSideText Text="{CleanedText}" Order="10" />
           </Mapping>
           <Mapping Name="Spacer" Default="false">
-            <!-- drop empty parts by commenting the clientsidewebpart or uncomment to add a spacer control -->
+            <!-- An "empty" piece of html is replaced by a spacer control to give the user flexibility to adjust the empty space.
+                 You can fully drop empty parts by commenting the clientsidewebpart as an empty mapping results in the web part being dropped -->
             <ClientSideWebPart Type="Spacer" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;autoHide&quot;&#58;true,&quot;height&quot;&#58;20&#125;&#125;"/>
           </Mapping>
         </Mappings>
@@ -59,7 +61,8 @@ Page transformation file. Describes:
         </Properties>
         <Mappings>
           <Mapping Default="true" Name="default">
-            <ClientSideWebPart Type="Image" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;captionText&quot;&#58;&quot;&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&quot;imageSource&quot;&#58;&quot;{serverRelativeFileName}&quot;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.8&quot;,&quot;properties&quot;&#58;&#123;&quot;imageSourceType&quot;&#58;2,&quot;altText&quot;&#58;&quot;{AlternativeText}&quot;,&quot;fileName&quot;&#58;&quot;{FileName}&quot;,&quot;siteId&quot;&#58;&quot;{SiteId}&quot;,&quot;webId&quot;&#58;&quot;{webId}&quot;,&quot;listId&quot;&#58;&quot;{ImageListId}&quot;,&quot;uniqueId&quot;&#58;&quot;{ImageUniqueId}&quot;,&quot;useParallax&quot;&#58;false&#125;&#125;"/>
+            <!-- Let's replace the images embedded in the wiki text with image web parts -->
+            <ClientSideWebPart Type="Image" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;captionText&quot;&#58;&quot;&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&quot;imageSource&quot;&#58;&quot;{ServerRelativeFileName}&quot;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.8&quot;,&quot;properties&quot;&#58;&#123;&quot;imageSourceType&quot;&#58;2,&quot;altText&quot;&#58;&quot;{AlternativeText}&quot;,&quot;fileName&quot;&#58;&quot;{FileName}&quot;,&quot;siteId&quot;&#58;&quot;{SiteId}&quot;,&quot;webId&quot;&#58;&quot;{webId}&quot;,&quot;listId&quot;&#58;&quot;{ImageListId}&quot;,&quot;uniqueId&quot;&#58;&quot;{ImageUniqueId}&quot;,&quot;useParallax&quot;&#58;false&#125;&#125;"/>
           </Mapping> 
         </Mappings>
       </WebPart>
@@ -67,12 +70,14 @@ Page transformation file. Describes:
       <WebPart Type="SharePointPnP.Modernization.WikiVideoPart">
         <Properties>
           <Property Name="Source" Type="string"/>
-          <Property Name="IFrameEmbed" Type="string" Functions="HtmlEncodeForJson(IFrameEmbed)"/>
+          <!-- Before inserting the iframe snippet it needs to be correctly encoded in -->
+          <Property Name="IFrameEmbed" Type="string" Functions="HtmlEncodeForJson({IFrameEmbed})"/>
           <Property Name="AllowFullScreen" Type="bool"/>
         </Properties>
         <Mappings>
           <Mapping Default="true" Name="default">
-            <!--<ClientSideWebPart Type="VideoEmbed" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;captionText&quot;&#58;&quot;My cool video!&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&quot;videoSource&quot;&#58;&quot;{Source}&quot;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;showInfo&quot;&#58;true,&quot;embedCode&quot;&#58;&quot;{IFrameEmbed}&quot;,&quot;isStream&quot;&#58;false,&quot;thumbnailUrl&quot;&#58;&quot;{Web}/_layouts/15/images/VIDEOPREVIEW.PNG&quot;&#125;&#125;"/>-->
+            <!-- Video players are iframe, so map to ContentEmbed. Tested with YouTube video and Office 365 Video. 
+                 Videos hosted in SharePoint libraries are presented using the MediaWebPart on wiki pages, so see that web part for the mapping -->
             <ClientSideWebPart Type="ContentEmbed" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;captionText&quot;&#58;&quot;&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;embedCode&quot;&#58;&quot;{IFrameEmbed}&quot;,&quot;cachedEmbedCode&quot;&#58;&quot;{IFrameEmbed}&quot;,&quot;shouldScaleWidth&quot;&#58;true,&quot;tempState&quot;&#58;&#123;&#125;&#125;&#125;"/>
           </Mapping>
         </Mappings>
@@ -203,11 +208,32 @@ Page transformation file. Describes:
         </Properties>
         <Mappings>
           <Mapping Name="default" Default="true">
-            <!-- Due to the dynamic nature of the client web part (it's hosting any add-in with their respecitive parameters) the JsonControlData is generated at runtime -->
+            <!-- Due to the dynamic nature of the client web part (it's hosting any add-in with their respective parameters) the JsonControlData is generated at runtime -->
             <ClientSideWebPart Type="ClientWebPart" Order="10" JsonControlData="{}"/>
           </Mapping>
         </Mappings>
       </WebPart>      
+      <!-- Media web part -->
+      <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.MediaWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="AutoPlay" Type="bool" Functions="{ServerRelativeMediaSource} = ReturnServerRelativePath({MediaSource}); {FullPath} = Concatenate({Host}, {ServerRelativeMediaSource})" />
+          <Property Name="MediaSource" Type="string" Functions="{FileName} = ReturnFileName({ServerRelativeMediaSource}); DocumentEmbedLookup({ServerRelativeMediaSource}); {EncodedFullPath} = HtmlEncodeForJson({FullPath}); {EncodedAuthor} = HtmlEncodeForJson({DocumentAuthor})" />
+          <Property Name="Loop" Type="bool" />
+          <Property Name="IsPreviewImageSourceOverridenForVideoSet" Type="bool" />
+          <Property Name="PreviewImageSource" Type="string" />
+          <Property Name="TemplateSource" Type="string" />
+          <Property Name="DisplayMode" Type="string" />
+          <Property Name="ShowEmbedControl" Type="bool" />
+          <Property Name="VideoSetEmbedCode" Type="string" />
+          <Property Name="VideoSetSource" Type="string" />
+          <Property Name="ConfigureFromContext" Type="bool" />
+        </Properties>
+        <Mappings>
+          <Mapping Default="true" Name="default">
+            <ClientSideWebPart Type="DocumentEmbed" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;annotation&quot;&#58;&quot;&quot;,&quot;title&quot;&#58;&quot;{FileName}&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&quot;serverRelativeUrl&quot;&#58;&quot;{MediaSource}&quot;,&quot;wopiurl&quot;&#58;&quot;&quot;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.1&quot;,&quot;properties&quot;&#58;&#123;&quot;authorName&quot;&#58;&quot;{DocumentAuthorName}&quot;,&quot;chartitem&quot;&#58;&quot;&quot;,&quot;endrange&quot;&#58;&quot;&quot;,&quot;excelSettingsType&quot;&#58;&quot;&quot;,&quot;file&quot;&#58;&quot;{EncodedFullPath}&quot;,&quot;listId&quot;&#58;&quot;{DocumentListId}&quot;,&quot;modifiedAt&quot;&#58;&quot;&quot;,&quot;photoUrl&quot;&#58;&quot;/_layouts/15/userphoto.aspx?size=S&amp;accountname={EncodedAuthor}&quot;,&quot;rangeitem&quot;&#58;&quot;&quot;,&quot;siteId&quot;&#58;&quot;{SiteId}&quot;,&quot;startPage&quot;&#58;1,&quot;startrange&quot;&#58;&quot;&quot;,&quot;tableitem&quot;&#58;&quot;&quot;,&quot;uniqueId&quot;&#58;&quot;{DocumentUniqueId}&quot;,&quot;wdallowinteractivity&quot;&#58;true,&quot;wdhidegridlines&quot;&#58;true,&quot;wdhideheaders&quot;&#58;true,&quot;webId&quot;&#58;&quot;{WebId}&quot;&#125;&#125;"/>
+          </Mapping>
+        </Mappings>
+      </WebPart>
       <!-- Content By Query web part -->
       <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.ContentByQueryWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -555,27 +581,6 @@ Page transformation file. Describes:
           <Property Name="ContentLink" Type="string"/>
           <Property Name="SourceType" Type="string"/>
         </Properties>
-      </WebPart>
-      <!-- Media web part -->
-      <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.MediaWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="AutoPlay" Type="bool" />
-          <Property Name="MediaSource" Type="string" />
-          <Property Name="Loop" Type="bool" />
-          <Property Name="IsPreviewImageSourceOverridenForVideoSet" Type="bool" />
-          <Property Name="PreviewImageSource" Type="string" />
-          <Property Name="TemplateSource" Type="string" />
-          <Property Name="DisplayMode" Type="string" />
-          <Property Name="ShowEmbedControl" Type="bool" />
-          <Property Name="VideoSetEmbedCode" Type="string" />
-          <Property Name="VideoSetSource" Type="string" />
-          <Property Name="ConfigureFromContext" Type="bool" />
-        </Properties>
-        <!--<Mappings>
-          <Mapping Default="true" Name="default">
-            <ClientSideWebPart Type="VideoEmbed" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;captionText&quot;&#58;&quot;My cool video!&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&quot;videoSource&quot;&#58;&quot;{Source}&quot;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;showInfo&quot;&#58;true,&quot;embedCode&quot;&#58;&quot;{IFrameEmbed}&quot;,&quot;isStream&quot;&#58;false,&quot;thumbnailUrl&quot;&#58;&quot;{Web}/_layouts/15/images/VIDEOPREVIEW.PNG&quot;&#125;&#125;"/>
-          </Mapping>
-        </Mappings>-->
       </WebPart>
       <!-- Table of Contents web part -->
       <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.TableOfContentsWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
