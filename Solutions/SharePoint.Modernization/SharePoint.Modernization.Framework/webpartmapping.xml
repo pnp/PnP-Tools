@@ -145,6 +145,7 @@ Page transformation file. Describes:
         </Properties>
         <Mappings>
           <Mapping Name="default" Default="true">
+            <!-- News reel is not the perfect mapping, currently there's no OOB replacement for showing the site feed data -->
             <ClientSideWebPart Type="NewsReel" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;title&quot;&#58;&quot;&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&quot;baseUrl&quot;&#58;&quot;{EncodedHostUrl}{Web}&quot;&#125;,&quot;componentDependencies&quot;&#58;&#123;&quot;layoutComponentId&quot;&#58;&quot;a2752e70-c076-41bf-a42e-1d955b449fbc&quot;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;layoutId&quot;&#58;&quot;FeaturedNews&quot;,&quot;newsDataSourceProp&quot;&#58;1,&quot;dataProviderId&quot;&#58;&quot;viewCounts&quot;,&quot;newsSiteList&quot;&#58;[],&quot;renderItemsSliderValue&quot;&#58;4,&quot;showThumbnails&quot;&#58;true,&quot;showAuthorDates&quot;&#58;true,&quot;showViewCounts&quot;&#58;true,&quot;webId&quot;&#58;&quot;{WebId}&quot;,&quot;siteId&quot;&#58;&quot;{SiteId}&quot;,&quot;propsLastEdited&quot;&#58;&quot;2018-04-27T15&#58;23&#58;15.635Z&quot;,&quot;templateId&quot;&#58;&quot;FeaturedNews&quot;&#125;&#125;"/>
           </Mapping>
         </Mappings>
@@ -230,10 +231,27 @@ Page transformation file. Describes:
         </Properties>
         <Mappings>
           <Mapping Default="true" Name="default">
+            <!-- Media web part is typically used to run videos located in SharePoint libraries, replacement for that is document embed -->
             <ClientSideWebPart Type="DocumentEmbed" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;annotation&quot;&#58;&quot;&quot;,&quot;title&quot;&#58;&quot;{FileName}&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&quot;serverRelativeUrl&quot;&#58;&quot;{MediaSource}&quot;,&quot;wopiurl&quot;&#58;&quot;&quot;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.1&quot;,&quot;properties&quot;&#58;&#123;&quot;authorName&quot;&#58;&quot;{DocumentAuthorName}&quot;,&quot;chartitem&quot;&#58;&quot;&quot;,&quot;endrange&quot;&#58;&quot;&quot;,&quot;excelSettingsType&quot;&#58;&quot;&quot;,&quot;file&quot;&#58;&quot;{EncodedFullPath}&quot;,&quot;listId&quot;&#58;&quot;{DocumentListId}&quot;,&quot;modifiedAt&quot;&#58;&quot;&quot;,&quot;photoUrl&quot;&#58;&quot;/_layouts/15/userphoto.aspx?size=S&amp;accountname={EncodedAuthor}&quot;,&quot;rangeitem&quot;&#58;&quot;&quot;,&quot;siteId&quot;&#58;&quot;{SiteId}&quot;,&quot;startPage&quot;&#58;1,&quot;startrange&quot;&#58;&quot;&quot;,&quot;tableitem&quot;&#58;&quot;&quot;,&quot;uniqueId&quot;&#58;&quot;{DocumentUniqueId}&quot;,&quot;wdallowinteractivity&quot;&#58;true,&quot;wdhidegridlines&quot;&#58;true,&quot;wdhideheaders&quot;&#58;true,&quot;webId&quot;&#58;&quot;{WebId}&quot;&#125;&#125;"/>
           </Mapping>
         </Mappings>
       </WebPart>
+      <!-- Silverlight viewer -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.SilverlightWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="MinRuntimeVersion" Type="string"/>
+          <Property Name="WindowlessMode" Type="bool"/>
+          <Property Name="CustomInitParameters" Type="string"/>
+          <Property Name="Url" Type="string"/>
+          <Property Name="ApplicationXml" Type="string"/>
+        </Properties>
+        <Mappings>
+          <!-- Silverlight web part has no replacement, so mention the used file with a nice message -->
+          <Mapping Name="Drop" Default="true">
+            <ClientSideText Order="10" Text="There's no modern equivalent to run Silverlight applications ({Url} / {ApplicationXml}). If Silverlight is crucial for you then it's recommended to keep using classic pages to host Silverlight content."/>
+          </Mapping>
+        </Mappings>
+      </WebPart>      
       <!-- Content By Query web part -->
       <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.ContentByQueryWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -301,6 +319,37 @@ Page transformation file. Describes:
           <Property Name="ContentTypeName" Type="string" />
           <Property Name="ViewFieldsOverride" Type="string" />
         </Properties>
+      </WebPart>      
+      <!-- Excel web part -->
+      <WebPart Type="Microsoft.Office.Excel.WebUI.ExcelWebRenderer, Microsoft.Office.Excel.WebUI, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="AllowInExcelOperations" Type="bool"/>
+          <Property Name="ShowAgaveTaskPanes" Type="bool"/>
+          <Property Name="AllowInteractivity" Type="bool"/>
+          <Property Name="TypingAndFormulaEntry" Type="bool"/>
+          <Property Name="AutoGenerateTitle" Type="bool"/>
+          <Property Name="WorkbookUri" Type="string" Functions="{ServerRelativeMediaSource} = ReturnServerRelativePath({WorkbookUri}); {FullPath} = Concatenate({Host}, {ServerRelativeMediaSource});{FileName} = ReturnFileName({ServerRelativeMediaSource}); DocumentEmbedLookup({ServerRelativeMediaSource})"/>
+          <Property Name="TitleUrl" Type="string" Functions="{EncodedFullPath} = HtmlEncodeForJson({FullPath}); {EncodedAuthor} = HtmlEncodeForJson({DocumentAuthor}); {EncodedHost} = HtmlEncodeForJson({Host})"/>
+          <Property Name="AllowHyperlinks" Type="bool"/>
+          <Property Name="AutoGenerateDetailLink" Type="bool"/>
+          <Property Name="AllowSorting" Type="bool"/>
+          <Property Name="AllowPivotSpecificOperation" Type="bool"/>
+          <Property Name="AllowManualDataRefresh" Type="bool"/>
+          <Property Name="ToolbarStyle" Type="string"/>
+          <Property Name="ShowPivotFieldList" Type="bool"/>
+          <Property Name="AllowRecalculation" Type="bool"/>
+          <Property Name="AllowParameterModification" Type="bool"/>
+          <Property Name="ShowWorkbookParameters" Type="bool"/>
+          <Property Name="AllowPeriodicDataRefresh" Type="bool"/>
+          <Property Name="AllowFiltering" Type="bool"/>
+          <Property Name="VisibleItem" Type="string"/>
+        </Properties>
+        <Mappings>
+          <Mapping Name="default" Default="true">
+            <!-- Map Excel web part to document embed. TODO: specific Excel settings mapping (e.g. range, table, ...) -->
+            <ClientSideWebPart Type="DocumentEmbed" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;annotation&quot;&#58;&quot;&quot;,&quot;title&quot;&#58;&quot;{FileName}&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&quot;serverRelativeUrl&quot;&#58;&quot;{ServerRelativeMediaSource}&quot;,&quot;wopiurl&quot;&#58;&quot;{EncodedHost}{Web}/_layouts/15/WopiFrame.aspx?sourcedoc=&#123;{DocumentUniqueId}&#125;&amp;action=interactivepreview&quot;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.1&quot;,&quot;properties&quot;&#58;&#123;&quot;authorName&quot;&#58;&quot;{DocumentAuthorName}&quot;,&quot;chartitem&quot;&#58;&quot;&quot;,&quot;endrange&quot;&#58;&quot;&quot;,&quot;excelSettingsType&quot;&#58;&quot;&quot;,&quot;file&quot;&#58;&quot;{EncodedFullPath}&quot;,&quot;listId&quot;&#58;&quot;{DocumentListId}&quot;,&quot;modifiedAt&quot;&#58;&quot;&quot;,&quot;photoUrl&quot;&#58;&quot;/_layouts/15/userphoto.aspx?size=S&amp;accountname={EncodedAuthor}&quot;,&quot;rangeitem&quot;&#58;&quot;&quot;,&quot;siteId&quot;&#58;&quot;{SiteId}&quot;,&quot;startPage&quot;&#58;1,&quot;startrange&quot;&#58;&quot;&quot;,&quot;tableitem&quot;&#58;&quot;&quot;,&quot;uniqueId&quot;&#58;&quot;{DocumentUniqueId}&quot;,&quot;wdallowinteractivity&quot;&#58;true,&quot;wdhidegridlines&quot;&#58;true,&quot;wdhideheaders&quot;&#58;true,&quot;webId&quot;&#58;&quot;{WebId}&quot;&#125;&#125;"/>
+          </Mapping>
+        </Mappings>
       </WebPart>      
       <!-- Search web parts -->
       <WebPart Type="Microsoft.Office.Server.Search.WebControls.ContentBySearchWebPart, Microsoft.Office.Server.Search, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
@@ -600,31 +649,6 @@ Page transformation file. Describes:
           <Property Name="ContactLoginName" Type="string"/>
         </Properties>
       </WebPart>
-      <!-- Excel web part -->
-      <WebPart Type="Microsoft.Office.Excel.WebUI.ExcelWebRenderer, Microsoft.Office.Excel.WebUI, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="AllowInExcelOperations" Type="bool"/>
-          <Property Name="ShowAgaveTaskPanes" Type="bool"/>
-          <Property Name="AllowInteractivity" Type="bool"/>
-          <Property Name="TypingAndFormulaEntry" Type="bool"/>
-          <Property Name="AutoGenerateTitle" Type="bool"/>
-          <Property Name="WorkbookUri" Type="string"/>
-          <Property Name="TitleUrl" Type="string"/>
-          <Property Name="AllowHyperlinks" Type="bool"/>
-          <Property Name="AutoGenerateDetailLink" Type="bool"/>
-          <Property Name="AllowSorting" Type="bool"/>
-          <Property Name="AllowPivotSpecificOperation" Type="bool"/>
-          <Property Name="AllowManualDataRefresh" Type="bool"/>
-          <Property Name="ToolbarStyle" Type="string"/>
-          <Property Name="ShowPivotFieldList" Type="bool"/>
-          <Property Name="AllowRecalculation" Type="bool"/>
-          <Property Name="AllowParameterModification" Type="bool"/>
-          <Property Name="ShowWorkbookParameters" Type="bool"/>
-          <Property Name="AllowPeriodicDataRefresh" Type="bool"/>
-          <Property Name="AllowFiltering" Type="bool"/>
-          <Property Name="VisibleItem" Type="string"/>
-        </Properties>
-      </WebPart>
       <!-- Visio web part -->
       <WebPart Type="Microsoft.Office.Visio.Server.WebControls.VisioWebAccess, Microsoft.Office.Visio.Server, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -684,16 +708,6 @@ Page transformation file. Describes:
           <Property Name="Speed" Type="integer"/>
           <Property Name="ShowToolbar" Type="bool"/>
           <Property Name="ViewGuid" Type="guid"/>
-        </Properties>
-      </WebPart>
-      <!-- Silverlight viewer -->
-      <WebPart Type="Microsoft.SharePoint.WebPartPages.SilverlightWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="MinRuntimeVersion" Type="string"/>
-          <Property Name="WindowlessMode" Type="bool"/>
-          <Property Name="CustomInitParameters" Type="string"/>
-          <Property Name="Url" Type="string"/>
-          <Property Name="ApplicationXml" Type="string"/>
         </Properties>
       </WebPart>
       <!-- Html form web part -->

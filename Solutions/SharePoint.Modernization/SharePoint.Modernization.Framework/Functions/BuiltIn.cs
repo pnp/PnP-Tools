@@ -485,17 +485,36 @@ namespace SharePoint.Modernization.Framework.Functions
         [OutputDocumentation(Name = "{DocumentAuthorName}", Description = "Name of the file author")]
         public Dictionary<string,string> DocumentEmbedLookup(string serverRelativeUrl)
         {
+            bool stop = false;
             if (string.IsNullOrEmpty(serverRelativeUrl))
             {
-                return null;
+                stop = true;
+            }
+
+            this.clientContext.Web.EnsureProperties(p => p.ServerRelativeUrl);
+
+            // Check if this url is pointing to content living in this site
+            if (!stop && !serverRelativeUrl.StartsWith(this.clientContext.Web.ServerRelativeUrl, StringComparison.InvariantCultureIgnoreCase))
+            {
+                // TODO: add handling of files living in another web
+                stop = true;
             }
 
             Dictionary<string, string> results = new Dictionary<string, string>();
 
+            if (stop)
+            {
+                results.Add("DocumentListId", "");
+                results.Add("DocumentUniqueId", "");
+                results.Add("DocumentAuthor", "");
+                results.Add("DocumentAuthorName", "");
+                return results;
+            }
+
             try
             {
                 var document = this.clientContext.Web.GetFileByServerRelativeUrl(serverRelativeUrl);
-                this.clientContext.Load(document, p => p.UniqueId, p => p.ListId, p => p.Author /*, p => p.TimeLastModified*/);
+                this.clientContext.Load(document, p => p.UniqueId, p => p.ListId, p => p.Author);
                 this.clientContext.ExecuteQueryRetry();
 
                 string[] authorParts = document.Author.LoginName.Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
