@@ -153,12 +153,18 @@ Page transformation file. Describes:
       <!-- Content Editor web part-->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.ContentEditorWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
-          <Property Name="ContentLink" Type="string" />
-          <Property Name="Content" Type="string"/>
+          <Property Name="ContentLink" Type="string" Functions="{ServerRelativeContent} = ReturnServerRelativePath({ContentLink}); {FullPath} = Concatenate({Host}, {ServerRelativeContent});{EncodedContentLink} = HtmlEncodeForJson({FullPath})" />
+          <Property Name="Content" Type="string" Functions="{Script} = HtmlEncodeForJson({Content})"/>
+          <Property Name="PartStorage" Type="string"/>
         </Properties>
-        <Mappings>
-          <!-- Adding an empty mapping node results in the web part being excluded from the target page -->
-          <Mapping Name="default" Default="true" />
+        <!-- if a link is used then map to OOB content embed, if raw content was set then use the script editor third party web part -->
+        <Mappings Selector="ContentEmbedSelectorContentLink({ContentLink})">
+          <Mapping Name="Link" Default="true">
+            <ClientSideWebPart Type="ContentEmbed" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;captionText&quot;&#58;&quot;&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;embedCode&quot;&#58;&quot;&lt;iframe width=\&quot;100%\&quot; height=\&quot;70%\&quot; src=\&quot;{EncodedContentLink}\&quot; allowfullscreen=\&quot;\&quot;&gt;&lt;/iframe&gt;&quot;,&quot;cachedEmbedCode&quot;&#58;&quot;&lt;iframe width=\&quot;100%\&quot; height=\&quot;70%\&quot; src=\&quot;{EncodedContentLink}\&quot; allowfullscreen=\&quot;\&quot;&gt;&lt;/iframe&gt;&quot;,&quot;shouldScaleWidth&quot;&#58;true,&quot;tempState&quot;&#58;&#123;&#125;&#125;&#125;"/>
+          </Mapping>
+          <Mapping Name="Content" Default="false">
+            <ClientSideWebPart Type="Custom" ControlId="3a328f0a-99c4-4b28-95ab-fe0847f657a3" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;script&quot;&#58;&quot;{Script}&quot;,&quot;title&quot;&#58;&quot;{Title}&quot;,&quot;removePadding&quot;&#58;false,&quot;spPageContextInfo&quot;&#58;false&#125;&#125;"/>
+          </Mapping>
         </Mappings>
       </WebPart>
       <!-- Script Editor web part-->
@@ -404,7 +410,7 @@ Page transformation file. Describes:
         <Mappings Selector="ContentEmbedSelectorSourceType({SourceType})">
           <Mapping Name="WebPage" Default="true">
             <!-- Web page can be shown using content embed -->
-            <ClientSideWebPart Type="ContentEmbed" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;captionText&quot;&#58;&quot;&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;embedCode&quot;&#58;&quot;&lt;iframe width=\&quot;100%\&quot; height=\&quot;70%\&quot; src=\&quot;{EncodedContentLink}\&quot; allowfullscreen=\&quot;\&quot;&gt;&lt;/iframe&gt;&quot;,&quot;cachedEmbedCode&quot;&#58;&quot;{IFrameEmbed}&quot;,&quot;shouldScaleWidth&quot;&#58;true,&quot;tempState&quot;&#58;&#123;&#125;&#125;&#125;"/>
+            <ClientSideWebPart Type="ContentEmbed" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;captionText&quot;&#58;&quot;&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;embedCode&quot;&#58;&quot;&lt;iframe width=\&quot;100%\&quot; height=\&quot;70%\&quot; src=\&quot;{EncodedContentLink}\&quot; allowfullscreen=\&quot;\&quot;&gt;&lt;/iframe&gt;&quot;,&quot;cachedEmbedCode&quot;&#58;&quot;&lt;iframe width=\&quot;100%\&quot; height=\&quot;70%\&quot; src=\&quot;{EncodedContentLink}\&quot; allowfullscreen=\&quot;\&quot;&gt;&lt;/iframe&gt;&quot;,&quot;shouldScaleWidth&quot;&#58;true,&quot;tempState&quot;&#58;&#123;&#125;&#125;&#125;"/>
           </Mapping>
           <!-- Showing server folder / file did not work anyhow, so no point in mapping it -->
           <Mapping Name="ServerFolderOrFile" Default="false">            
@@ -441,6 +447,14 @@ Page transformation file. Describes:
           <Mapping Name="PuzzlePartScriptEditor" Default="true">
             <ClientSideWebPart Type="Custom" ControlId="3a328f0a-99c4-4b28-95ab-fe0847f657a3" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;script&quot;&#58;&quot;{Script}&quot;,&quot;title&quot;&#58;&quot;{Title}&quot;,&quot;removePadding&quot;&#58;false,&quot;spPageContextInfo&quot;&#58;false&#125;&#125;"/>
           </Mapping>          
+        </Mappings>
+      </WebPart>
+      <!-- InfoPath web part -->
+      <WebPart Type="Microsoft.Office.InfoPath.Server.Controls.WebUI.BrowserFormWebPart, Microsoft.Office.InfoPath.Server, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">        
+        <!-- Still to investigate: why don't I see the needed properties? -->
+        <Mappings>
+          <!-- TODO: dropping for now, possible alternative is adding a link to the form library assuming we can get that information from the web part -->
+          <Mapping Default="true" Name="default"></Mapping>
         </Mappings>
       </WebPart>
       <!-- UserCode web part (sandbox web part)-->
@@ -782,9 +796,6 @@ Page transformation file. Describes:
           <Property Name="PartImageLarge" Type="string"/>
           <Property Name="IsIncludedFilter" Type="bool"/>
         </Properties>
-      </WebPart>
-      <!-- InfoPath web part -->
-      <WebPart Type="Microsoft.Office.InfoPath.Server.Controls.WebUI.BrowserFormWebPart, Microsoft.Office.InfoPath.Server, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">        
       </WebPart>
       <!-- Timeline web part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.SPTimelineWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">

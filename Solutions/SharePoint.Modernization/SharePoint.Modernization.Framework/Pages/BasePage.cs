@@ -251,7 +251,20 @@ namespace SharePoint.Modernization.Framework.Pages
                                         propertiesToKeep.Add(property.Name, v2Element.Value);
                                     }
                                 }
-
+                                else if (webPartType == WebParts.ContentEditor)
+                                {
+                                    if (property.Name.Equals("ContentLink", StringComparison.InvariantCultureIgnoreCase) ||
+                                        property.Name.Equals("Content", StringComparison.InvariantCultureIgnoreCase) ||
+                                        property.Name.Equals("PartStorage", StringComparison.InvariantCultureIgnoreCase) )
+                                    {
+                                        XNamespace xmlcontentns = "http://schemas.microsoft.com/WebPart/v2/ContentEditor";
+                                        v2Element = xml.Descendants(xmlcontentns + property.Name).FirstOrDefault();
+                                        if (v2Element != null)
+                                        {
+                                            propertiesToKeep.Add(property.Name, v2Element.Value);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

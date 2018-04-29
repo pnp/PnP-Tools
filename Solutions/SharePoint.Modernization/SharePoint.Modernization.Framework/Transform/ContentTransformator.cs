@@ -376,7 +376,10 @@ namespace SharePoint.Modernization.Framework.Transform
         private static void UpdateWebPartDataProperties(WebPartEntity webPart, WebPart webPartData, Dictionary<string,string> globalProperties)
         {
             List<Property> tempList = new List<Property>();
-            tempList.AddRange(webPartData.Properties);
+            if (webPartData.Properties != null)
+            {
+                tempList.AddRange(webPartData.Properties);
+            }
 
             foreach (var token in globalProperties)
             {

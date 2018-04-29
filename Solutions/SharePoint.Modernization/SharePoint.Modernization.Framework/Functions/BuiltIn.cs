@@ -558,6 +558,24 @@ namespace SharePoint.Modernization.Framework.Functions
 
             return "ServerFolderOrFile";
         }
+
+        [SelectorDocumentation(TargetWebPart = ClientSideWebPartType.ContentEmbed,
+                       Description = "If ContentLink is set (content editor) then return Link, otherwise return Content.",
+                       Example = "ContentEmbedSelectorContentLink({ContentLink})")]
+        [InputDocumentation(Name = "{ContentLink}", Description = "Link value if set")]
+        [OutputDocumentation(Name = "Link", Description = "If the link was not empty")]
+        [OutputDocumentation(Name = "Content", Description = "If no link was specified")]
+        public string ContentEmbedSelectorContentLink(string contentLink)
+        {
+            if (!string.IsNullOrEmpty(contentLink))
+            {
+                return "Link";
+            }
+            else
+            {
+                return "Content";
+            }
+        }
         #endregion
 
     }
