@@ -239,6 +239,19 @@ namespace SharePoint.Modernization.Framework.Pages
                                 {
                                     propertiesToKeep.Add(property.Name, v2Element.Value);
                                 }
+
+                                // Some properties do have their own namespace defined
+                                if (webPartType == WebParts.SimpleForm && property.Name.Equals("Content", StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    // Load using the http://schemas.microsoft.com/WebPart/v2/SimpleForm namespace
+                                    XNamespace xmlcontentns = "http://schemas.microsoft.com/WebPart/v2/SimpleForm";
+                                    v2Element = xml.Descendants(xmlcontentns + property.Name).FirstOrDefault();
+                                    if (v2Element != null)
+                                    {
+                                        propertiesToKeep.Add(property.Name, v2Element.Value);
+                                    }
+                                }
+
                             }
                         }
                     }

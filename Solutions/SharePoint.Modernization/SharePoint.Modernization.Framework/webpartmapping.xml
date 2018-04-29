@@ -427,6 +427,22 @@ Page transformation file. Describes:
           </Mapping>
         </Mappings>
       </WebPart>
+      <!-- Html form web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.SimpleFormWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+          <Property Name="Content" Type="string" Functions="{Script} = HtmlEncodeForJson({Content})"/>
+        </Properties>
+        <Mappings>
+          <Mapping Name="PuzzlePartScriptEditor" Default="true">
+            <ClientSideWebPart Type="Custom" ControlId="3a328f0a-99c4-4b28-95ab-fe0847f657a3" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;script&quot;&#58;&quot;{Script}&quot;,&quot;title&quot;&#58;&quot;{Title}&quot;,&quot;removePadding&quot;&#58;false,&quot;spPageContextInfo&quot;&#58;false&#125;&#125;"/>
+          </Mapping>          
+        </Mappings>
+      </WebPart>
       <!-- UserCode web part (sandbox web part)-->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.SPUserCodeWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -765,17 +781,6 @@ Page transformation file. Describes:
           <Property Name="PartImageSmall" Type="string"/>
           <Property Name="PartImageLarge" Type="string"/>
           <Property Name="IsIncludedFilter" Type="bool"/>
-        </Properties>
-      </WebPart>
-      <!-- Html form web part -->
-      <WebPart Type="Microsoft.SharePoint.WebPartPages.SimpleFormWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="IsIncluded" Type="bool"/>
-          <Property Name="Dir" Type="string"/>
-          <Property Name="PartImageSmall" Type="string"/>
-          <Property Name="PartImageLarge" Type="string"/>
-          <Property Name="IsIncludedFilter" Type="bool"/>
-          <Property Name="Content" Type="string"/>
         </Properties>
       </WebPart>
       <!-- InfoPath web part -->
