@@ -265,6 +265,36 @@ namespace SharePoint.Modernization.Framework.Pages
                                         }
                                     }
                                 }
+                                else if (webPartType == WebParts.Xml)
+                                {
+                                    if (property.Name.Equals("XMLLink", StringComparison.InvariantCultureIgnoreCase) ||
+                                        property.Name.Equals("XML", StringComparison.InvariantCultureIgnoreCase) ||
+                                        property.Name.Equals("XSLLink", StringComparison.InvariantCultureIgnoreCase) ||
+                                        property.Name.Equals("XSL", StringComparison.InvariantCultureIgnoreCase) ||
+                                        property.Name.Equals("PartStorage", StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        XNamespace xmlcontentns = "http://schemas.microsoft.com/WebPart/v2/Xml";
+                                        v2Element = xml.Descendants(xmlcontentns + property.Name).FirstOrDefault();
+                                        if (v2Element != null)
+                                        {
+                                            propertiesToKeep.Add(property.Name, v2Element.Value);
+                                        }
+                                    }
+                                }
+                                else if (webPartType == WebParts.SiteDocuments)
+                                {
+                                    if (property.Name.Equals("UserControlledNavigation", StringComparison.InvariantCultureIgnoreCase) ||
+                                        property.Name.Equals("ShowMemberships", StringComparison.InvariantCultureIgnoreCase) ||
+                                        property.Name.Equals("UserTabs", StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        XNamespace xmlcontentns = "urn:schemas-microsoft-com:sharepoint:portal:sitedocumentswebpart";
+                                        v2Element = xml.Descendants(xmlcontentns + property.Name).FirstOrDefault();
+                                        if (v2Element != null)
+                                        {
+                                            propertiesToKeep.Add(property.Name, v2Element.Value);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

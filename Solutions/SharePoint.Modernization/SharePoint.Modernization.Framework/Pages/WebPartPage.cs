@@ -33,15 +33,16 @@ namespace SharePoint.Modernization.Framework.Pages
             List<WebPartEntity> webparts = new List<WebPartEntity>();
 
             //Load the page
-            var wikiPageUrl = page[Constants.FileRefField].ToString();
-            var wikiPage = cc.Web.GetFileByServerRelativeUrl(wikiPageUrl);
+            var webPartPageUrl = page[Constants.FileRefField].ToString();
+            var webPartPage = cc.Web.GetFileByServerRelativeUrl(webPartPageUrl);
 
             // Load page properties
-            var pageProperties = wikiPage.Properties;
+            var pageProperties = webPartPage.Properties;
             cc.Load(pageProperties);
 
-            // Load web parts on wiki page
-            var limitedWPManager = wikiPage.GetLimitedWebPartManager(PersonalizationScope.Shared);
+            // Load web parts on web part page
+            // TODO: web parts placed outside of a web part zone using SPD are not picked up by the web part manager
+            var limitedWPManager = webPartPage.GetLimitedWebPartManager(PersonalizationScope.Shared);
             cc.Load(limitedWPManager);
 
             IEnumerable<WebPartDefinition> webParts = cc.LoadQuery(limitedWPManager.WebParts.IncludeWithDefaultProperties(wp => wp.Id, wp => wp.ZoneId, wp => wp.WebPart.ExportMode, wp => wp.WebPart.Title, wp => wp.WebPart.ZoneIndex, wp => wp.WebPart.IsClosed, wp => wp.WebPart.Hidden, wp => wp.WebPart.Properties));

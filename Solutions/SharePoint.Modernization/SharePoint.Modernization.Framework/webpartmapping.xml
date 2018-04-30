@@ -457,6 +457,96 @@ Page transformation file. Describes:
           <Mapping Default="true" Name="default"></Mapping>
         </Mappings>
       </WebPart>
+      <!-- Xml Web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.XmlWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+          <Property Name="XMLLink" Type="string"/>
+          <Property Name="XML" Type="string"/>
+          <Property Name="XSLLink" Type="string"/>
+          <Property Name="XSL" Type="string"/>
+          <Property Name="PartStorage" Type="string"/>
+        </Properties>
+        <Mappings>
+          <Mapping Default="true" Name="default">
+            <!-- For now do not support this. Checking customer analysis data showed low usage. Plan B would be be write a third party web part that can do this -->
+            <ClientSideText Order="10" Text="The XmlWebPart on the source page reads XML and then uses XSL to produce HTML. This is currently not supported by the page migration engine"/>
+          </Mapping>
+        </Mappings>
+      </WebPart>
+      <!-- List View Web part: SP 2007/2010 way of displaying list data -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.ListViewWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="WebId" Type="guid"/>
+          <Property Name="ListViewXml" Type="string" Functions="{ListViewId} = ListDetectUsedView({ListId},{ListViewXml})"/>
+          <Property Name="ListName" Type="string"/>
+          <Property Name="ListId" Type="string" Functions="{ListWebRelativeUrl} = ListAddWebRelativeUrl({ListId}); {ListServerRelativeUrl} = ListAddServerRelativeUrl({ListId})"/>
+          <Property Name="ViewFlag" Type="integer"/>
+          <Property Name="ViewFlags" Type="string"/>
+          <Property Name="ViewContentTypeId" Type="string"/>
+          <Property Name="PageType" Type="string"/>
+        </Properties>
+        <!-- TODO: validate this mapping -->
+        <Mappings Selector="ListSelectorListLibrary({ListId})">
+          <Mapping Name="List" Default="true">
+            <ClientSideWebPart Type="List" Order="20" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;false,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" />
+          </Mapping>
+          <Mapping Name="Library" Default="false">
+            <ClientSideWebPart Type="List" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;true,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" />
+          </Mapping>
+          <Mapping Name="Issue" Default="false">            
+            <ClientSideText Text="Mapping for web part {Title} still to be defined" Order="10"/>
+          </Mapping>
+          <Mapping Name="DiscussionBoard" Default="false">            
+            <ClientSideText Text="Mapping for web part {Title} still to be defined" Order="10"/>
+          </Mapping>
+          <Mapping Name="Survey" Default="false">            
+            <ClientSideText Text="Mapping for web part {Title} still to be defined" Order="10"/>
+          </Mapping>
+          <Mapping Name="Undefined" Default="false">
+            <ClientSideText Text="No mapping possible for web part {Title}" Order="10"/>
+          </Mapping>
+        </Mappings> 
+      </WebPart>
+      <!-- Data Form Web part: SP 2007/2010 way of displaying list edit/view forms -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.DataFormWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="ListName " Type="string"/>
+          <Property Name="ListId" Type="guid"/>
+          <Property Name="PageType " Type="string"/>
+          <Property Name="FormType " Type="integer"/>
+          <Property Name="ControlMode " Type="string"/>
+          <Property Name="ViewFlag " Type="integer"/>
+          <Property Name="ViewFlags " Type="string"/>
+          <Property Name="ListItemId" Type="integer"/>
+          <Property Name="DataFields" Type="string"/>
+          <Property Name="DataSourceID" Type="string"/>
+        </Properties>
+        <Mappings>
+          <Mapping Default="true" Name="default">
+            <!-- Don't see an option to transform this one. Also not massively used -->
+            <ClientSideText Order="10" Text="The DataFormWebPart (List: {ListName}, Id: {ListId}) on the source page could not be transformed."/>
+          </Mapping>
+        </Mappings>
+      </WebPart>
+      <!-- Wiki Content web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.WikiContentWebpart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <!-- We're not able to see the actual web part content in the web part properties -->
+          <Property Name="Content" Type="string"/>
+        </Properties>
+        <Mappings>
+          <Mapping Default="true" Name="default">
+            <!-- Not heavily used, does not work in SPO. Could be potentially mapped to text if the Content property would be exported 
+                 See /sporel/sts/wp/WikiContentWebPart.cs. Content property could contain html + web parts   -->
+            <ClientSideText Order="10" Text="The WikiContentWebpart web part is not functional anymore in SPO...hence it's not migrated"/>
+          </Mapping>
+        </Mappings>
+      </WebPart>
       <!-- UserCode web part (sandbox web part)-->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.SPUserCodeWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -680,48 +770,6 @@ Page transformation file. Describes:
           <Property Name="SelectedRefinementControlsJson" Type="string"/>
         </Properties>
       </WebPart>
-      <!-- Xml Web part -->
-      <WebPart Type="Microsoft.SharePoint.WebPartPages.XmlWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="IsIncluded" Type="bool"/>
-          <Property Name="Dir" Type="string"/>
-          <Property Name="PartImageSmall" Type="string"/>
-          <Property Name="PartImageLarge" Type="string"/>
-          <Property Name="IsIncludedFilter" Type="bool"/>
-          <Property Name="XMLLink" Type="string"/>
-          <Property Name="XML" Type="string"/>
-          <Property Name="XSLLink" Type="string"/>
-          <Property Name="XSL" Type="string"/>
-        </Properties>
-      </WebPart>
-      <!-- List View Web part -->
-      <WebPart Type="Microsoft.SharePoint.WebPartPages.ListViewWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="WebId" Type="guid"/>
-          <Property Name="ListViewXml" Type="string"/>
-          <Property Name="ListName" Type="string"/>
-          <Property Name="ListId" Type="string"/>
-          <Property Name="ViewFlag" Type="integer"/>
-          <Property Name="ViewFlags" Type="string"/>
-          <Property Name="ViewContentTypeId" Type="string"/>
-          <Property Name="PageType" Type="string"/>
-        </Properties>
-      </WebPart>
-      <!-- Data Form Web part -->
-      <WebPart Type="Microsoft.SharePoint.WebPartPages.DataFormWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="ListName " Type="string"/>
-          <Property Name="ListId" Type="guid"/>
-          <Property Name="PageType " Type="string"/>
-          <Property Name="FormType " Type="integer"/>
-          <Property Name="ControlMode " Type="string"/>
-          <Property Name="ViewFlag " Type="integer"/>
-          <Property Name="ViewFlags " Type="string"/>
-          <Property Name="ListItemId" Type="integer"/>
-          <Property Name="DataFields" Type="string"/>
-          <Property Name="DataSourceID" Type="string"/>
-        </Properties>
-      </WebPart>
       <!-- RSS aggregator -->
       <WebPart Type="Microsoft.SharePoint.Portal.WebControls.RSSAggregatorWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -744,17 +792,41 @@ Page transformation file. Describes:
           <Property Name="XmlDefinition" Type="string"/>
         </Properties>
       </WebPart>
-      <!-- Wiki Content web part -->
-      <WebPart Type="Microsoft.SharePoint.WebPartPages.WikiContentWebpart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="Content" Type="string"/>
-        </Properties>
-      </WebPart>
       <!-- Table of Contents web part -->
       <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.TableOfContentsWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="ListId" Type="guid"/>
+          <Property Name="ListName" Type="string"/>
+          <!-- Is starting location server relative site url -->
+          <Property Name="AnchorLocation" Type="string"/>
+          <Property Name="IncludeContentFromStartingLocation" Type="bool" />
+          <Property Name="IncludeHiddenPages" Type="bool"/>
+          <Property Name="IncludeHiddenWebs" Type="bool"/>
+          <Property Name="LevelsToShow" Type="integer"/>
+          <Property Name="Level1Style" Type="string"/>
+          <Property Name="Level2Style" Type="string"/>
+          <Property Name="Level3Style" Type="string"/>
+          <Property Name="ShowPages" Type="bool"/>
+          <Property Name="Xsl" Type="string"/>
+          <Property Name="StartFromCurrentNode" Type="bool"/>
+          <Property Name="SortWebsBy" Type="string"/>
+          <Property Name="SortWebsByDirection" Type="string"/>   
+          <Property Name="SortPagesBy" Type="string"/>
+          <Property Name="SortPagesByDirection" Type="string"/>
+          <Property Name="DisplayColumns" Type="integer"/>
+          <Property Name="HeaderTemplate" Type="string"/>
+          <Property Name="Header" Type="string"/>
+        </Properties>
+        <!-- TODO: map to highlighted content or use CBQ/CBS type og mapping-->
       </WebPart>
       <!-- Summary Link web part -->
       <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.SummaryLinkWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <!-- Contains the html representation of the links -->
+          <Property Name="SummaryLinkStore" Type="string"/>
+          <Property Name="Xsl" Type="string"/>
+        </Properties>
+        <!-- TODO: map to bulleted list in text part: requires function that transforms SummaryLinkStore into the valid html -->
       </WebPart>
       <!-- Contact web part -->
       <WebPart Type="Microsoft.SharePoint.Portal.WebControls.ContactFieldControl, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
