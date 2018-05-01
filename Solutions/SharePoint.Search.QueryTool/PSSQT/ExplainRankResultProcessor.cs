@@ -15,7 +15,7 @@ namespace PSSQT
     {
         public string XsltFilename { get; set; }
 
-        public ExplainRankResultProcessor(Cmdlet cmdlet) :
+        public ExplainRankResultProcessor(SearchSPIndexCmdlet cmdlet) :
             base(cmdlet)
         {
         }
@@ -84,14 +84,10 @@ namespace PSSQT
         {
             base.Configure();
 
-            if (Cmdlet is SearchSPIndex)
-            {
-                var cl = (SearchSPIndex)Cmdlet;
 
-                if (!String.IsNullOrWhiteSpace(cl.ExplainRankXsltFile))
-                {
-                    XsltFilename = cl.GetRootedPath(cl.ExplainRankXsltFile.Trim());
-                }
+            if (!String.IsNullOrWhiteSpace(Cmdlet.ExplainRankXsltFile))
+            {
+                XsltFilename = Cmdlet.GetRootedPath(Cmdlet.ExplainRankXsltFile.Trim());
             }
         }
 
@@ -99,14 +95,9 @@ namespace PSSQT
         {
             base.EnsurePropertiesPresent();
 
-            if (Cmdlet is SearchSPIndex)
-            {
-                var cl = (SearchSPIndex)Cmdlet;
-
-                cl.AddProperty("Title");
-                cl.AddProperty("Path");
-            }
-        }
+            Cmdlet.AddSelectProperty("Title");
+            Cmdlet.AddSelectProperty("Path");
+    }
 
         protected void XmlAddSelectedProperties(ResultItem resultItem, XElement element, XElement rankcontrib, int n)
         {
