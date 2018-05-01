@@ -1,0 +1,5 @@
+﻿* Update the AssemblyInfo.cs file with the correct AssemblyFileVersion number.
+* Update the PSSQT.psd1 with a new module version. Keep the first to aligned to SearchQueryTool UI version. The next are incremental releases of PSSQT published to PowerShellGallery. E.g. 2.8.1
+* Check in files
+* Build Release build.
+* Publish to Powershell Gallery.

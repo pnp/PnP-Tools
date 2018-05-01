@@ -255,7 +255,9 @@ namespace SearchQueryTool.Helpers
 
         private void ClaimsWebBrowser_Navigated(object sender, WebBrowserNavigatedEventArgs e)
         {
-            Console.WriteLine("Navigated to " + e.Url);
+            //Console.WriteLine("Navigated to " + e.Url);
+            WriteLine("Navigated to " + e.Url);             // overridden in PSWebAuthetication to avoid printout to console
+
             // check whether the url is same as the navigationEndUrl.
             if (fldNavigationEndUrl != null && fldNavigationEndUrl.Equals(e.Url))
             {
@@ -270,6 +272,11 @@ namespace SearchQueryTool.Helpers
                     this.DisplayLoginForm.Close();
                 }
             }            
+        }
+
+        protected virtual void WriteLine(string text)
+        {
+            Console.WriteLine(text);
         }
 
         #endregion

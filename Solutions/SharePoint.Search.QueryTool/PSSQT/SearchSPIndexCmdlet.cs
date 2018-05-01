@@ -8,7 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Collections.Specialized;
 using System.Collections.Generic;
-
+using PSSQT.Helpers;
+using PSSQT.Helpers.Authentication;
 
 /**
  * <ParameterSetName	P1	P2
@@ -20,17 +21,15 @@ using System.Collections.Generic;
 namespace PSSQT
 {
     [Cmdlet(VerbsCommon.Search, "SPIndex",DefaultParameterSetName = "P1")]
-    public class SearchSPIndex
+    public class SearchSPIndexCmdlet
         : PSCmdlet
     {
         #region PrivateMembers
         private static readonly int SearchResultBatchSize = 500;
         private static readonly char[] trimChars = { ' ', '\t', '\n', '\r' };
-        private static readonly string sortDescending = ":descending";
-        private static readonly string sortAscending = ":ascending";
+ 
 
         // default values for script parameters
-        private static readonly string selectPropertiesDefault = "Title,Path,WorkId";
         private static readonly int startRowDefault = 0;
         private static readonly int rowLimitDefault = 10;
         private static readonly int timeoutDefault = 60;
@@ -101,10 +100,18 @@ namespace PSSQT
             Mandatory = false,
             ValueFromPipelineByPropertyName = false,
             ValueFromPipeline = false,
-            HelpMessage = "Select Properties."
+            HelpMessage = "Select Properties. You can use the value :default: to retrieve the default properties from SharePoint."
         )]
         [Alias("Properties")]
         public List<string> SelectProperties { get; set; }
+
+        [Parameter(
+             Mandatory = false,
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             HelpMessage = "Hithighlighted Properties. "
+         )]
+        public List<string> HithighlightedProperties { get; set; }
 
 
 
@@ -362,7 +369,7 @@ namespace PSSQT
             ValueFromPipeline = false,
             HelpMessage = "Specify refiners."
         )]
-        public string Refiners { get; set; }
+        public List<string> Refiners { get; set; }
 
 
         [Parameter(
@@ -371,7 +378,7 @@ namespace PSSQT
             ValueFromPipeline = false,
             HelpMessage = "Select the result processor. One of Basic, Primary, All, Raw, RankDetail, RankXML, ExplainRank, Refiners."
         )]
-        public ResultProcessor ResultProcessor { get; set; } = ResultProcessor.Primary;
+        public ResultProcessor? ResultProcessor { get; set; } //= ResultProcessor.Primary;
 
 
         [Parameter(
@@ -396,7 +403,7 @@ namespace PSSQT
             ValueFromPipeline = false,
             HelpMessage = "Sort List."
         )]
-        public string Sort { get; set; }
+        public List<string> Sort { get; set; }
 
 
         [Parameter(
@@ -461,32 +468,34 @@ namespace PSSQT
         [Alias("Preset")]
         public string LoadPreset { get; set; }
 
+
         [Parameter(
             Mandatory = false,
             ValueFromPipelineByPropertyName = false,
             ValueFromPipeline = false,
-            HelpMessage = "Use this if you are connecting to SPO."
+            HelpMessage = "Specify authentication mode."
         )]
 
-        public SwitchParameter SPO { get; set; }
+
+        public PSAuthenticationMethod AuthenticationMethod { get; set; } = PSAuthenticationMethod.Windows;
 
 
         #endregion
 
         #region Methods
 
-        public string SelectPropertiesAsString
-        {
-            get
-            {
-                return SelectProperties == null ?  null : string.Join(",", SelectProperties);
-            }
+        //public string SelectPropertiesAsString
+        //{
+        //    get
+        //    {
+        //        return SelectProperties == null ?  null : string.Join(",", SelectProperties);
+        //    }
 
-            private set
-            {
-                AddProperty(value);
-            }
-        }
+        //    private set
+        //    {
+        //        AddSelectProperty(value);
+        //    }
+        //}
 
         protected override void ProcessRecord()
         {
@@ -502,16 +511,14 @@ namespace PSSQT
                 // Load Preset
                 if (ParameterSetName == "P2")
                 {
-                    string path = GetPresetFilename(LoadPreset);
+                    string path = GetPresetFilename(LoadPreset, true);
 
-                    WriteDebug("Loading preset " + path);
+                    WriteVerbose("Loading preset " + path);
 
                     SearchPreset preset = new SearchPreset(path, true);
 
                     searchConnection = preset.Connection;
                     searchQueryRequest = preset.Request;
-
-                    WriteDebug("Finished loading preset " + path);
                 }
 
                 // Set Script Parameters from Command Line
@@ -534,9 +541,6 @@ namespace PSSQT
                 }
                 else // Perform the Search
                 {
-                    WriteVerbose(searchQueryRequest.PrintVerbose());
-                    WriteDebug(searchQueryRequest.PrintDebug());
-
                     EnsureValidQuery(searchQueryRequest);
 
                     // split select properties
@@ -576,13 +580,13 @@ namespace PSSQT
             }
             catch (Exception ex)
             {
-                WriteDebug(ex.StackTrace);
-
                 WriteError(new ErrorRecord(ex,
                            "SearchSPIndexError",
                            ErrorCategory.NotSpecified,
                            null)
                           );
+
+                WriteDebug(ex.StackTrace);
             }
         }
 
@@ -600,27 +604,21 @@ namespace PSSQT
 
         private void EnsureValidQuery(SearchQueryRequest searchQueryRequest)
         {
-            WriteDebug(searchQueryRequest.ToString());
-
             if (String.IsNullOrWhiteSpace(searchQueryRequest.QueryText))
             {
                 throw new Exception("Query text cannot be null.");
             }
         }
 
-        private SearchQueryRequest Up2Date(SearchQueryRequest searchQueryRequest)
+        private SearchQueryRequest SetSelectProperties(SearchQueryRequest searchQueryRequest)
         {
-            var copy = SelectProperties;
-            SelectProperties = new List<string>();
+            searchQueryRequest.SelectProperties = new SelectPropertiesListArgumentParser(SelectProperties, searchQueryRequest).Parse();
 
-            foreach (var p in copy)
-            {
-                SelectProperties.Add(p.ToLower());
-            }
+            // Cmdlet.SelectProperties is used by ResultProcessors
+            SelectProperties = searchQueryRequest.SelectProperties != null ? searchQueryRequest.SelectProperties.Split(',').ToList() : null;   
 
-            searchQueryRequest.SelectProperties = SelectPropertiesAsString;
-
-            WriteVerbose("Properties: " + searchQueryRequest.SelectProperties);
+            WriteVerbose(searchQueryRequest.PrintVerbose());
+            WriteDebug(searchQueryRequest.PrintDebug());
 
             return searchQueryRequest;
         }
@@ -641,7 +639,7 @@ namespace PSSQT
                 }
 
                 newPreset.Connection = searchConnection;
-                newPreset.Request = Up2Date(searchQueryRequest);
+                newPreset.Request = SetSelectProperties(searchQueryRequest);
 
                 newPreset.Save();
 
@@ -680,17 +678,14 @@ namespace PSSQT
             searchQueryRequest.ClientType = GetClientTypeName(searchQueryRequest);
 
             // This cmdlet keeps select properties as a list of strings, and SearchQueryRequest uses a string.
-            // We always update the list internally, and set the searchQueryRequest string in the Up2Date method which is called last thing before searchQueryRequest is used.
-            if (SelectProperties == null || SelectProperties.Count == 0)
-            {
-                SelectPropertiesAsString = searchQueryRequest.SelectProperties ?? selectPropertiesDefault;
-            }
-            else
-            {
-                NormalizeProperties();
-            }
+  
+            // searchQueryRequest.SelectProperties is set very last thing before we execute the query in SetSelectProperties() 
 
-            searchQueryRequest.SortList = GetSortList() ?? searchQueryRequest.SortList;
+
+            searchQueryRequest.HitHighlightedProperties = new StringListArgumentParser(HithighlightedProperties).Parse() ?? searchQueryRequest.HitHighlightedProperties;
+
+
+            searchQueryRequest.SortList = new SortListArgumentParser(Sort).Parse() ?? searchQueryRequest.SortList;
 
             // set based on switches
             bool? switchValue;
@@ -752,7 +747,9 @@ namespace PSSQT
             searchQueryRequest.RowLimit = RowLimit.HasValue ? RowLimit : (searchQueryRequest.RowLimit.HasValue ? searchQueryRequest.RowLimit : rowLimitDefault);
             searchQueryRequest.StartRow = StartRow.HasValue ? StartRow : (searchQueryRequest.StartRow.HasValue ? searchQueryRequest.StartRow : startRowDefault);
             searchQueryRequest.Timeout = Timeout.HasValue ? Timeout : (searchQueryRequest.Timeout.HasValue ? searchQueryRequest.Timeout : timeoutDefault);
-            searchQueryRequest.Refiners = Refiners ?? searchQueryRequest.Refiners;
+
+            searchQueryRequest.Refiners = new StringListArgumentParser(Refiners).Parse() ?? searchQueryRequest.Refiners;
+
 
             if (Credential != null || searchQueryRequest.AuthenticationType == AuthenticationType.Windows)
             {
@@ -767,7 +764,7 @@ namespace PSSQT
                 searchQueryRequest.UserName = Credential.UserName;
                 searchQueryRequest.SecurePassword = Credential.Password;
             }
-            else if (SPO || searchQueryRequest.AuthenticationType == AuthenticationType.SPO)
+            else if (searchQueryRequest.AuthenticationType == AuthenticationType.SPO)
             {
                 Guid runspaceId = Guid.Empty;
                 using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
@@ -780,9 +777,8 @@ namespace PSSQT
 
                     if (! found)
                     {
-                        //cc = WebAuthentication.GetAuthenticatedCookies(searchQueryRequest.SharePointSiteUrl, searchQueryRequest.AuthenticationType);
-                        cc = SPOClientWebAuth.GetAuthenticatedCookies(searchQueryRequest.SharePointSiteUrl);
-
+                        cc = PSWebAuthentication.GetAuthenticatedCookies(this, searchQueryRequest.SharePointSiteUrl, AuthenticationType.SPO);
+ 
                         if (cc == null)
                         {
                             throw new RuntimeException("Authentication cookie returned is null! Authentication failed. Please try again.");  // TODO find another exception
@@ -798,6 +794,23 @@ namespace PSSQT
                     //searchSuggestionsRequest.Cookies = cc;
                 }
             }
+            else if (AuthenticationMethod == PSAuthenticationMethod.SPOManagement || searchQueryRequest.AuthenticationType == AuthenticationType.SPOManagement)
+            {
+                AdalAuthentication adalAuth = new AdalAuthentication();
+
+                var task = adalAuth.Login(searchQueryRequest.SharePointSiteUrl);
+
+                if (! task.Wait(300000))
+                {
+                    throw new TimeoutException("Prompt for user credentials timed out after 5 minutes.");
+                }
+
+                var token = task.Result;
+
+                searchQueryRequest.AuthenticationType = AuthenticationType.SPOManagement;
+                searchQueryRequest.Token = token;
+                //searchSuggestionsRequest.Token = token;
+        }
             else
             {
                 searchQueryRequest.AuthenticationType = AuthenticationType.CurrentUser;
@@ -806,21 +819,7 @@ namespace PSSQT
             }
         }
 
-        private void NormalizeProperties()
-        {
-            if (SelectProperties != null && SelectProperties.Count > 0)
-            {
-                List<string> copy = SelectProperties;
-
-                SelectProperties = null;
-
-                foreach (var property in copy)
-                {
-                    AddProperty(property);
-                }
-            }
-        }
-
+ 
         private string DefaultClientTypeName()
         {
             // ContentSearchRegular prevents cluttering the page impression table and seems appropriate as default when scripting
@@ -840,60 +839,28 @@ namespace PSSQT
             return Query == null ? null : String.Join(" ", Query);
         }
 
-        private string GetSortList()
-        {
-            if (!String.IsNullOrWhiteSpace(Sort))
-            {
-                var elements = Sort.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-                List<string> sl = new List<string>(elements.Length);
-
-                foreach (var e in elements)
-                {
-                    if (e.EndsWith(sortDescending) || e.EndsWith(sortAscending))
-                    {
-                        sl.Add(e);
-                    }
-                    else
-                    {
-                        var parts = e.Split(':');
-
-                        if (parts.Length > 1)
-                        {
-                            if (sortAscending.StartsWith(String.Format(":{0}", parts[1])))
-                            {
-                                sl.Add(String.Format("{0}{1}", parts[0], sortAscending));
-                            }
-                            else if (sortDescending.StartsWith(String.Format(":{0}", parts[1])))
-                            {
-                                sl.Add(String.Format("{0}{1}", parts[0], sortDescending));
-                            }
-                            else
-                            {
-                                throw new Exception(String.Format("Unrecognized sort direction specifier: {0}, Use {1} or {2}", parts[1], sortAscending, sortDescending));
-                            }
-                        }
-                        else
-                        {
-                            sl.Add(String.Format("{0}{1}", e, sortAscending));
-                        }
-                    }
-                }
-
-                Sort = String.Join(",", sl);
-            }
-
-            WriteDebug("Sort: " + Sort);
-
-            return Sort;
-        }
 
         private int GetResults(SearchQueryRequest searchQueryRequest)
         {
             int totalRows = 0;
             bool keepTrying = true;
 
-            IQueryResultProcessor queryResultProcessor = QueryResultProcessorFactory.SelectQueryResultProcessor(ResultProcessor, this);
+            // Pick default result processor
+            if (! ResultProcessor.HasValue)     // user has not specified one
+            {
+                if (Refiners != null)
+                {
+                    ResultProcessor = PSSQT.ResultProcessor.Refiners;
+                }
+                else
+                {
+                    ResultProcessor = PSSQT.ResultProcessor.Primary;
+                }
+
+                WriteVerbose(String.Format("Using ResultProcessor {0}", Enum.GetName(typeof(ResultProcessor), ResultProcessor)));
+            }
+
+            IQueryResultProcessor queryResultProcessor = QueryResultProcessorFactory.SelectQueryResultProcessor(ResultProcessor.Value, this, searchQueryRequest);
 
             queryResultProcessor.Configure();    // May add required properties to retrieve (e.g. rankdetail etc.)
 
@@ -903,9 +870,9 @@ namespace PSSQT
 
                 try
                 {
-                    var requestResponsePair = HttpRequestRunner.RunWebRequest(Up2Date(searchQueryRequest));
+                    var requestResponsePair = HttpRequestRunner.RunWebRequest(SetSelectProperties(searchQueryRequest));
 
-                    var queryResults = GetResultItem(requestResponsePair);
+                    var queryResults = requestResponsePair.GetResultItem();
 
                     totalRows = queryResults.PrimaryQueryResult.TotalRows;
 
@@ -931,86 +898,22 @@ namespace PSSQT
             return totalRows;
         }
 
-        public void AddProperty(string property)
+        public void AddSelectProperty(string property)
         {
-            string input = property.Trim();
+            string trimmedProperty = property.Trim();
 
-            if (!string.IsNullOrWhiteSpace(input))
+            if (SelectProperties == null)
             {
-                if (SelectProperties == null)
-                {
-                    SelectProperties = new List<string>();
-                }
-
-                // For backward compatibility, property can be a comma separated string of properties. We'll split and add each of them
-
-                var props = input.Split(new[] { ',', ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (var prop in props)
-                {
-                    if (!SelectProperties.Contains(prop, StringComparer.InvariantCultureIgnoreCase))
-                    {
-                        SelectProperties.Add(prop);
-                    }
-                }
-
-                SelectProperties.ForEach(e => e.ToLower());
+                SelectProperties = new List<string>();
             }
+
+            if (! SelectProperties.Contains(trimmedProperty, StringComparer.InvariantCultureIgnoreCase))
+            {
+                SelectProperties.Add(trimmedProperty);
+            }
+
         }
 
-        private SearchQueryResult GetResultItem(HttpRequestResponsePair requestResponsePair)
-        {
-            SearchQueryResult searchResults;
-            var request = requestResponsePair.Item1;
-
-            using (var response = requestResponsePair.Item2)
-            {
-                if (response.StatusCode != HttpStatusCode.OK)
-                {
-                    throw new Exception(String.Format("HTTP {0}: {1}", (int)response.StatusCode, response.StatusDescription));
-                }
-
-                using (var reader = new StreamReader(response.GetResponseStream()))
-                {
-                    var content = reader.ReadToEnd();
-
-                    NameValueCollection requestHeaders = new NameValueCollection();
-                    foreach (var header in request.Headers.AllKeys)
-                    {
-                        requestHeaders.Add(header, request.Headers[header]);
-                    }
-
-                    NameValueCollection responseHeaders = new NameValueCollection();
-                    foreach (var header in response.Headers.AllKeys)
-                    {
-                        responseHeaders.Add(header, response.Headers[header]);
-                    }
-
-                    string requestContent = "";
-                    if (request.Method == "POST")
-                    {
-                        requestContent = requestResponsePair.Item3;
-                    }
-
-                    searchResults = new SearchQueryResult
-                    {
-                        RequestUri = request.RequestUri,
-                        RequestMethod = request.Method,
-                        RequestContent = requestContent,
-                        ContentType = response.ContentType,
-                        ResponseContent = content,
-                        RequestHeaders = requestHeaders,
-                        ResponseHeaders = responseHeaders,
-                        StatusCode = response.StatusCode,
-                        StatusDescription = response.StatusDescription,
-                        HttpProtocolVersion = response.ProtocolVersion.ToString()
-                    };
-
-                    searchResults.Process();
-                }
-            }
-            return searchResults;
-        }
 
         private static bool? GetThreeWaySwitchValue(SwitchParameter enable, SwitchParameter disable)
         {
@@ -1022,7 +925,7 @@ namespace PSSQT
             return result;
         }
 
-        private string GetPresetFilename(string presetName)
+        private string GetPresetFilename(string presetName, bool searchPath = false)
         {
             string path = presetName;
 
@@ -1030,6 +933,35 @@ namespace PSSQT
             {
                 path += ".xml";
             }
+
+            if (searchPath && !Path.IsPathRooted(path))
+            {
+                // always check current directory first
+                var rootedPath = GetRootedPath(path);
+
+                if (! File.Exists(rootedPath))
+                {
+                    var environmentVariable = Environment.GetEnvironmentVariable("PSSQT_PresetsPath");
+
+                    if (environmentVariable != null)
+                    {
+                        var result = environmentVariable 
+                            .Split(';')
+                            .Where(s => File.Exists(Path.Combine(s, path)))
+                            .FirstOrDefault();
+
+                        if (result == null)
+                        {
+                            throw new ArgumentException(String.Format("File \"{0}\" not found in current directory or PSSQT_PresetsPath", path));
+                        }
+
+                        return Path.Combine(result, path);
+                    }
+                }
+
+                return rootedPath;
+            }
+
 
             return GetRootedPath(path);
         }

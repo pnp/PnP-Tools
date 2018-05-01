@@ -28,9 +28,9 @@ namespace PSSQT
             sb.Append(String.Format("SelectProperties: {0}\n", searchQueryRequest.SelectProperties));
             //sb.Append(String.Format("GraphQuery: {0}\n", searchQueryRequest.GraphQuery));
             //sb.Append(String.Format("GraphRankingModel: {0}\n", searchQueryRequest.GraphRankingModel));
-            //sb.Append(String.Format("Refiners: {0}\n", searchQueryRequest.Refiners));
+            sb.Append(String.Format("Refiners: {0}\n", searchQueryRequest.Refiners));
             //sb.Append(String.Format("RefinementFilters: {0}\n", searchQueryRequest.RefinementFilters));
-            //sb.Append(String.Format("HitHighlightedProperties: {0}\n", searchQueryRequest.HitHighlightedProperties));
+            sb.Append(String.Format("HitHighlightedProperties: {0}\n", searchQueryRequest.HitHighlightedProperties));
             sb.Append(String.Format("RankingModelId: {0}\n", searchQueryRequest.RankingModelId));
             sb.Append(String.Format("SortList: {0}\n", searchQueryRequest.SortList));
             //sb.Append(String.Format("Culture: {0}\n", searchQueryRequest.Culture));
@@ -45,6 +45,7 @@ namespace PSSQT
             //sb.Append(String.Format("PersonalizationData: {0}\n", searchQueryRequest.PersonalizationData));
             sb.Append(String.Format("Accept Type: {0}\n", searchQueryRequest.AcceptType));
             sb.Append(String.Format("Http Method Type: {0}\n", searchQueryRequest.HttpMethodType));
+            sb.Append(String.Format("HTTP URI: {0}\n", searchQueryRequest.GenerateUri()));
 
             return sb.ToString();
         }
@@ -52,9 +53,26 @@ namespace PSSQT
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(String.Format("Query: {0}", searchQueryRequest.QueryText));
+            sb.Append(String.Format("Query Text: {0}\n", searchQueryRequest.QueryText));
+            sb.Append(String.Format("HTTP URI: {0}\n", searchQueryRequest.GenerateUri()));
 
             return sb.ToString();
+        }
+
+        public static string GenerateUri(this SearchQueryRequest searchQueryRequest)
+        {
+            if (searchQueryRequest.HttpMethodType == HttpMethodType.Post)
+            {
+                var sb = new StringBuilder();
+
+                sb.Append(searchQueryRequest.GenerateHttpPostUri().ToString());
+                sb.Append("\n\nPAYLOAD\n");
+                sb.Append(searchQueryRequest.GenerateHttpPostBodyPayload());
+
+                return sb.ToString();
+            }
+
+            return searchQueryRequest.GenerateHttpGetUri().ToString();
         }
 
     }
