@@ -533,6 +533,50 @@ Page transformation file. Describes:
           </Mapping>
         </Mappings>
       </WebPart>
+      <!-- Table of Contents web part -->
+      <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.TableOfContentsWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="ListId" Type="guid"/>
+          <Property Name="ListName" Type="string"/>
+          <!-- Is starting location server relative site url -->
+          <Property Name="AnchorLocation" Type="string"/>
+          <Property Name="IncludeContentFromStartingLocation" Type="bool" />
+          <Property Name="IncludeHiddenPages" Type="bool"/>
+          <Property Name="IncludeHiddenWebs" Type="bool"/>
+          <Property Name="LevelsToShow" Type="integer"/>
+          <Property Name="Level1Style" Type="string"/>
+          <Property Name="Level2Style" Type="string"/>
+          <Property Name="Level3Style" Type="string"/>
+          <Property Name="ShowPages" Type="bool"/>
+          <Property Name="Xsl" Type="string"/>
+          <Property Name="StartFromCurrentNode" Type="bool"/>
+          <Property Name="SortWebsBy" Type="string"/>
+          <Property Name="SortWebsByDirection" Type="string"/>   
+          <Property Name="SortPagesBy" Type="string"/>
+          <Property Name="SortPagesByDirection" Type="string"/>
+          <Property Name="DisplayColumns" Type="integer"/>
+          <Property Name="HeaderTemplate" Type="string"/>
+          <Property Name="Header" Type="string"/>
+        </Properties>
+        <!-- Don't migrate as this closely resembles the site navigation -->
+        <Mappings>
+          <Mapping Default="true" Name="default"></Mapping>
+        </Mappings>
+      </WebPart>
+      <!-- Summary Link web part -->
+      <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.SummaryLinkWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <!-- Contains the html representation of the links -->
+          <Property Name="SummaryLinkStore" Type="string" Functions="{CleanedText} = TextCleanUpSummaryLinks({SummaryLinkStore}"/>
+          <Property Name="Xsl" Type="string"/>
+        </Properties>
+        <Mappings>
+          <Mapping Default="true" Name="default">
+            <!-- Summary links html is tranformed to html that be presented using the text editor -->
+            <ClientSideText Order="10" Text="{CleanedText}"/>
+          </Mapping>
+        </Mappings>
+      </WebPart>
       <!-- Wiki Content web part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.WikiContentWebpart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -791,42 +835,6 @@ Page transformation file. Describes:
           <Property Name="ViewContentTypeId" Type="string"/>
           <Property Name="XmlDefinition" Type="string"/>
         </Properties>
-      </WebPart>
-      <!-- Table of Contents web part -->
-      <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.TableOfContentsWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="ListId" Type="guid"/>
-          <Property Name="ListName" Type="string"/>
-          <!-- Is starting location server relative site url -->
-          <Property Name="AnchorLocation" Type="string"/>
-          <Property Name="IncludeContentFromStartingLocation" Type="bool" />
-          <Property Name="IncludeHiddenPages" Type="bool"/>
-          <Property Name="IncludeHiddenWebs" Type="bool"/>
-          <Property Name="LevelsToShow" Type="integer"/>
-          <Property Name="Level1Style" Type="string"/>
-          <Property Name="Level2Style" Type="string"/>
-          <Property Name="Level3Style" Type="string"/>
-          <Property Name="ShowPages" Type="bool"/>
-          <Property Name="Xsl" Type="string"/>
-          <Property Name="StartFromCurrentNode" Type="bool"/>
-          <Property Name="SortWebsBy" Type="string"/>
-          <Property Name="SortWebsByDirection" Type="string"/>   
-          <Property Name="SortPagesBy" Type="string"/>
-          <Property Name="SortPagesByDirection" Type="string"/>
-          <Property Name="DisplayColumns" Type="integer"/>
-          <Property Name="HeaderTemplate" Type="string"/>
-          <Property Name="Header" Type="string"/>
-        </Properties>
-        <!-- TODO: map to highlighted content or use CBQ/CBS type og mapping-->
-      </WebPart>
-      <!-- Summary Link web part -->
-      <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.SummaryLinkWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <!-- Contains the html representation of the links -->
-          <Property Name="SummaryLinkStore" Type="string"/>
-          <Property Name="Xsl" Type="string"/>
-        </Properties>
-        <!-- TODO: map to bulleted list in text part: requires function that transforms SummaryLinkStore into the valid html -->
       </WebPart>
       <!-- Contact web part -->
       <WebPart Type="Microsoft.SharePoint.Portal.WebControls.ContactFieldControl, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">

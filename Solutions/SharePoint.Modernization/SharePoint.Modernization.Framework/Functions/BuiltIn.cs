@@ -207,6 +207,22 @@ namespace SharePoint.Modernization.Framework.Functions
 
             return new HtmlTransformator().Transform(text, usePlaceHolder);
         }
+
+
+        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.Text,
+                               Description = "Rewrites summarylinks web part html to be compliant with the html supported by the client side text part.",
+                               Example = "{CleanedText} = TextCleanUpSummaryLinks({Text})")]
+        [InputDocumentation(Name = "{Text}", Description = "Original wiki html content")]
+        [OutputDocumentation(Name = "{CleanedText}", Description = "Html compliant with client side text part")]
+        public string TextCleanUpSummaryLinks(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return "";
+            }
+
+            return new SummaryLinksHtmlTransformator().Transform(text, false);
+        }
         #endregion
 
         #region List functions, used by XsltListViewWebPart
@@ -577,6 +593,6 @@ namespace SharePoint.Modernization.Framework.Functions
             }
         }
         #endregion
-
+       
     }
 }
