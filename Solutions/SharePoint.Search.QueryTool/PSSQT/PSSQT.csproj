@@ -23,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>CS0649</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,8 +34,15 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>CS0649</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=3.19.2.6005, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.3.19.2\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.Platform, Version=3.19.2.6005, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.3.19.2\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -172,8 +180,14 @@
     <Compile Include="..\SearchQueryTool\SPAuthenticationClient\AuthenticationClient.cs">
       <Link>SPAuthenticationClient\AuthenticationClient.cs</Link>
     </Compile>
+    <Compile Include="AllPropertiesInlineResultProcessor.cs" />
+    <Compile Include="AllPropertiesResultProcessor.cs" />
+    <Compile Include="AuthenticationMethod.cs" />
     <Compile Include="ExplainRankResultProcessor.cs" />
-    <Compile Include="Helpers\SPOClientWebAuth.cs" />
+    <Compile Include="Helpers\Authentication\AdalAuthentication.cs" />
+    <Compile Include="Helpers\HttpRequestResponsePairExtensions.cs" />
+    <Compile Include="Helpers\PSWebAuthentication.cs" />
+    <Compile Include="Helpers\ResultItemExtensions.cs" />
     <Compile Include="QueryResultProcessor.cs" />
     <Compile Include="RankDetailTooManyResults.cs" />
     <Compile Include="RankingFeatureHelper.cs" />
@@ -204,22 +218,25 @@
     <Compile Include="RankModelNames.cs" />
     <Compile Include="ResultSourceNames.cs" />
     <Compile Include="SearchQueryRequestExtensions.cs" />
-    <Compile Include="SearchSPIndex.cs" />
+    <Compile Include="SearchSPIndexCmdlet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelectPropertiesListArgumentParser.cs" />
+    <Compile Include="SortListArgumentParser.cs" />
+    <Compile Include="StringListArgumentParser.cs" />
     <Compile Include="TransformResults.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Doc\PSSQT.docx" />
+    <None Include="packages.config" />
     <None Include="PSSQT.psd1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Scripts\Issues\Issue1.ps1" />
     <None Include="Scripts\Search-Compare.ps1" />
-    <None Include="Scripts\Search-DefaultSite.ps1" />
     <None Include="Scripts\Update-AssemblyFileVersion.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Doc\Installation.txt" />
+    <Content Include="Doc\Publish-ThingsToRemember.txt" />
     <Content Include="Samples\CopyXml.xslt">
       <SubType>Designer</SubType>
     </Content>

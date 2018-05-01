@@ -18,21 +18,24 @@ namespace PSSQT
         RankDetail,
         RankXML,
         ExplainRank,
-        RankContribution
+        RankContribution,
+        AllProperties,
+        AllPropertiesInline
     }
 
     public interface IQueryResultProcessor
     {
+        void Configure();
+
         void Process(SearchQueryResult searchQueryResult);
 
-
-        void Configure();
+               
         bool HandleException(Exception ex);
     }
 
     public static class QueryResultProcessorFactory
     {
-        public static IQueryResultProcessor SelectQueryResultProcessor(ResultProcessor type, Cmdlet cmdlet)
+        public static IQueryResultProcessor SelectQueryResultProcessor(ResultProcessor type, SearchSPIndexCmdlet cmdlet, SearchQueryRequest searchQueryRequest)
         {
             IQueryResultProcessor qrp = null;
 
@@ -74,6 +77,14 @@ namespace PSSQT
                     qrp = new RankContributionresultProcessor(cmdlet);
                     break;
 
+                case ResultProcessor.AllProperties:
+                    qrp = new AllPropertiesResultProcessor(cmdlet, searchQueryRequest);
+                    break;
+
+                case ResultProcessor.AllPropertiesInline:
+                    qrp = new AllPropertiesInlineResultProcessor(cmdlet, searchQueryRequest);
+                    break;
+
                 default:
                     throw new NotImplementedException("No result processor match " + type);
             }
@@ -85,12 +96,12 @@ namespace PSSQT
 
     public abstract class AbstractQueryResultProcessor : IQueryResultProcessor
     {
-        public AbstractQueryResultProcessor(Cmdlet cmdlet)
+        public AbstractQueryResultProcessor(SearchSPIndexCmdlet cmdlet)
         {
             this.Cmdlet = cmdlet;
         }
 
-        public Cmdlet Cmdlet { get; private set; }
+        public SearchSPIndexCmdlet Cmdlet { get; private set; }
 
         public abstract void Process(SearchQueryResult searchQueryResult);
 
@@ -119,7 +130,7 @@ namespace PSSQT
 
     public class BaseQueryResultProcessor : AbstractQueryResultProcessor
     {
-        public BaseQueryResultProcessor(Cmdlet cmdlet) :
+        public BaseQueryResultProcessor(SearchSPIndexCmdlet cmdlet) :
             base(cmdlet)
         {
         }
@@ -129,7 +140,7 @@ namespace PSSQT
             get
             {
                 // this will throw an exception if we implement something other that SearchSPIndex in the future. Serves as a reminder to look into this.
-                return ((SearchSPIndex)Cmdlet).SelectProperties;
+                return ((SearchSPIndexCmdlet)Cmdlet).SelectProperties;
             }
         }
 
@@ -253,7 +264,7 @@ namespace PSSQT
 
     public class BasicResultProcessor : BaseQueryResultProcessor
     {
-        public BasicResultProcessor(Cmdlet cmdlet) :
+        public BasicResultProcessor(SearchSPIndexCmdlet cmdlet) :
             base(cmdlet)
         {
 
@@ -283,7 +294,7 @@ namespace PSSQT
 
     public class RefinerResultProcessor : BaseQueryResultProcessor
     {
-        public RefinerResultProcessor(Cmdlet cmdlet) :
+        public RefinerResultProcessor(SearchSPIndexCmdlet cmdlet) :
             base(cmdlet)
         {
 
@@ -334,7 +345,7 @@ namespace PSSQT
 
     public class PrimaryResultsResultProcessor : BaseQueryResultProcessor
     {
-        public PrimaryResultsResultProcessor(Cmdlet cmdlet) :
+        public PrimaryResultsResultProcessor(SearchSPIndexCmdlet cmdlet) :
             base(cmdlet)
         {
         }
@@ -353,19 +364,7 @@ namespace PSSQT
 
                     PrimaryResultPrePopulateItem(item);
 
-                    if (SelectedProperties != null)
-                    {
-                        AddSelectedProperties(resultItem, item);
-                    }
-                    else
-                    {
-                        foreach (var key in resultItem.Keys)
-                        {
-                            item.Properties.Add(
-                                new PSVariableProperty(
-                                    new PSVariable(key, resultItem[key])));
-                        }
-                    }
+                    PrimaryResultPopulateItem(resultItem, item);
 
                     PrimaryResultPostPopulateItem(item);
 
@@ -375,7 +374,24 @@ namespace PSSQT
             }
         }
 
-        protected void AddSelectedProperties(ResultItem resultItem, PSObject item)
+        protected virtual void PrimaryResultPopulateItem(ResultItem resultItem, PSObject item)
+        {
+            if (SelectedProperties != null)
+            {
+                AddSelectedProperties(resultItem, item);
+            }
+            else
+            {
+                foreach (var key in resultItem.Keys)
+                {
+                    item.Properties.Add(
+                        new PSVariableProperty(
+                            new PSVariable(key, resultItem[key])));
+                }
+            }
+        }
+
+        protected virtual void AddSelectedProperties(ResultItem resultItem, PSObject item)
         {
             // force the order of SelectProperties. If user specifies -Properties "Author,Title", they should appear in that order
             foreach (var selProp in SelectedProperties)
@@ -389,7 +405,7 @@ namespace PSSQT
             }
         }
 
-        protected virtual void AddItemProperty(PSObject item, string key, string value)
+        protected virtual void AddItemProperty(PSObject item, string key, object value)
         {
             item.Properties.Add(
                 new PSVariableProperty(
@@ -431,7 +447,7 @@ namespace PSSQT
     public class AllResultsResultProcessor : PrimaryResultsResultProcessor
     {
         private static readonly string resultGroupPropertyName = "ResultGroup";
-        public AllResultsResultProcessor(Cmdlet cmdlet) :
+        public AllResultsResultProcessor(SearchSPIndexCmdlet cmdlet) :
             base(cmdlet)
         {
 
@@ -492,7 +508,7 @@ namespace PSSQT
 
     public class RawResultProcessor : AbstractQueryResultProcessor
     {
-        public RawResultProcessor(Cmdlet cmdlet) :
+        public RawResultProcessor(SearchSPIndexCmdlet cmdlet) :
             base(cmdlet)
         {
 
@@ -509,7 +525,7 @@ namespace PSSQT
 
     public class BaseRankDetailProcessor : PrimaryResultsResultProcessor
     {
-        protected BaseRankDetailProcessor(Cmdlet cmdlet) :
+        protected BaseRankDetailProcessor(SearchSPIndexCmdlet cmdlet) :
             base(cmdlet)
         {
         }
@@ -524,17 +540,10 @@ namespace PSSQT
         protected override void EnsurePropertiesPresent()
         {
             base.EnsurePropertiesPresent();
-
-            if (Cmdlet is SearchSPIndex)
-            {
-                var cl = (SearchSPIndex)Cmdlet;
-
-                cl.AddProperty("WorkId");
-                cl.AddProperty("Rank");
-                cl.AddProperty("RankDetail");
-
-            }
-
+  
+            Cmdlet.AddSelectProperty("WorkId");
+            Cmdlet.AddSelectProperty("Rank");
+            Cmdlet.AddSelectProperty("RankDetail");
         }
 
         public override bool HandleException(Exception ex)
@@ -555,7 +564,7 @@ namespace PSSQT
     {
         public static readonly int maxResults = 100;
 
-        public RankXMLResultProcessor(Cmdlet cmdlet) :
+        public RankXMLResultProcessor(SearchSPIndexCmdlet cmdlet) :
             base(cmdlet)
         {
 
@@ -616,16 +625,16 @@ namespace PSSQT
 
     public class RankDetailResultProcessor : RankXMLResultProcessor
     {
-        public RankDetailResultProcessor(Cmdlet cmdlet) :
+        public RankDetailResultProcessor(SearchSPIndexCmdlet cmdlet) :
             base(cmdlet)
         {
         }
 
-        protected override void AddItemProperty(PSObject item, string key, string value)
+        protected override void AddItemProperty(PSObject item, string key, object value)
         {
             if (key.Equals("RankDetail", StringComparison.InvariantCultureIgnoreCase))
             {
-                var rlogparser = new SearchQueryTool.Helpers.RankLogParser(value);
+                var rlogparser = new SearchQueryTool.Helpers.RankLogParser((string) value);
 
                 List<string> rankFeatures = new List<string>();
 
@@ -656,15 +665,16 @@ namespace PSSQT
 
     public class RankContributionresultProcessor : RankXMLResultProcessor
     {
-        public RankContributionresultProcessor(Cmdlet cmdlet) : base(cmdlet)
+        public RankContributionresultProcessor(SearchSPIndexCmdlet cmdlet) : 
+            base(cmdlet)
         {
         }
 
-        protected override void AddItemProperty(PSObject item, string key, string value)
+        protected override void AddItemProperty(PSObject item, string key, object value)
         {
             if (key.Equals("RankDetail", StringComparison.InvariantCultureIgnoreCase))
             {
-                var rlog = RankLog.CreateRankLogFromXml(value);
+                var rlog = RankLog.CreateRankLogFromXml((string) value);
 
                 RankLogStage stage = rlog.FinalRankStage;
 
