@@ -24,6 +24,12 @@ namespace SharePoint.Modernization.Scanner
         [Option('m', "mode", HelpText = "Execution mode. Use following modes: full, GroupifyOnly. Omit or use full for a full scan", DefaultValue = Mode.Full, Required = false)]
         public Mode Mode { get; set; }
 
+        [Option('b', "exportwebpartproperties", HelpText = "Export the web part property data", DefaultValue = false, Required = false)]
+        public bool ExportWebPartProperties { get; set; }
+
+        [Option('c', "skipusageinformation", HelpText = "Don't use search to get the site/page usage information and don't export that data", DefaultValue = false, Required = false)]
+        public bool SkipUsageInformation { get; set; }
+
 
         /// <summary>
         /// Validate the provided commandline options, will exit the program when not valid

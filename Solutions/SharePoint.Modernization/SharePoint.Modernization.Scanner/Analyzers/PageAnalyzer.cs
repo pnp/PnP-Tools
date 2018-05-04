@@ -127,14 +127,17 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                                         fullPageUrl = this.SiteUrl;
                                     }
 
-                                    var searchPage = this.pageSearchResults.Where(x => x.Values.Contains(fullPageUrl)).FirstOrDefault();
-                                    if (searchPage != null)
+                                    if (!this.ScanJob.SkipUsageInformation)
                                     {
-                                        // Recent = last 14 days
-                                        pageResult.ViewsRecent = searchPage["ViewsRecent"].ToInt32();
-                                        pageResult.ViewsRecentUniqueUsers = searchPage["ViewsRecentUniqueUsers"].ToInt32();
-                                        pageResult.ViewsLifeTime = searchPage["ViewsLifeTime"].ToInt32();
-                                        pageResult.ViewsLifeTimeUniqueUsers = searchPage["ViewsLifeTimeUniqueUsers"].ToInt32();
+                                        var searchPage = this.pageSearchResults.Where(x => x.Values.Contains(fullPageUrl)).FirstOrDefault();
+                                        if (searchPage != null)
+                                        {
+                                            // Recent = last 14 days
+                                            pageResult.ViewsRecent = searchPage["ViewsRecent"].ToInt32();
+                                            pageResult.ViewsRecentUniqueUsers = searchPage["ViewsRecentUniqueUsers"].ToInt32();
+                                            pageResult.ViewsLifeTime = searchPage["ViewsLifeTime"].ToInt32();
+                                            pageResult.ViewsLifeTimeUniqueUsers = searchPage["ViewsLifeTimeUniqueUsers"].ToInt32();
+                                        }
                                     }
 
                                     if (!this.ScanJob.PageScanResults.TryAdd(pageResult.PageUrl, pageResult))

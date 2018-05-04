@@ -19,6 +19,8 @@ namespace SharePoint.Modernization.Scanner
         #region Variables
         private Int32 SitesToScan = 0;
         public Mode Mode;
+        public bool ExportWebPartProperties;
+        public bool SkipUsageInformation;
         public string EveryoneExceptExternalUsersClaim = "";
         public readonly string EveryoneClaim = "c:0(.s|true";
         public ConcurrentDictionary<string, WebScanResult> WebScanResults;
@@ -37,6 +39,8 @@ namespace SharePoint.Modernization.Scanner
         {
             ExpandSubSites = false;
             Mode = options.Mode;
+            ExportWebPartProperties = options.ExportWebPartProperties;
+            SkipUsageInformation = options.SkipUsageInformation;
 
             this.WebScanResults = new ConcurrentDictionary<string, WebScanResult>(options.Threads, 50000);
             this.SiteScanResults = new ConcurrentDictionary<string, SiteScanResult>(options.Threads, 10000);
@@ -293,7 +297,7 @@ namespace SharePoint.Modernization.Scanner
                                                                                        ToCsv(item.Value.WebTemplate), ToCsv(item.Value.Office365GroupId != Guid.Empty ? item.Value.Office365GroupId.ToString() : ""), item.Value.MasterPage, item.Value.AlternateCSS, ((item.Value.SiteUserCustomActions != null && item.Value.SiteUserCustomActions.Count > 0) || (item.Value.WebUserCustomActions != null && item.Value.WebUserCustomActions.Count > 0)),
                                                                                        item.Value.SubSites, item.Value.SubSitesWithBrokenPermissionInheritance, item.Value.ModernPageWebFeatureDisabled, item.Value.ModernPageFeatureWasEnabledBySPO,
                                                                                        item.Value.ModernListSiteBlockingFeatureEnabled, item.Value.ModernListWebBlockingFeatureEnabled, item.Value.SitePublishingFeatureEnabled, item.Value.WebPublishingFeatureEnabled,
-                                                                                       item.Value.ViewsRecent, item.Value.ViewsRecentUniqueUsers, item.Value.ViewsLifeTime, item.Value.ViewsLifeTimeUniqueUsers,
+                                                                                       (SkipUsageInformation ? 0: item.Value.ViewsRecent), (SkipUsageInformation ? 0 : item.Value.ViewsRecentUniqueUsers), (SkipUsageInformation ? 0 : item.Value.ViewsLifeTime), (SkipUsageInformation ? 0 : item.Value.ViewsLifeTimeUniqueUsers),
                                                                                        item.Value.EveryoneClaimsGranted, item.Value.ContainsADGroup(), ToCsv(item.Value.SharingCapabilities),
                                                                                        ToCsv(SiteScanResult.FormatUserList(item.Value.Admins, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)), item.Value.HasClaim(item.Value.Admins, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim), item.Value.ContainsADGroup(item.Value.Admins),
                                                                                        ToCsv(SiteScanResult.FormatUserList(item.Value.Owners, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)), item.Value.HasClaim(item.Value.Owners, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim), item.Value.ContainsADGroup(item.Value.Owners),
@@ -371,7 +375,7 @@ namespace SharePoint.Modernization.Scanner
             {
                 outputfile = string.Format("{0}\\PageScanResults.csv", this.OutputFolder);
                 outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl", "PageUrl", "Library", "HomePage",
-                                           "Type", "Layout", "ModifiedBy", "ModifiedAt",
+                                           "Type", "Layout", "Mapping %", "Unmapped web parts", "ModifiedBy", "ModifiedAt",
                                            "ViewsRecent", "ViewsRecentUniqueUsers", "ViewsLifeTime", "ViewsLifeTimeUniqueUsers"};
                 Console.WriteLine("Outputting scan results to {0}", outputfile);
 
@@ -379,7 +383,14 @@ namespace SharePoint.Modernization.Scanner
                 string header2 = "";
                 for (int i = 1; i <= 30; i++)
                 {
-                    header2 = header2 + $"{this.Separator}WPType{i}{this.Separator}WPTitle{i}{this.Separator}WPData{i}";
+                    if (ExportWebPartProperties)
+                    {
+                        header2 = header2 + $"{this.Separator}WPType{i}{this.Separator}WPTitle{i}{this.Separator}WPData{i}";
+                    }
+                    else
+                    {
+                        header2 = header2 + $"{this.Separator}WPType{i}{this.Separator}WPTitle{i}";
+                    }
                 }
 
                 List<string> UniqueWebParts = new List<string>();
@@ -389,21 +400,52 @@ namespace SharePoint.Modernization.Scanner
                     foreach (var item in this.PageScanResults)
                     {
                         var part1 = string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.PageUrl), ToCsv(item.Value.Library), item.Value.HomePage,
-                                                                ToCsv(item.Value.PageType), ToCsv(item.Value.Layout), ToCsv(item.Value.ModifiedBy), item.Value.ModifiedAt,
-                                                                item.Value.ViewsRecent, item.Value.ViewsRecentUniqueUsers, item.Value.ViewsLifeTime, item.Value.ViewsLifeTimeUniqueUsers);
+                                                                ToCsv(item.Value.PageType), ToCsv(item.Value.Layout), "{MappingPercentage}", "{UnmappedWebParts}", ToCsv(item.Value.ModifiedBy), item.Value.ModifiedAt,
+                                                                (SkipUsageInformation ? 0 : item.Value.ViewsRecent), (SkipUsageInformation ? 0 : item.Value.ViewsRecentUniqueUsers), (SkipUsageInformation ? 0 : item.Value.ViewsLifeTime), (SkipUsageInformation ? 0 : item.Value.ViewsLifeTimeUniqueUsers));
 
                         string part2 = "";
                         if (item.Value.WebParts != null)
                         {
-                            foreach (var webPart in item.Value.WebParts.OrderBy(p => p.Row).OrderBy(p => p.Column).OrderBy(p => p.Order))
+                            int webPartsOnPage = item.Value.WebParts.Count();
+                            int webPartsOnPageMapped = 0;
+                            List<string> nonMappedWebParts = new List<string>();
+                            foreach (var webPart in item.Value.WebParts.OrderBy(p => p.Row).ThenBy(p => p.Column).ThenBy(p => p.Order))
                             {
-                                part2 = part2 + $"{this.Separator}{ToCsv(webPart.TypeShort())}{this.Separator}{ToCsv(webPart.Title)}{this.Separator}{ToCsv(webPart.Json())}";
+                                var found = this.PageTransformation.WebParts.Where(p => p.Type.Equals(webPart.Type, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                                if (found != null && found.Mappings != null)
+                                {
+                                    webPartsOnPageMapped++;
+                                }
+                                else
+                                {
+                                    var t = webPart.Type.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries)[0];
+                                    if (!nonMappedWebParts.Contains(t))
+                                    {
+                                        nonMappedWebParts.Add(t);
+                                    }
+                                }
+
+                                if (ExportWebPartProperties)
+                                {
+                                    part2 = part2 + $"{this.Separator}{ToCsv(webPart.TypeShort())}{this.Separator}{ToCsv(webPart.Title)}{this.Separator}{ToCsv(webPart.Json())}";
+                                }
+                                else
+                                {
+                                    part2 = part2 + $"{this.Separator}{ToCsv(webPart.TypeShort())}{this.Separator}{ToCsv(webPart.Title)}";
+                                }
+
                                 if (!UniqueWebParts.Contains(webPart.Type))
                                 {
                                     UniqueWebParts.Add(webPart.Type);
                                 }
                             }
+                            part1 = part1.Replace("{MappingPercentage}", webPartsOnPage == 0 ? "100" : String.Format("{0:0}", (((double)webPartsOnPageMapped / (double)webPartsOnPage) * 100))).Replace("{UnmappedWebParts}", SiteScanResult.FormatList(nonMappedWebParts));
                         }
+                        else
+                        {
+                            part1 = part1.Replace("{MappingPercentage}", "").Replace("{UnmappedWebParts}", "");
+                        }
+
                         outfile.Write(string.Format("{0}\r\n", part1 + (!string.IsNullOrEmpty(part2) ? part2 : "")));
                     }
                 }

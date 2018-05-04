@@ -335,8 +335,9 @@ Page transformation file. Describes:
           <Property Name="ContentTypeName" Type="string" />
           <Property Name="ViewFieldsOverride" Type="string" />
         </Properties>
+        <!--
         <Mappings>
-          <Mapping Default="true" Name="test">
+          <Mapping Default="true" Name="test"> -->
             <!--
               WebUrl (= scope) = ~sitecollection, ~site, ~sitecollection/sub1 to indicate scope from a given subsite or empty (= current site)
               
@@ -369,10 +370,11 @@ Page transformation file. Describes:
               Title:{fa564e0f-0c70-4ab9-b863-0177e6ddd247},Title,Text;|
               LinkUrl:{94f89715-e097-4e8b-ba79-ea02aa8b7adb},FileRef,Lookup;|              
               -->
+            <!--
             <ClientSideText Order="10" Text="{DataMappings}"/>
             <ClientSideText Order="20" Text="{DataMappingViewFields}"/>
           </Mapping>
-        </Mappings>
+        </Mappings> -->
       </WebPart>      
       <!-- Excel web part -->
       <WebPart Type="Microsoft.Office.Excel.WebUI.ExcelWebRenderer, Microsoft.Office.Excel.WebUI, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
