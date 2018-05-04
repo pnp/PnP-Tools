@@ -77,6 +77,7 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
                     PageTransformationInformation pti = new PageTransformationInformation(page)
                     {
                         Overwrite = true,
+                        PageHeader = new ClientSidePageHeader(cc, ClientSidePageHeaderType.None, null),
                         //ReplaceHomePageWithDefaultHomePage = true,
                         //HandleWikiImagesAndVideos = false,
                         //PageTitleOverride = titleOverride,

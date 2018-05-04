@@ -42,7 +42,7 @@ namespace SharePoint.Modernization.Framework.Transform
         }
         #endregion
 
-        #region Core Properties
+        #region Page Properties
         /// <summary>
         /// Source wiki/webpart page we want to transform
         /// </summary>
@@ -55,7 +55,13 @@ namespace SharePoint.Modernization.Framework.Transform
         /// Overwrite the target page if it already exists?
         /// </summary>
         public bool Overwrite { get; set; }
+        /// <summary>
+        /// Configuration of the page header to apply
+        /// </summary>
+        public ClientSidePageHeader PageHeader { get; set; }
+        #endregion
 
+        #region Webpart replacement configuration
         /// <summary>
         /// If true images and videos embedded in wiki text will get a placeholder + a configured image/video client side web part at the end of the page
         /// </summary>

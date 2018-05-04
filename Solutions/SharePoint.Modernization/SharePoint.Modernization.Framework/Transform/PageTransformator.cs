@@ -149,6 +149,21 @@ namespace SharePoint.Modernization.Framework.Transform
             #region Article page handling
             if (!replacedByOOBHomePage)
             {
+                #region Configure header from target page
+                if (pageTransformationInformation.PageHeader == null || pageTransformationInformation.PageHeader.Type == ClientSidePageHeaderType.None)
+                {
+                    targetPage.RemovePageHeader();
+                }
+                else if (pageTransformationInformation.PageHeader.Type == ClientSidePageHeaderType.Default)
+                {
+                    targetPage.SetDefaultPageHeader();
+                }
+                else if (pageTransformationInformation.PageHeader.Type == ClientSidePageHeaderType.Custom)
+                {
+                    targetPage.SetCustomPageHeader(pageTransformationInformation.PageHeader.ImageServerRelativeUrl, pageTransformationInformation.PageHeader.TranslateX, pageTransformationInformation.PageHeader.TranslateY);
+                }
+                #endregion
+
                 #region Analysis of the source page
                 // Analyze the source page
                 Tuple<PageLayout, List<WebPartEntity>> pageData = null;
