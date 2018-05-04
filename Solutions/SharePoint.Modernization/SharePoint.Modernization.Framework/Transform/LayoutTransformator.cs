@@ -30,6 +30,7 @@ namespace SharePoint.Modernization.Framework.Transform
         {
             switch (layout)
             {
+                // In case of a custom layout let's stick with one column as model
                 case PageLayout.Wiki_OneColumn:
                 case PageLayout.WebPart_FullPageVertical:
                 case PageLayout.Wiki_Custom:

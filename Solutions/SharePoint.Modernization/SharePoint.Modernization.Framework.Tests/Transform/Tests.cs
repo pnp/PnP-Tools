@@ -8,6 +8,7 @@ using Microsoft.SharePoint.Client;
 using SharePoint.Modernization.Framework.Transform;
 using OfficeDevPnP.Core.Pages;
 using SharePoint.Modernization.Framework.Pages;
+using SharePoint.Modernization.Framework.Entities;
 
 namespace SharePoint.Modernization.Framework.Tests.Transform
 {
@@ -17,6 +18,14 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
         class TestLayout : ILayoutTransformator
         {
             public void Transform(PageLayout layout)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        class TestTransformator : IContentTransformator
+        {
+            public void Transform(List<WebPartEntity> webParts)
             {
                 throw new NotImplementedException();
             }
@@ -62,6 +71,11 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
                 return new TestLayout();
             }
 
+            IContentTransformator contentOverride(ClientSidePage cp, PageTransformation pt)
+            {
+                return new TestTransformator();
+            }
+
             using (var cc = TestCommon.CreateClientContext())
             {
                 var pageTransformator = new PageTransformator(cc);
@@ -76,12 +90,26 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
                 {
                     PageTransformationInformation pti = new PageTransformationInformation(page)
                     {
+                        // If target page exists, then overwrite it
                         Overwrite = true,
-                        PageHeader = new ClientSidePageHeader(cc, ClientSidePageHeaderType.None, null),
+
+                        // Configure the page header, empty value means ClientSidePageHeaderType.None
+                        //PageHeader = new ClientSidePageHeader(cc, ClientSidePageHeaderType.None, null),
+                        
+                        // If the page is a home page then replace with stock home page
                         //ReplaceHomePageWithDefaultHomePage = true,
+                        
+                        // Replace embedded images and iframes with a placeholder and add respective images and video web parts at the bottom of the page
                         //HandleWikiImagesAndVideos = false,
+                        
+                        // Callout to your custom code to allow for title overriding
                         //PageTitleOverride = titleOverride,
+                        
+                        // Callout to your custom layout handler
                         //LayoutTransformatorOverride = layoutOverride,
+
+                        // Callout to your custom content transformator...in case you fully want replace the model
+                        //ContentTransformatorOverride = contentOverride,
                     };
 
                     pageTransformator.Transform(pti);
