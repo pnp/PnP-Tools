@@ -335,6 +335,44 @@ Page transformation file. Describes:
           <Property Name="ContentTypeName" Type="string" />
           <Property Name="ViewFieldsOverride" Type="string" />
         </Properties>
+        <Mappings>
+          <Mapping Default="true" Name="test">
+            <!--
+              WebUrl (= scope) = ~sitecollection, ~site, ~sitecollection/sub1 to indicate scope from a given subsite or empty (= current site)
+              
+              ListName/ListGuid will be set whenever the query is scoped to a list in the current web
+              
+              ServerTemplate contains list template which we're filtering on (e.g. 119 for wiki list). Must be set!
+              
+              ContentTypeBeginsWithId contains prefix for content type filtering (e.g. 0x010108 for all wiki page content types and descendants)
+              
+              Extra filtering can be applied using 3 filters (assuming not using QueryOverride):
+              FilterFieldx (e.g. {8553196d-ec8d-4564-9861-3dbe931050c8})
+              FilterDisplayValuex (e.g. d)
+              FilterOperatorx (e.g. BeginsWith)
+              
+              Sorting:
+              SortBy (e.g. {8553196d-ec8d-4564-9861-3dbe931050c8})
+              SortByDirection (e.g. Asc, Desc)
+              
+              Grouping:
+              GroupBy (e.g. {8553196d-ec8d-4564-9861-3dbe931050c8})
+              GroupByDirection (e.g. Asc, Desc)
+              
+              ItemLimit: number of items to display (e.g. 15)
+              
+              DisplayColumns: number of columns used to present the data (e.g. 1)
+              
+              DataMappings (= fields used for the respective Description, ImageUrl, Title and LinkUrl slots) E.g.:
+              Description:{691b9a4b-512e-4341-b3f1-68914130d5b2},ShortComment,Text;|
+              ImageUrl:{b9e6f3ae-5632-4b13-b636-9d1a2bd67120},EncodedAbsThumbnailUrl,Computed;{543bc2cf-1f30-488e-8f25-6fe3b689d9ac},PublishingRollupImage,Image;|
+              Title:{fa564e0f-0c70-4ab9-b863-0177e6ddd247},Title,Text;|
+              LinkUrl:{94f89715-e097-4e8b-ba79-ea02aa8b7adb},FileRef,Lookup;|              
+              -->
+            <ClientSideText Order="10" Text="{DataMappings}"/>
+            <ClientSideText Order="20" Text="{DataMappingViewFields}"/>
+          </Mapping>
+        </Mappings>
       </WebPart>      
       <!-- Excel web part -->
       <WebPart Type="Microsoft.Office.Excel.WebUI.ExcelWebRenderer, Microsoft.Office.Excel.WebUI, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
@@ -814,6 +852,7 @@ Page transformation file. Describes:
           <Property Name="SelectedRefinementControlsJson" Type="string"/>
         </Properties>
       </WebPart>
+      <!-- SharePoint Portal WebControls web parts-->
       <!-- RSS aggregator -->
       <WebPart Type="Microsoft.SharePoint.Portal.WebControls.RSSAggregatorWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -867,6 +906,152 @@ Page transformation file. Describes:
           <Property Name="OnlyShowHtmlView" Type="string"/>          
         </Properties>
       </WebPart>
+      <!-- Site documents web part -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.SiteDocuments, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IsIncluded" Type="bool"/>
+          <Property Name="Dir" Type="string"/>
+          <Property Name="PartImageSmall" Type="string"/>
+          <Property Name="PartImageLarge" Type="string"/>
+          <Property Name="IsIncludedFilter" Type="bool"/>
+          <Property Name="_locDefinition" Type="string"/>
+          <Property Name="UserControlledNavigation" Type="bool"/>
+          <Property Name="ShowMemberships" Type="bool"/>
+          <Property Name="UserTabs" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Tag cloud web part -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.TagCloudWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="MaxTerms" Type="integer"/>
+          <Property Name="ShowCount" Type="bool"/>
+          <Property Name="UserScope" Type="string"/>
+          <Property Name="DateRange" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Project site web parts -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.ProjectSummaryWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="PrimaryTaskListUrl" Type="string" />
+          <Property Name="ListId" Type="guid"/>
+          <Property Name="ShowTimeline" Type="bool"/>
+          <Property Name="Panels" Type="string"/>
+        </Properties>
+      </WebPart>     
+      <!-- KPI web parts -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.IndicatorWebpart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="IconPrefix" Type="string"/>
+          <Property Name="KpiItemID" Type="integer"/>
+          <Property Name="ListURL" Type="string"/>
+        </Properties>
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.KPIListWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="MultipleColumnsKpiId" Type="string"/>
+          <Property Name="ToolbarHidden" Type="bool"/>
+          <Property Name="MultipleColumnsMembers" Type="string"/>
+          <Property Name="MultipleColumnsHierarchyName" Type="string"/>
+          <Property Name="IconPrefix" Type="string"/>
+          <Property Name="DisplayMultipleColumns" Type="bool"/>
+          <Property Name="ShowOnlyProblems" Type="bool"/>
+          <Property Name="ListURL" Type="string"/>
+          <Property Name="ShowOnlyStatusIcon" Type="bool"/>
+          <Property Name="AlwaysShowFullToolbar" Type="bool"/>
+          <Property Name="MultipleColumnsColumnName" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Community site web parts -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.CommunityAdminWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.CommunityJoinWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.DashboardWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.AboutUsWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.MyMembershipWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      </WebPart>
+      <!-- OWA web parts -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.OWAInboxPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="OWAServerAddressRoot" Type="string"/>
+          <Property Name="ExchangeFolderName" Type="string"/>
+          <Property Name="MailboxName" Type="string"/>
+          <Property Name="ViewName" Type="string"/>
+        </Properties>
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.OWACalendarPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="OWAServerAddressRoot" Type="string"/>
+          <Property Name="ExchangeFolderName" Type="string"/>
+          <Property Name="MailboxName" Type="string"/>
+          <Property Name="ViewName" Type="string"/>
+        </Properties>
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.OWAContactsPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="OWAServerAddressRoot" Type="string"/>
+          <Property Name="ExchangeFolderName" Type="string"/>
+          <Property Name="MailboxName" Type="string"/>
+          <Property Name="ViewName" Type="string"/>
+        </Properties>
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.OWATasksPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="OWAServerAddressRoot" Type="string"/>
+          <Property Name="ExchangeFolderName" Type="string"/>
+          <Property Name="MailboxName" Type="string"/>
+          <Property Name="ViewName" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Category web parts -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.CategoryWebPart, Microsoft.SharePoint.Portal,Version=16.0.0.0,Culture=neutral,PublicKeyToken=71e9bce111e9429c">
+      </WebPart>
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.CategoryResultsWebPart, Microsoft.SharePoint.Portal,Version=16.0.0.0,Culture=neutral,PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="DataSourcesString" Type="string"/>
+          <Property Name="xsl" Type="string"/>
+          <Property Name="ParameterBindings" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Announcements web part -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.AnnouncementTilesWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="BaseViewID" Type="string"/>
+          <Property Name="CustomContextInfoJson" Type="string"/>
+          <Property Name="JSLink" Type="string"/>
+          <Property Name="ListTemplateType" Type="integer"/>
+          <Property Name="ViewName" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- TasksAndTools Web part -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.TasksAndToolsWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="ListName " Type="string"/>
+          <Property Name="ListId" Type="guid"/>
+          <Property Name="PageType " Type="string"/>
+          <Property Name="FormType " Type="integer"/>
+          <Property Name="ControlMode " Type="string"/>
+          <Property Name="ViewFlag " Type="integer"/>
+          <Property Name="ViewFlags " Type="string"/>
+          <Property Name="ListItemId" Type="integer"/>
+          <Property Name="DataFields" Type="string"/>
+          <Property Name="DataSourceID" Type="string"/>
+          <Property Name="TasksAndToolsWebUrl" Type="string"/>
+          <Property Name="TasksAndToolsListName" Type="string"/>
+          <Property Name="FilterCategory" Type="string"/>
+          <Property Name="FilterFieldValue" Type="string"/>
+        </Properties>
+      </WebPart>
+      <!-- Week in Pictures web part -->
+      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.ThisWeekInPicturesWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+        <Properties>
+          <Property Name="ImageLibrary" Type="string"/>
+          <Property Name="WebImageWidth" Type="string"/>
+          <Property Name="WebImageHeight" Type="string"/>
+        </Properties>
+      </WebPart>
       <!-- User tasks web part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.UserTasksWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -889,14 +1074,6 @@ Page transformation file. Describes:
           <Property Name="TimelineType" Type="string"/>
         </Properties>
       </WebPart>
-      <!-- Taxonomy term web part -->
-      <WebPart Type="Microsoft.SharePoint.Taxonomy.TermProperty, Microsoft.SharePoint.Taxonomy, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="TermStoreID" Type="guid"/>
-          <Property Name="TermSetID" Type="guid"/>
-          <Property Name="TermID" Type="guid"/>
-        </Properties>
-      </WebPart>
       <!-- User Documents web part -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.UserDocsWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
@@ -907,27 +1084,12 @@ Page transformation file. Describes:
           <Property Name="IsIncludedFilter" Type="bool"/>
         </Properties>
       </WebPart>      
-      <!-- Site documents web part -->
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.SiteDocuments, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <!-- Taxonomy term web part -->
+      <WebPart Type="Microsoft.SharePoint.Taxonomy.TermProperty, Microsoft.SharePoint.Taxonomy, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
-          <Property Name="IsIncluded" Type="bool"/>
-          <Property Name="Dir" Type="string"/>
-          <Property Name="PartImageSmall" Type="string"/>
-          <Property Name="PartImageLarge" Type="string"/>
-          <Property Name="IsIncludedFilter" Type="bool"/>
-          <Property Name="_locDefinition" Type="string"/>
-          <Property Name="UserControlledNavigation" Type="bool"/>
-          <Property Name="ShowMemberships" Type="bool"/>
-          <Property Name="UserTabs" Type="string"/>
-        </Properties>
-      </WebPart>
-      <!-- Tag cloud web part -->
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.TagCloudWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="MaxTerms" Type="integer"/>
-          <Property Name="ShowCount" Type="bool"/>
-          <Property Name="UserScope" Type="string"/>
-          <Property Name="DateRange" Type="string"/>
+          <Property Name="TermStoreID" Type="guid"/>
+          <Property Name="TermSetID" Type="guid"/>
+          <Property Name="TermID" Type="guid"/>
         </Properties>
       </WebPart>
       <!-- Business data web parts -->
@@ -1030,48 +1192,18 @@ Page transformation file. Describes:
           <Property Name="Toolbar" Type="bool"/>
         </Properties>        
       </WebPart>
-      <!-- Project site web parts -->
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.ProjectSummaryWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <!-- Error web part -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.ErrorWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
-          <Property Name="PrimaryTaskListUrl" Type="string" />
-          <Property Name="ListId" Type="guid"/>
-          <Property Name="ShowTimeline" Type="bool"/>
-          <Property Name="Panels" Type="string"/>
-        </Properties>
-      </WebPart>     
-      <!-- KPI web parts -->
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.IndicatorWebpart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="IconPrefix" Type="string"/>
-          <Property Name="KpiItemID" Type="integer"/>
-          <Property Name="ListURL" Type="string"/>
+          <Property Name="ErrorMessage" Type="string" />
+          <Property Name="ErrorType" Type="string" />        
         </Properties>
       </WebPart>
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.KPIListWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <!-- App catalog web parts -->
+      <WebPart Type="Microsoft.SharePoint.WebPartPages.GettingStartedWithAppCatalogSiteWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
-          <Property Name="MultipleColumnsKpiId" Type="string"/>
-          <Property Name="ToolbarHidden" Type="bool"/>
-          <Property Name="MultipleColumnsMembers" Type="string"/>
-          <Property Name="MultipleColumnsHierarchyName" Type="string"/>
-          <Property Name="IconPrefix" Type="string"/>
-          <Property Name="DisplayMultipleColumns" Type="bool"/>
-          <Property Name="ShowOnlyProblems" Type="bool"/>
-          <Property Name="ListURL" Type="string"/>
-          <Property Name="ShowOnlyStatusIcon" Type="bool"/>
-          <Property Name="AlwaysShowFullToolbar" Type="bool"/>
-          <Property Name="MultipleColumnsColumnName" Type="string"/>
+          <Property Name="BaseViewID" Type="string" />
         </Properties>
-      </WebPart>
-      <!-- Community site web parts -->
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.CommunityAdminWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-      </WebPart>
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.CommunityJoinWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-      </WebPart>
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.DashboardWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-      </WebPart>
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.AboutUsWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-      </WebPart>
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.MyMembershipWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
       </WebPart>
       <!-- Document set web parts -->
       <WebPart Type="Microsoft.Office.Server.WebControls.DocIdSearchWebPart, Microsoft.Office.DocumentManagement, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
@@ -1089,86 +1221,6 @@ Page transformation file. Describes:
           <Property Name="DisplayText" Type="string"/>
         </Properties>
       </WebPart>
-      <!-- OWA web parts -->
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.OWAInboxPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="OWAServerAddressRoot" Type="string"/>
-          <Property Name="ExchangeFolderName" Type="string"/>
-          <Property Name="MailboxName" Type="string"/>
-          <Property Name="ViewName" Type="string"/>
-        </Properties>
-      </WebPart>
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.OWACalendarPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="OWAServerAddressRoot" Type="string"/>
-          <Property Name="ExchangeFolderName" Type="string"/>
-          <Property Name="MailboxName" Type="string"/>
-          <Property Name="ViewName" Type="string"/>
-        </Properties>
-      </WebPart>
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.OWAContactsPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="OWAServerAddressRoot" Type="string"/>
-          <Property Name="ExchangeFolderName" Type="string"/>
-          <Property Name="MailboxName" Type="string"/>
-          <Property Name="ViewName" Type="string"/>
-        </Properties>
-      </WebPart>
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.OWATasksPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="OWAServerAddressRoot" Type="string"/>
-          <Property Name="ExchangeFolderName" Type="string"/>
-          <Property Name="MailboxName" Type="string"/>
-          <Property Name="ViewName" Type="string"/>
-        </Properties>
-      </WebPart>
-      <!-- Category web parts -->
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.CategoryWebPart, Microsoft.SharePoint.Portal,Version=16.0.0.0,Culture=neutral,PublicKeyToken=71e9bce111e9429c">
-      </WebPart>
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.CategoryResultsWebPart, Microsoft.SharePoint.Portal,Version=16.0.0.0,Culture=neutral,PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="DataSourcesString" Type="string"/>
-          <Property Name="xsl" Type="string"/>
-          <Property Name="ParameterBindings" Type="string"/>
-        </Properties>
-      </WebPart>
-      <!-- Announcements web part -->
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.AnnouncementTilesWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="BaseViewID" Type="string"/>
-          <Property Name="CustomContextInfoJson" Type="string"/>
-          <Property Name="JSLink" Type="string"/>
-          <Property Name="ListTemplateType" Type="integer"/>
-          <Property Name="ViewName" Type="string"/>
-        </Properties>
-      </WebPart>
-      <!-- TasksAndTools Web part -->
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.TasksAndToolsWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="ListName " Type="string"/>
-          <Property Name="ListId" Type="guid"/>
-          <Property Name="PageType " Type="string"/>
-          <Property Name="FormType " Type="integer"/>
-          <Property Name="ControlMode " Type="string"/>
-          <Property Name="ViewFlag " Type="integer"/>
-          <Property Name="ViewFlags " Type="string"/>
-          <Property Name="ListItemId" Type="integer"/>
-          <Property Name="DataFields" Type="string"/>
-          <Property Name="DataSourceID" Type="string"/>
-          <Property Name="TasksAndToolsWebUrl" Type="string"/>
-          <Property Name="TasksAndToolsListName" Type="string"/>
-          <Property Name="FilterCategory" Type="string"/>
-          <Property Name="FilterFieldValue" Type="string"/>
-        </Properties>
-      </WebPart>
-      <!-- Week in Pictures web part -->
-      <WebPart Type="Microsoft.SharePoint.Portal.WebControls.ThisWeekInPicturesWebPart, Microsoft.SharePoint.Portal, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="ImageLibrary" Type="string"/>
-          <Property Name="WebImageWidth" Type="string"/>
-          <Property Name="WebImageHeight" Type="string"/>
-        </Properties>
-      </WebPart>
       <!-- What's Popular web part -->
       <WebPart Type="Microsoft.Office.Server.WebAnalytics.Reporting.WhatsPopularWebPart, Microsoft.Office.Server.WebAnalytics.UI, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
       </WebPart>
@@ -1181,19 +1233,6 @@ Page transformation file. Describes:
           <Property Name="DataBindingsString" Type="string"/>
           <Property Name="DesignerTemplateId" Type="string"/>
           <Property Name="DesignerChartTheme" Type="string"/>
-        </Properties>
-      </WebPart>
-      <!-- Error web part -->
-      <WebPart Type="Microsoft.SharePoint.WebPartPages.ErrorWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="ErrorMessage" Type="string" />
-          <Property Name="ErrorType" Type="string" />        
-        </Properties>
-      </WebPart>
-      <!-- App catalog web parts -->
-      <WebPart Type="Microsoft.SharePoint.WebPartPages.GettingStartedWithAppCatalogSiteWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-        <Properties>
-          <Property Name="BaseViewID" Type="string" />
         </Properties>
       </WebPart>
     </WebParts>
