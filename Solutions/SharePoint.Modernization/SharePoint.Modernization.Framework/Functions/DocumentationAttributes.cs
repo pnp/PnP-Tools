@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace SharePoint.Modernization.Framework.Functions
 {
+
     /// <summary>
     /// Base attribute to document a function or selector
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public abstract class BaseFunctionDocumentationAttribute : Attribute
     {
-        public ClientSideWebPartType TargetWebPart { get; set; }
         public string Description { get; set; }
         public string Example { get; set; }
     }

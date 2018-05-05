@@ -158,8 +158,7 @@ namespace SharePoint.Modernization.Framework.Functions
         /// </summary>
         /// <param name="text">Text to evaluate</param>
         /// <returns>Text if text needs to be inserted, Spacer if text was empty and you want a spacer</returns>
-        [SelectorDocumentation(TargetWebPart = ClientSideWebPartType.Text,
-                               Description = "Allows for option to include a spacer for empty text wiki text parts.",
+        [SelectorDocumentation(Description = "Allows for option to include a spacer for empty text wiki text parts.",
                                Example = "TextSelector({CleanedText})")]
         [InputDocumentation(Name = "{CleanedText}", Description = "Client side text part compliant html (cleaned via TextCleanup function)")]
         [OutputDocumentation(Name = "Text", Description = "Will be output if the provided wiki text was not considered empty" )]
@@ -188,8 +187,7 @@ namespace SharePoint.Modernization.Framework.Functions
         /// </summary>
         /// <param name="text">Wiki html to rewrite</param>
         /// <returns>Html that's compatible with RTE</returns>
-        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.Text, 
-                               Description = "Rewrites wiki page html to be compliant with the html supported by the client side text part.",
+        [FunctionDocumentation(Description = "Rewrites wiki page html to be compliant with the html supported by the client side text part.",
                                Example = "{CleanedText} = TextCleanup({Text},{UsePlaceHolders})")]
         [InputDocumentation(Name = "{Text}", Description = "Original wiki html content")]
         [InputDocumentation(Name = "{UsePlaceHolders}", Description = "Parameter indicating if placeholders must be included for unsupported img/iframe elements inside wiki html")]
@@ -209,8 +207,7 @@ namespace SharePoint.Modernization.Framework.Functions
         }
 
 
-        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.Text,
-                               Description = "Rewrites summarylinks web part html to be compliant with the html supported by the client side text part.",
+        [FunctionDocumentation(Description = "Rewrites summarylinks web part html to be compliant with the html supported by the client side text part.",
                                Example = "{CleanedText} = TextCleanUpSummaryLinks({Text})")]
         [InputDocumentation(Name = "{Text}", Description = "Original wiki html content")]
         [OutputDocumentation(Name = "{CleanedText}", Description = "Html compliant with client side text part")]
@@ -231,8 +228,7 @@ namespace SharePoint.Modernization.Framework.Functions
         /// </summary>
         /// <param name="listId">Id of the list</param>
         /// <returns>Mapping to be used for the given list</returns>
-        [SelectorDocumentation(TargetWebPart = ClientSideWebPartType.List,
-                               Description = "Analyzes a list and returns the list base type.",
+        [SelectorDocumentation(Description = "Analyzes a list and returns the list base type.",
                                Example = "ListSelectorListLibrary({ListId})")]
         [InputDocumentation(Name = "{ListId}", Description = "Guid of the list to use")]
         [OutputDocumentation(Name = "Library", Description = "The list is a document library")]
@@ -282,8 +278,7 @@ namespace SharePoint.Modernization.Framework.Functions
         /// </summary>
         /// <param name="listId">Id of the list</param>
         /// <returns>Server relative url of the list</returns>
-        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.List,
-                               Description = "Returns the server relative url of a list.",
+        [FunctionDocumentation(Description = "Returns the server relative url of a list.",
                                Example = "{ListServerRelativeUrl} = ListAddServerRelativeUrl({ListId})")]
         [InputDocumentation(Name = "{ListId}", Description = "Guid of the list to use")]
         [OutputDocumentation(Name = "{ListServerRelativeUrl}", Description = "Server relative url of the list")]
@@ -306,8 +301,7 @@ namespace SharePoint.Modernization.Framework.Functions
         /// </summary>
         /// <param name="listId">Id of the list</param>
         /// <returns>Web relative url of the list</returns>
-        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.List,
-                               Description = "Returns the web relative url of a list.",
+        [FunctionDocumentation(Description = "Returns the web relative url of a list.",
                                Example = "{ListWebRelativeUrl} = ListAddWebRelativeUrl({ListId})")]
         [InputDocumentation(Name = "{ListId}", Description = "Guid of the list to use")]
         [OutputDocumentation(Name = "{ListWebRelativeUrl}", Description = "Web relative url of the list")]
@@ -332,8 +326,7 @@ namespace SharePoint.Modernization.Framework.Functions
         /// <param name="listId">Id of the list</param>
         /// <param name="xmlDefinition">Webpart view definition</param>
         /// <returns>Id of the detected view if found or otherwise the id of the default list view</returns>
-        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.List,
-                               Description = "Detects the list view id that was used by the webpart by mapping the web part xmldefinition to the list views. If no view found the list default view id is returned.",
+        [FunctionDocumentation(Description = "Detects the list view id that was used by the webpart by mapping the web part xmldefinition to the list views. If no view found the list default view id is returned.",
                                Example = "{ListViewId} = ListDetectUsedView({ListId},{XmlDefinition})")]
         [InputDocumentation(Name = "{ListId}", Description = "Guid of the list to analyze")]
         [InputDocumentation(Name = "{XmlDefinition}", Description = "XmlDefinition attribute of the XSLTListViewWebPart")]
@@ -424,8 +417,7 @@ namespace SharePoint.Modernization.Framework.Functions
         /// </summary>
         /// <param name="serverRelativeImagePath">Server relative path of the image</param>
         /// <returns>A set of image properties</returns>
-        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.Image,
-                               Description = "Does lookup a file based on the given server relative path and return needed properties of the file. Returns null if file was not found.",
+        [FunctionDocumentation(Description = "Does lookup a file based on the given server relative path and return needed properties of the file. Returns null if file was not found.",
                                Example = "ImageLookup({ServerRelativeFileName})")]
         [InputDocumentation(Name = "{ServerRelativeFileName}", Description = "Server relative file name of the image")]
         [OutputDocumentation(Name = "{ImageListId}", Description = "Id of the list holding the file")]
@@ -491,8 +483,7 @@ namespace SharePoint.Modernization.Framework.Functions
         #endregion
 
         #region DocumentEmbed functions
-        [FunctionDocumentation(TargetWebPart = ClientSideWebPartType.DocumentEmbed,
-                               Description = "Does lookup a file based on the given server relative path and return needed properties of the file. Returns null if file was not found.",
+        [FunctionDocumentation(Description = "Does lookup a file based on the given server relative path and return needed properties of the file. Returns null if file was not found.",
                                Example = "DocumentEmbedLookup({ServerRelativeFileName})")]
         [InputDocumentation(Name = "{ServerRelativeFileName}", Description = "Server relative file name")]
         [OutputDocumentation(Name = "{DocumentListId}", Description = "Id of the list holding the file")]
@@ -559,8 +550,7 @@ namespace SharePoint.Modernization.Framework.Functions
         #endregion
 
         #region Content Embed functions
-        [SelectorDocumentation(TargetWebPart = ClientSideWebPartType.ContentEmbed,
-                               Description = "Analyzes sourcetype and return recommended mapping.",
+        [SelectorDocumentation(Description = "Analyzes sourcetype and return recommended mapping.",
                                Example = "ContentEmbedSelectorSourceType({SourceType})")]
         [InputDocumentation(Name = "{SourceType}", Description = "Sourcetype of the viewed page in pageviewerwebpart")]
         [OutputDocumentation(Name = "WebPage", Description = "The embedded content is a page")]
@@ -575,9 +565,8 @@ namespace SharePoint.Modernization.Framework.Functions
             return "ServerFolderOrFile";
         }
 
-        [SelectorDocumentation(TargetWebPart = ClientSideWebPartType.ContentEmbed,
-                       Description = "If ContentLink is set (content editor) then return Link, otherwise return Content.",
-                       Example = "ContentEmbedSelectorContentLink({ContentLink})")]
+        [SelectorDocumentation(Description = "If ContentLink is set (content editor) then return Link, otherwise return Content.",
+                               Example = "ContentEmbedSelectorContentLink({ContentLink})")]
         [InputDocumentation(Name = "{ContentLink}", Description = "Link value if set")]
         [OutputDocumentation(Name = "Link", Description = "If the link was not empty")]
         [OutputDocumentation(Name = "Content", Description = "If no link was specified")]
