@@ -18,6 +18,7 @@ SharePoint.Modernization.Scanner | Bert Jansen (**Microsoft**)
 
 Version  | Date | Comments
 ---------| -----| --------
+1.4 | May 5th 2018 | Added web part mapping percentage in page scan + by default raw web part data is not exported + allow to skip search query for site/page usage information
 1.3 | March 16th 2018 | Added site usage information
 1.2 | March 7th 2018 | Reliability improvements
 1.1 | January 31st 2018 | Performance and stability improvements + Page scanner component integrated
@@ -42,7 +43,7 @@ The main purpose of this tool is to give you a set of reports that you can use t
 
 You can download the tool from here:
 
-- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.3.zip?raw=true)
+- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.4.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.Modernization.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -220,10 +221,10 @@ Column | Description
 **ModernListWebBlockingFeatureEnabled** | Was the modern UI for lists purposely blocked at web level?
 **SitePublishingFeatureEnabled** | Is site scoped publishing feature enabled?
 **WebPublishingFeatureEnabled** | Is web scoped publishing feature enabled?
-**ViewsRecent** | Number of views this site received in the last 14 days.
-**ViewsRecentUniqueUsers** | Number of unique visitors for this site in the last 14 days.
-**ViewsLifeTime** | Number of views this site received during it's lifetime.
-**ViewsLifeTimeUniqueUsers** | Number of unique visitors for this site during it's lifetime.
+**ViewsRecent** | Number of views this site received in the last 14 days. If the -c or skipusageinformation parameter was used this column is always 0.
+**ViewsRecentUniqueUsers** | Number of unique visitors for this site in the last 14 days. If the -c or skipusageinformation parameter was used this column is always 0.
+**ViewsLifeTime** | Number of views this site received during it's lifetime. If the -c or skipusageinformation parameter was used this column is always 0.
+**ViewsLifeTimeUniqueUsers** | Number of unique visitors for this site during it's lifetime. If the -c or skipusageinformation parameter was used this column is always 0.
 **Everyone(ExceptExternalUsers)Claim** | Is the `everyone` or `everyone except external users` claim used at site level?
 **UsesADGroups** | Are there AD groups used to grant permissions?
 **ExternalSharing** | Lists the external sharing status of the site
@@ -321,15 +322,17 @@ Column | Description
 **HomePage** | Is this a site's home page?.
 **Type** | Type of the page (`WikiPage`, `WebPartPage`, `ClientSidePage` or `AspxPage`).
 **Layout** | Standard layout of the found WikiPage or WebPartPage
+**Mapping %** | Percentage of web parts on the page that have a mapping in the provided mapping file
+**Unmapped web parts** | Web part types which were not mapped via the provided web part mapping file
 **ModifiedBy** | Last person that modified this page.
 **ModifiedAt** | Last modification date and time for this page.
-**ViewsRecent** | Number of views this page received in the last 14 days.
-**ViewsRecentUniqueUsers** | Number of unique visitors for this page in the last 14 days.
-**ViewsLifeTime** | Number of views this page received during it's lifetime.
-**ViewsLifeTimeUniqueUsers** | Number of unique visitors for this page during it's lifetime.
+**ViewsRecent** | Number of views this page received in the last 14 days. If the -c or skipusageinformation parameter was used this column is always 0.
+**ViewsRecentUniqueUsers** | Number of unique visitors for this page in the last 14 days. If the -c or skipusageinformation parameter was used this column is always 0.
+**ViewsLifeTime** | Number of views this page received during it's lifetime. If the -c or skipusageinformation parameter was used this column is always 0.
+**ViewsLifeTimeUniqueUsers** | Number of unique visitors for this page during it's lifetime. If the -c or skipusageinformation parameter was used this column is always 0.
 **WPType1-30** | Up to 30 columns indicating the web part type.
 **WPTitle1-30** | Up to 30 columns indicating the web part title.
-**WPData1-30** | Up to 30 columns holding the exported web part data (see upcoming chapter for details).
+**WPData1-30** | Up to 30 columns holding the exported web part data (see upcoming chapter for details), only if the -b or exportwebpartproperties parameter was specified
 
 
 ### Key takeaways from this report ##
@@ -343,7 +346,7 @@ Filter | Takeaway
 **Type = "WebPartPage"** | Gives you all the web part pages
 **ViewsRecent > 0** | Pages which have been recently accessed
 
-### WPData details ###
+### WPData details (if the -b or exportwebpartproperties parameter was specified) ###
 
 For each exported web part the same base JSON structure is used as shown below. Important to note are:
 

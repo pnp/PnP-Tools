@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- SharePoint.Modernization.Scanner v1.4: page webpart mapping percentage and unmapped web parts column + additional commandline options to control the export of web part properties and use of search for site/page usage information
+
 ## [May 2018]
 
 ### Added
