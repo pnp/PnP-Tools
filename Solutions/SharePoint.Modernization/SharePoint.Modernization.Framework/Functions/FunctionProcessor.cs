@@ -114,7 +114,16 @@ namespace SharePoint.Modernization.Framework.Functions
             {
                 try
                 {
-                    string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, addOn.Assembly);
+                    string path = "";
+                    if (addOn.Assembly.Contains("\\") && System.IO.File.Exists(addOn.Assembly))
+                    {
+                        path = addOn.Assembly; 
+                    }
+                    else
+                    {
+                        path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, addOn.Assembly);
+                    }
+                    
                     var assembly = Assembly.LoadFile(path);
                     var customType = assembly.GetType(addOn.Type);
                     var instance = Activator.CreateInstance(customType, this.page.Context);

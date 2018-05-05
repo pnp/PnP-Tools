@@ -26,7 +26,7 @@ Page transformation file. Describes:
     </BaseWebPart>
     <!-- List of assemblies and Types that contain custom transform or selector functions -->
     <AddOns>
-      <AddOn Name="Custom" Type="SharePoint.Modernization.Framework.SampleAddOn.MyCustomFunctions" Assembly="SharePoint.Modernization.Framework.SampleAddOn.dll" />
+      <AddOn Name="Custom" Type="SharePoint.Modernization.Framework.SampleAddOn.MyCustomFunctions" Assembly="C:\github\BertPnPTools\Solutions\SharePoint.Modernization\SharePoint.Modernization.Framework\bin\Debug\SharePoint.Modernization.Framework.SampleAddOn.dll" />
     </AddOns>
     <!-- Web parts with their property definition and mappings to client side web parts --> 
     <WebParts>
