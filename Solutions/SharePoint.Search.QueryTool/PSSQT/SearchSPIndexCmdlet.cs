@@ -20,14 +20,14 @@ using PSSQT.Helpers.Authentication;
 
 namespace PSSQT
 {
-    [Cmdlet(VerbsCommon.Search, "SPIndex",DefaultParameterSetName = "P1")]
+    [Cmdlet(VerbsCommon.Search, "SPIndex", DefaultParameterSetName = "P1")]
     public class SearchSPIndexCmdlet
         : PSCmdlet
     {
         #region PrivateMembers
         private static readonly int SearchResultBatchSize = 500;
         private static readonly char[] trimChars = { ' ', '\t', '\n', '\r' };
- 
+
 
         // default values for script parameters
         private static readonly int startRowDefault = 0;
@@ -468,6 +468,15 @@ namespace PSSQT
         [Alias("Preset")]
         public string LoadPreset { get; set; }
 
+        [Parameter(
+             Mandatory = false,
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             HelpMessage = "Collapse Specification."
+         )]
+
+        public string CollapseSpecification { get; set; }
+
 
         [Parameter(
             Mandatory = false,
@@ -615,7 +624,7 @@ namespace PSSQT
             searchQueryRequest.SelectProperties = new SelectPropertiesListArgumentParser(SelectProperties, searchQueryRequest).Parse();
 
             // Cmdlet.SelectProperties is used by ResultProcessors
-            SelectProperties = searchQueryRequest.SelectProperties != null ? searchQueryRequest.SelectProperties.Split(',').ToList() : null;   
+            SelectProperties = searchQueryRequest.SelectProperties != null ? searchQueryRequest.SelectProperties.Split(',').ToList() : null;
 
             WriteVerbose(searchQueryRequest.PrintVerbose());
             WriteDebug(searchQueryRequest.PrintDebug());
@@ -678,7 +687,7 @@ namespace PSSQT
             searchQueryRequest.ClientType = GetClientTypeName(searchQueryRequest);
 
             // This cmdlet keeps select properties as a list of strings, and SearchQueryRequest uses a string.
-  
+
             // searchQueryRequest.SelectProperties is set very last thing before we execute the query in SetSelectProperties() 
 
 
@@ -686,6 +695,9 @@ namespace PSSQT
 
 
             searchQueryRequest.SortList = new SortListArgumentParser(Sort).Parse() ?? searchQueryRequest.SortList;
+
+            searchQueryRequest.CollapseSpecifiation = CollapseSpecification ?? searchQueryRequest.CollapseSpecifiation;
+
 
             // set based on switches
             bool? switchValue;
@@ -750,7 +762,11 @@ namespace PSSQT
 
             searchQueryRequest.Refiners = new StringListArgumentParser(Refiners).Parse() ?? searchQueryRequest.Refiners;
 
+            SetRequestAutheticationType(searchQueryRequest);
+        }
 
+        private void SetRequestAutheticationType(SearchQueryRequest searchQueryRequest)
+        {
             if (Credential != null || searchQueryRequest.AuthenticationType == AuthenticationType.Windows)
             {
                 if (Credential == null)
@@ -772,13 +788,13 @@ namespace PSSQT
                     runspaceId = ps.Runspace.InstanceId;
 
                     CookieCollection cc;
-                    
+
                     bool found = Tokens.TryGetValue(runspaceId, out cc);
 
-                    if (! found)
+                    if (!found)
                     {
                         cc = PSWebAuthentication.GetAuthenticatedCookies(this, searchQueryRequest.SharePointSiteUrl, AuthenticationType.SPO);
- 
+
                         if (cc == null)
                         {
                             throw new RuntimeException("Authentication cookie returned is null! Authentication failed. Please try again.");  // TODO find another exception
@@ -800,7 +816,7 @@ namespace PSSQT
 
                 var task = adalAuth.Login(searchQueryRequest.SharePointSiteUrl);
 
-                if (! task.Wait(300000))
+                if (!task.Wait(300000))
                 {
                     throw new TimeoutException("Prompt for user credentials timed out after 5 minutes.");
                 }
@@ -810,7 +826,7 @@ namespace PSSQT
                 searchQueryRequest.AuthenticationType = AuthenticationType.SPOManagement;
                 searchQueryRequest.Token = token;
                 //searchSuggestionsRequest.Token = token;
-        }
+            }
             else
             {
                 searchQueryRequest.AuthenticationType = AuthenticationType.CurrentUser;
@@ -819,7 +835,6 @@ namespace PSSQT
             }
         }
 
- 
         private string DefaultClientTypeName()
         {
             // ContentSearchRegular prevents cluttering the page impression table and seems appropriate as default when scripting
@@ -846,7 +861,7 @@ namespace PSSQT
             bool keepTrying = true;
 
             // Pick default result processor
-            if (! ResultProcessor.HasValue)     // user has not specified one
+            if (!ResultProcessor.HasValue)     // user has not specified one
             {
                 if (Refiners != null)
                 {
@@ -859,6 +874,8 @@ namespace PSSQT
 
                 WriteVerbose(String.Format("Using ResultProcessor {0}", Enum.GetName(typeof(ResultProcessor), ResultProcessor)));
             }
+
+
 
             IQueryResultProcessor queryResultProcessor = QueryResultProcessorFactory.SelectQueryResultProcessor(ResultProcessor.Value, this, searchQueryRequest);
 
@@ -887,7 +904,7 @@ namespace PSSQT
                 }
                 catch (Exception ex)
                 {
-                    if (! queryResultProcessor.HandleException(ex))
+                    if (!queryResultProcessor.HandleException(ex))
                     {
                         throw;
                     }
@@ -907,7 +924,7 @@ namespace PSSQT
                 SelectProperties = new List<string>();
             }
 
-            if (! SelectProperties.Contains(trimmedProperty, StringComparer.InvariantCultureIgnoreCase))
+            if (!SelectProperties.Contains(trimmedProperty, StringComparer.InvariantCultureIgnoreCase))
             {
                 SelectProperties.Add(trimmedProperty);
             }
@@ -939,13 +956,13 @@ namespace PSSQT
                 // always check current directory first
                 var rootedPath = GetRootedPath(path);
 
-                if (! File.Exists(rootedPath))
+                if (!File.Exists(rootedPath))
                 {
                     var environmentVariable = Environment.GetEnvironmentVariable("PSSQT_PresetsPath");
 
                     if (environmentVariable != null)
                     {
-                        var result = environmentVariable 
+                        var result = environmentVariable
                             .Split(';')
                             .Where(s => File.Exists(Path.Combine(s, path)))
                             .FirstOrDefault();

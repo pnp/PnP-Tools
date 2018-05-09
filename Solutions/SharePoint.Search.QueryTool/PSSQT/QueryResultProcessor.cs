@@ -11,6 +11,7 @@ namespace PSSQT
     public enum ResultProcessor
     {
         Basic,
+        BasicAll,
         Primary,
         All,
         Refiners,
@@ -31,7 +32,7 @@ namespace PSSQT
 
                
         bool HandleException(Exception ex);
-    }
+      }
 
     public static class QueryResultProcessorFactory
     {
@@ -59,6 +60,10 @@ namespace PSSQT
 
                 case ResultProcessor.Basic:
                     qrp = new BasicResultProcessor(cmdlet);
+                    break;
+
+                case ResultProcessor.BasicAll:
+                    qrp = new BasicAllResultProcessor(cmdlet);
                     break;
 
                 case ResultProcessor.RankXML:
@@ -124,9 +129,10 @@ namespace PSSQT
 
         public virtual bool HandleException(Exception ex)
         {
-            return false;   // just rethrow
+             return false;   // just rethrow
         }
-    }
+
+     }
 
     public class BaseQueryResultProcessor : AbstractQueryResultProcessor
     {
@@ -262,9 +268,14 @@ namespace PSSQT
         }
     }
 
-    public class BasicResultProcessor : BaseQueryResultProcessor
+ 
+    /*
+     * I don't want to break backwards compatibility, so I'l leaving Basic as is and adding BasicAll instead
+     */
+
+    public class BasicAllResultProcessor : BaseQueryResultProcessor
     {
-        public BasicResultProcessor(SearchSPIndexCmdlet cmdlet) :
+        public BasicAllResultProcessor(SearchSPIndexCmdlet cmdlet) :
             base(cmdlet)
         {
 
@@ -274,22 +285,81 @@ namespace PSSQT
         {
             var item = new PSObject();
 
+            PopulateItemFromSearchQueryResult(queryResults, item);
+
+            if (queryResults.PrimaryQueryResult != null)
+            {
+                PopulateItemFromQueryResult(queryResults.PrimaryQueryResult, item, 1);
+            }
+
+            PopulateItemFromSecondaryResults(queryResults, item);
+
+            Cmdlet.WriteObject(item);
+        }
+
+        protected virtual void PopulateItemFromSecondaryResults(SearchQueryResult queryResults, PSObject item)
+        {
+            if (queryResults.SecondaryQueryResults != null)
+            {
+                int resultGroup = 2;   // Primary results are result group 1
+
+                foreach (var queryResult in queryResults.SecondaryQueryResults)
+                {
+                    PopulateItemFromQueryResult(queryResult, item, resultGroup);
+
+                    resultGroup++;
+                }
+
+            }
+        }
+
+        protected virtual void PopulateItemFromSearchQueryResult(SearchQueryResult queryResults, PSObject item)
+        {
             item.Properties.Add(new PSVariableProperty(new PSVariable("StatusCode", queryResults.StatusCode)));
             item.Properties.Add(new PSVariableProperty(new PSVariable("StatusDescription", queryResults.StatusDescription)));
             item.Properties.Add(new PSVariableProperty(new PSVariable("HTTPProtocalVersion", queryResults.HttpProtocolVersion)));
             item.Properties.Add(new PSVariableProperty(new PSVariable("ContentType", queryResults.ContentType)));
-            //item.Properties.Add(new PSVariableProperty(new PSVariable("ResponseHeaders", String.Join(",",queryResults.ResponseHeaders.AllKeys))));
-            item.Properties.Add(new PSVariableProperty(new PSVariable("TotalRows", queryResults.PrimaryQueryResult.TotalRows)));
-            item.Properties.Add(new PSVariableProperty(new PSVariable("TotalRowsInclDups", queryResults.PrimaryQueryResult.TotalRowsIncludingDuplicates)));
-            item.Properties.Add(new PSVariableProperty(new PSVariable("QueryId", queryResults.PrimaryQueryResult.QueryId)));
-            item.Properties.Add(new PSVariableProperty(new PSVariable("QueryModification", queryResults.PrimaryQueryResult.QueryModification)));
-            item.Properties.Add(new PSVariableProperty(new PSVariable("QueryRuleId", queryResults.PrimaryQueryResult.QueryRuleId)));
+            item.Properties.Add(new PSVariableProperty(new PSVariable("ElapsedTime", queryResults.ElapsedTime)));
+            item.Properties.Add(new PSVariableProperty(new PSVariable("ElapsedMilliseconds", queryResults.ElapsedMilliseconds)));
+            item.Properties.Add(new PSVariableProperty(new PSVariable("QueryElapsedTime", queryResults.QueryElapsedTime)));
             item.Properties.Add(new PSVariableProperty(new PSVariable("NumSecondaryResults", queryResults.SecondaryQueryResults != null ? queryResults.SecondaryQueryResults.Count : 0)));
-            //item.Properties.Add(new PSVariableProperty(new PSVariable("NumRefiners", queryResults.PrimaryQueryResult.RefinerResults != null ? queryResults.PrimaryQueryResult.RefinerResults.Count : 0)));
             item.Properties.Add(new PSVariableProperty(new PSVariable("NumTriggeredRules", queryResults.TriggeredRules != null ? queryResults.TriggeredRules.Count : 0)));
-
-            Cmdlet.WriteObject(item);
+            item.Properties.Add(new PSVariableProperty(new PSVariable("TriggeredRules", queryResults.TriggeredRules)));
         }
+
+        protected virtual void PopulateItemFromQueryResult(QueryResult queryResult, PSObject item, int resultGroup)
+        {
+            //item.Properties.Add(new PSVariableProperty(new PSVariable("ResponseHeaders", String.Join(",",queryResults.ResponseHeaders.AllKeys))));
+            item.Properties.Add(new PSVariableProperty(new PSVariable($"[{resultGroup}] TotalRows", queryResult.TotalRows)));
+            item.Properties.Add(new PSVariableProperty(new PSVariable($"[{resultGroup}] TotalRowsInclDups", queryResult.TotalRowsIncludingDuplicates)));
+            item.Properties.Add(new PSVariableProperty(new PSVariable($"[{resultGroup}] QueryId", queryResult.QueryId)));
+            item.Properties.Add(new PSVariableProperty(new PSVariable($"[{resultGroup}] QueryModification", queryResult.QueryModification)));
+            item.Properties.Add(new PSVariableProperty(new PSVariable($"[{resultGroup}] QueryRuleId", queryResult.QueryRuleId)));
+        }
+    }
+
+    public class BasicResultProcessor : BasicAllResultProcessor
+    {
+        public BasicResultProcessor(SearchSPIndexCmdlet cmdlet) :
+            base(cmdlet)
+        {
+
+        }
+
+        protected override void PopulateItemFromSecondaryResults(SearchQueryResult queryResults, PSObject item)
+        {
+            // no secondary result information
+        }
+
+        protected override void PopulateItemFromQueryResult(QueryResult queryResult, PSObject item, int resultGroup)
+        {
+            item.Properties.Add(new PSVariableProperty(new PSVariable("TotalRows", queryResult.TotalRows)));
+            item.Properties.Add(new PSVariableProperty(new PSVariable("TotalRowsInclDups", queryResult.TotalRowsIncludingDuplicates)));
+            item.Properties.Add(new PSVariableProperty(new PSVariable("QueryId", queryResult.QueryId)));
+            item.Properties.Add(new PSVariableProperty(new PSVariable("QueryModification", queryResult.QueryModification)));
+            item.Properties.Add(new PSVariableProperty(new PSVariable("QueryRuleId", queryResult.QueryRuleId)));
+        }
+
     }
 
     public class RefinerResultProcessor : BaseQueryResultProcessor
