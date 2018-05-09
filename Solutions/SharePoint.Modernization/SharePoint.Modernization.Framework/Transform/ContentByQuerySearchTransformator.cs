@@ -1,10 +1,8 @@
-﻿using Newtonsoft.Json;
-using Microsoft.SharePoint.Client;
+﻿using Microsoft.SharePoint.Client;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharePoint.Modernization.Framework.Transform
 {
@@ -387,6 +385,9 @@ namespace SharePoint.Modernization.Framework.Transform
     }
     #endregion
 
+    /// <summary>
+    /// Class used to generate contentrollup (=highlighted content) web part properties coming from either a content by query or content by search web part
+    /// </summary>
     public class ContentByQuerySearchTransformator
     {
         private ContentRollupWebPartProperties properties;
@@ -395,6 +396,10 @@ namespace SharePoint.Modernization.Framework.Transform
         private List<Field> queryFields;
 
         #region Construction
+        /// <summary>
+        /// Instantiates the class
+        /// </summary>
+        /// <param name="cc">Client context for the web holding the source page</param>
         public ContentByQuerySearchTransformator(ClientContext cc)
         {
             this.clientContext = cc;
@@ -413,22 +418,11 @@ namespace SharePoint.Modernization.Framework.Transform
         }
         #endregion
 
-        public string HighlightedContentProperties()
-        {
-            // Don't serialize null values
-            var jsonSerializerSettings = new JsonSerializerSettings()
-            {
-                MissingMemberHandling = MissingMemberHandling.Ignore,
-                NullValueHandling = NullValueHandling.Ignore
-            };
-
-            var json = JsonConvert.SerializeObject(this.properties, jsonSerializerSettings);
-            
-            // Embed DisplayMaps via a placeholder replace
-            json = json.Replace("\"%%DisplayMapsPlaceholder%%\"", displayMapJson);
-            return json;
-        }
-
+        /// <summary>
+        /// Generate contentrollup (=highlighted content) web part properties coming from a content by query web part
+        /// </summary>
+        /// <param name="cbq">Properties coming from the content by query web part</param>
+        /// <returns>Properties for highlighted content web part</returns>
         public string TransformContentByQueryWebPartToHighlightedContent(ContentByQuery cbq)
         {
             // Transformation logic
@@ -601,7 +595,6 @@ namespace SharePoint.Modernization.Framework.Transform
             // Return the json properties for the converted web part
             return HighlightedContentProperties();
         }
-
 
         #region Helper methods
         #region CAML Query builder - not needed so far
@@ -947,6 +940,22 @@ namespace SharePoint.Modernization.Framework.Transform
         {
             this.properties.TemplateId = template;
             this.properties.LayoutId = template.ToString();
+        }
+
+        internal string HighlightedContentProperties()
+        {
+            // Don't serialize null values
+            var jsonSerializerSettings = new JsonSerializerSettings()
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore
+            };
+
+            var json = JsonConvert.SerializeObject(this.properties, jsonSerializerSettings);
+
+            // Embed DisplayMaps via a placeholder replace
+            json = json.Replace("\"%%DisplayMapsPlaceholder%%\"", displayMapJson);
+            return json;
         }
         #endregion
 

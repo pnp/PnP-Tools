@@ -584,6 +584,59 @@ namespace SharePoint.Modernization.Framework.Functions
         #endregion
 
         #region HighlightedContent functions
+        /// <summary>
+        /// Maps content by query web part data into a properties collection for the contentrollup (= Highlighted Content) web part
+        /// </summary>
+        /// <param name="webUrl"></param>
+        /// <param name="listGuid"></param>
+        /// <param name="listName"></param>
+        /// <param name="serverTemplate"></param>
+        /// <param name="contentTypeBeginsWithId"></param>
+        /// <param name="filterField1"></param>
+        /// <param name="filter1ChainingOperator"></param>
+        /// <param name="filterField1Value"></param>
+        /// <param name="filterOperator1"></param>
+        /// <param name="filterField2"></param>
+        /// <param name="filter2ChainingOperator"></param>
+        /// <param name="filterField2Value"></param>
+        /// <param name="filterOperator2"></param>
+        /// <param name="filterField3"></param>
+        /// <param name="filterField3Value"></param>
+        /// <param name="filterOperator3"></param>
+        /// <param name="sortBy"></param>
+        /// <param name="sortByDirection"></param>
+        /// <param name="groupBy"></param>
+        /// <param name="groupByDirection"></param>
+        /// <param name="itemLimit"></param>
+        /// <param name="displayColumns"></param>
+        /// <param name="dataMappings"></param>
+        /// <returns>Properties collection for the contentrollup (= Highlighted Content) web part</returns>
+        [FunctionDocumentation(Description = "Maps content by query web part data into a properties collection for the contentrollup (= Highlighted Content) web part", 
+                               Example = "{JsonProperties} = ContentByQueryToHighlightedContentProperties({WebUrl},{ListGuid},{ListName},{ServerTemplate},{ContentTypeBeginsWithId},{FilterField1},{Filter1ChainingOperator},{FilterDisplayValue1},{FilterOperator1},{FilterField2},{Filter2ChainingOperator},{FilterDisplayValue2},{FilterOperator2},{FilterField3},{FilterDisplayValue3},{FilterOperator3},{SortBy},{SortByDirection},{GroupBy},{GroupByDirection},{ItemLimit},{DisplayColumns},{DataMappings})")]
+        [InputDocumentation(Name = "{WebUrl}", Description = "")]
+        [InputDocumentation(Name = "{ListGuid}", Description = "")]
+        [InputDocumentation(Name = "{ListName}", Description = "")]
+        [InputDocumentation(Name = "{ServerTemplate}", Description = "")]
+        [InputDocumentation(Name = "{ContentTypeBeginsWithId}", Description = "")]
+        [InputDocumentation(Name = "{FilterField1}", Description = "")]
+        [InputDocumentation(Name = "{Filter1ChainingOperator}", Description = "")]
+        [InputDocumentation(Name = "{FilterField1Value}", Description = "")]
+        [InputDocumentation(Name = "{FilterOperator1}", Description = "")]
+        [InputDocumentation(Name = "{FilterField2}", Description = "")]
+        [InputDocumentation(Name = "{Filter2ChainingOperator}", Description = "")]
+        [InputDocumentation(Name = "{FilterField2Value}", Description = "")]
+        [InputDocumentation(Name = "{FilterOperator2}", Description = "")]
+        [InputDocumentation(Name = "{FilterField3}", Description = "")]
+        [InputDocumentation(Name = "{FilterField3Value}", Description = "")]
+        [InputDocumentation(Name = "{FilterOperator3}", Description = "")]
+        [InputDocumentation(Name = "{SortBy}", Description = "")]
+        [InputDocumentation(Name = "{SortByDirection}", Description = "")]
+        [InputDocumentation(Name = "{GroupBy}", Description = "")]
+        [InputDocumentation(Name = "{GroupByDirection}", Description = "")]
+        [InputDocumentation(Name = "{ItemLimit}", Description = "")]
+        [InputDocumentation(Name = "{DisplayColumns}", Description = "")]
+        [InputDocumentation(Name = "{DataMappings}", Description = "")]
+        [OutputDocumentation(Name = "JsonProperties", Description = "Properties collection for the contentrollup (= Highlighted Content) web part")]
         public string ContentByQueryToHighlightedContentProperties(string webUrl, string listGuid, string listName, string serverTemplate, string contentTypeBeginsWithId,
                                                                    string filterField1, string filter1ChainingOperator, string filterField1Value, string filterOperator1,
                                                                    string filterField2, string filter2ChainingOperator, string filterField2Value, string filterOperator2,

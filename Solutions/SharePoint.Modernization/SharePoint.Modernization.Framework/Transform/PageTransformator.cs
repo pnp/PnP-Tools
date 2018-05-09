@@ -282,7 +282,6 @@ namespace SharePoint.Modernization.Framework.Transform
                 this.clientContext.ExecuteQueryRetry();
             }
             #endregion
-
         }
 
         /// <summary>
