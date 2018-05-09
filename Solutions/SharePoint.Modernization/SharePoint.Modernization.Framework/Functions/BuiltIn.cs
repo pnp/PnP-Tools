@@ -582,6 +582,51 @@ namespace SharePoint.Modernization.Framework.Functions
             }
         }
         #endregion
-       
+
+        #region HighlightedContent functions
+        public string ContentByQueryToHighlightedContentProperties(string webUrl, string listGuid, string listName, string serverTemplate, string contentTypeBeginsWithId,
+                                                                   string filterField1, string filter1ChainingOperator, string filterField1Value, string filterOperator1,
+                                                                   string filterField2, string filter2ChainingOperator, string filterField2Value, string filterOperator2,
+                                                                   string filterField3, string filterField3Value, string filterOperator3,
+                                                                   string sortBy, string sortByDirection, string groupBy, string groupByDirection, string itemLimit, int displayColumns,
+                                                                   string dataMappings)
+        {
+            ContentByQuery cbq = new ContentByQuery()
+            {
+                WebUrl = webUrl,
+                ListGuid = listGuid,
+                ListName = listName,
+                ServerTemplate = serverTemplate,
+                ContentTypeBeginsWithId = contentTypeBeginsWithId,
+
+                FilterField1 = filterField1,
+                Filter1ChainingOperator = (FilterChainingOperator)Enum.Parse(typeof(FilterChainingOperator), filter1ChainingOperator, true),
+                FilterField1Value = filterField1Value,
+                FilterOperator1 = (FilterFieldQueryOperator)Enum.Parse(typeof(FilterFieldQueryOperator), filterOperator1, true),
+                FilterField2 = filterField2,
+                Filter2ChainingOperator = (FilterChainingOperator)Enum.Parse(typeof(FilterChainingOperator), filter2ChainingOperator, true),
+                FilterField2Value = filterField2Value,
+                FilterOperator2 = (FilterFieldQueryOperator)Enum.Parse(typeof(FilterFieldQueryOperator), filterOperator2, true),
+                FilterField3 = filterField3,
+                FilterField3Value = filterField3Value,
+                FilterOperator3 = (FilterFieldQueryOperator)Enum.Parse(typeof(FilterFieldQueryOperator), filterOperator3, true),
+
+                SortBy = sortBy,
+                SortByDirection = (SortDirection)Enum.Parse(typeof(SortDirection), sortByDirection, true),
+                GroupBy = groupBy,
+                GroupByDirection = (SortDirection)Enum.Parse(typeof(SortDirection), groupByDirection, true),
+
+                ItemLimit = Convert.ToInt32(itemLimit),
+                DisplayColumns = displayColumns,
+
+                DataMappings = dataMappings
+            };
+
+            ContentByQuerySearchTransformator cqs = new ContentByQuerySearchTransformator(this.clientContext);
+            var res = cqs.TransformContentByQueryWebPartToHighlightedContent(cbq);
+            return res;
+        }
+        #endregion
+
     }
 }
