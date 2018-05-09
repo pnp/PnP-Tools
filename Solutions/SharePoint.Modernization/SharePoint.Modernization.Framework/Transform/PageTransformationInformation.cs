@@ -39,6 +39,9 @@ namespace SharePoint.Modernization.Framework.Transform
             TargetPageName = targetPageName;
             Overwrite = overwrite;
             HandleWikiImagesAndVideos = true;
+            TargetPageTakesSourcePageName = false;
+            SetDefaultTargetPagePrefix();
+            SetDefaultSourcePagePrefix();
         }
         #endregion
 
@@ -52,9 +55,21 @@ namespace SharePoint.Modernization.Framework.Transform
         /// </summary>
         public string TargetPageName { get; set; }
         /// <summary>
+        /// Target page will get the source page name, source page will be renamed. Used in conjunction with SourcePagePrefix
+        /// </summary>
+        public bool TargetPageTakesSourcePageName { get; set; }
+        /// <summary>
         /// Overwrite the target page if it already exists?
         /// </summary>
         public bool Overwrite { get; set; }
+        /// <summary>
+        /// Prefix used to name the target page
+        /// </summary>
+        public string TargetPagePrefix { get; set; }
+        /// <summary>
+        /// Prefix used to name the source page. Used in conjunction with TargetPageTakesSourcePageName
+        /// </summary>
+        public string SourcePagePrefix { get; set; }
         /// <summary>
         /// Configuration of the page header to apply
         /// </summary>
@@ -86,6 +101,18 @@ namespace SharePoint.Modernization.Framework.Transform
         /// Custom content transformator to be used for this page
         /// </summary>
         public Func<ClientSidePage, PageTransformation, IContentTransformator> ContentTransformatorOverride { get; set; }
+        #endregion
+
+        #region Functionality
+        public void SetDefaultTargetPagePrefix()
+        {
+            this.TargetPagePrefix = "Migrated_";
+        }
+
+        public void SetDefaultSourcePagePrefix()
+        {
+            this.SourcePagePrefix = "Previous_";
+        }
         #endregion
 
     }

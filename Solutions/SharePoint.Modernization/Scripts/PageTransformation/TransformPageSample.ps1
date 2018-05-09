@@ -81,7 +81,7 @@ Load-PnPModernizationFramework $binaryFolder
 Connect-PnPOnline -Url https://bertonline.sharepoint.com/sites/espctest2 -Verbose
 
 # Get aspx page(s)
-[string] $query = [string]::Format($CAMLQueryByExtensionAndName, "webparts.aspx")
+[string] $query = [string]::Format($CAMLQueryByExtensionAndName, "contentbyquery.aspx")
 $pages = Get-PnPListItem -List SitePages -Query $query 
 
 # Modernize the found pages
