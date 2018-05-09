@@ -98,7 +98,12 @@ namespace SharePoint.Modernization.Framework.Transform
             // If no targetname specified then we'll come up with one
             if (string.IsNullOrEmpty(pageTransformationInformation.TargetPageName))
             {
-                pageTransformationInformation.TargetPageName = $"Migrated_{pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString()}";
+                if (string.IsNullOrEmpty(pageTransformationInformation.TargetPagePrefix))
+                {
+                    pageTransformationInformation.SetDefaultTargetPagePrefix();
+                }
+
+                pageTransformationInformation.TargetPageName = $"{pageTransformationInformation.TargetPagePrefix}{pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString()}";
             }
 
             // Check if page name is free to use
@@ -242,6 +247,40 @@ namespace SharePoint.Modernization.Framework.Transform
             // Persist the client side page
             targetPage.Save(pageTransformationInformation.TargetPageName);
             targetPage.Publish();
+
+            // All went well so far...swap pages if that's needed
+            if (pageTransformationInformation.TargetPageTakesSourcePageName)
+            {
+                //Load the source page
+                var sourcePageUrl = pageTransformationInformation.SourcePage[Constants.FileRefField].ToString();
+                var orginalSourcePageName = pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString();
+
+                string path = sourcePageUrl.Replace(pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString(), "");
+
+                var sourcePage = this.clientContext.Web.GetFileByServerRelativeUrl(sourcePageUrl);
+                this.clientContext.Load(sourcePage);
+                this.clientContext.ExecuteQueryRetry();
+
+                if (string.IsNullOrEmpty(pageTransformationInformation.SourcePagePrefix))
+                {
+                    pageTransformationInformation.SetDefaultSourcePagePrefix();
+                }
+                var newSourcePageUrl = $"{pageTransformationInformation.SourcePagePrefix}{pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString()}";
+
+                // Rename source page using the sourcepageprefix
+                sourcePage.MoveTo($"{path}{newSourcePageUrl}", MoveOperations.None);
+                this.clientContext.ExecuteQueryRetry();
+
+                //Load the created target page
+                var targetPageUrl = $"{path}{pageTransformationInformation.TargetPageName}";
+                var targetPageFile = this.clientContext.Web.GetFileByServerRelativeUrl(targetPageUrl);
+                this.clientContext.Load(targetPageFile);
+                this.clientContext.ExecuteQueryRetry();
+
+                // Rename the target page to the original source page name
+                targetPageFile.MoveTo($"{path}{orginalSourcePageName}", MoveOperations.Overwrite);
+                this.clientContext.ExecuteQueryRetry();
+            }
             #endregion
         }
 

@@ -26,6 +26,7 @@ Page transformation file. Describes:
     </BaseWebPart>
     <!-- List of assemblies and Types that contain custom transform or selector functions -->
     <AddOns>
+      <!-- Assembly can contain either a fully qualified path or just the dll name. In the latter case we depend on .Net assembly resolving to find the assembly -->
       <AddOn Name="Custom" Type="SharePoint.Modernization.Framework.SampleAddOn.MyCustomFunctions" Assembly="C:\github\BertPnPTools\Solutions\SharePoint.Modernization\SharePoint.Modernization.Framework\bin\Debug\SharePoint.Modernization.Framework.SampleAddOn.dll" />
     </AddOns>
     <!-- Web parts with their property definition and mappings to client side web parts --> 
@@ -271,7 +272,9 @@ Page transformation file. Describes:
       <!-- Content By Query web part -->
       <WebPart Type="Microsoft.SharePoint.Publishing.WebControls.ContentByQueryWebPart, Microsoft.SharePoint.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
-          <Property Name="FilterField1" Type="string" />
+          <Property Name="WebUrl" Type="string" Functions="{FullPath} = Concatenate({Host}, {Web});{EncodedWeb} = HtmlEncodeForJson({FullPath})"/>
+          <Property Name="ListName" Type="string"/>
+          <Property Name="FilterField1" Type="string" Functions="{JsonProperties} = ContentByQueryToHighlightedContentProperties({WebUrl},{ListGuid},{ListName},{ServerTemplate},{ContentTypeBeginsWithId},{FilterField1},{Filter1ChainingOperator},{FilterDisplayValue1},{FilterOperator1},{FilterField2},{Filter2ChainingOperator},{FilterDisplayValue2},{FilterOperator2},{FilterField3},{FilterDisplayValue3},{FilterOperator3},{SortBy},{SortByDirection},{GroupBy},{GroupByDirection},{ItemLimit},{DisplayColumns},{DataMappings})"/>
           <Property Name="FilterOperator1" Type="string" />
           <Property Name="FilterValue1" Type="string" />
           <Property Name="FilterDisplayValue1" Type="string" />
@@ -310,6 +313,7 @@ Page transformation file. Describes:
           <Property Name="ListGuid" Type="string" />
           <Property Name="DataFields" Type="string" />
           <Property Name="GroupByFieldType" Type="string" />
+          <Property Name="GroupByDirection" Type="string"/>
           <Property Name="ViewFlags" Type="string" />
           <Property Name="ContentTypeBeginsWithId" Type="string" />
           <Property Name="SortBy" Type="string" />
@@ -335,9 +339,8 @@ Page transformation file. Describes:
           <Property Name="ContentTypeName" Type="string" />
           <Property Name="ViewFieldsOverride" Type="string" />
         </Properties>
-        <!--
         <Mappings>
-          <Mapping Default="true" Name="test"> -->
+          <Mapping Default="true" Name="test">
             <!--
               WebUrl (= scope) = ~sitecollection, ~site, ~sitecollection/sub1 to indicate scope from a given subsite or empty (= current site)
               
@@ -348,7 +351,7 @@ Page transformation file. Describes:
               ContentTypeBeginsWithId contains prefix for content type filtering (e.g. 0x010108 for all wiki page content types and descendants)
               
               Extra filtering can be applied using 3 filters (assuming not using QueryOverride):
-              FilterFieldx (e.g. {8553196d-ec8d-4564-9861-3dbe931050c8})
+              FilterFieldx (e.g. {8553196d-ec8d-4564-9861-3dbe931050c8}). Allowed fields are Created, Created By, Document Created By, Document Modified by, Modified, Modified By, Name, Title
               FilterDisplayValuex (e.g. d)
               FilterOperatorx (e.g. BeginsWith)
               
@@ -370,11 +373,9 @@ Page transformation file. Describes:
               Title:{fa564e0f-0c70-4ab9-b863-0177e6ddd247},Title,Text;|
               LinkUrl:{94f89715-e097-4e8b-ba79-ea02aa8b7adb},FileRef,Lookup;|              
               -->
-            <!--
-            <ClientSideText Order="10" Text="{DataMappings}"/>
-            <ClientSideText Order="20" Text="{DataMappingViewFields}"/>
+            <ClientSideWebPart Type="ContentRollup" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;title&quot;&#58;&quot;{Title}&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&quot;baseUrl&quot;&#58;&quot;{EncodedWeb}&quot;&#125;,&quot;componentDependencies&quot;&#58;&#123;&quot;layoutComponentId&quot;&#58;&quot;cea5863a-b857-46bb-aaf0-ae5f7cb447b6&quot;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;2.1&quot;,&quot;properties&quot;&#58;{JsonProperties}&#125;"/>
           </Mapping>
-        </Mappings> -->
+        </Mappings>
       </WebPart>      
       <!-- Excel web part -->
       <WebPart Type="Microsoft.Office.Excel.WebUI.ExcelWebRenderer, Microsoft.Office.Excel.WebUI, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">

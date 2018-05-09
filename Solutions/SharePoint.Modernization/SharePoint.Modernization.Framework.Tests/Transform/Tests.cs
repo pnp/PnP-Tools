@@ -84,6 +84,8 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
                 //demo1
                 //wikitext
                 //wiki_li
+                //webparts.aspx
+                //contentbyquery1.aspx
                 var pages = cc.Web.GetPages("webparts.aspx");
 
                 foreach (var page in pages)
@@ -92,6 +94,12 @@ namespace SharePoint.Modernization.Framework.Tests.Transform
                     {
                         // If target page exists, then overwrite it
                         Overwrite = true,
+
+                        // Migrated page gets the name of the original page
+                        //TargetPageTakesSourcePageName = false,
+
+                        // Give the migrated page a specific prefix, default is Migrated_
+                        //TargetPagePrefix = "Yes_",
 
                         // Configure the page header, empty value means ClientSidePageHeaderType.None
                         //PageHeader = new ClientSidePageHeader(cc, ClientSidePageHeaderType.None, null),
