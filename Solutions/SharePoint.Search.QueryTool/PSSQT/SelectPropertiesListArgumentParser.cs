@@ -20,7 +20,12 @@ namespace PSSQT
         public SelectPropertiesListArgumentParser(List<string> list, SearchQueryRequest searchQueryRequest) :
             base(list)
         {
-            this.searchQueryRequestSelectProperties = searchQueryRequest.SelectProperties;
+            searchQueryRequestSelectProperties = searchQueryRequest.SelectProperties;
+
+            if (String.IsNullOrWhiteSpace(searchQueryRequestSelectProperties))
+            {
+                searchQueryRequestSelectProperties = null;
+            } 
         }
 
  
@@ -52,6 +57,11 @@ namespace PSSQT
                 }
                 else
                 {
+                    if (searchQueryRequestSelectProperties != null && searchQueryRequestSelectProperties.Equals(":default:",StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return null;
+                    }
+
                     return searchQueryRequestSelectProperties ?? DefaultSelectProperties();
                 }
             }

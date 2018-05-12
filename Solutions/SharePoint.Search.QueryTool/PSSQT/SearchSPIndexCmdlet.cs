@@ -70,6 +70,16 @@ namespace PSSQT
 
         #region ScriptParameters
         [Parameter(
+             Mandatory = true,
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             Position = 0,
+             HelpMessage = "Show a calculated build number.",
+             ParameterSetName = "P3"
+         )]
+        public SwitchParameter Build { get; set; }
+
+        [Parameter(
             Mandatory = true,
             ValueFromPipelineByPropertyName = false,
             ValueFromPipeline = false,
@@ -879,7 +889,7 @@ namespace PSSQT
 
             IQueryResultProcessor queryResultProcessor = QueryResultProcessorFactory.SelectQueryResultProcessor(ResultProcessor.Value, this, searchQueryRequest);
 
-            queryResultProcessor.Configure();    // May add required properties to retrieve (e.g. rankdetail etc.)
+            queryResultProcessor.Configure();    // May add required properties to retrieve, modify the searchQueryRequest (e.g. rankdetail etc.)
 
             while (keepTrying)
             {

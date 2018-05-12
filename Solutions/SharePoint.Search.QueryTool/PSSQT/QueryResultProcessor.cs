@@ -21,7 +21,8 @@ namespace PSSQT
         ExplainRank,
         RankContribution,
         AllProperties,
-        AllPropertiesInline
+        AllPropertiesInline,
+        ManagedProperties
     }
 
     public interface IQueryResultProcessor
@@ -88,6 +89,10 @@ namespace PSSQT
 
                 case ResultProcessor.AllPropertiesInline:
                     qrp = new AllPropertiesInlineResultProcessor(cmdlet, searchQueryRequest);
+                    break;
+
+                case ResultProcessor.ManagedProperties:
+                    qrp = new ManagedPropertiesResultProcessor(cmdlet, searchQueryRequest);
                     break;
 
                 default:
@@ -407,8 +412,38 @@ namespace PSSQT
             }
             else
             {
-                Cmdlet.WriteWarning("The query returned zero refiner results.");
+                ZeroResultsWriteWarning();
+
             }
+        }
+
+        protected virtual void ZeroResultsWriteWarning()
+        {
+            Cmdlet.WriteWarning("The query returned zero refiner results. Make sure you specify which refiners to retrieve by using -Refiners.");
+        }
+    }
+
+
+    public class ManagedPropertiesResultProcessor : RefinerResultProcessor
+    {
+        private SearchQueryRequest request;
+
+        public ManagedPropertiesResultProcessor(SearchSPIndexCmdlet cmdlet, SearchQueryRequest searchQueryRequest) :
+            base(cmdlet)
+        {
+            this.request = searchQueryRequest;
+        }
+
+        public override void Configure()
+        {
+            base.Configure();
+
+            request.Refiners = "ManagedProperties(filter=600/0/*)";
+        }
+
+        protected override void ZeroResultsWriteWarning()
+        {
+            Cmdlet.WriteWarning("The query returned zero results for the managedproperties(filter=600/0/*) refiner.");
         }
 
     }
