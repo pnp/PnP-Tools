@@ -310,8 +310,7 @@ namespace SharePoint.Modernization.Framework.Transform
                                     }
                                 case ClientSideWebPartType.ClientWebPart:
                                     {
-                                        //TODO: replace with call once we've released the May PnP nuget
-                                        webPartName = "243166f5-4dc3-4fe2-9df2-a7971b546a0a";
+                                        webPartName = ClientSidePage.ClientSideWebPartEnumToName(DefaultClientSideWebParts.ClientWebPart);
                                         break;
                                     }
                                 default:
