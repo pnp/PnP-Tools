@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SharePoint.Modernization.Framework")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("SharePointPnP.Modernization.Framework")]
+[assembly: AssemblyDescription("SharePoint modernization framework for SharePoint Online")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SharePoint.Modernization.Framework")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyProduct("SharePointPnP.Modernization.Framework")]
+[assembly: AssemblyCopyright("Copyright © Microsoft 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -35,4 +35,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("0.1.1805.0")]
 [assembly: AssemblyFileVersion("0.1.1805.0")]
 
-[assembly: InternalsVisibleTo("SharePoint.Modernization.Framework.Tests")]
+[assembly: InternalsVisibleTo("SharePointPnP.Modernization.Framework.Tests")]
