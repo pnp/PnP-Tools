@@ -1,7 +1,5 @@
 ﻿using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
-using System;
 using System.Linq;
 
 namespace SharePoint.Modernization.Framework.Transform
