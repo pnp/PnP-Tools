@@ -27,7 +27,7 @@ Page transformation file. Describes:
     <!-- List of assemblies and Types that contain custom transform or selector functions -->
     <AddOns>
       <!-- Assembly can contain either a fully qualified path or just the dll name. In the latter case we depend on .Net assembly resolving to find the assembly -->
-      <AddOn Name="Custom" Type="SharePoint.Modernization.Framework.SampleAddOn.MyCustomFunctions" Assembly="C:\github\BertPnPTools\Solutions\SharePoint.Modernization\SharePoint.Modernization.Framework\bin\Debug\SharePoint.Modernization.Framework.SampleAddOn.dll" />
+      <!--<AddOn Name="Custom" Type="SharePoint.Modernization.Framework.SampleAddOn.MyCustomFunctions" Assembly="C:\github\BertPnPTools\Solutions\SharePoint.Modernization\SharePoint.Modernization.Framework\bin\Debug\SharePoint.Modernization.Framework.SampleAddOn.dll" />-->
     </AddOns>
     <!-- Web parts with their property definition and mappings to client side web parts --> 
     <WebParts>
@@ -89,7 +89,8 @@ Page transformation file. Describes:
           <Property Name="ViewContentTypeId" Type="string" Functions="" />
           <Property Name="XmlDefinitionLink" Type="string" />
           <Property Name="ListUrl" Type="string" />
-          <Property Name="ListId" Type="guid" Functions="{ListWebRelativeUrl} = ListAddWebRelativeUrl({ListId}); {ListServerRelativeUrl} = Custom.MyListAddServerRelativeUrl({ListId})"/>
+          <!-- {ListServerRelativeUrl} = Custom.MyListAddServerRelativeUrl({ListId}) -->
+          <Property Name="ListId" Type="guid" Functions="{ListWebRelativeUrl} = ListAddWebRelativeUrl({ListId}); {ListServerRelativeUrl} = ListAddServerRelativeUrl({ListId})"/>
           <Property Name="Direction" Type="string"/>
           <Property Name="ViewFlags" Type="string" Functions=""/>
           <Property Name="ViewFlag" Type="string"/>
