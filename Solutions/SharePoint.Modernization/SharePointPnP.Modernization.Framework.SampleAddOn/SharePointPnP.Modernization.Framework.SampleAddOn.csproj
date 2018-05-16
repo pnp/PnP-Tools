@@ -7,8 +7,8 @@
     <ProjectGuid>{7A31933F-BDAD-4B95-A774-EDD4B0F47908}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SharePoint.Modernization.Framework.SampleAddOn</RootNamespace>
-    <AssemblyName>SharePoint.Modernization.Framework.SampleAddOn</AssemblyName>
+    <RootNamespace>SharePointPnP.Modernization.Framework.SampleAddOn</RootNamespace>
+    <AssemblyName>SharePointPnP.Modernization.Framework.SampleAddOn</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

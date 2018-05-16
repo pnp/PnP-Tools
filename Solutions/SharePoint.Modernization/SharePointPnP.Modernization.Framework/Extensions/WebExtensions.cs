@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SharePointPnP.Modernization.Framework;
 
 namespace Microsoft.SharePoint.Client
 {
@@ -10,6 +11,46 @@ namespace Microsoft.SharePoint.Client
     /// </summary>
     public static partial class WebExtensions
     {
+        /// <summary>
+        /// Returns the site pages from a web, optionally filtered on pagename
+        /// </summary>
+        /// <param name="web">Web to get the pages from</param>
+        /// <param name="pageNameStartsWith">Filter to get all pages starting with</param>
+        /// <returns>A list of pages (ListItem intances)</returns>
+        public static ListItemCollection GetPages(this Web web, string pageNameStartsWith = null)
+        {
+            // Get pages library
+            ListCollection listCollection = web.Lists;
+            listCollection.EnsureProperties(coll => coll.Include(li => li.BaseTemplate, li => li.RootFolder));
+            var sitePagesLibrary = listCollection.Where(p => p.BaseTemplate == (int)ListTemplateType.WebPageLibrary).FirstOrDefault();
+            if (sitePagesLibrary != null)
+            {
+                CamlQuery query = null;
+                if (!string.IsNullOrEmpty(pageNameStartsWith))
+                {
+                    query = new CamlQuery
+                    {
+                        ViewXml = string.Format(Constants.CAMLQueryByExtensionAndName, pageNameStartsWith)
+                    };
+                }
+                else
+                {
+                    query = new CamlQuery
+                    {
+                        ViewXml = Constants.CAMLQueryByExtension
+                    };
+                }
+
+                var pages = sitePagesLibrary.GetItems(query);
+                web.Context.Load(pages);
+                web.Context.ExecuteQueryRetry();
+
+                return pages;
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Returns the admins of this site
         /// </summary>

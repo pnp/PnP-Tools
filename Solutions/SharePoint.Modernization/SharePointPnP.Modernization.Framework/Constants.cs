@@ -20,6 +20,35 @@ namespace SharePointPnP.Modernization.Framework
         // Features
         public static readonly Guid FeatureId_Web_ModernPage = new Guid("B6917CB1-93A0-4B97-A84D-7CF49975D4EC");
 
+        // Queries
+        public const string CAMLQueryByExtension = @"
+                <View Scope='Recursive'>
+                  <Query>
+                    <Where>
+                      <Contains>
+                        <FieldRef Name='File_x0020_Type'/>
+                        <Value Type='text'>aspx</Value>
+                      </Contains>
+                    </Where>
+                  </Query>
+                </View>";
+        public const string CAMLQueryByExtensionAndName = @"
+                <View Scope='Recursive'>
+                  <Query>
+                    <Where>
+                      <And>
+                        <Contains>
+                          <FieldRef Name='File_x0020_Type'/>
+                          <Value Type='text'>aspx</Value>
+                        </Contains>
+                        <BeginsWith>
+                          <FieldRef Name='FileLeafRef'/>
+                          <Value Type='text'>{0}</Value>
+                        </BeginsWith>
+                      </And>
+                    </Where>
+                  </Query>
+                </View>";
 
     }
 }
