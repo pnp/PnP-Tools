@@ -11,6 +11,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- SharePoint.Modernization.Scanner v1.4: page webpart mapping percentage and unmapped web parts column + additional commandline options to control the export of web part properties and use of search for site/page usage information
+
+## [May 2018]
+
+### Added
+
+- First preview version of page migration tech that can be used to transform wiki and webpart pages into modern client side pages
+
+### Changed
+
+- Search query tool v2.8.1: Updated PSSQT version [trevis62]
+
 ## [April 2018]
 
 ### Added

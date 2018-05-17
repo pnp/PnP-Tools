@@ -44,6 +44,11 @@ namespace SearchQueryTool.Model
         public string ClientType { get; set; }
         public string PersonalizationData { get; set; }
 
+        public SearchQueryRequest Clone()
+        {
+            return (SearchQueryRequest)this.MemberwiseClone();
+        }
+
         public override Uri GenerateHttpGetUri()
         {
             string sharepointSiteUrl = this.SharePointSiteUrl;
