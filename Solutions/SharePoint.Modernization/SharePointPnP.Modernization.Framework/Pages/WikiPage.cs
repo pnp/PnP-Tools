@@ -1,4 +1,5 @@
-﻿using AngleSharp.Dom.Html;
+﻿using AngleSharp.Dom;
+using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.WebParts;
@@ -89,6 +90,13 @@ namespace SharePointPnP.Modernization.Framework.Pages
                             // Do we find a web part inside...
                             if (((node as IHtmlElement) != null) && ContainsWebPart(node as IHtmlElement))
                             {
+                                // Do we still have non wp html that we need to retain?
+                                var extraText = StripWebPart(node as IHtmlElement);
+                                if (!string.IsNullOrEmpty(extraText))
+                                {
+                                    textContent.AppendLine(extraText);
+                                }
+
                                 // first insert text part (if it was available)
                                 if (!string.IsNullOrEmpty(textContent.ToString()))
                                 {
@@ -249,6 +257,27 @@ namespace SharePointPnP.Modernization.Framework.Pages
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Strips the div holding the web part from the html
+        /// </summary>
+        /// <param name="element">Html element holding one or more web part divs</param>
+        /// <returns>Cleaned html</returns>
+        private string StripWebPart(IHtmlElement element)
+        {
+            IElement copy = element.Clone(true) as IElement;
+            var doc = parser.Parse(copy.OuterHtml);
+            var nodes = doc.All.Where(p => p.LocalName == "div");
+            foreach (var node in nodes)
+            {
+                if (((node as IHtmlElement) != null) && (node as IHtmlElement).ClassList.Contains("ms-rte-wpbox"))
+                {
+                    node.Remove();
+                }
+            }
+
+            return doc.DocumentElement.Children[1].InnerHtml;
         }
 
         /// <summary>
