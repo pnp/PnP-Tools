@@ -269,15 +269,22 @@ namespace SharePointPnP.Modernization.Framework.Pages
             IElement copy = element.Clone(true) as IElement;
             var doc = parser.Parse(copy.OuterHtml);
             var nodes = doc.All.Where(p => p.LocalName == "div");
-            foreach (var node in nodes)
+            if (nodes.Count() > 0)
             {
-                if (((node as IHtmlElement) != null) && (node as IHtmlElement).ClassList.Contains("ms-rte-wpbox"))
+                foreach (var node in nodes.ToList())
                 {
-                    node.Remove();
+                    if (((node as IHtmlElement) != null) && (node as IHtmlElement).ClassList.Contains("ms-rte-wpbox"))
+                    {
+                        node.Remove();
+                    }
                 }
-            }
 
-            return doc.DocumentElement.Children[1].InnerHtml;
+                return doc.DocumentElement.Children[1].InnerHtml;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
