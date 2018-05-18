@@ -170,6 +170,7 @@
     <Compile Include="Transform\Text.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="App.config.sample" />
     <None Include="packages.config" />
   </ItemGroup>
