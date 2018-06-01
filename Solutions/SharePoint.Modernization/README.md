@@ -441,6 +441,16 @@ Filter | Takeaway
 
 # Advanced topics #
 
+## Can I generate the Excel reports for existing scan data? ##
+
+You can do this by specifying the folder(s) with already existing scan data using the -g parameter. The scanner will concatenate the data from all passed folders and will generate the needed reports. The "Page transformation Readiness" report will only be generated if the relevant data is available.
+
+```console
+SharePoint.Modernization.Scanner -g <paths>
+
+SharePoint.Modernization.Scanner -g "c:\temp\636529695601669598,c:\temp\636529695601698765"
+```
+
 ## I'm running SharePoint Online dedicated, is this different? ##
 
 In SharePoint Online Dedicated one can have vanity url's like teams.contoso.com which implies that the tool cannot automatically determine the used url's and tenant admin center url. Using below command line switches you can specify the site url's to scan and the tenant admin center url. Note that the urls need to be separated by a comma.
@@ -507,7 +517,7 @@ SharePoint.Modernization.Scanner -t contoso -c admin@contoso.onmicrosoft.com -p 
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
-SharePoint PnP Modernization scanner 1.1.0.0
+SharePoint PnP Modernization scanner 1.5.0.0
 Copyright (C) 2018 SharePoint PnP
 ==========================================================
 
@@ -557,6 +567,16 @@ https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd
 
   -m, --mode                      (Default: Full) Execution mode. Use following modes: full, GroupifyOnly. Omit or use
                                   full for a full scan
+
+  -b, --exportwebpartproperties   (Default: False) Export the web part property data
+
+  -c, --skipusageinformation      (Default: False) Don't use search to get the site/page usage information and don't
+                                  export that data
+
+  -d, --skipreport                (Default: False) Don't generate an Excel report for the found data
+
+  -g, --exportpaths               List of paths (e.g. c:\temp\636529695601669598,c:\temp\636529695601656430)
+                                  containing scan results you want to add to the report
 
   -i, --clientid                  Client ID of the app-only principal used to scan your site collections
 
