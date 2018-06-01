@@ -18,6 +18,7 @@ SharePoint.Modernization.Scanner | Bert Jansen (**Microsoft**)
 
 Version  | Date | Comments
 ---------| -----| --------
+1.5 | June 1st 2018 | Added generation of Excel based reports which make it easier to consume the generated data
 1.4 | May 5th 2018 | Added web part mapping percentage in page scan + by default raw web part data is not exported + allow to skip search query for site/page usage information
 1.3 | March 16th 2018 | Added site usage information
 1.2 | March 7th 2018 | Reliability improvements
@@ -37,13 +38,17 @@ The main purpose of this tool is to give you a set of reports that you can use t
 - Assess which sites are ready for "groupify": this report will give you "groupify" warnings and blockers which you can use to scope the sites to "groupify" and plan the needed remediation work
 - Learn more about the site pages used in your tenant: knowing which pages you have and their characteristics (type, layout, web part data, usage) is important to prepare for modernizing (a subset of) these pages
 
+Group connection readiness | Page transformation readiness
+---------|----------
+![Group connection readiness report](groupconnection.png) | ![Page transformation readiness report](pagetransformation.png)
+
 # Quick start guide #
 
 ## Download the tool ##
 
 You can download the tool from here:
 
-- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.4.zip?raw=true)
+- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.5.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.Modernization.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -108,6 +113,7 @@ After the run you'll find a new sub folder (e.g. 636519019371118441) which conta
 
 Report | Content
 ---------|----------
+**Office 365 Group Connection Readiness.xlsx** | The report that summarizes the data you need to know to help with assessing the readiness for "Office 365 group connection" also called "Groupify"
 **ModernizationSiteScanResults.csv** | The main "groupify" report contains one row per site collection explaining which sites are ready to "groupify" with which warnings. It will also tell which "groupify" blockers it found and provide extensive information on the applied permission model.
 **ModernizationWebScanResults.csv** | Having sub sites is a potential "groupify" warning and this report contains "groupify" relevant information about each web. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the found warnings/blockers.
 **ModernizationUserCustomActionScanResults.csv** | When a site is "Groupified" it will get a "modern" home page...and  user custom actions that embed script do not work on modern pages. This report contains all the site/web scoped user custom actions that do not work on modern pages. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the actual found user custom actions
@@ -183,6 +189,8 @@ After the run you'll find a new sub folder (e.g. 636530041937506713) which conta
 
 Report | Content
 ---------|----------
+**Office 365 Group Connection Readiness.xlsx** | The report that summarizes the data you need to know to help with assessing the readiness for "Office 365 group connection" also called "Groupify"
+**Office 365 Page Transformation Readiness.xlsx** | The report that summarizes the data you need to know to help with assessing the readiness for "Page Transformation" (so transforming from classic pages into modern pages)
 **ModernizationSiteScanResults.csv** | The main "groupify" report contains one row per site collection explaining which sites are ready to "groupify" with which warnings. It will also tell which "groupify" blockers it found and provide extensive information on the applied permission model.
 **ModernizationWebScanResults.csv** | Having sub sites is a potential "groupify" warning and this report contains "groupify" relevant information about each web. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the found warnings/blockers.
 **ModernizationUserCustomActionScanResults.csv** | When a site is "Groupified" it will get a "modern" home page...and  user custom actions that embed script do not work on modern pages. This report contains all the site/web scoped user custom actions that do not work on modern pages. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the actual found user custom actions.
