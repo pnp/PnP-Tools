@@ -4,6 +4,7 @@ using OfficeOpenXml.Table;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -30,6 +31,14 @@ namespace SharePoint.Modernization.Scanner.Reports
             DataTable unmappedWebPartsTable = null;
             ScanSummary scanSummary = null;
 
+            var outputfolder = ".";
+            DateTime dateCreationTime = DateTime.MinValue;
+            if (exportPaths.Count == 1)
+            {
+                outputfolder = new DirectoryInfo(exportPaths[0]).FullName;
+                var pathToUse = exportPaths[0].TrimEnd(new char[] { '\\' });
+                dateCreationTime = File.GetCreationTime($"{pathToUse}\\{PageCSV}");
+            }
 
             // import the data and "clean" it
             foreach (var path in exportPaths)
@@ -114,12 +123,12 @@ namespace SharePoint.Modernization.Scanner.Reports
             // Get the template Excel file
             using (Stream stream = typeof(Generator).Assembly.GetManifestResourceStream($"SharePoint.Modernization.Scanner.Reports.{PageMasterFile}"))
             {
-                if (File.Exists(PageMasterFile))
+                if (File.Exists($"{outputfolder}\\{PageMasterFile}"))
                 {
-                    File.Delete(PageMasterFile);
+                    File.Delete($"{outputfolder}\\{PageMasterFile}");
                 }
 
-                using (var fileStream = File.Create(PageMasterFile))
+                using (var fileStream = File.Create($"{outputfolder}\\{PageMasterFile}"))
                 {
                     stream.Seek(0, SeekOrigin.Begin);
                     stream.CopyTo(fileStream);
@@ -128,12 +137,12 @@ namespace SharePoint.Modernization.Scanner.Reports
 
             // Push the data to Excel, starting from an Excel template
             //using (var excel = new ExcelPackage(new FileInfo(PageMasterFile)))
-            using (var excel = new ExcelPackage(new FileInfo(PageMasterFile), false))
+            using (var excel = new ExcelPackage(new FileInfo($"{outputfolder}\\{PageMasterFile}"), false))
             {
 
+                var dashboardSheet = excel.Workbook.Worksheets["Dashboard"];
                 if (scanSummary != null)
                 {
-                    var dashboardSheet = excel.Workbook.Worksheets["Dashboard"];
                     if (scanSummary.SiteCollections.HasValue)
                     {
                         dashboardSheet.SetValue("X7", scanSummary.SiteCollections.Value);
@@ -156,6 +165,15 @@ namespace SharePoint.Modernization.Scanner.Reports
                     }
                 }
 
+                if (dateCreationTime != DateTime.MinValue)
+                {
+                    dashboardSheet.SetValue("X6", dateCreationTime.ToString("G", DateTimeFormatInfo.InvariantInfo));
+                }
+                else
+                {
+                    dashboardSheet.SetValue("X6", "-");
+                }
+
                 //var readyForPageTransformationSheet = excel.Workbook.Worksheets.Add("ReadyForPageTransformation");
                 //var insertedRange = readyForPageTransformationSheet.Cells["A1"].LoadFromDataTable(readyForPageTransformationTable, true);
 
@@ -169,17 +187,17 @@ namespace SharePoint.Modernization.Scanner.Reports
                 InsertTableData(unmappedWebPartsSheet.Tables[0], unmappedWebPartsTable);
 
                 // Save the resulting file
-                if (File.Exists(PageReport))
+                if (File.Exists($"{outputfolder}\\{PageReport}"))
                 {
-                    File.Delete(PageReport);
+                    File.Delete($"{outputfolder}\\{PageReport}");
                 }
-                excel.SaveAs(new FileInfo(PageReport));
+                excel.SaveAs(new FileInfo($"{outputfolder}\\{PageReport}"));
             }
 
             // Clean the template file
-            if (File.Exists(PageMasterFile))
+            if (File.Exists($"{outputfolder}\\{PageMasterFile}"))
             {
-                File.Delete(PageMasterFile);
+                File.Delete($"{outputfolder}\\{PageMasterFile}");
             }
         }
 
@@ -191,6 +209,15 @@ namespace SharePoint.Modernization.Scanner.Reports
             DataTable modernUIWarningsTable = null;
             DataTable permissionWarningsTable = null;
             ScanSummary scanSummary = null;
+
+            var outputfolder = ".";
+            DateTime dateCreationTime = DateTime.MinValue;
+            if (exportPaths.Count == 1)
+            {
+                outputfolder = new DirectoryInfo(exportPaths[0]).FullName;
+                var pathToUse = exportPaths[0].TrimEnd(new char[] { '\\' });
+                dateCreationTime = File.GetCreationTime($"{pathToUse}\\{PageCSV}");
+            }
 
             // import the data and "clean" it
             foreach (var path in exportPaths)
@@ -315,12 +342,12 @@ namespace SharePoint.Modernization.Scanner.Reports
             // Get the template Excel file
             using (Stream stream = typeof(Generator).Assembly.GetManifestResourceStream($"SharePoint.Modernization.Scanner.Reports.{GroupifyMasterFile}"))
             {
-                if (File.Exists(GroupifyMasterFile))
+                if (File.Exists($"{outputfolder}\\{GroupifyMasterFile}"))
                 {
-                    File.Delete(GroupifyMasterFile);
+                    File.Delete($"{outputfolder}\\{GroupifyMasterFile}");
                 }
 
-                using (var fileStream = File.Create(GroupifyMasterFile))
+                using (var fileStream = File.Create($"{outputfolder}\\{GroupifyMasterFile}"))
                 {
                     stream.Seek(0, SeekOrigin.Begin);
                     stream.CopyTo(fileStream);
@@ -328,11 +355,12 @@ namespace SharePoint.Modernization.Scanner.Reports
             }
 
             // Push the data to Excel, starting from an Excel template
-            using (var excel = new ExcelPackage(new FileInfo(GroupifyMasterFile), false))
+            using (var excel = new ExcelPackage(new FileInfo($"{outputfolder}\\{GroupifyMasterFile}"), false))
             {
+                var dashboardSheet = excel.Workbook.Worksheets["Dashboard"];
+
                 if (scanSummary != null)
                 {
-                    var dashboardSheet = excel.Workbook.Worksheets["Dashboard"];
                     if (scanSummary.SiteCollections.HasValue)
                     {
                         dashboardSheet.SetValue("U7", scanSummary.SiteCollections.Value);
@@ -355,6 +383,14 @@ namespace SharePoint.Modernization.Scanner.Reports
                     }
                 }
 
+                if (dateCreationTime != DateTime.MinValue)
+                {
+                    dashboardSheet.SetValue("U6", dateCreationTime.ToString("G", DateTimeFormatInfo.InvariantInfo));
+                }
+                else
+                {
+                    dashboardSheet.SetValue("U6", "-");
+                }
                 var readyForGroupifySheet = excel.Workbook.Worksheets["ReadyForGroupify"];
                 InsertTableData(readyForGroupifySheet.Tables[0], readyForGroupifyTable);
 
@@ -371,17 +407,17 @@ namespace SharePoint.Modernization.Scanner.Reports
                 InsertTableData(permissionsWarningsSheet.Tables[0], permissionWarningsTable);
 
                 // Save the resulting file
-                if (File.Exists(GroupifyReport))
+                if (File.Exists($"{outputfolder}\\{GroupifyReport}"))
                 {
-                    File.Delete(GroupifyReport);
+                    File.Delete($"{outputfolder}\\{GroupifyReport}");
                 }
-                excel.SaveAs(new FileInfo(GroupifyReport));
+                excel.SaveAs(new FileInfo($"{outputfolder}\\{GroupifyReport}"));
             }
 
             // Clean the template file
-            if (File.Exists(GroupifyMasterFile))
+            if (File.Exists($"{outputfolder}\\{GroupifyMasterFile}"))
             {
-                File.Delete(GroupifyMasterFile);
+                File.Delete($"{outputfolder}\\{GroupifyMasterFile}");
             }
 
         }
