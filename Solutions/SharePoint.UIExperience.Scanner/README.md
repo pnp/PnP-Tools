@@ -40,8 +40,6 @@ The main purpose of this tool is to give you a report of sites, lists, libraries
 - Which lists are not presenting themselves using the "modern" user interface and what's causing that: there are many reasons why a list is falling back to showing the "classic" user interface, all of which will be listed in the report.
 - Get a better understanding of which customizations in your tenant are not compatible with the "modern" experiences
 
-List and Library modern UI readiness 
----------|----------
 ![List and Library modern UI readiness report](modernuicompatibilityreport.png)
 
 Using the reports you can streamline the "modern" experience in your tenant: you can increase the amount of sites, libraries and lists that work fine using "modern", but the reports also give you the data that allows you to disable "modern" for a subset of sites which are not yet ready for it.
