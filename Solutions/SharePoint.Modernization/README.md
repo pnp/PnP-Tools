@@ -18,6 +18,7 @@ SharePoint.Modernization.Scanner | Bert Jansen (**Microsoft**)
 
 Version  | Date | Comments
 ---------| -----| --------
+1.5 | June 1st 2018 | Added generation of Excel based reports which make it easier to consume the generated data
 1.4 | May 5th 2018 | Added web part mapping percentage in page scan + by default raw web part data is not exported + allow to skip search query for site/page usage information
 1.3 | March 16th 2018 | Added site usage information
 1.2 | March 7th 2018 | Reliability improvements
@@ -37,13 +38,17 @@ The main purpose of this tool is to give you a set of reports that you can use t
 - Assess which sites are ready for "groupify": this report will give you "groupify" warnings and blockers which you can use to scope the sites to "groupify" and plan the needed remediation work
 - Learn more about the site pages used in your tenant: knowing which pages you have and their characteristics (type, layout, web part data, usage) is important to prepare for modernizing (a subset of) these pages
 
+Group connection readiness | Page transformation readiness
+---------|----------
+![Group connection readiness report](groupconnection.png) | ![Page transformation readiness report](pagetransformation.png)
+
 # Quick start guide #
 
 ## Download the tool ##
 
 You can download the tool from here:
 
-- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.4.zip?raw=true)
+- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.5.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.Modernization.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -108,6 +113,7 @@ After the run you'll find a new sub folder (e.g. 636519019371118441) which conta
 
 Report | Content
 ---------|----------
+**Office 365 Group Connection Readiness.xlsx** | The report that summarizes the data you need to know to help with assessing the readiness for "Office 365 group connection" also called "Groupify"
 **ModernizationSiteScanResults.csv** | The main "groupify" report contains one row per site collection explaining which sites are ready to "groupify" with which warnings. It will also tell which "groupify" blockers it found and provide extensive information on the applied permission model.
 **ModernizationWebScanResults.csv** | Having sub sites is a potential "groupify" warning and this report contains "groupify" relevant information about each web. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the found warnings/blockers.
 **ModernizationUserCustomActionScanResults.csv** | When a site is "Groupified" it will get a "modern" home page...and  user custom actions that embed script do not work on modern pages. This report contains all the site/web scoped user custom actions that do not work on modern pages. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the actual found user custom actions
@@ -183,6 +189,8 @@ After the run you'll find a new sub folder (e.g. 636530041937506713) which conta
 
 Report | Content
 ---------|----------
+**Office 365 Group Connection Readiness.xlsx** | The report that summarizes the data you need to know to help with assessing the readiness for "Office 365 group connection" also called "Groupify"
+**Office 365 Page Transformation Readiness.xlsx** | The report that summarizes the data you need to know to help with assessing the readiness for "Page Transformation" (so transforming from classic pages into modern pages)
 **ModernizationSiteScanResults.csv** | The main "groupify" report contains one row per site collection explaining which sites are ready to "groupify" with which warnings. It will also tell which "groupify" blockers it found and provide extensive information on the applied permission model.
 **ModernizationWebScanResults.csv** | Having sub sites is a potential "groupify" warning and this report contains "groupify" relevant information about each web. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the found warnings/blockers.
 **ModernizationUserCustomActionScanResults.csv** | When a site is "Groupified" it will get a "modern" home page...and  user custom actions that embed script do not work on modern pages. This report contains all the site/web scoped user custom actions that do not work on modern pages. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the actual found user custom actions.
@@ -433,6 +441,16 @@ Filter | Takeaway
 
 # Advanced topics #
 
+## Can I generate the Excel reports for existing scan data? ##
+
+You can do this by specifying the folder(s) with already existing scan data using the -g parameter. The scanner will concatenate the data from all passed folders and will generate the needed reports. The "Page transformation Readiness" report will only be generated if the relevant data is available.
+
+```console
+SharePoint.Modernization.Scanner -g <paths>
+
+SharePoint.Modernization.Scanner -g "c:\temp\636529695601669598,c:\temp\636529695601698765"
+```
+
 ## I'm running SharePoint Online dedicated, is this different? ##
 
 In SharePoint Online Dedicated one can have vanity url's like teams.contoso.com which implies that the tool cannot automatically determine the used url's and tenant admin center url. Using below command line switches you can specify the site url's to scan and the tenant admin center url. Note that the urls need to be separated by a comma.
@@ -499,7 +517,7 @@ SharePoint.Modernization.Scanner -t contoso -c admin@contoso.onmicrosoft.com -p 
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
-SharePoint PnP Modernization scanner 1.1.0.0
+SharePoint PnP Modernization scanner 1.5.0.0
 Copyright (C) 2018 SharePoint PnP
 ==========================================================
 
@@ -549,6 +567,16 @@ https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd
 
   -m, --mode                      (Default: Full) Execution mode. Use following modes: full, GroupifyOnly. Omit or use
                                   full for a full scan
+
+  -b, --exportwebpartproperties   (Default: False) Export the web part property data
+
+  -c, --skipusageinformation      (Default: False) Don't use search to get the site/page usage information and don't
+                                  export that data
+
+  -d, --skipreport                (Default: False) Don't generate an Excel report for the found data
+
+  -g, --exportpaths               List of paths (e.g. c:\temp\636529695601669598,c:\temp\636529695601656430)
+                                  containing scan results you want to add to the report
 
   -i, --clientid                  Client ID of the app-only principal used to scan your site collections
 

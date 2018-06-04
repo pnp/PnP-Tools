@@ -1,4 +1,9 @@
-﻿namespace SharePoint.Modernization.Scanner
+﻿using SharePoint.Modernization.Scanner.Reports;
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+namespace SharePoint.Modernization.Scanner
 {
     /// <summary>
     /// SharePoint PnP Modernization scanner
@@ -16,15 +21,42 @@
             var options = new Options();
             options.ValidateOptions(args);
 
-            //Instantiate scan job
-            ModernizationScanJob job = new ModernizationScanJob(options)
+            if (options.ExportPaths != null && options.ExportPaths.Count > 0)
             {
+                Generator generator = new Generator();
+                generator.CreateGroupifyReport(options.ExportPaths);
+                generator.CreatePageReport(options.ExportPaths);
+            }
+            else
+            {
+                //Instantiate scan job
+                ModernizationScanJob job = new ModernizationScanJob(options)
+                {
 
-                // I'm debugging
-                //UseThreading = false
-            };
+                    // I'm debugging
+                    //UseThreading = false
+                };
 
-            job.Execute();
+                job.Execute();
+
+                // Create reports
+                if (!options.SkipReport)
+                {
+                    string workingFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                    List<string> paths = new List<string>
+                    {
+                        Path.Combine(workingFolder, job.OutputFolder)
+                    };
+
+                    var generator = new Generator();
+                    generator.CreateGroupifyReport(paths);
+
+                    if (options.Mode != Mode.GroupifyOnly)
+                    {
+                        generator.CreatePageReport(paths);
+                    }
+                }
+            }            
         }
     }
 }
