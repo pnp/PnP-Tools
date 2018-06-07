@@ -2,7 +2,10 @@
 
 ### Summary ###
 
-Using this scanner you can prepare your classic team sites for modernization via connecting these sites to an Office 365 group (the "groupify" process). This scanner is a key piece if you want to modernize your classic sites. Checkout the [Modernize your classic sites](https://docs.microsoft.com/en-us/sharepoint/dev/transform/modernize-classic-sites) article on docs.microsoft.com to learn more.
+Using this scanner you can prepare your classic team sites for modernization via connecting these sites to an Office 365 group (the "groupify" process). This scanner is a key piece if you want to modernize your classic sites. 
+
+> **Important**
+> Checkout the [Modernize your classic sites](https://docs.microsoft.com/en-us/sharepoint/dev/transform/modernize-classic-sites) article series on docs.microsoft.com to learn more about modernization. [Connect to an Office 365 group](https://docs.microsoft.com/en-us/sharepoint/dev/transform/modernize-connect-to-office365-group) and [Transform classic pages to modern client-side pages](https://docs.microsoft.com/en-us/sharepoint/dev/transform/modernize-userinterface-site-pages) are articles that refer to this scanner.
 
 ### Applies to ###
 
@@ -113,7 +116,7 @@ After the run you'll find a new sub folder (e.g. 636519019371118441) which conta
 
 Report | Content
 ---------|----------
-**Office 365 Group Connection Readiness.xlsx** | The report that summarizes the data you need to know to help with assessing the readiness for "Office 365 group connection" also called "Groupify"
+**Office 365 Group Connection Readiness.xlsx** | The report that summarizes the data you need to know to help with assessing the readiness for "Office 365 group connection" also called "Groupify". Checkout [Analyze and use the scanner data](https://docs.microsoft.com/en-us/sharepoint/dev/transform/modernize-connect-to-office365-group-scanner) to learn more on how to use the scanner results.
 **ModernizationSiteScanResults.csv** | The main "groupify" report contains one row per site collection explaining which sites are ready to "groupify" with which warnings. It will also tell which "groupify" blockers it found and provide extensive information on the applied permission model.
 **ModernizationWebScanResults.csv** | Having sub sites is a potential "groupify" warning and this report contains "groupify" relevant information about each web. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the found warnings/blockers.
 **ModernizationUserCustomActionScanResults.csv** | When a site is "Groupified" it will get a "modern" home page...and  user custom actions that embed script do not work on modern pages. This report contains all the site/web scoped user custom actions that do not work on modern pages. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the actual found user custom actions
@@ -189,7 +192,7 @@ After the run you'll find a new sub folder (e.g. 636530041937506713) which conta
 
 Report | Content
 ---------|----------
-**Office 365 Group Connection Readiness.xlsx** | The report that summarizes the data you need to know to help with assessing the readiness for "Office 365 group connection" also called "Groupify"
+**Office 365 Group Connection Readiness.xlsx** | The report that summarizes the data you need to know to help with assessing the readiness for "Office 365 group connection" also called "Groupify". Checkout [Analyze and use the scanner data](https://docs.microsoft.com/en-us/sharepoint/dev/transform/modernize-connect-to-office365-group-scanner) to learn more on how to use the scanner results.
 **Office 365 Page Transformation Readiness.xlsx** | The report that summarizes the data you need to know to help with assessing the readiness for "Page Transformation" (so transforming from classic pages into modern pages)
 **ModernizationSiteScanResults.csv** | The main "groupify" report contains one row per site collection explaining which sites are ready to "groupify" with which warnings. It will also tell which "groupify" blockers it found and provide extensive information on the applied permission model.
 **ModernizationWebScanResults.csv** | Having sub sites is a potential "groupify" warning and this report contains "groupify" relevant information about each web. This information is also rolled up to the ModernizationSiteScanResults.csv report, so you only need this report if you want to get more details on the found warnings/blockers.
