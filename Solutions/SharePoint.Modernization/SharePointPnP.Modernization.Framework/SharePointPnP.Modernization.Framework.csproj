@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SharePointPnP.Modernization.Framework</RootNamespace>
     <AssemblyName>SharePointPnP.Modernization.Framework</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -151,6 +152,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caml\FieldReference.cs" />
+    <Compile Include="Caml\FieldReferenceFunctionType.cs" />
+    <Compile Include="Caml\Internal\Operators\ComplexOperator.cs" />
+    <Compile Include="Caml\Internal\Operators\InOperator.cs" />
+    <Compile Include="Caml\Internal\Operators\MembershipOperator.cs" />
+    <Compile Include="Caml\Internal\Operators\SimpleOperator.cs" />
+    <Compile Include="Caml\Internal\Values\AnyValue.cs" />
+    <Compile Include="Caml\Internal\Values\ListPropertyValue.cs" />
+    <Compile Include="Caml\Internal\Values\MonthValue.cs" />
+    <Compile Include="Caml\Internal\Values\NowValue.cs" />
+    <Compile Include="Caml\Internal\Values\TodayValue.cs" />
+    <Compile Include="Caml\Internal\Values\UserIdValue.cs" />
+    <Compile Include="Caml\ListPropertyValueItem.cs" />
+    <Compile Include="Caml\LogicalJoin.cs" />
+    <Compile Include="Caml\LogicalJoinType.cs" />
+    <Compile Include="Caml\MembershipType.cs" />
+    <Compile Include="Caml\Operator.cs" />
+    <Compile Include="Caml\OperatorType.cs" />
+    <Compile Include="Caml\OrderByFieldOrder.cs" />
+    <Compile Include="Caml\Query.cs" />
+    <Compile Include="Caml\Statement.cs" />
+    <Compile Include="Caml\Value.cs" />
+    <Compile Include="Caml\ValueType.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Entities\WebPartEntity.cs" />
     <Compile Include="Extensions\ListItemExtensions.cs" />
@@ -198,6 +222,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Caml\credits.txt" />
     <Content Include="Functions\HighlightedContent.txt" />
     <Content Include="Functions\sourcetext.html" />
     <Content Include="Functions\targettext.html" />

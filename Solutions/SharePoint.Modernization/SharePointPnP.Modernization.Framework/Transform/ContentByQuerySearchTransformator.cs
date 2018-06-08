@@ -1,4 +1,5 @@
-﻿using Microsoft.SharePoint.Client;
+﻿using CamlBuilder;
+using Microsoft.SharePoint.Client;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -405,7 +406,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
             this.clientContext = cc;
             this.properties = new ContentRollupWebPartProperties();
             this.queryFields = new List<Field>();
-            
+
             cc.Web.EnsureProperties(p => p.Id, p => p.Url);
             cc.Site.EnsureProperties(p => p.Id);
 
@@ -414,7 +415,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
             this.properties.SiteId = cc.Site.Id.ToString();
             this.properties.MaxItemsPerPage = 8;
             this.properties.HideWebPartWhenEmpty = false;
-            this.properties.Sites = new List<SiteMetadata>();            
+            this.properties.Sites = new List<SiteMetadata>();
         }
         #endregion
 
@@ -459,6 +460,8 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 this.properties.LastListId = this.properties.ListId;
                 this.properties.ListTitle = list.Title;
                 this.properties.DataProviderId = "List";
+                //this.properties.DataProviderId = "Search";
+
                 this.properties.IsDefaultDocumentLibrary = defaultDocLib.Id.Equals(list.Id);
 
                 // TODO: verify upper limit bound
@@ -491,7 +494,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 query.ContentTypes.AddRange(MapToContentTypes(cbq.ContentTypeBeginsWithId));
 
                 // Filtering
-                var filter1 = MapToFilter(list, cbq.FilterOperator1, cbq.FilterField1, cbq.FilterField1Value, null);
+                var filter1 = MapToFilter(list, cbq.FilterOperator1, cbq.FilterField1, cbq.FilterField1Value, FilterChainingOperator.And);
                 if (filter1 != null)
                 {
                     query.Filters.Add(filter1);
@@ -529,15 +532,9 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 // assign query
                 this.properties.Query = query;
 
-                // Experiment with build caml based on currently defined query (this.properties.Query) and the cbq input ==> not possible to override all options, but required to handle things like [me]
-                // If not specified web part will build CAML itself...except in case of [me] or [today] filter values
-                if (this.properties.Query.Filters.Any() && (
-                        this.properties.Query.Filters.Where(p => p.Value.ToString().ToLower() == "[me]").FirstOrDefault() != null ||
-                        this.properties.Query.Filters.Where(p => p.Value.ToString().ToLower().StartsWith("[today]")).FirstOrDefault() != null
-                        )
-                   )
+                if (this.properties.Query.Filters.Any())
                 {
-                    this.properties.Caml = CamlBuilder(list, cbq);
+                    this.properties.Caml = CamlQueryBuilder(list, cbq);
                 }
             }
             else
@@ -597,87 +594,10 @@ namespace SharePointPnP.Modernization.Framework.Transform
         }
 
         #region Helper methods
-        #region CAML Query builder - not needed so far
-        private string CamlFilterValueBuilder(string fieldName, string fieldValue)
-        {
-            // default to Text
-            string valueType = "Text";
-            string value = fieldValue;
 
-            var field = this.queryFields.Where(p => p.InternalName == fieldName).FirstOrDefault();
-            if (field != null)
-            {
-                if (field.FieldTypeKind == FieldType.User)
-                {
-                    if (fieldValue.Equals("[me]", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        value = "<UserID Type=\"Integer\" />";
-                        valueType = "Integer";
-                    }
-                    else
-                    {
-                        valueType = "User";
-                    }
-                }
-                else if (field.FieldTypeKind == FieldType.DateTime && fieldValue.StartsWith("[today]", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    string days = fieldValue.ToLower().Replace("[today]", "");
-
-                    if (string.IsNullOrEmpty(days) || !int.TryParse(days, out int offset))
-                    {
-                        offset = 0;
-                    }
-
-                    value = $"<Today OffsetDays=\"{offset}\" />";
-                    valueType = "DateTime";
-                }
-            }
-
-            // Special case
-            if (fieldName == "FSObjType")
-            {
-                valueType = "Integer";
-            }
-
-            return $"<Value Type=\"{valueType}\">{value}</Value>";
-        }
-
-        private string CamlFilterBuilder(SearchQueryFilter queryFilter)
-        {
-            string filter = "";
-
-            if (queryFilter.Op == FilterOperator.BeginsWith)
-            {
-                filter = $"<BeginsWith><FieldRef Name=\"{queryFilter.Fieldname}\"/>{CamlFilterValueBuilder(queryFilter.Fieldname, queryFilter.Value.ToString())}</BeginsWith>";
-            }
-            else if (queryFilter.Op == FilterOperator.Contains)
-            {
-                filter = $"<Contains><FieldRef Name=\"{queryFilter.Fieldname}\"/>{CamlFilterValueBuilder(queryFilter.Fieldname, queryFilter.Value.ToString())}</Contains>";
-            }
-            else if (queryFilter.Op == FilterOperator.Equals)
-            {
-                filter = $"<Eq><FieldRef Name=\"{queryFilter.Fieldname}\"/>{CamlFilterValueBuilder(queryFilter.Fieldname, queryFilter.Value.ToString())}</Eq>";
-            }
-            else if (queryFilter.Op == FilterOperator.NotEqual)
-            {
-                filter = $"<Neq><FieldRef Name=\"{queryFilter.Fieldname}\"/>{CamlFilterValueBuilder(queryFilter.Fieldname, queryFilter.Value.ToString())}</Neq>";
-            }
-            else if (queryFilter.Op == FilterOperator.GreaterThan)
-            {
-                filter = $"<Gt><FieldRef Name=\"{queryFilter.Fieldname}\"/>{CamlFilterValueBuilder(queryFilter.Fieldname, queryFilter.Value.ToString())}</Gt>";
-            }
-            else if (queryFilter.Op == FilterOperator.LessThan)
-            {
-                filter = $"<Lt><FieldRef Name=\"{queryFilter.Fieldname}\"/>{CamlFilterValueBuilder(queryFilter.Fieldname, queryFilter.Value.ToString())}</Lt>";
-            }
-
-            return filter;
-        }
-
-        private string CamlBuilder(List list, ContentByQuery cbq)
-        {
-            string filterValue = "";
-
+        #region CAML Query Builder
+        private string CamlQueryBuilder(List list, ContentByQuery cbq)
+        {            
             // Copy the CBQW filters
             List<SearchQueryFilter> filters = new List<SearchQueryFilter>();
             filters.AddRange(this.properties.Query.Filters);
@@ -690,109 +610,6 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 Value = 0
             });
 
-            // Do we have filters to apply?
-            if (filters.Any())
-            {
-                // Generate filter strings
-                int i = 0;
-                foreach (var queryFilter in filters)
-                {
-                    i++;
-                    filterValue = $"{filterValue}[%%Start{i}%%]{CamlFilterBuilder(queryFilter)}[%%Stop{i}%%]";
-                }
-
-                // Replace filter and/or placeholders
-                if (filters.Count == 1)
-                {
-                    filterValue = filterValue.Replace("[%%Start1%%]", "").Replace("[%%Stop1%%]", "");
-                }
-                else if (filters.Count == 2)
-                {
-                    if (filters[1].ChainingOperatorUsedInCQWP == FilterChainingOperator.And)
-                    {
-                        filterValue = filterValue.Replace("[%%Start1%%]", "").Replace("[%%Stop1%%]", "");
-                        filterValue = filterValue.Replace("[%%Start2%%]", "").Replace("[%%Stop2%%]", "");
-                    }
-                    else
-                    {
-                        filterValue = filterValue.Replace("[%%Start1%%]", "<Or>").Replace("[%%Stop1%%]", "");
-                        filterValue = filterValue.Replace("[%%Start2%%]", "").Replace("[%%Stop2%%]", "</Or>");
-                    }
-                }
-                else if (filters.Count == 3)
-                {
-                    if (filters[1].ChainingOperatorUsedInCQWP == FilterChainingOperator.And && 
-                        filters[2].ChainingOperatorUsedInCQWP == FilterChainingOperator.And)
-                    {
-                        filterValue = filterValue.Replace("[%%Start1%%]", "<And><And>").Replace("[%%Stop1%%]", "");
-                        filterValue = filterValue.Replace("[%%Start2%%]", "").Replace("[%%Stop2%%]", "</And>");
-                        filterValue = filterValue.Replace("[%%Start3%%]", "<And>").Replace("[%%Stop3%%]", "</And></And>");
-                    }
-                    else if (filters[1].ChainingOperatorUsedInCQWP == FilterChainingOperator.Or && 
-                             filters[2].ChainingOperatorUsedInCQWP == FilterChainingOperator.Or)
-                    {
-                        filterValue = filterValue.Replace("[%%Start1%%]", "<Or><Or>").Replace("[%%Stop1%%]", "");
-                        filterValue = filterValue.Replace("[%%Start2%%]", "").Replace("[%%Stop2%%]", "</Or>");
-                        filterValue = filterValue.Replace("[%%Start3%%]", "<Or>").Replace("[%%Stop3%%]", "</Or></Or>");
-                    }
-                    else if (filters[1].ChainingOperatorUsedInCQWP == FilterChainingOperator.Or && 
-                             filters[2].ChainingOperatorUsedInCQWP == FilterChainingOperator.And)
-                    {
-                        filterValue = filterValue.Replace("[%%Start1%%]", "<Or>").Replace("[%%Stop1%%]", "");
-                        filterValue = filterValue.Replace("[%%Start2%%]", "").Replace("[%%Stop2%%]", "</Or>");
-                        filterValue = filterValue.Replace("[%%Start3%%]", "").Replace("[%%Stop3%%]", "");
-                    }
-                    else if (filters[1].ChainingOperatorUsedInCQWP == FilterChainingOperator.And && 
-                             filters[2].ChainingOperatorUsedInCQWP == FilterChainingOperator.Or)
-                    {
-                        filterValue = filterValue.Replace("[%%Start1%%]", "<And>").Replace("[%%Stop1%%]", "");
-                        filterValue = filterValue.Replace("[%%Start2%%]", "").Replace("[%%Stop2%%]", "</And>");
-                        filterValue = filterValue.Replace("[%%Start3%%]", "<Or>").Replace("[%%Stop3%%]", "</Or>");
-                    }
-                }
-                // Last operator is always an And
-                else if (filters.Count == 4)
-                {
-                    if (filters[1].ChainingOperatorUsedInCQWP == FilterChainingOperator.And && 
-                        filters[2].ChainingOperatorUsedInCQWP == FilterChainingOperator.And && 
-                        filters[3].ChainingOperatorUsedInCQWP == FilterChainingOperator.And)
-                    {
-                        filterValue = filterValue.Replace("[%%Start1%%]", "<And>").Replace("[%%Stop1%%]", "");
-                        filterValue = filterValue.Replace("[%%Start2%%]", "").Replace("[%%Stop2%%]", "</And>");
-                        filterValue = filterValue.Replace("[%%Start3%%]", "<And>").Replace("[%%Stop3%%]", "");
-                        filterValue = filterValue.Replace("[%%Start4%%]", "").Replace("[%%Stop4%%]", "</And>");
-                    }
-                    else if (filters[1].ChainingOperatorUsedInCQWP == FilterChainingOperator.Or && 
-                             filters[2].ChainingOperatorUsedInCQWP == FilterChainingOperator.Or && 
-                             filters[3].ChainingOperatorUsedInCQWP == FilterChainingOperator.And)
-                    {
-                        filterValue = filterValue.Replace("[%%Start1%%]", "<Or><Or>").Replace("[%%Stop1%%]", "");
-                        filterValue = filterValue.Replace("[%%Start2%%]", "").Replace("[%%Stop2%%]", "</Or>");
-                        filterValue = filterValue.Replace("[%%Start3%%]", "<Or>").Replace("[%%Stop3%%]", "</Or></Or>");
-                        filterValue = filterValue.Replace("[%%Start4%%]", "<And>").Replace("[%%Stop4%%]", "</And>");
-                    }
-                    else if (filters[1].ChainingOperatorUsedInCQWP == FilterChainingOperator.Or && 
-                             filters[2].ChainingOperatorUsedInCQWP == FilterChainingOperator.And && 
-                             filters[3].ChainingOperatorUsedInCQWP == FilterChainingOperator.And)
-                    {
-                        filterValue = filterValue.Replace("[%%Start1%%]", "<Or>").Replace("[%%Stop1%%]", "");
-                        filterValue = filterValue.Replace("[%%Start2%%]", "").Replace("[%%Stop2%%]", "</Or>");
-                        filterValue = filterValue.Replace("[%%Start3%%]", "<And>").Replace("[%%Stop3%%]", "");
-                        filterValue = filterValue.Replace("[%%Start4%%]", "").Replace("[%%Stop4%%]", "</And>");
-                    }
-                    else if (filters[1].ChainingOperatorUsedInCQWP == FilterChainingOperator.And && 
-                             filters[2].ChainingOperatorUsedInCQWP == FilterChainingOperator.Or && 
-                             filters[3].ChainingOperatorUsedInCQWP == FilterChainingOperator.And)
-                    {
-                        filterValue = filterValue.Replace("[%%Start1%%]", "<And>").Replace("[%%Stop1%%]", "");
-                        filterValue = filterValue.Replace("[%%Start2%%]", "").Replace("[%%Stop2%%]", "</And>");
-                        filterValue = filterValue.Replace("[%%Start3%%]", "<Or>").Replace("[%%Stop3%%]", "</Or>");
-                        filterValue = filterValue.Replace("[%%Start4%%]", "<And>").Replace("[%%Stop4%%]", "</And>");
-                    }
-                }
-            }
-            string filter = $"<Where><And>{filterValue}</And></Where>";
-
             // Sorting: if CBQW was sorted on one of the 4 allowed fields then take over the setting, else fall back to default sort (= Modified)
             string sortField = "Modified";
             if (!string.IsNullOrEmpty(cbq.SortBy))
@@ -804,16 +621,146 @@ namespace SharePointPnP.Modernization.Framework.Transform
             }
 
             // Sort order cannot be choosen: Modified = descending, others are ascending
-            string sortOrder = "true";
+            string sortOrder = "True";
             if (sortField == "Modified")
             {
-                sortOrder = "false";
+                sortOrder = "False";
             }
 
-            return $"<View Scope=\"RecursiveAll\"><Query>{filter}<OrderBy><FieldRef Name=\"{sortField}\" Ascending=\"{sortOrder}\" /></OrderBy></Query><ViewFields><FieldRef Name=\"Editor\" /><FieldRef Name=\"FileLeafRef\" /><FieldRef Name=\"File_x0020_Type\" /><FieldRef Name=\"ID\" /><FieldRef Name=\"Modified\" /><FieldRef Name=\"Title\" /><FieldRef Name=\"UniqueID\" /></ViewFields><RowLimit Paged=\"false\">{cbq.ItemLimit}</RowLimit></View>";
+            string query = "";
+            Query queryCaml = null;
+            var and = LogicalJoin.And();
+            var or = LogicalJoin.Or();
+
+            // Do we have filters to apply?
+            if (filters.Any())
+            {
+                for (int i = 0; i < filters.Count; i++)
+                {
+                    var queryFilter = filters[i];
+                    var nextQueryFilter = filters[i];
+                    if (i < filters.Count - 1)
+                    {
+                        nextQueryFilter = filters[i+1];
+                    }
+
+                    if (queryFilter.ChainingOperatorUsedInCQWP == FilterChainingOperator.And && nextQueryFilter.ChainingOperatorUsedInCQWP == FilterChainingOperator.And)
+                    {
+                        and.AddStatement(CamlFilterBuilder(queryFilter));
+                    }
+                    else
+                    {
+                        or.AddStatement(CamlFilterBuilder(queryFilter));
+                    }
+                }
+
+                if (or.HasStatements())
+                {
+                    and.AddStatement(or);
+                }
+            }
+
+            queryCaml = Query.Build(and);
+            query = queryCaml.GetCaml(true).Replace("\r", "").Replace("\n", "");
+            return $"<View Scope=\"RecursiveAll\"><Query>{query}<OrderBy><FieldRef Name=\"{sortField}\" Ascending=\"{sortOrder}\" /></OrderBy></Query><ViewFields><FieldRef Name=\"Editor\" /><FieldRef Name=\"FileLeafRef\" /><FieldRef Name=\"File_x0020_Type\" /><FieldRef Name=\"ID\" /><FieldRef Name=\"Modified\" /><FieldRef Name=\"Title\" /><FieldRef Name=\"UniqueID\" /></ViewFields><RowLimit Paged=\"false\">{cbq.ItemLimit}</RowLimit></View>";
+        }
+
+        private string CamlFilterValueBuilder(string fieldName, string fieldValue)
+        {
+            // default to Text
+            string value = fieldValue;
+
+            var field = this.queryFields.Where(p => p.InternalName == fieldName).FirstOrDefault();
+            if (field != null)
+            {
+                if (field.FieldTypeKind == FieldType.User)
+                {
+                    if (fieldValue.Equals("[me]", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        value = "<UserID Type=\"Integer\" />";
+                    }
+                }
+                else if (field.FieldTypeKind == FieldType.DateTime && fieldValue.StartsWith("[today]", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    string days = fieldValue.ToLower().Replace("[today]", "");
+
+                    if (string.IsNullOrEmpty(days) || !int.TryParse(days, out int offset))
+                    {
+                        offset = 0;
+                    }
+
+                    value = $"<Today OffsetDays=\"{offset}\" />";                    
+                }
+            }
+
+            return value;
+        }
+
+        private CamlBuilder.ValueType CamlFilterValueTypeBuilder(string fieldName, string fieldValue)
+        {
+            // default to Text
+            CamlBuilder.ValueType valueType = CamlBuilder.ValueType.Text;            
+
+            var field = this.queryFields.Where(p => p.InternalName == fieldName).FirstOrDefault();
+            if (field != null)
+            {
+                if (field.FieldTypeKind == FieldType.User)
+                {
+                    if (fieldValue.Equals("[me]", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        valueType = CamlBuilder.ValueType.Integer;
+                    }
+                    else
+                    {
+                        valueType = CamlBuilder.ValueType.User;
+                    }
+                }
+                else if (field.FieldTypeKind == FieldType.DateTime && fieldValue.StartsWith("[today]", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    valueType = CamlBuilder.ValueType.DateTime;
+                }
+            }
+
+            // Special case
+            if (fieldName == "FSObjType")
+            {
+                valueType = CamlBuilder.ValueType.Integer;
+            }
+
+            return valueType;
+        }
+
+        private Operator CamlFilterBuilder(SearchQueryFilter queryFilter)
+        {
+            if (queryFilter.Op == FilterOperator.BeginsWith)
+            {
+                return Operator.BeginsWith(queryFilter.Fieldname, CamlFilterValueTypeBuilder(queryFilter.Fieldname, queryFilter.Value.ToString()), CamlFilterValueBuilder(queryFilter.Fieldname, queryFilter.Value.ToString()));
+            }
+            else if (queryFilter.Op == FilterOperator.Contains)
+            {
+                return Operator.Contains(queryFilter.Fieldname, CamlFilterValueTypeBuilder(queryFilter.Fieldname, queryFilter.Value.ToString()), CamlFilterValueBuilder(queryFilter.Fieldname, queryFilter.Value.ToString()));
+            }
+            else if (queryFilter.Op == FilterOperator.Equals)
+            {
+                return Operator.Equal(queryFilter.Fieldname, CamlFilterValueTypeBuilder(queryFilter.Fieldname, queryFilter.Value.ToString()), CamlFilterValueBuilder(queryFilter.Fieldname, queryFilter.Value.ToString()));
+            }
+            else if (queryFilter.Op == FilterOperator.NotEqual)
+            {
+                return Operator.NotEqual(queryFilter.Fieldname, CamlFilterValueTypeBuilder(queryFilter.Fieldname, queryFilter.Value.ToString()), CamlFilterValueBuilder(queryFilter.Fieldname, queryFilter.Value.ToString()));
+            }
+            else if (queryFilter.Op == FilterOperator.GreaterThan)
+            {
+                return Operator.GreaterThan(queryFilter.Fieldname, CamlFilterValueTypeBuilder(queryFilter.Fieldname, queryFilter.Value.ToString()), CamlFilterValueBuilder(queryFilter.Fieldname, queryFilter.Value.ToString()));
+            }
+            else if (queryFilter.Op == FilterOperator.LessThan)
+            {
+                return Operator.LowerThan(queryFilter.Fieldname, CamlFilterValueTypeBuilder(queryFilter.Fieldname, queryFilter.Value.ToString()), CamlFilterValueBuilder(queryFilter.Fieldname, queryFilter.Value.ToString()));
+            }
+
+            return null;
         }
         #endregion
-
+        
         private ContentLocation MapToContentLocation(string webUrl)
         {
             // ~sitecollection/sub1 scoping is not supported...fall back to complete site collection
