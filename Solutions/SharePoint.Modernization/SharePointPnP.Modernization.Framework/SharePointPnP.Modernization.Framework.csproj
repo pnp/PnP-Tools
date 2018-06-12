@@ -226,7 +226,7 @@
     <Content Include="Functions\HighlightedContent.txt" />
     <Content Include="Functions\sourcetext.html" />
     <Content Include="Functions\targettext.html" />
-    <Content Include="nuget\webpartmapping.xml">
+    <Content Include="Nuget\webpartmapping.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="webpartmapping.xml">
