@@ -223,21 +223,21 @@ function GroupifySite
         #endregion
 
         #region Optional: Add SharePoint Framework customizations - sample
-        LogWrite "Deploying SPFX application customizer"
-        Add-PnPCustomAction -Name "Footer" -Title "Footer" -Location "ClientSideExtension.ApplicationCustomizer" -ClientSideComponentId "edbe7925-a83b-4d61-aabf-81219fdc1539" -ClientSideComponentProperties "{}"
+        # LogWrite "Deploying SPFX application customizer"
+        # Add-PnPCustomAction -Name "Footer" -Title "Footer" -Location "ClientSideExtension.ApplicationCustomizer" -ClientSideComponentId "edbe7925-a83b-4d61-aabf-81219fdc1539" -ClientSideComponentProperties "{}"
         #endregion
 
         #region Optional: Add custom home page - sample
-        LogWrite "Deploying a custom modern home page"
-        $homePage = Get-PnPHomePage -Connection $siteContext
-        $newHomePageName = $homePage.Substring($homePage.IndexOf("/") + 1).Replace(".aspx", "_new.aspx")
-        $newHomePagePath = $homePage.Substring(0, $homePage.IndexOf("/") + 1)
-        $newHomePage = Add-PnPClientSidePage -Name $newHomePageName -LayoutType Article -CommentsEnabled:$false -Publish:$true -Connection $siteContext
+        # LogWrite "Deploying a custom modern home page"
+        # $homePage = Get-PnPHomePage -Connection $siteContext
+        # $newHomePageName = $homePage.Substring($homePage.IndexOf("/") + 1).Replace(".aspx", "_new.aspx")
+        # $newHomePagePath = $homePage.Substring(0, $homePage.IndexOf("/") + 1)
+        # $newHomePage = Add-PnPClientSidePage -Name $newHomePageName -LayoutType Article -CommentsEnabled:$false -Publish:$true -Connection $siteContext
 
         # Add your additional web parts here!
-        Add-PnPClientSidePageSection -Page $newHomePage -SectionTemplate OneColumn -Order 1 -Connection $siteContext
-        Add-PnPClientSideText -Page $newHomePage -Text "Old home page was <a href=""$siteCollectionUrl/$homePage"">here</a>" -Section 1 -Column 1
-        Set-PnPHomePage -RootFolderRelativeUrl ($newHomePagePath + $newHomePageName) -Connection $siteContext
+        # Add-PnPClientSidePageSection -Page $newHomePage -SectionTemplate OneColumn -Order 1 -Connection $siteContext
+        # Add-PnPClientSideText -Page $newHomePage -Text "Old home page was <a href=""$siteCollectionUrl/$homePage"">here</a>" -Section 1 -Column 1
+        # Set-PnPHomePage -RootFolderRelativeUrl ($newHomePagePath + $newHomePageName) -Connection $siteContext
         #endregion        
 
         #region Prepare for group permission configuration
@@ -250,7 +250,7 @@ function GroupifySite
 
         #region Call groupify API
         LogWrite "Call groupify API with following settings: Alias=$alias, IsPublic=$isPublic, Classification=$siteClassification"
-        Add-PnPOffice365GroupToSite -Url $siteCollectionUrl -Alias $alias -DisplayName $alias -Description $web.Description -IsPublic:$isPublic -KeepOldHomePage:$true -Classification $siteClassification -Connection $siteContext
+        Add-PnPOffice365GroupToSite -Url $siteCollectionUrl -Alias $alias -DisplayName $alias -Description $web.Description -IsPublic:$isPublic -KeepOldHomePage:$false -Classification $siteClassification -Connection $siteContext
         #endregion
 
         #region Configure group permissions

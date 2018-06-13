@@ -191,19 +191,26 @@ namespace SharePointPnP.Modernization.Framework.Transform
 
                 #region Page title configuration
                 // Set page title
-                if (pageType.Equals("WikiPage", StringComparison.InvariantCultureIgnoreCase) && pageTransformationInformation.SourcePage.FieldExistsAndUsed(Constants.FileTitleField))
+                if (pageType.Equals("WikiPage", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    targetPage.PageTitle = pageTransformationInformation.SourcePage[Constants.FileTitleField].ToString();
+                    SetPageTitle(pageTransformationInformation, targetPage);
                 }
                 else if (pageType.Equals("WebPartPage"))
                 {
+                    bool titleFound = false;
                     var titleBarWebPart = pageData.Item2.Where(p => p.Type == WebParts.TitleBar).FirstOrDefault();
                     if (titleBarWebPart != null)
                     {
                         if (titleBarWebPart.Properties.ContainsKey("HeaderTitle") && !string.IsNullOrEmpty(titleBarWebPart.Properties["HeaderTitle"]))
                         {
                             targetPage.PageTitle = titleBarWebPart.Properties["HeaderTitle"];
+                            titleFound = true;
                         }
+                    }
+
+                    if (!titleFound)
+                    {
+                        SetPageTitle(pageTransformationInformation, targetPage);
                     }
                 }
 
@@ -298,6 +305,21 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 return (PageTransformation)xmlMapping.Deserialize(stream);
             }
         }
+
+        #region Helper methods
+        private static void SetPageTitle(PageTransformationInformation pageTransformationInformation, ClientSidePage targetPage)
+        {
+            if (pageTransformationInformation.SourcePage.FieldExistsAndUsed(Constants.FileLeafRefField))
+            {
+                string pageTitle = Path.GetFileNameWithoutExtension((pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString()));
+                if (!string.IsNullOrEmpty(pageTitle))
+                {
+                    pageTitle = pageTitle.First().ToString().ToUpper() + pageTitle.Substring(1);
+                    targetPage.PageTitle = pageTitle;
+                }
+            }
+        }
+        #endregion
 
     }
 }

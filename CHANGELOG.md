@@ -5,12 +5,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [June 2018 - Unreleased]
+## [July 2018 - Unreleased]
 
 ### Added
 
 ### Changed
 
+## [June 2018]
+
+### Added
+
+### Changed
+
+- SharePoint.UIExperience.Scanner v1.6: Add Excel based "List and library readiness for modern UI" report generation
 - SharePoint.Modernization.Scanner v1.5: Add Excel based "Group connection readiness" and "Page transformation readiness" report generation
 - SharePoint.Modernization.Scanner v1.4: page webpart mapping percentage and unmapped web parts column + additional commandline options to control the export of web part properties and use of search for site/page usage information
 
