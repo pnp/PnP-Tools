@@ -31,8 +31,7 @@ namespace PSSQT
 
         void Process(SearchQueryResult searchQueryResult);
 
-               
-        bool HandleException(Exception ex);
+        bool HandleException(Exception ex); 
       }
 
     public static class QueryResultProcessorFactory
@@ -106,6 +105,8 @@ namespace PSSQT
 
     public abstract class AbstractQueryResultProcessor : IQueryResultProcessor
     {
+ 
+
         public AbstractQueryResultProcessor(SearchSPIndexCmdlet cmdlet)
         {
             this.Cmdlet = cmdlet;
@@ -134,7 +135,7 @@ namespace PSSQT
 
         public virtual bool HandleException(Exception ex)
         {
-             return false;   // just rethrow
+            return false;   // just rethrow
         }
 
      }

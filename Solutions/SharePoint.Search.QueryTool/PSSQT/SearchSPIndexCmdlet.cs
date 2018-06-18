@@ -10,6 +10,7 @@ using System.Collections.Specialized;
 using System.Collections.Generic;
 using PSSQT.Helpers;
 using PSSQT.Helpers.Authentication;
+using System.Threading;
 
 /**
  * <ParameterSetName	P1	P2
@@ -499,6 +500,15 @@ namespace PSSQT
         public PSAuthenticationMethod AuthenticationMethod { get; set; } = PSAuthenticationMethod.Windows;
 
 
+        [Parameter(
+             Mandatory = false,
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             HelpMessage = "Specify number of milliseconds to sleep between each query batch (500 results) when using RowLimit > 500."
+         )]
+
+
+        public int SleepBetweenQueryBatches { get; set; } = 0;
         #endregion
 
         #region Methods
@@ -587,6 +597,12 @@ namespace PSSQT
                             remaining = totalRows - searchQueryRequest.StartRow.Value;
                             //Console.WriteLine(remaining);
                             searchQueryRequest.RowLimit = remaining < SearchResultBatchSize ? remaining : SearchResultBatchSize;
+
+                            if (SleepBetweenQueryBatches > 0)
+                            {
+                                Thread.Sleep(SleepBetweenQueryBatches);
+                            }
+                            
                         }
                     }
                     else
@@ -792,49 +808,11 @@ namespace PSSQT
             }
             else if (searchQueryRequest.AuthenticationType == AuthenticationType.SPO)
             {
-                Guid runspaceId = Guid.Empty;
-                using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
-                {
-                    runspaceId = ps.Runspace.InstanceId;
-
-                    CookieCollection cc;
-
-                    bool found = Tokens.TryGetValue(runspaceId, out cc);
-
-                    if (!found)
-                    {
-                        cc = PSWebAuthentication.GetAuthenticatedCookies(this, searchQueryRequest.SharePointSiteUrl, AuthenticationType.SPO);
-
-                        if (cc == null)
-                        {
-                            throw new RuntimeException("Authentication cookie returned is null! Authentication failed. Please try again.");  // TODO find another exception
-                        }
-                        else
-                        {
-                            Tokens.Add(runspaceId, cc);
-                        }
-                    }
-
-                    searchQueryRequest.AuthenticationType = AuthenticationType.SPO;
-                    searchQueryRequest.Cookies = cc;
-                    //searchSuggestionsRequest.Cookies = cc;
-                }
+                SPOLegacyLogin(searchQueryRequest);
             }
             else if (AuthenticationMethod == PSAuthenticationMethod.SPOManagement || searchQueryRequest.AuthenticationType == AuthenticationType.SPOManagement)
             {
-                AdalAuthentication adalAuth = new AdalAuthentication();
-
-                var task = adalAuth.Login(searchQueryRequest.SharePointSiteUrl);
-
-                if (!task.Wait(300000))
-                {
-                    throw new TimeoutException("Prompt for user credentials timed out after 5 minutes.");
-                }
-
-                var token = task.Result;
-
-                searchQueryRequest.AuthenticationType = AuthenticationType.SPOManagement;
-                searchQueryRequest.Token = token;
+                AdalLogin(searchQueryRequest);
                 //searchSuggestionsRequest.Token = token;
             }
             else
@@ -843,6 +821,54 @@ namespace PSSQT
                 WindowsIdentity currentWindowsIdentity = WindowsIdentity.GetCurrent();
                 searchQueryRequest.UserName = currentWindowsIdentity.Name;
             }
+        }
+
+        private void SPOLegacyLogin(SearchQueryRequest searchQueryRequest)
+        {
+            Guid runspaceId = Guid.Empty;
+            using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
+            {
+                runspaceId = ps.Runspace.InstanceId;
+
+                CookieCollection cc;
+
+                bool found = Tokens.TryGetValue(runspaceId, out cc);
+
+                if (!found)
+                {
+                    cc = PSWebAuthentication.GetAuthenticatedCookies(this, searchQueryRequest.SharePointSiteUrl, AuthenticationType.SPO);
+
+                    if (cc == null)
+                    {
+                        throw new RuntimeException("Authentication cookie returned is null! Authentication failed. Please try again.");  // TODO find another exception
+                    }
+                    else
+                    {
+                        Tokens.Add(runspaceId, cc);
+                    }
+                }
+
+                searchQueryRequest.AuthenticationType = AuthenticationType.SPO;
+                searchQueryRequest.Cookies = cc;
+                //searchSuggestionsRequest.Cookies = cc;
+            }
+        }
+
+        private static void AdalLogin(SearchQueryRequest searchQueryRequest)
+        {
+            AdalAuthentication adalAuth = new AdalAuthentication();
+
+            var task = adalAuth.Login(searchQueryRequest.SharePointSiteUrl);
+
+            if (!task.Wait(300000))
+            {
+                throw new TimeoutException("Prompt for user credentials timed out after 5 minutes.");
+            }
+
+            var token = task.Result;
+
+            searchQueryRequest.AuthenticationType = AuthenticationType.SPOManagement;
+            searchQueryRequest.Token = token;
         }
 
         private string DefaultClientTypeName()
@@ -869,6 +895,8 @@ namespace PSSQT
         {
             int totalRows = 0;
             bool keepTrying = true;
+            int retryCount = 0;
+            int MaxRetries = 3;
 
             // Pick default result processor
             if (!ResultProcessor.HasValue)     // user has not specified one
@@ -914,7 +942,34 @@ namespace PSSQT
                 }
                 catch (Exception ex)
                 {
-                    if (!queryResultProcessor.HandleException(ex))
+                    // for long running queries retrieving 100s of thousands of results, I have seen that we get a 401 after the token expires (in my case after 30 minutes)
+                    // we'll try to login again here
+                    if (ex.Message.Contains("HTTP 401"))
+                    {
+                        if (retryCount++ < MaxRetries)
+                        {
+                            WriteVerbose($"Received HTTP 401. Retrying authentication. (Attempt {retryCount} of {MaxRetries})");
+                            keepTrying = true;
+
+                            switch (searchQueryRequest.AuthenticationType)
+                            {
+                                case AuthenticationType.SPO:
+                                    SPOLegacyLogin(searchQueryRequest);
+                                    break;
+
+                                case AuthenticationType.SPOManagement:
+                                    AdalLogin(searchQueryRequest);
+                                    break;
+                            }
+
+                        }
+                        else
+                        {
+                            WriteWarning("Received HTTP 401. Max number of retries exhausted. Giving up.");
+                            throw;
+                        }
+                    }
+                    else if (!queryResultProcessor.HandleException(ex))
                     {
                         throw;
                     }
