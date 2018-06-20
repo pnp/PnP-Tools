@@ -16,6 +16,9 @@ namespace SharePoint.PermissiveFile.Scanner
         [OptionList('l', "filetypes", HelpText = "List of additional (besides html and html) file types to scan (e.g. zip,ica) that you want to get scanned", Separator = ',')]
         public virtual IList<string> FileTypes { get; set; }
 
+        [Option('g', "lightmode", HelpText = "Light mode, skips user retrieval and html file analysis", DefaultValue = false)]
+        public bool LightMode { get; set; }
+
 
         /// <summary>
         /// Validate the provided commandline options, will exit the program when not valid

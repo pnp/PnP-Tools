@@ -19,6 +19,7 @@ namespace SharePoint.PermissiveFile.Scanner
         #region Variables
         private Int32 SitesToScan = 0;
         private IList<string> FileTypes;
+        private bool LightMode;
         public ConcurrentDictionary<string, ScanResult> ScanResults = new ConcurrentDictionary<string, ScanResult>();
         #endregion
 
@@ -31,6 +32,7 @@ namespace SharePoint.PermissiveFile.Scanner
         {
             ExpandSubSites = false;
             this.FileTypes = options.FileTypes;
+            this.LightMode = options.LightMode;
 
             this.TimerJobRun += PermissiveScanJob_TimerJobRun;
         }
@@ -73,11 +75,11 @@ namespace SharePoint.PermissiveFile.Scanner
                     using (ClientContext ccAdmin = this.CreateClientContext(tenantAdmin))
                     {
                         List<string> propertiesToRetrieve = new List<string>
-                    {
-                        "SPSiteUrl",
-                        "FileExtension",
-                        "OriginalPath"
-                    };
+                        {
+                            "SPSiteUrl",
+                            "FileExtension",
+                            "OriginalPath"
+                        };
 
                         // Get sites that contain a certain set of files, we'll only process these
                         var results = this.Search(ccAdmin.Web, $"({this.GetBaseSearchQuery()})", propertiesToRetrieve);
@@ -163,64 +165,67 @@ namespace SharePoint.PermissiveFile.Scanner
                         ModifiedBy = searchResult["ModifiedBy"]
                     };
 
-                    // Analyse the files
                     var webUrlData = Web.GetWebUrlFromPageUrl(e.SiteClientContext, result.FileName);
 
-                    Uri fileUri;
-                    if (Uri.TryCreate(result.FileName, UriKind.Absolute, out fileUri) && 
-                       (result.FileExtension.ToLower().Equals("html") || result.FileExtension.ToLower().Equals("htm")))
+                    // Analyse the files
+                    if (!this.LightMode)
                     {
-                        var fileContents = e.SiteClientContext.Web.GetFileAsString(fileUri.LocalPath);
-                        var htmlScan = new HtmlScanner().Scan(fileContents);
-
-                        result.EmbeddedLinkCount = htmlScan.LinkReferences;
-                        result.EmbeddedLocalHtmlLinkCount = htmlScan.LocalHtmlLinkReferences;
-                        result.EmbeddedScriptTagCount = htmlScan.ScriptReferences;                        
-                    }
-
-                    e.SiteClientContext.Load(e.SiteClientContext.Web, p => p.SiteUsers, p => p.AssociatedOwnerGroup);
-                    e.SiteClientContext.Load(e.SiteClientContext.Web.AssociatedOwnerGroup, p => p.Users);
-                    e.SiteClientContext.ExecuteQueryRetry();
-
-                    if (e.SiteClientContext.Web.SiteUsers != null)
-                    {
-                        try
+                        Uri fileUri;
+                        if (Uri.TryCreate(result.FileName, UriKind.Absolute, out fileUri) &&
+                           (result.FileExtension.ToLower().Equals("html") || result.FileExtension.ToLower().Equals("htm")))
                         {
-                            var admins = e.SiteClientContext.Web.SiteUsers.Where(p => p.IsSiteAdmin);
-                            if (admins != null && admins.Count() > 0)
+                            var fileContents = e.SiteClientContext.Web.GetFileAsString(fileUri.LocalPath);
+                            var htmlScan = new HtmlScanner().Scan(fileContents);
+
+                            result.EmbeddedLinkCount = htmlScan.LinkReferences;
+                            result.EmbeddedLocalHtmlLinkCount = htmlScan.LocalHtmlLinkReferences;
+                            result.EmbeddedScriptTagCount = htmlScan.ScriptReferences;
+                        }
+
+                        e.SiteClientContext.Load(e.SiteClientContext.Web, p => p.SiteUsers, p => p.AssociatedOwnerGroup);
+                        e.SiteClientContext.Load(e.SiteClientContext.Web.AssociatedOwnerGroup, p => p.Users);
+                        e.SiteClientContext.ExecuteQueryRetry();
+
+                        if (e.SiteClientContext.Web.SiteUsers != null)
+                        {
+                            try
                             {
-                                foreach (var admin in admins)
+                                var admins = e.SiteClientContext.Web.SiteUsers.Where(p => p.IsSiteAdmin);
+                                if (admins != null && admins.Count() > 0)
                                 {
-                                    if (!string.IsNullOrEmpty(admin.Email))
+                                    foreach (var admin in admins)
                                     {
-                                        result.SiteAdmins = AddSiteOwner(result.SiteAdmins, admin.Email);
+                                        if (!string.IsNullOrEmpty(admin.Email))
+                                        {
+                                            result.SiteAdmins = AddSiteOwner(result.SiteAdmins, admin.Email);
+                                        }
                                     }
                                 }
                             }
-                        }
-                        catch
-                        {
-                            //Eat exceptions...rather log all files in the main result list instead of dropping some due to error getting owners
-                        }
-
-                        try
-                        {
-                            if (e.SiteClientContext.Web.AssociatedOwnerGroup != null && e.SiteClientContext.Web.AssociatedOwnerGroup.Users != null && e.SiteClientContext.Web.AssociatedOwnerGroup.Users.Count > 0)
+                            catch
                             {
-                                foreach (var owner in e.SiteClientContext.Web.AssociatedOwnerGroup.Users)
+                                //Eat exceptions...rather log all files in the main result list instead of dropping some due to error getting owners
+                            }
+
+                            try
+                            {
+                                if (e.SiteClientContext.Web.AssociatedOwnerGroup != null && e.SiteClientContext.Web.AssociatedOwnerGroup.Users != null && e.SiteClientContext.Web.AssociatedOwnerGroup.Users.Count > 0)
                                 {
-                                    if (!string.IsNullOrEmpty(owner.Email))
+                                    foreach (var owner in e.SiteClientContext.Web.AssociatedOwnerGroup.Users)
                                     {
-                                        result.SiteAdmins = AddSiteOwner(result.SiteAdmins, owner.Email);
+                                        if (!string.IsNullOrEmpty(owner.Email))
+                                        {
+                                            result.SiteAdmins = AddSiteOwner(result.SiteAdmins, owner.Email);
+                                        }
                                     }
                                 }
                             }
-                        }
-                        catch
-                        {
-                            //Eat exceptions...rather log all files in the main result list instead of dropping some due to error getting owners
-                        }
+                            catch
+                            {
+                                //Eat exceptions...rather log all files in the main result list instead of dropping some due to error getting owners
+                            }
 
+                        }
                     }
 
                     result.SiteURL = webUrlData.Value;
