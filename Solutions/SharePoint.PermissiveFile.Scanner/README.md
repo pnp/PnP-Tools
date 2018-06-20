@@ -205,6 +205,10 @@ A real life sample:
 SharePoint.PermssiveFile.Scanner -t contoso -c admin@contoso.onmicrosoft.com -p mypassword
 ```
 
+## How to speed up the scanning?
+Using the light mode (-g) you can tell the scanner to leave out some resource intensive steps like retrieving all site owners and admins and analysing the found html files. Simply add -g to you command line to turn on the light mode.
+
+
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
