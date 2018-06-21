@@ -26,7 +26,7 @@ namespace SharePointPnP.Modernization.DocsGenerator
             builder.Append($"# Page Transformation Functions and Selectors{Environment.NewLine}{Environment.NewLine}");
             builder.Append($"## Summary{Environment.NewLine}{Environment.NewLine}");
             builder.Append($"The default page transformation configuration (webpartmapping.xml) uses built-in functions and selectors to drive the mapping from classic web parts to modern 1st party and 3rd party web parts. This page lists all the available functions.{Environment.NewLine}{Environment.NewLine}");
-            builder.Append($"> Note:{Environment.NewLine}");
+            builder.Append($"> [!Note]{Environment.NewLine}");
             builder.Append($"> This page is auto-generated, if you see issues please create a PR against the respective Transformation framework code base.{Environment.NewLine}{Environment.NewLine}");
 
             builder.Append($"## Functions{Environment.NewLine}{Environment.NewLine}");
