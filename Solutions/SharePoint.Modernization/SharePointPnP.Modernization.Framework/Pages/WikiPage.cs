@@ -135,7 +135,14 @@ namespace SharePointPnP.Modernization.Framework.Pages
                                     {
                                         if (!string.IsNullOrEmpty(node.TextContent.Trim()))
                                         {
-                                            textContent.AppendLine(node.TextContent.Trim());
+                                            textContent.AppendLine(node.TextContent);
+                                        }
+                                        else
+                                        {
+                                            if (node.NodeName.Equals("br", StringComparison.InvariantCultureIgnoreCase))
+                                            {
+                                                textContent.AppendLine("<BR>");
+                                            }
                                         }
                                     }
                                 }

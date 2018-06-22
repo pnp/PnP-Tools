@@ -35,7 +35,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
             using (var document = this.parser.Parse(text))
             {
                 // Drop all <BR>
-                DropBRs(document);
+                // DropBRs(document);
 
                 // Process headings: RTE does h2, h3, h4 while wiki does h1, h2, h3, h4
                 TransformHeadings(document, 4, 5);
@@ -61,7 +61,8 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 // Return the transformed html
                 if (document.DocumentElement.Children.Count() > 1)
                 {
-                    return document.DocumentElement.Children[1].InnerHtml;
+                    string updatedText = document.DocumentElement.Children[1].InnerHtml;
+                    return updatedText;
                 }
                 else
                 {
