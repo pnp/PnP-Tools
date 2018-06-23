@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- SharePoint.UIExperience.Scanner v1.7: Switched to use the latest CSOM version + small improvements in the Excel dashboard template
+
 ## [June 2018]
 
 ### Added

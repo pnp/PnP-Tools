@@ -16,6 +16,7 @@ SharePoint.PermissiveFile.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.7 | June 20th 2018 | Introduced light mode, skipping site owner/admin retrieval and html file processing
 1.6 | March 7th 2018 | Reliabilty improvements
 1.5 | February 10th 2018 | Improved output writing approach to increase performance
 1.4 | February 5th 2018 | Allow site scoping via -r or -v parameter
@@ -46,7 +47,7 @@ If this results in False then your tenant is using strict, if this is set to Tru
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [Permissive file scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.PermissiveFile.Scanner/Releases/SharePoint.PermissiveFile.Scanner%20v1.6.zip?raw=true)
+ - [Permissive file scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.PermissiveFile.Scanner/Releases/SharePoint.PermissiveFile.Scanner%20v1.7.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.PermissiveFile.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -204,11 +205,15 @@ A real life sample:
 SharePoint.PermssiveFile.Scanner -t contoso -c admin@contoso.onmicrosoft.com -p mypassword
 ```
 
+## How to speed up the scanning?
+Using the light mode (-g) you can tell the scanner to leave out some resource intensive steps like retrieving all site owners and admins and analysing the found html files. Simply add -g to you command line to turn on the light mode.
+
+
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
-SharePoint PnP Permissive scanner 1.0.0.0
-Copyright (C) 2017 SharePoint PnP
+SharePoint PnP Permissive scanner 1.7.0.0
+Copyright (C) 2018 SharePoint PnP
 ==========================================================
 
 See the PnP-Tools repo for more information at:
@@ -226,22 +231,21 @@ SharePoint.PermissiveFile.Scanner.exe -t <tenant> -u <your user id> -p <your use
 
 e.g. SharePoint.PermissiveFile.Scanner.exe -t contoso -u spadmin@contoso.onmicrosoft.com -p pwd
 
-Specifying your urls to scan + url to tenant admin (needed for SPO Dedicated):
-==============================================================================
+Specifying url to tenant admin (needed for SPO Dedicated):
+==========================================================
 Using app-only:
-SharePoint.PermissiveFile.Scanner.exe -r <urls> -a <tenant admin site> -i <your client id> -s <your client secret>
-e.g. SharePoint.PermissiveFile.Scanner.exe -r https://team.contoso.com/*,https://mysites.contoso.com/* -a
-https://contoso-admin.contoso.com -i 7a5c1615-997a-4059-a784-db2245ec7cc1 -s
-eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
+SharePoint.PermissiveFile.Scanner.exe -a <tenant admin site> -i <your client id> -s <your client secret>
+e.g. SharePoint.PermissiveFile.Scanner.exe -a https://contoso-admin.contoso.com -i 7a5c1615-997a-4059-a784-db2245ec7cc1
+ -s eOb6h+s805O/V3DOpd0dalec33Q6ShrHlSKkSra1FFw=
 
 Using credentials:
-SharePoint.PermissiveFile.Scanner.exe -r <urls> -a <tenant admin site> -u <your user id> -p <your user password>
-e.g. SharePoint.PermissiveFile.Scanner.exe -r https://team.contoso.com/*,https://mysites.contoso.com/* -a
-https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd
-
+SharePoint.PermissiveFile.Scanner.exe -a <tenant admin site> -u <your user id> -p <your user password>
+e.g. SharePoint.PermissiveFile.Scanner.exe -a https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd
 
   -l, --filetypes                 List of additional (besides html and html) file types to scan (e.g. zip,ica) that you
                                   want to get scanned
+
+  -g, --lightmode                 (Default: False) Light mode, skips user retrieval and html file analysis
 
   -i, --clientid                  Client ID of the app-only principal used to scan your site collections
 
@@ -263,6 +267,15 @@ https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd
   -t, --tenant                    Tenant name, e.g. contoso when your sites are under
                                   https://contoso.sharepoint.com/sites. This is the recommended model for SharePoint
                                   Online MT as this way all site collections will be scanned
+
+  -r, --urls                      List of (wildcard) urls (e.g.
+                                  https://contoso.sharepoint.com/*,https://contoso-my.sharepoint.com,https://contoso-my.
+                                  sharepoint.com/personal/*) that you want to get scanned
+
+  -o, --includeod4b               (Default: False) Include OD4B sites in the scan
+
+  -v, --csvfile                   CSV file name (e.g. input.csv) which contains the list of site collection urls that
+                                  you want to scan
 
   -h, --threads                   (Default: 10) Number of parallel threads, maximum = 100
 

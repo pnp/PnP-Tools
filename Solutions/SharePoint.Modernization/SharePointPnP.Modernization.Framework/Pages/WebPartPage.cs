@@ -41,7 +41,8 @@ namespace SharePointPnP.Modernization.Framework.Pages
             cc.Load(pageProperties);
 
             // Load web parts on web part page
-            // TODO: web parts placed outside of a web part zone using SPD are not picked up by the web part manager
+            // Note: Web parts placed outside of a web part zone using SPD are not picked up by the web part manager. There's no API that will return those,
+            //       only possible option to add parsing of the raw page aspx file.
             var limitedWPManager = webPartPage.GetLimitedWebPartManager(PersonalizationScope.Shared);
             cc.Load(limitedWPManager);
 

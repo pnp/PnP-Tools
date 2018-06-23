@@ -134,6 +134,8 @@ namespace SharePointPnP.Modernization.Framework.Transform
             }
             #endregion
 
+            // TODO: add logic to implement page level permission settings to be copied as well
+
             #region Home page handling
             bool replacedByOOBHomePage = false;
             // Check if the transformed page is the web's home page
