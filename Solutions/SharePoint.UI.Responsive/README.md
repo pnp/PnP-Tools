@@ -16,7 +16,7 @@ in order to make a custom responsive version of the out of the box UI of a class
 
 > **Note**: This solution is not compatible with the new experience available only with SharePoint Online.
 
-The Responsive UI Package is described in an Office Dev Center [blog article](https://dev.office.com/blogs/announcing-responsive-ui-package-for-sharepoint-on-premises-2013-2016),
+The Responsive UI Package is described in an Office Dev Center [blog article](https://blogs.msdn.microsoft.com/vesku/2016/03/03/announcing-responsive-ui-package-for-sharepoint-on-premises-2013-and-2016/),
 although this article and its associated video tutorial were written before the PowerShell cmdlet was created,
 so it uses script injection to enable the responsive UI.
 Moving forward we recommend using the PowerShell cmdlet which makes use of the PnP core library.
