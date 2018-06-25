@@ -370,15 +370,41 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 // ================================
                 // rewrite colors
                 // ================================
-                // TODO: map theme fore and back colors
                 // <span class="ms-rteThemeForeColor-5-0">red</span>
-                if (span.ClassName != null && (span.ClassName.ToLower().StartsWith("ms-rtethemeforecolor-") || span.ClassName.ToLower().StartsWith("ms-rtethemebackcolor-")))
+                if (span.ClassName != null && (span.ClassName.ToLower().StartsWith("ms-rtethemeforecolor-")))
                 {
+                    string newClass = null;
+
                     // Modern Theme colors
                     // Darker, Dark, Dark Alternate, Primary, Secondary
                     // Neutral Tertiary, Neutral Secondary, Primary alternate, Neutral primary, Neutral Dark
+                    if (int.TryParse(span.ClassName.ToLower()[span.ClassName.ToLower().Length - 1].ToString(), out int themeCode))
+                    {
+                        string colorName = ThemeCodeToForegroundColorName(themeCode);
+                        if (!string.IsNullOrEmpty(colorName))
+                        {
+                            newClass = $"fontColor{colorName}";
+                        }
+                    }
 
-                    // For now drop the color span
+                    if (!string.IsNullOrEmpty(newClass))
+                    {
+                        // We mapped a color
+                        span.ClassName = newClass;
+                        continue;
+                    }
+                    else
+                    {
+                        // For now drop the color span
+                        ReplaceChildElementByText(parent, span, document);
+                        continue;
+                    }
+                }
+
+                // <span class="ms-rteThemeBackColor-5-0">red</span>
+                if (span.ClassName != null && span.ClassName.ToLower().StartsWith("ms-rtethemebackcolor-"))
+                {
+                    // There are no themed back colors in modern, so for now drop the color span and the background color
                     ReplaceChildElementByText(parent, span, document);
                     continue;
                 }
@@ -627,6 +653,45 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 case 10:
                     {
                         return "Purple";
+                    }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Translated SharePoint Wiki foreground theme color number (e.g. ms-rteThemeForeColor-6-1) to RTE compatible color name
+        /// </summary>
+        /// <param name="themeCode">Theme color code</param>
+        /// <returns>RTE color string</returns>
+        public static string ThemeCodeToForegroundColorName(int themeCode)
+        {
+            switch (themeCode)
+            {
+                case 0:
+                    {
+                        // 0 (light) will go to NeutralPrimary which is the default, hence returning null
+                        return null;
+                    }
+                case 1:
+                    {
+                        return "ThemeSecondary";
+                    }
+                case 2:
+                    {
+                        return "ThemePrimary";
+                    }
+                case 3:
+                    {
+                        return "ThemeDarkAlt";
+                    }
+                case 4:
+                    {
+                        return "ThemeDark";
+                    }
+                case 5:
+                    {
+                        return "ThemeDarker";
                     }
             }
 
