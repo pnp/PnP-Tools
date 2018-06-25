@@ -138,6 +138,13 @@ namespace SharePointPnP.Modernization.Framework.Transform
                                     // Reset the text element 
                                     newWikiTextHtmlFragment = document.CreateElement($"div");
                                     lastElementAdded = null;
+
+                                    // Do we need to add the current element's parent element tree again? 
+                                    // This is important to correctly be able to parent siblings at the level of this image element
+                                    if ((element as IHtmlImageElement).NextElementSibling != null)
+                                    {
+                                        lastElementAdded = RebuildElementTree(newWikiTextHtmlFragment, lastElementAdded, element);
+                                    }
                                 }
                                 else
                                 {
@@ -209,6 +216,13 @@ namespace SharePointPnP.Modernization.Framework.Transform
                                     // Reset the text element 
                                     newWikiTextHtmlFragment = document.CreateElement($"div");
                                     lastElementAdded = null;
+
+                                    // Do we need to add the current element's parent element tree again? 
+                                    // This is important to correctly be able to parent siblings at the level of this iframe element
+                                    if ((element as IHtmlInlineFrameElement).NextElementSibling != null)
+                                    {
+                                        lastElementAdded = RebuildElementTree(newWikiTextHtmlFragment, lastElementAdded, element);
+                                    }
                                 }
                                 else
                                 {
@@ -310,7 +324,35 @@ namespace SharePointPnP.Modernization.Framework.Transform
             return updatedWebParts;
         }
 
+
         #region Helper methods
+        private INode RebuildElementTree(IElement newWikiTextHtmlFragment, INode lastElementAdded, INode element)
+        {
+            List<IElement> elementsToAdd = new List<IElement>();
+            bool notBody = true;
+            IElement e = element.ParentElement;
+            while (notBody)
+            {
+                // Insert as first as we want to walk this from top to bottom
+                elementsToAdd.Insert(0, e);
+                if (!(e.ParentElement is IHtmlBodyElement))
+                {
+                    e = e.ParentElement;
+                }
+                else
+                {
+                    notBody = false;
+                }
+            }
+
+            foreach (var e1 in elementsToAdd)
+            {
+                lastElementAdded = AddNodeToHtmlTree(newWikiTextHtmlFragment, lastElementAdded, e1);
+            }
+
+            return lastElementAdded;
+        }
+
         private void StripEmptyDivAndPfromHtmlTree(IElement newWikiTextHtmlFragment)
         {
             var divs = newWikiTextHtmlFragment.QuerySelectorAll("div");
@@ -344,7 +386,15 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 // Set the correct insertion point for the next cloned node based on how the source element is setup
                 lastElementAdded = SetParentElement(element, lastElementAdded);
                 // Add the cloned node
-                lastElementAdded = lastElementAdded.AppendChild(clone);
+                if (lastElementAdded != null)
+                {
+                    lastElementAdded = lastElementAdded.AppendChild(clone);
+                }
+                else
+                {
+                    // We should not end up here that often unless for some empty nodes (carriage returns) at the very end
+                    lastElementAdded = newWikiTextHtmlFragment.AppendChild(clone);
+                }
             }
 
             return lastElementAdded;
@@ -467,14 +517,14 @@ namespace SharePointPnP.Modernization.Framework.Transform
             {
                 foreach (var node in parent.ChildNodes)
                 {
-                    if (!(node is IHtmlBreakRowElement))
-                    {
+                    //if (!(node is IHtmlBreakRowElement))
+                    //{
                         nodes.Add(node);
                         if ((node is IElement) && node.ChildNodes.Count() > 0)
                         {
                             RecurseNodes((node as IElement), ref nodes);
                         }
-                    }
+                    //}
                 }
             }
         }

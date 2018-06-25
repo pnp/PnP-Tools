@@ -62,6 +62,12 @@ namespace SharePoint.UIExperience.Scanner
         [Option('h', "threads", HelpText = "Number of parallel threads, maximum = 100", DefaultValue = 10)]
         public int Threads { get; set; }
 
+        [Option('d', "skipreport", HelpText = "Don't generate an Excel report for the found data", DefaultValue = false, Required = false)]
+        public bool SkipReport { get; set; }
+
+        [OptionList('g', "exportpaths", HelpText = "List of paths (e.g. c:\\temp\\636529695601669598,c:\\temp\\636529695601656430) containing scan results you want to add to the report", Separator = ',')]
+        public virtual IList<string> ExportPaths { get; set; }
+
         [HelpOption]
         public string GetUsage()
         {

@@ -83,7 +83,8 @@ namespace SharePointPnP.Modernization.Framework.Tests.Transform
                 //wiki_li
                 //webparts.aspx
                 //contentbyquery1.aspx
-                var pages = cc.Web.GetPages("webparts.aspx");
+                //how to use this library.aspx
+                var pages = cc.Web.GetPages("wikitext.aspx");
 
                 foreach (var page in pages)
                 {

@@ -383,7 +383,10 @@ namespace SharePointPnP.Modernization.Framework.Transform
             foreach (var token in globalProperties)
             {
                 // Add property to web part
-                webPart.Properties.Add(token.Key, token.Value);
+                if (!webPart.Properties.ContainsKey(token.Key))
+                {
+                    webPart.Properties.Add(token.Key, token.Value);
+                }
 
                 // Add parameter to model
                 tempList.Add(new Property()

@@ -445,8 +445,7 @@ namespace SharePointPnP.Modernization.Framework.Functions
             {
                 if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
                 {
-                    // provided file link does not exist...we're eating the exception and the page will end up with a default page header
-                    //TODO: log error
+                    // Provided image was not found, should not happen
                     return null;
                 }
                 else

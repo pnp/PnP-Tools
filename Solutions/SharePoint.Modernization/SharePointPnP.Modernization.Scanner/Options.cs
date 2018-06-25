@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using SharePoint.Scanning.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace SharePoint.Modernization.Scanner
 {
@@ -29,6 +30,12 @@ namespace SharePoint.Modernization.Scanner
 
         [Option('c', "skipusageinformation", HelpText = "Don't use search to get the site/page usage information and don't export that data", DefaultValue = false, Required = false)]
         public bool SkipUsageInformation { get; set; }
+
+        [Option('d', "skipreport", HelpText = "Don't generate an Excel report for the found data", DefaultValue = false, Required = false)]
+        public bool SkipReport { get; set; }
+
+        [OptionList('g', "exportpaths", HelpText = "List of paths (e.g. c:\\temp\\636529695601669598,c:\\temp\\636529695601656430) containing scan results you want to add to the report", Separator = ',')]
+        public virtual IList<string> ExportPaths { get; set; }
 
 
         /// <summary>
