@@ -29,6 +29,7 @@ namespace SharePointPnP.Modernization.Framework.Pages
         }
 
         private HtmlParser parser;
+        private const string webPartMarkerString = "[[WebPartMarker]]";
 
         #region construction
         /// <summary>
@@ -90,11 +91,27 @@ namespace SharePointPnP.Modernization.Framework.Pages
                             // Do we find a web part inside...
                             if (((node as IHtmlElement) != null) && ContainsWebPart(node as IHtmlElement))
                             {
-                                // Do we still have non wp html that we need to retain?
                                 var extraText = StripWebPart(node as IHtmlElement);
+                                string extraTextAfterWebPart = null;
+                                string extraTextBeforeWebPart = null;
                                 if (!string.IsNullOrEmpty(extraText))
                                 {
-                                    textContent.AppendLine(extraText);
+                                    // Should be, but checking anyhow
+                                    int webPartMarker = extraText.IndexOf(webPartMarkerString);
+                                    if (webPartMarker > -1)
+                                    {
+                                        extraTextBeforeWebPart = extraText.Substring(0, webPartMarker);
+                                        extraTextAfterWebPart = extraText.Substring(webPartMarker + webPartMarkerString.Length);
+
+                                        // there could have been multiple web parts in a row (we don't support text inbetween them for now)...strip the remaining markers
+                                        extraTextBeforeWebPart = extraTextBeforeWebPart.Replace(webPartMarkerString, "");
+                                        extraTextAfterWebPart = extraTextAfterWebPart.Replace(webPartMarkerString, "");
+                                    }
+                                }
+
+                                if (!string.IsNullOrEmpty(extraTextBeforeWebPart))
+                                {
+                                    textContent.AppendLine(extraTextBeforeWebPart);
                                 }
 
                                 // first insert text part (if it was available)
@@ -117,6 +134,12 @@ namespace SharePointPnP.Modernization.Framework.Pages
                                         var serverSideControlIdToSearchFor = $"g_{serverSideControlId.Replace("-", "_")}";
                                         webPartsToRetrieve.Add(new WebPartPlaceHolder() { ControlId = serverSideControlIdToSearchFor, Id = serverSideControlId, Row = rowCount, Column = colCount, Order = order });
                                     }
+                                }
+
+                                // Process the extra text that was positioned after the web part (if any)
+                                if (!string.IsNullOrEmpty(extraTextAfterWebPart))
+                                {
+                                    textContent.AppendLine(extraTextAfterWebPart);
                                 }
                             }
                             else
@@ -270,7 +293,7 @@ namespace SharePointPnP.Modernization.Framework.Pages
         /// Strips the div holding the web part from the html
         /// </summary>
         /// <param name="element">Html element holding one or more web part divs</param>
-        /// <returns>Cleaned html</returns>
+        /// <returns>Cleaned html with a placeholder for the web part div</returns>
         private string StripWebPart(IHtmlElement element)
         {
             IElement copy = element.Clone(true) as IElement;
@@ -282,11 +305,20 @@ namespace SharePointPnP.Modernization.Framework.Pages
                 {
                     if (((node as IHtmlElement) != null) && (node as IHtmlElement).ClassList.Contains("ms-rte-wpbox"))
                     {
-                        node.Remove();
+                        var newElement = doc.CreateTextNode(webPartMarkerString);
+                        node.Parent.ReplaceChild(newElement, node);
                     }
                 }
 
-                return doc.DocumentElement.Children[1].InnerHtml;
+                if (doc.DocumentElement.Children[1].FirstElementChild != null &&
+                    doc.DocumentElement.Children[1].FirstElementChild is IHtmlDivElement)
+                {
+                    return doc.DocumentElement.Children[1].FirstElementChild.InnerHtml;
+                }
+                else
+                {
+                    return doc.DocumentElement.Children[1].InnerHtml;
+                }
             }
             else
             {
