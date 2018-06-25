@@ -20,6 +20,21 @@ if (window.hasOwnProperty('Type')) {
  */
 PnPResponsiveApp.Main = (function () {
     /**
+     * Current instance class
+     */
+    var instance;
+
+    /**
+     * Current init statement
+     */
+    var initState = false;
+
+    /**
+     * Current viewport statement
+     */
+    var viewportState = false;
+    
+    /**
      * Toggle element class
      * @param {element} el - Element
      * @param {string} cls - CSS Class Name
@@ -63,10 +78,10 @@ PnPResponsiveApp.Main = (function () {
     }
 
     /**
-     * Change element ID and all childs to avoid duplicates
-     * Add a feature to manage the case of attributes for the suiteBarButtons
+     * Change element ID and all children to avoid duplicate
+     * Add a feature to manage the case of attribute for the suiteBarButtons
      * @param {element} el - Cloned Element
-     * @returns {element} Cloned Element with all childs with a unique id
+     * @returns {element} Cloned Element with all children with a unique id
      * @private
      */
     function cloneSPIdNodes(el) {
@@ -90,6 +105,155 @@ PnPResponsiveApp.Main = (function () {
         return el;
     }
 
+    /**
+     * Manage SharePoint Settings Page Responsive
+     * @private
+     */
+    function responsivizeSettings() {
+        /* return if no longer on Settings page */
+        if (window.location.href.indexOf('/settings.aspx') < 0) return;
+
+        /* find the Settings root element, or wait if not available yet */
+        var settingsRoot = document.getElementsByClassName('ms-siteSettings-root')[0];
+        if (!settingsRoot) {
+            setTimeout(responsivizeSettings, 100);
+            return;
+        }
+
+        var linkSettingsSectionsLvl = settingsRoot.getElementsByClassName('ms-linksection-level1');
+        for (var i = 0; i < linkSettingsSectionsLvl.length; i++) {
+            var self = linkSettingsSectionsLvl[i];
+            var settingsDiv = document.createElement('div');
+            settingsDiv.className = 'pnp-settingsdiv';
+            settingsDiv.appendChild(self.getElementsByTagName('img')[0]);
+            settingsDiv.appendChild(self.getElementsByClassName('ms-linksection-textCell')[0]);
+            settingsRoot.appendChild(settingsDiv);
+        }
+        if (settingsRoot.getElementsByTagName('table')[0]) {
+            settingsRoot.removeChild(settingsRoot.getElementsByTagName('table')[0]);
+        }
+    }
+
+    /**
+     * Retrieve Navigation nodes and adapt them to the custom responsive menu
+     * @param {string} Delta Navigation ID
+     * @returns {element} Customized Cloned Navigation
+     * @private
+     */
+    function pnpNavGeneration(navId) {
+        var nav = document.getElementById(navId);
+        var clonedNav = null;
+        if (nav) {
+            clonedNav = nav.cloneNode(true);
+            clonedNav = cloneSPIdNodes(clonedNav);
+
+            /* Sub nodes accordion */
+            var navNodes = clonedNav.querySelectorAll('li');
+            for (var n = 0; n < navNodes.length; n++) {
+                var navItem = navNodes[n].getElementsByClassName('menu-item')[0];
+                var navRow = document.createElement('div');
+                navRow.className = 'ms-core-menu-item';
+                
+                var checkChild = navNodes[n].getElementsByTagName('ul');
+                if (checkChild.length > 0 && navItem) {
+                    if (!hasClass(navNodes[n], 'dynamic-children')) {
+                        navNodes[n].className = navNodes[n].className + ' dynamic-children';
+                    }
+                    /* Add button to preserve html link */
+                    var expandBtn = document.createElement('button');
+                    expandBtn.type = 'button';
+                    navRow.appendChild(expandBtn);
+                    expandBtn.addEventListener('click', function () {
+                        toggleClass(this.parentNode.parentNode, 'expand');
+                        return false;
+                    });
+                }
+
+                if (navItem) {
+                    navNodes[n].insertBefore(navRow, navNodes[n].firstElementChild);
+                    navRow.appendChild(navItem);
+                }
+                
+                navNodes[n].insertBefore(navRow, navNodes[n].firstElementChild);
+                /* Change Edit Link navigation */
+                var l = navNodes[n].querySelector('a.ms-navedit-editLinksText');
+                if (l) {
+                    l.removeAttribute('onclick');
+                    l.href = _spPageContextInfo.webServerRelativeUrl + '/_layouts/15/AreaNavigationSettings.aspx';
+                }
+            }
+        }
+        return clonedNav;
+    }
+
+    /**
+     * Allow to detect when a child node is added to a specific DOM Element (Used essentially because of SharePoint Online)
+     * @param {element} p Parent Node that attach the event if child does not exist
+     * @param {element} c Child Node that you're looking for
+     * @returns {boolean} True if the targeted element exist, else return false
+     * @private
+     */
+    function ensureElemCreation(p, c) {
+        var r = false;
+        var evExist = false;
+        if (!c) {
+            try {
+                var ev = getEventListeners(p);
+                for (var e in ev) {
+                    if (e == 'DOMNodeInserted') {
+                        evExist = true;
+                        break;
+                    }
+                }
+            } catch (err) {
+                console.log('Error: ' + err);
+            }
+            if (!evExist) {
+                p.addEventListener('DOMNodeInserted', function () {
+                    PnPResponsiveApp.Main.setUpToggling();
+                });
+            }
+        } else {
+            r = true;
+        }
+        return r;
+    }
+
+    /**
+     * Top Bar Responsive UI Burger
+     * @returns {element} Element UI Burger
+     * @private
+     */
+    function uiBurger() {
+        var newTopItem = document.createElement('div');
+        newTopItem.className = 'o365cs-nav-topItem o365cs-rsp-m-hide o365cs-rsp-tn-hideIfAffordanceOn mobile-only';
+        var newTopItemChild = document.createElement('div');
+        var newTopNavItem = document.createElement('button');
+        newTopNavItem.type = 'button';
+        newTopNavItem.className = 'o365cs-nav-item o365cs-nav-button ms-bgc-tdr-h o365button o365cs-topnavText o365cs-navMenuButton ms-bgc-tp ms-button-emphasize mobile-only';
+        newTopNavItem.id = 'PnP_MainLink_Hamburger';
+        newTopNavItem.setAttribute('role', 'menuitem');
+        newTopNavItem.setAttribute('aria-disabled', 'false');
+        newTopNavItem.setAttribute('aria-selected', 'false');
+        newTopNavItem.setAttribute('aria-label', 'Open the menu to access additional app options');
+
+        var newTopNavText = document.createElement('span');
+        newTopNavText.className = 'ms-rteThemeBackColor-1-0 ms-Icon--GlobalNavButton';
+        newTopNavText.setAttribute('aria-hidden', 'true');
+
+        newTopNavItem.addEventListener('click', function () {
+            var panel = document.getElementById('PnPNavPanel');
+            toggleClass(panel, 'PnPPanelEnabled');
+            return false;
+        });
+        
+        newTopNavItem.appendChild(newTopNavText);
+        newTopItemChild.appendChild(newTopNavItem);
+        newTopItem.appendChild(newTopItemChild);
+
+        return newTopItem;
+    }
+
     return {
         /**
          * PnP Responsive Initialization
@@ -97,135 +261,153 @@ PnPResponsiveApp.Main = (function () {
          * @public
          */
         init: function () {
-            var currentScriptUrl;
+            if (!initState) {
+                var currentScriptUrl;
 
-            var currentScript = document.getElementById('PnPResponsiveUI');
-            if (currentScript != undefined) {
-                currentScriptUrl = currentScript.src;
-            }
-
-            if (currentScriptUrl == undefined) {
-                var responsiveScripts = document.querySelectorAll("script[src$='sp-responsive-ui.js']");
-                if (responsiveScripts.length > 0) {
-                    currentScriptUrl = responsiveScripts[0].src;
+                var currentScript = document.getElementById('PnPResponsiveUI');
+                if (currentScript != undefined) {
+                    currentScriptUrl = currentScript.src;
                 }
+
+                if (currentScriptUrl == undefined) {
+                    var responsiveScripts = document.querySelectorAll("script[src$='sp-responsive-ui.js']");
+                    if (responsiveScripts.length > 0) {
+                        currentScriptUrl = responsiveScripts[0].src;
+                    }
+                }
+                if (currentScriptUrl != undefined) {
+                    var currentScriptBaseUrl = currentScriptUrl.substring(0, currentScriptUrl.lastIndexOf('/') + 1);
+                    loadCSS(currentScriptBaseUrl + 'sp-responsive-ui.css');
+                }
+                
+                PnPResponsiveApp.Main.setUpToggling();
+                PnPResponsiveApp.Main.setUpSuiteBarToogling();
+
+                responsivizeSettings();
+                // also listen for dynamic page change to Settings page
+                window.onhashchange = function () { responsivizeSettings(); };
+
+                // Extend/override some SP native functions to fix resizing quirks
+
+                // First of all save the original function definition
+                var originalResizeFunction = FixRibbonAndWorkspaceDimensions;
+
+                // Then define a new one
+                FixRibbonAndWorkspaceDimensions = function () {
+                    // let sharepoint do its thing
+                    originalResizeFunction();
+                    // fix the body container width
+                    document.getElementById('s4-bodyContainer').style.width = document.getElementById('s4-workspace').offsetWidth + 'px';
+                };
             }
-            if (currentScriptUrl != undefined) {
-                var currentScriptBaseUrl = currentScriptUrl.substring(0, currentScriptUrl.lastIndexOf('/') + 1);
-                loadCSS(currentScriptBaseUrl + 'sp-responsive-ui.css');
-            }
-
-            PnPResponsiveApp.Main.setUpToggling();
-            PnPResponsiveApp.Main.responsivizeSettings();
-            PnPResponsiveApp.Main.setUpSuiteBarToogling();
-
-            // also listen for dynamic page change to Settings page
-            window.onhashchange = function () { PnPResponsiveApp.Main.responsivizeSettings(); };
-
-            // Extend/override some SP native functions to fix resizing quirks
-
-            // First of all save the original function definition
-            var originalResizeFunction = FixRibbonAndWorkspaceDimensions;
-
-            // Then define a new one
-            FixRibbonAndWorkspaceDimensions = function () {
-                // let sharepoint do its thing
-                originalResizeFunction();
-                // fix the body container width
-                document.getElementById('s4-bodyContainer').style.width = document.getElementById('s4-workspace').offsetWidth;
-            };
+            initState = true;
         },
         /**
          * Add viewport and support retina devices
          * @public
          */
         addViewport: function () {
-            var head = document.getElementsByTagName('head')[0];
-            var viewport = document.createElement('meta');
-            viewport.name = 'viewport';
-            if (window.devicePixelRatio == 2) {
-                viewport.content = 'width=device-width, user-scalable=yes, initial-scale=.5, shrink-to-fit';
-            } else {
-                viewport.content = 'width=device-width, user-scalable=yes, initial-scale=1.0, shrink-to-fit';
+            if (!viewportState) {
+                var head = document.getElementsByTagName('head')[0];
+                var viewport = document.createElement('meta');
+                viewport.name = 'viewport';
+                if (window.devicePixelRatio == 2) {
+                    viewport.content = 'width=device-width, user-scalable=yes, initial-scale=.5';
+                } else {
+                    viewport.content = 'width=device-width, user-scalable=yes, initial-scale=1.0';
+                }
+                var appleMeta = document.createElement('meta');
+                appleMeta.name = 'apple-mobile-web-app-capable';
+                appleMeta.content = 'yes';
+                head.appendChild(viewport);
+                head.appendChild(appleMeta);
             }
-            var appleMeta = document.createElement('meta');
-            appleMeta.name = 'apple-mobile-web-app-capable';
-            appleMeta.content = 'yes';
-            head.appendChild(viewport);
-            head.appendChild(appleMeta);
-        },
-        /**
-         * Manage SharePoint Settings Page Responsive
-         * @public
-         */
-        responsivizeSettings: function () {
-            /* return if no longer on Settings page */
-            if (window.location.href.indexOf('/settings.aspx') < 0) return;
-
-            /* find the Settings root element, or wait if not available yet */
-            var settingsRoot = document.getElementsByClassName('ms-siteSettings-root')[0];
-            if (!settingsRoot) {
-                setTimeout(PnPResponsiveApp.Main.responsivizeSettings, 100);
-                return;
-            }
-
-            var linkSettingsSectionsLvl = settingsRoot.getElementsByClassName('ms-linksection-level1');
-            for (var i = 0; i < linkSettingsSectionsLvl.length; i++) {
-                var self = linkSettingsSectionsLvl[i];
-                var settingsDiv = document.createElement('div');
-                settingsDiv.className = 'pnp-settingsdiv';
-                settingsDiv.appendChild(self.getElementsByTagName('img')[0]);
-                settingsDiv.appendChild(self.getElementsByClassName('ms-linksection-textCell')[0]);
-                settingsRoot.appendChild(settingsDiv);
-            }
-            if (settingsRoot.getElementsByTagName('table')[0]) {
-                settingsRoot.removeChild(settingsRoot.getElementsByTagName('table')[0]);
-            }
+            viewportState = true;
         },
         /**
          * Set up Toggle Button to Hide or Show responsive menu
          * @public
          */
         setUpToggling: function () {
-            /* if it is already responsivized, return */
-            if (document.getElementById('navbar-toggle')) { return; }
 
-            /* Set up sidenav toggling */
-            var topNav = document.getElementById('DeltaTopNavigation');
+            /* If current window is a Modal Dialog */
+            var mDialog = document.getElementsByClassName('ms-dialogBody');
+            if (mDialog != undefined && mDialog.length > 0) { return; }
 
-            /* No Top Nav */
-            if (topNav == undefined) { return; }
+            /* If it is already responsivized, return */
+            if (document.getElementById('PnP_MainLink_Hamburger')) { return; }
 
-            var topNavClone = topNav.cloneNode(true);
-            topNavClone.className = topNavClone.className + ' mobile-only';
-            topNavClone = cloneSPIdNodes(topNavClone);
-            /* Sub nodes accordion */
-            var childs = topNavClone.querySelectorAll('a.dynamic-children');
-            for (var c = 0; c < childs.length; c++) {
-                /* Add button to preserve html link */
-                var expandBtn = document.createElement('button');
-                expandBtn.type = 'button';
-                var expandSpan = document.createElement('span');
-                expandBtn.appendChild(expandSpan);
-                childs[c].parentNode.insertBefore(expandBtn, childs[c]);
-                expandBtn.addEventListener('click', function () {
-                    toggleClass(this.parentNode, 'expand');
-                    return false;
-                });
+            /* Get Top Bar */
+            var topBar = document.getElementById('suiteBarTop');
+            var topNavLeft = null;
+            /* If suiteBarTop of SP2016/online doesn't exists, it is because is a SP2013 ? */
+            if (!topBar) {
+                topBar = document.getElementById('suiteBar');
+                topNavLeft = topBar.querySelector('.ms-verticalAlignMiddle');
+                topNavLeft = topNavLeft ? topNavLeft.parentNode : null;
+            } else {
+                topNavLeft = topBar.getElementsByClassName('o365cs-nav-leftAlign')[0];
+                /* Because SharePoint Online is Async and take more time to be defined */
+                if (!ensureElemCreation(topBar, topNavLeft)) { return; }
             }
-            topNav.className = topNav.className + ' no-mobile';
-            document.getElementById('sideNavBox').appendChild(topNavClone);
 
-            var sideNavToggle = document.createElement('button');
-            sideNavToggle.id = 'navbar-toggle';
-            sideNavToggle.className = 'mobile-only burger';
-            sideNavToggle.type = 'button';
-            sideNavToggle.innerHTML = '<span></span>';
-            sideNavToggle.addEventListener('click', function () {
-                toggleClass(document.getElementsByTagName('body')[0], 'shownav');
-                toggleClass(sideNavToggle, 'selected');
-            });
-            document.getElementById('pageTitle').parentNode.insertBefore(sideNavToggle, document.getElementById('pageTitle'));
+            if (topNavLeft) {
+                /* Add burger button */
+                topNavLeft.insertBefore(uiBurger(), topNavLeft.firstElementChild);
+
+                /* Check if left panel already exist (To fix MDS feature effect) */
+                if (document.getElementById('PnPNavPanel')) { return; }
+                /* Left Panel */
+                var spSuiteBar = document.getElementById('suiteBarDelta');
+                if (!spSuiteBar) {
+                    spSuiteBar = document.getElementById('suiteBar');
+                }
+                if (!spSuiteBar) { return; }
+
+                var pnpNavPanel = document.createElement('div');
+                pnpNavPanel.id = 'PnPNavPanel';
+                pnpNavPanel.className = 'ms-rteThemeBackColor-1-0 ms-dialogHidden mobile-only';
+
+                var pnpContentNavPanel = document.createElement('div');
+                /* Content Panel */
+                pnpContentNavPanel.id = 'PnPContentNavPanel';
+
+                /* MySite Profile */
+                var spMySiteProfile = pnpNavGeneration('DeltaPlaceHolderProfileImage');
+                if (spMySiteProfile) {
+                    pnpContentNavPanel.appendChild(spMySiteProfile);
+                }
+
+                /* TOP NAV support */
+                var spTopNav = pnpNavGeneration('DeltaTopNavigation');
+                if (spTopNav) {
+                    spTopNav.className += ' ms-picker-line';
+                    pnpContentNavPanel.appendChild(spTopNav);
+                }
+
+                /* QUICK LAUNCH nav support */
+                var spQLNav = pnpNavGeneration('DeltaPlaceHolderLeftNavBar');
+                if (spQLNav) {
+                    spQLNav.className += ' ms-picker-line';
+                    pnpContentNavPanel.appendChild(spQLNav);
+                }
+
+                /* Oslo nav support */
+                var spHQLNav = pnpNavGeneration('DeltaHorizontalQuickLaunch');
+                if (spHQLNav) {
+                    spHQLNav.className += ' ms-picker-line';
+                    pnpContentNavPanel.appendChild(spHQLNav);
+                }
+
+                /* Add bottom space to compensate for lack of height  */
+                var panelBottom = document.createElement('div');
+                panelBottom.className = 'PnPPanelBottom';
+                pnpContentNavPanel.appendChild(panelBottom);
+
+                /* Add Left Panel to page */
+                pnpNavPanel.appendChild(pnpContentNavPanel);
+                spSuiteBar.parentElement.insertBefore(pnpNavPanel, spSuiteBar.nextSibling);
+            }
         },
         /**
          * Set Up Toggle and Top SuiteBar Responsive
@@ -236,15 +418,18 @@ PnPResponsiveApp.Main = (function () {
             if (document.getElementById('suiteBar')) {
                 /* Open Responsive Bar Button that replace Suite Bar Links */
                 var suiteBarToggle = document.createElement('button');
-                suiteBarToggle.id = 'suiteBar-open';
+                suiteBarToggle.id = 'pnp-suiteBar-open';
                 suiteBarToggle.className = 'mobile-only ms-button-emphasize';
                 suiteBarToggle.type = 'button';
-                suiteBarToggle.innerHTML = '<span></span>';
+                var bulletStyle = document.createElement('span');
+                bulletStyle.className = 'ms-rteThemeBackColor-1-0';
+                bulletStyle.setAttribute('aria-hidden', 'true');
                 suiteBarToggle.addEventListener('click', function () {
-                    if (document.getElementById('suiteBar-rwd')) {
-                        toggleClass(document.getElementById('suiteBar-rwd'), 'ms-hide');
+                    if (document.getElementById('pnp-suiteBar')) {
+                        toggleClass(document.getElementById('pnp-suiteBar'), 'ms-hide');
                     }
                 });
+                suiteBarToggle.appendChild(bulletStyle);
                 document.getElementById('DeltaSuiteLinks').appendChild(suiteBarToggle);
             }
             PnPResponsiveApp.Main.setUpSuiteBarRwd();
@@ -252,10 +437,11 @@ PnPResponsiveApp.Main = (function () {
         /**
          * Build and render Suite Bar Rwd Mode
          * @public
+         * @see setUpSuiteBarToogling
          */
         setUpSuiteBarRwd: function () {
             /* if it is already responsivized, return */
-            if (document.getElementById('suiteBar-rwd')) { return; }
+            if (document.getElementById('pnp-suiteBar')) { return; }
 
             /*
              * Get if it's SharePoint 2013 environment
@@ -274,31 +460,40 @@ PnPResponsiveApp.Main = (function () {
                 suiteLinksBoxClone = cloneSPIdNodes(suiteLinksBoxClone);
                 /* Create responsive bar */
                 var suiteBarRwd = document.createElement('div');
-                suiteBarRwd.id = 'suiteBar-rwd';
+                suiteBarRwd.id = 'pnp-suiteBar';
                 suiteBarRwd.className = 'mobile-only ms-rteThemeBackColor-5-0 ms-hide';
                 /* Close Responsive Bar Button */
                 var closeSuiteBarRwd = document.createElement('button');
-                closeSuiteBarRwd.id = 'suiteBar-close';
+                closeSuiteBarRwd.id = 'pnp-suiteBar-close';
                 closeSuiteBarRwd.type = 'button';
                 closeSuiteBarRwd.className = 'ms-button-emphasize';
                 closeSuiteBarRwd.addEventListener('click', function () {
-                    toggleClass(document.getElementById('suiteBar-rwd'), 'ms-hide');
+                    toggleClass(document.getElementById('pnp-suiteBar'), 'ms-hide');
                 });
                 /* Render Responsive Bar */
                 suiteBarRwd.appendChild(closeSuiteBarRwd);
                 suiteBarRwd.appendChild(suiteBarBtnClone);
                 suiteBarRwd.appendChild(suiteLinksBoxClone);
-                document.getElementById('aspnetForm').insertBefore(suiteBarRwd, document.getElementById('suiteBar'));
+                document.getElementById('suiteBar').parentNode.insertBefore(suiteBarRwd, document.getElementById('suiteBar'));
             }
+        },
+        getInstance: function () {
+            if (!instance) {
+                instance = this;
+            }
+            return instance;
         }
     };
 })();
 
-// Register Responsive Behavior after SP page is loaded
-_spBodyOnLoadFunctionNames.push("responsiveStartup");
-
 /* exported responsiveStartup */
 function responsiveStartup() {
-    PnPResponsiveApp.Main.addViewport();
-    PnPResponsiveApp.Main.init();
+    var ui = PnPResponsiveApp.Main.getInstance();
+    ui.addViewport();
+    ui.init();
 }
+
+/* Register Responsive Behavior after SP.js is loaded (used for SharePoint On-Premise) */
+SP.SOD.executeFunc('sp.js', 'SP.ClientContext', responsiveStartup);
+/* Register Responsive Behavior after SP page is loaded (used for SharePoint Online) */
+_spBodyOnLoadFunctionNames.push("responsiveStartup");

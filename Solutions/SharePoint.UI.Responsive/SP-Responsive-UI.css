@@ -1,4 +1,8 @@
-﻿.mobile-only {
+/*
+ * Hide all HTML nodes that don't have to appear
+ */
+
+.mobile-only {
     display: none;
 }
 
@@ -11,11 +15,10 @@
     -o-transition: all 400ms ease;
     transition: all 400ms ease;
 }
-
+#s4-bodyContainer .contentwrapper,
 #contentBox {
     min-width: auto;
 }
-
 
 /* Make sure dialog windows don't break */
 
@@ -32,110 +35,379 @@
     font-size: 1em;
 }
 
+/* OSLO */
+#s4-bodyContainer .contentwrapper {
+    min-width: 0;
+    margin-top: 0;
+}
+
+/*======================== V2 ========================*/
+/* SharePoint 2013 Top Bar adaptation burger */
+#suiteBar #suiteBarLeft #PnP_MainLink_Hamburger {
+    min-width: 30px;
+    position: relative;
+    height: 30px;
+    margin-left: 0;
+    border: 0;
+    cursor: pointer;
+}
+
+/* PnP Burger to open PnP Panel */
+#PnP_MainLink_Hamburger>span {
+    width: 45%;
+    height: 1.5px;
+    position: absolute;
+    top: 50%;
+    left: 25%;
+}
+#PnP_MainLink_Hamburger>span::before {
+    content: " ";
+    background-color: inherit;
+    width: 100%;
+    height: 1.5px;
+    position: absolute;
+    top: -6px;
+    left: 0;
+}
+#PnP_MainLink_Hamburger>span::after {
+    content: " ";
+    width: 100%;
+    height: 1.5px;
+    background-color: inherit;
+    top: 6px;
+    position: absolute;
+    left: 0;
+}
+/* Overwrite default SP Class in desktop mode */
+#PnP_MainLink_Hamburger.mobile-only {
+    display: none;
+}
+
+/* PnP Left Panel Navigation */
+#PnPNavPanel {
+    opacity: 0;
+    width: 272px;
+    height: 100%;
+    position: absolute;
+    left: -302px;
+    z-index: 298;
+    transition: left 367ms ease-out, opacity 367ms ease-out;
+    box-shadow: 30px 0 30px -30px rgba(100, 100, 100, 0.4);
+    box-sizing: border-box;
+    font-size: 1.2em;
+}
+
+#PnPNavPanel.PnPPanelEnabled {
+    left: 0;
+    opacity: 1;
+}
+
+/* Content panel that contain all links. This one add a filigrane color to identify easily the panel area */
+#PnPNavPanel>#PnPContentNavPanel {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.2);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Add a space at the end of the panel */
+#PnPNavPanel>#PnPContentNavPanel>.PnPPanelBottom {
+    width: 100%;
+    height: 30px;
+}
+
+/* Remove font style linked to current node selected/active */
+#PnPNavPanel>#PnPContentNavPanel span {
+    color: initial;
+    font-weight: normal;
+}
+
+/* Remove the margin defined by corev15 */
+#PnPNavPanel>#PnPContentNavPanel .ms-core-sideNavBox-removeLeftMargin {
+    margin-left: 0;
+}
+
+/* Manage separators between menus */
+#PnPNavPanel>#PnPContentNavPanel>.ms-picker-line {
+    border-top-width: 1px;
+}
+/* Rempove border for the first menu */
+#PnPNavPanel>#PnPContentNavPanel>.ms-picker-line:first-child {
+    border-top: 0;
+}
+
+/*
+* Change the default navs style
+* DelaTopNavigation : Top Navigation
+* DeltaPlaceHolderLeftNavBar : Quick Launch
+* DeltaHorizontalQuickLaunch : Oslo Top Navigation
+*/
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone>div[id*=TopNavigationMenu],
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone>div[id*=QuickLaunchMenu],
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone div[id*=QuickLaunchMenu] {
+    display: inline-block;
+    width: 100%;
+}
+
+/* Change the default list style */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone],
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone],
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] {
+    list-style-type: none;
+    padding-left: 0;
+    width: 100%;
+}
+
+/* Visual li and link */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] li,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] li a,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] li,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] li a,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] li,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] li a {
+    display: block;
+    line-height: 36px;
+    position: relative;
+}
+
+/* Collapse/expand button style - Level 0 */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] li button,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] li button,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] li button {
+    width: 16px;
+    min-width: 16px;
+    height: 16px;
+    position: absolute;
+    left: 0;
+    margin: 0 4px 0 4px;
+    padding: 0;
+    top: 12px;
+    transition-duration: 0.1s;
+    transition-timing-function: linear;
+    transition-delay: initial;
+    transition-property: transform;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+    transform: rotate(90deg);
+    -webkit-transform:rotate(90deg);
+    -moz-transform:rotate(90deg); 
+    -o-transform:rotate(90deg);
+}
+/* Collapse/expand button style - Level 1 */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] ul > li > div,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] ul > li > div,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] ul > li > div {
+    padding: 0 0 0 17px;
+}
+
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] ul > li button,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] ul > li button,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] ul > li button {
+    left: 17px;
+}
+
+/* Collapse/expand button style - Level 2 */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] ul ul > li > div,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] ul ul > li > div,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] ul ul > li > div {
+    padding: 0 0 0 34px;
+}
+
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] ul ul > li button,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] ul ul > li button,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] ul ul > li button {
+    left: 34px;
+}
+
+/* Remove outline on navigation buttons to collapse/expand subnodes */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] li button:focus,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] li button:focus,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] li button:focus {
+    outline: none;
+}
+
+/* Add arrow in to button of expand/collapse subnodes */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] li button::after,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] li button::after,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] li button::after {
+    content: " ";
+    display: block;
+    border-width: 1px 1px 0 0;
+    border-style: solid;
+    border-color: #000;
+    width: 8px;
+    height: 8px;
+    position: absolute;
+    right: 30%;
+    transform: rotate(45deg);
+    top: 15%;
+}
+
+/* Add effect of rotation when user expand or collapse subnodes */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] li.expand > .ms-core-menu-item > button,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] li.expand > .ms-core-menu-item > button,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] li.expand > .ms-core-menu-item > button {
+    transform: rotate(-90deg);
+    -webkit-transform:rotate(-90deg);
+    -moz-transform:rotate(-90deg); 
+    -o-transform:rotate(-90deg);
+}
+
+/* Manage left space for each nodes and subnodes */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] li .ms-core-menu-item > .menu-item,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] li .ms-core-menu-item > .menu-item,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] li .ms-core-menu-item > .menu-item {
+    padding: 0 0 0 24px;
+}
+
+/* Don't add padding when is EDIT LINK */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] li .ms-navedit-editSpan > a,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] li .ms-navedit-editSpan > a,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] li .ms-navedit-editSpan > a {
+    padding: 0;
+}
+
+/* When the nodes is a header (had subnodes), the padding is chnaged by maring to allow access to the button element */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] li.dynamic-children .ms-core-menu-item > .menu-item,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] li.dynamic-children .ms-core-menu-item > .menu-item,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] li.dynamic-children .ms-core-menu-item > .menu-item {
+    margin-left: 24px;
+    padding: 0;
+}
+
+/* Remove default arrow when the node is a header */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] li .dynamic-children .additional-background,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] li .dynamic-children .additional-background,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] li .dynamic-children .additional-background {
+    background-image: none;
+}
+
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] li > ul,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] li > ul {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+}
+
+/* Change subnodes style to show them. The appear/disappear will be manage through a custom CSS class and PnP JavaScript */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaTopNavigation_mobileClone ul[id*=RootAspMenu_mobileClone] li.expand > ul,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] li.expand > ul,
+#PnPNavPanel>#PnPContentNavPanel>#DeltaHorizontalQuickLaunch_mobileClone ul[id*=RootAspMenu_mobileClone] li.expand > ul {
+    left: 0;
+    top: 0;
+    position: relative;
+    box-shadow: none;
+    border: 0;
+    width: 100%;
+    list-style-type: none;
+    padding: 0;
+    background-color: transparent;
+}
+
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderLeftNavBar_mobileClone ul[id*=RootAspMenu_mobileClone] .ms-listMenu-editLink {
+    margin: 0 0 0 10px;
+}
+/* MySite Profile Image position */
+#PnPNavPanel>#PnPContentNavPanel>#DeltaPlaceHolderProfileImage_mobileClone .ms-profile-image {
+    margin: auto;
+}
+
+/*======================== END of V2 ========================*/
 
 /* Tablet/smartphones common styles for collapsibles */
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 1024px) {
     .mobile-only {
         display: block;
     }
-
+    /* Overwrite default SP Class in device mode */
+    #PnP_MainLink_Hamburger.mobile-only {
+        display: inline-block;
+    }
     .no-mobile {
         display: none;
     }
-    /* Mobile and Table Burger styles */
-    .burger {
-        position: relative;
-        left: 0px;
-        top: 0px;
-        padding: 0px 7px;
-        display: inline-block;
+    /* Add smooth scroll on iOS */
+    #s4-workspace {
+        -webkit-overflow-scrolling: touch;
     }
-
-        #suiteBar-rwd > #suiteBar-close:before,
-        #suiteBar-rwd > #suiteBar-close:after,
-        .burger span,
-        .burger span:before,
-        .burger span:after {
-            display: block;
-            width: 100%;
-            height: 2px;
-            background: black;
-            -ms-transition: all 0.5s;
-            -webkit-transition: all 0.5s;
-            transition: all 0.5s;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-        }
-
-        .burger span {
-            position: relative;
-            margin: 0 0 0 0;
-        }
-
-            #suiteBar-rwd > #suiteBar-close:before,
-            #suiteBar-rwd > #suiteBar-close:after,
-            .burger span:before,
-            .burger span:after {
-                position: absolute;
-                content: "";
-            }
-
-            #suiteBar-rwd > #suiteBar-close:before,
-            .burger span:before {
-                top: -8px;
-            }
-
-            #suiteBar-rwd > #suiteBar-close:after,
-            .burger span:after {
-                top: 8px;
-            }
-
-        .burger.selected span:before {
-            -ms-transform: translate(0px, 8px) rotate(90deg);
-            -webkit-transform: translate(0px, 8px) rotate(90deg);
-            transform: translate(0px, 8px) rotate(90deg);
-        }
-
-        .burger.selected span:after {
-            -ms-transform: translate(0px, -8px) rotate(90deg);
-            -webkit-transform: translate(0px, -8px) rotate(90deg);
-            transform: translate(0px, -8px) rotate(90deg);
-        }
-
-        .burger.selected span {
-            -ms-transform: rotate(-45deg);
-            -webkit-transform: rotate(-45deg);
-            transform: rotate(-45deg);
-        }
-
-    #DeltaSuiteLinks > #suiteLinksBox {
+    /* Fix SharePoint position from Top Bar when Burger is present */
+    #suiteBar #suiteBarLeft .ms-verticalAlignMiddle {
+        width: 100%;
+    }
+    #pnp-suiteBar>#pnp-suiteBar-close::before,
+    #pnp-suiteBar>#pnp-suiteBar-close::after {
+        display: block;
+        width: 100%;
+        height: 2px;
+        background: black;
+        -ms-transition: all 0.5s;
+        -webkit-transition: all 0.5s;
+        transition: all 0.5s;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+    #pnp-suiteBar>#pnp-suiteBar-close::before,
+    #pnp-suiteBar>#pnp-suiteBar-close::after {
+        position: absolute;
+        content: "";
+    }
+    #pnp-suiteBar>#pnp-suiteBar-close::before {
+        top: -8px;
+    }
+    #pnp-suiteBar>#pnp-suiteBar-close::after {
+        top: 8px;
+    }
+    #DeltaSuiteLinks #suiteLinksBox {
         display: none;
     }
-
-    #suiteBar-open {
-        float: right;
+    #pnp-suiteBar-open {
+        position: relative;
+        margin: 0;
+        padding: 0;
         height: 30px;
-        min-width: auto;
+        min-width: 30px;
         border: 0;
-        padding-top: 2px;
+        cursor: pointer;
     }
-
-        #suiteBar-open > span {
-            line-height: 20px;
-        }
-
-        #suiteBar-open:hover {
-            cursor: pointer;
-        }
-
-        #suiteBar-open > span:before {
-            content: '\2219 \2219 \2219';
-            font-size: 40px;
-            color: #fff;
-        }
-
-    #suiteBar-rwd {
+    #pnp-suiteBar-open>span {
+        position: absolute;
+        right: 5px;
+        bottom: 12px;
+        border: 0;
+        border-radius: 50%;
+        width: 3px;
+        height: 3px;
+    }
+    #pnp-suiteBar-open>span::before {
+        content: ' ';
+        border: 0;
+        width: 3px;
+        height: 3px;
+        position: absolute;
+        right: 7px;
+        border-radius: 50%;
+        bottom: 0;
+        background-color: inherit;
+    }
+    #pnp-suiteBar-open>span::after {
+        content: ' ';
+        border: 0;
+        width: 3px;
+        height: 3px;
+        right: 15px;
+        position: absolute;
+        border-radius: 50%;
+        bottom: 0;
+        background-color: inherit;
+    }
+    #pnp-suiteBar {
         position: absolute;
         top: 0;
         left: 0;
@@ -143,57 +415,49 @@
         width: 100%;
         z-index: 101;
     }
-
-        #suiteBar-rwd.mobile-only.ms-hide {
-            display: none;
-        }
-
-        #suiteBar-rwd > #suiteBar-close {
-            min-width: 40px;
-            height: 30px;
-            margin-left: 0;
-            border: 0;
-        }
-
-            #suiteBar-rwd > #suiteBar-close:hover {
-                cursor: pointer;
-            }
-
-            #suiteBar-rwd > #suiteBar-close:before {
-                -ms-transform: translate(0px, 22px) rotate(-45deg);
-                -webkit-transform: translate(0px, 21px) rotate(-45deg);
-                transform: translate(0px, 21px) rotate(-45deg);
-                background: #fff;
-                height: 3px;
-                width: 20px;
-            }
-
-            #suiteBar-rwd > #suiteBar-close:after {
-                -ms-transform: translate(0px, 5px) rotate(45deg);
-                -webkit-transform: translate(0px, 5px) rotate(45deg);
-                transform: translate(0px, 5px) rotate(45deg);
-                background: #fff;
-                height: 3px;
-                width: 20px;
-            }
-
-        #suiteBar-rwd > #suiteBarButtons_mobileClone {
-            float: right;
-            background-color: rgb( 239, 239, 239);
-            padding-right: 5px;
-        }
-
+    #pnp-suiteBar.mobile-only.ms-hide {
+        display: none;
+    }
+    #pnp-suiteBar>#pnp-suiteBar-close {
+        min-width: 40px;
+        height: 30px;
+        margin-left: 0;
+        border: 0;
+    }
+    #pnp-suiteBar>#pnp-suiteBar-close:hover {
+        cursor: pointer;
+    }
+    #pnp-suiteBar>#pnp-suiteBar-close::before {
+        -ms-transform: translate(0px, 22px) rotate(-45deg);
+        -webkit-transform: translate(0px, 21px) rotate(-45deg);
+        transform: translate(0px, 21px) rotate(-45deg);
+        background: #fff;
+        height: 3px;
+        width: 20px;
+    }
+    #pnp-suiteBar>#pnp-suiteBar-close::after {
+        -ms-transform: translate(0px, 5px) rotate(45deg);
+        -webkit-transform: translate(0px, 5px) rotate(45deg);
+        transform: translate(0px, 5px) rotate(45deg);
+        background: #fff;
+        height: 3px;
+        width: 20px;
+    }
+    #pnp-suiteBar>#suiteBarButtons_mobileClone {
+        float: right;
+        background-color: rgb( 239, 239, 239);
+        padding-right: 5px;
+    }
     #suiteBarButtons {
         display: none;
     }
-
-    #suiteBar-rwd #suiteLinksBox_mobileClone {
+    #pnp-suiteBar #suiteLinksBox_mobileClone {
         float: right;
     }
     /*
     * Support mobileClone Style to arrow of Suite Active Links
     */
-    #suiteBar-rwd #Suite_ActiveLinkIndicator_Clip_mobileClone {
+    #pnp-suiteBar #Suite_ActiveLinkIndicator_Clip_mobileClone {
         display: inline-block;
         left: 50%;
         position: absolute;
@@ -203,8 +467,8 @@
     /*
     * Support mobileClone Style to Settings icon
     */
-    #suiteBar-rwd .ms-siteactions-root > span > a.ms-selectedtitle,
-    #suiteBar-rwd .ms-siteactions-root > span > a.ms-unselectedtitle {
+    #pnp-suiteBar .ms-siteactions-root>span>a.ms-selectedtitle,
+    #pnp-suiteBar .ms-siteactions-root>span>a.ms-unselectedtitle {
         width: 16px;
         height: 16px;
         display: inline-block;
@@ -212,162 +476,31 @@
         border: 0;
     }
     /*
-    * Hide EDIT LINK from top navigation
-    */
-    #DeltaTopNavigation_mobileClone a[id*='_NavMenu_EditLinks'] {
-        display: none;
-    }
-    /*
-    * Support Top Nav rwd as accordion
-    */
-    #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] {
-        width: 100%;
-    }
-        /*
-        * Change position and collapse sub nodes
-        */
-        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] li.dynamic-children > ul {
-            position: inherit;
-            border: 0;
-            box-shadow: none;
-            padding: 0;
-            overflow: hidden;
-            height: 0;
-        }
-        /*
-        * Expand sub nodes
-        */
-        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] li.dynamic-children.expand > ul {
-            height: auto;
-            padding-left: 15px;
-            border-top-width: 1px;
-            border-top-style: dotted;
-            background-color: inherit;
-        }
-        /*
-        * Nodes position
-        */
-        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] li.dynamic-children .ms-core-listMenu-item {
-            padding: 0;
-            margin-right: 0;
-            line-height: 30px;
-            font-size: 1.1em;
-        }
-        /*
-        * Remove arrow background 
-        */
-        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.additional-background,
-        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic .additional-background.dynamic-children {
-            background-image: none;
-            padding-right: 0;
-        }
-
-        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > a {
-            display: inline;
-        }
-        /*
-        * Expand/Collapse button style
-        */
-        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button {
-            float: right;
-            display: block;
-            position: relative;
-            overflow: hidden;
-            margin: 0;
-            padding: 0;
-            width: 20px;
-            height: 30px;
-            font-size: 0;
-            text-indent: -9999px;
-            box-shadow: none;
-            border-radius: none;
-            border: none;
-            cursor: pointer;
-            background-color: inherit;
-        }
-
-            #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button:focus {
-                outline: none;
-            }
-
-            #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button span {
-                display: block;
-                position: absolute;
-                top: 15px;
-                left: 3px;
-                right: 3px;
-                height: 1px;
-                background: #444;
-            }
-
-                #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button span::before,
-                #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button span::after {
-                    position: absolute;
-                    display: block;
-                    left: 0;
-                    width: 100%;
-                    height: 1px;
-                    background-color: #444;
-                    content: "";
-                    transition-duration: 0.3s, 0.3s;
-                    transition-delay: 0.3s, 0s;
-                }
-
-                #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button span::before {
-                    top: -3px;
-                    transition-property: top, transform;
-                }
-
-                #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children > button span::after {
-                    bottom: -3px;
-                    transition-property: bottom, transform;
-                }
-
-        #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.expand > button span {
-            background-color: inherit;
-        }
-
-            #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.expand > button span::before {
-                top: 0;
-                transform: rotate(45deg);
-            }
-
-            #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.expand > button span::after {
-                bottom: 0;
-                transform: rotate(-45deg);
-            }
-
-            #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.expand > button span::before,
-            #DeltaTopNavigation_mobileClone div[id*='TopNavigationMenu'] .dynamic-children.expand > button span::after {
-                transition-delay: 0s, 0.3s;
-            }
-
-    /*
      * PnP Fix : Note Board horizontal scroll
      */
     .ms-socialCommentItem .socialcomment-contents {
         max-width: 100%;
         width: auto;
     }
-
     #siteIcon #DeltaSiteLogo img {
         height: auto !important;
         max-height: 75px !important;
         display: inline-block;
         vertical-align: middle;
     }
+    .ms-pub-contentLayout {
+        padding: 0;
+    }
 }
-
 
 /* Tablets */
 
-@media only screen and (min-width: 481px) and (max-width: 768px) {
+@media only screen and (min-width: 640px) and (max-width: 1023px) {
     /* Sidebar navigation toggling */
     #titleAreaBox {
         position: relative;
         padding-left: 30px;
     }
-
     #navbar-toggle {
         margin: 0;
         min-width: 0;
@@ -379,33 +512,29 @@
         height: 73px;
         padding: 5px;
     }
-
     #contentRow {
         /* Start out as collapsed */
         margin-left: -200px;
     }
-
     .ms-dialog #contentRow {
         /* Make sure this is not applied to dialog windows */
         margin-left: 0;
     }
-
     body.shownav #contentRow {
         margin-left: 0;
         margin-right: -200px;
     }
-
     body.shownav #siteIcon {
         min-width: 150px;
         text-align: right;
     }
-
     .ms-navedit-editSpan {
         margin-bottom: 25px;
         display: block;
     }
-
-    #DeltaTopNavigation {
+    #DeltaHorizontalQuickLaunch,
+    #DeltaTopNavigation,
+    #sideNavBox {
         display: none;
     }
     /* Stack title area */
@@ -414,77 +543,78 @@
         display: block;
         margin: 0;
     }
-
     div#titleAreaBox {
         margin-left: 10px;
     }
-
-    div#titleAreaRow > div {
+    div#titleAreaRow>div {
         display: block;
     }
-
+    div#titleAreaBox>#titleAreaRow>#siteIcon {
+        margin-top: 19px;
+    }
+    div#titleAreaBox>#titleAreaRow>.ms-breadcrumb-box {
+        padding-bottom: 0;
+        padding-top: 19px;
+    }
     #siteIcon,
     .ms-siteicon-img,
     .ms-siteicon-a,
-    #s4-titlerow {
+    #s4-titlerow, #mysite-titlerow {
         height: 75px;
     }
-
     div#DeltaPlaceHolderSearchArea {
         float: left;
     }
-
     div#searchInputBox {
         float: left;
         margin-bottom: 0;
     }
-
+    #titleAreaBox .ms-belltown-searcharea {
+        padding-top: 0;
+    }
     .ms-core-listMenu-horizontalBox ul,
     .ms-core-listMenu-horizontalBox li,
     .ms-core-listMenu-horizontalBox .ms-core-listMenu-item,
-    .ms-core-listMenu-horizontalBox > ul > li > table {
+    .ms-core-listMenu-horizontalBox>ul>li>table {
         display: block;
     }
-
     .ms-breadcrumb-box {
         height: auto;
     }
     /* Main content panel */
     table#layoutsTable,
-    table#layoutsTable > tbody,
-    table#layoutsTable > tbody > tr,
-    table#layoutsTable > tbody > tr > td {
+    table#layoutsTable>tbody,
+    table#layoutsTable>tbody>tr,
+    table#layoutsTable>tbody>tr>td {
         display: block;
     }
-
-        table#layoutsTable > tbody > tr > td {
-            width: auto !important;
-            padding: 0;
-        }
-
+    table#layoutsTable>tbody>tr>td {
+        width: auto !important;
+        padding: 0;
+    }
     table.ms-listviewtable {
         border-collapse: collapse;
         width: 100%;
     }
-
-    td.ms-cellstyle /*td[role=gridcell]*/ {
+    td.ms-cellstyle/*td[role=gridcell]*/
+        {
         padding: 2px;
         vertical-align: top;
     }
-
     td[role=gridcell] .ms-noWrap {
         white-space: normal;
     }
-
     td.ms-cellstyle .ms-list-itemLink {
         height: auto;
     }
 }
 
-
 /* Smartphones */
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 639px) {
+    #suiteBarTop .o365cs-nav-brandingText {
+        font-size: 17px;
+    }
     div#s4-bodyContainer {
         width: auto !important;
         margin-left: 10px;
@@ -497,37 +627,44 @@
         display: block;
         margin: 0;
     }
-
-        div#titleAreaRow > div {
-            display: block;
-            float: none;
-            clear: both;
-            margin: 0;
-        }
-
-        div#titleAreaRow .ms-core-pageTitle {
-            overflow: hidden;
-            white-space: nowrap;
-        }
-
+    div#titleAreaRow>div {
+        display: block;
+        float: none;
+        clear: both;
+        margin: 0;
+    }
+    div#titleAreaRow .ms-core-pageTitle {
+        overflow: hidden;
+        white-space: normal;
+        text-align: center;
+    }
+    #DeltaHorizontalQuickLaunch,
     #DeltaTopNavigation {
         display: none;
     }
-
-    div#titleAreaRow > div#siteIcon {
+    div#titleAreaRow>div#siteIcon {
         margin-bottom: 25px;
     }
-
     .ms-siteicon-img {
         max-width: 250px;
         max-height: 100px;
     }
-
+    /* oslo title */
+    #titlerow #siteIcon {
+        padding-top:19px;
+    }
+    /* MySite Title */
+    #mysite-titlerow {
+        margin-left: 0;
+    }
     div#s4-titlerow,
     .ms-breadcrumb-box {
         height: auto;
+        padding-bottom: 0;
     }
-
+    .ms-breadcrumb-box {
+        padding-top: 0;
+    }
     div.ms-mpSearchBox {
         float: none;
         margin: 10px 0;
@@ -535,22 +672,18 @@
         position: relative;*/
         width: auto;
     }
-
-    div.ms-srch-sb > input {
+    div.ms-srch-sb>input {
         width: 80%;
     }
-
     div#searchInputBox,
     div#searchInputBox div.ms-srch-sb {
         float: none;
         height: 22px;
         display: block;
     }
-
-        div#searchInputBox div.ms-srch-sb > a {
-            float: right;
-        }
-
+    div#searchInputBox div.ms-srch-sb>a {
+        float: right;
+    }
     /*
      * Fix Search Tool bar width in WebPart Page
      */
@@ -560,25 +693,20 @@
         float: none;
         margin: 10px 0;
     }
-
-        .ms-srch-sb-border > a,
-        .ms-srch-sb.ms-srch-sb-borderFocused > a {
-            float: right;
-        }
-
+    .ms-srch-sb-border>a,
+    .ms-srch-sb.ms-srch-sb-borderFocused>a {
+        float: right;
+    }
     /* Title breadcrumb */
-    #pageTitle #DeltaPlaceHolderPageTitleInTitleArea > span > span:not(:last-child-of-type) {
+    #pageTitle #DeltaPlaceHolderPageTitleInTitleArea>span>span:not(:last-child-of-type) {
         font-size: .4em;
     }
-
-    #pageTitle #DeltaPlaceHolderPageTitleInTitleArea > span > span:last-child-of-type {
+    #pageTitle #DeltaPlaceHolderPageTitleInTitleArea>span>span:last-child-of-type {
         display: block;
     }
-
-    #pageTitle #DeltaPlaceHolderPageTitleInTitleArea > span > span > span > span {
+    #pageTitle #DeltaPlaceHolderPageTitleInTitleArea>span>span>span>span {
         height: 12px !important;
     }
-
     #pageTitle #DeltaPlaceHolderPageDescription {
         display: none;
     }
@@ -586,14 +714,9 @@
     .ms-core-listMenu-horizontalBox ul,
     .ms-core-listMenu-horizontalBox li,
     .ms-core-listMenu-horizontalBox .ms-core-listMenu-item,
-    .ms-core-listMenu-horizontalBox > ul > li > table {
+    .ms-core-listMenu-horizontalBox>ul>li>table {
         display: block;
     }
-
-    .ms-core-listMenu-horizontalBox > .ms-core-listMenu-root > .ms-listMenu-editLink {
-        margin-left: 0;
-    }
-
     .ms-navedit-editSpan {
         margin-bottom: 25px;
         display: block;
@@ -611,7 +734,6 @@
         -webkit-box-shadow: -10px -2px 10px 10px #fff;
         box-shadow: -10px -2px 10px 10px #fff;
     }
-
     #sideNavBox {
         float: none;
         clear: both;
@@ -624,7 +746,6 @@
         max-height: 0;
         overflow: hidden;
     }
-
     body.shownav div#sideNavBox {
         max-height: 850px;
         overflow: visible;
@@ -633,40 +754,39 @@
     #contentRow {
         padding-top: 0;
     }
-
+    #titleAreaBox .ms-belltown-searcharea {
+        padding-top: 0;
+        width: auto;
+    }
+    #s4-bodyContainer .contentwrapper,
     #contentBox {
         margin-top: 35px;
         margin-right: 0;
         margin-left: 0;
         min-width: 0;
     }
-
     table#layoutsTable,
-    table#layoutsTable > tbody,
-    table#layoutsTable > tbody > tr,
-    table#layoutsTable > tbody > tr > td {
+    table#layoutsTable>tbody,
+    table#layoutsTable>tbody>tr,
+    table#layoutsTable>tbody>tr>td {
         display: block;
     }
-
-        table#layoutsTable > tbody > tr > td {
-            width: auto !important;
-            padding: 0;
-        }
-
+    table#layoutsTable>tbody>tr>td {
+        width: auto !important;
+        padding: 0;
+    }
     table.ms-listviewtable {
         border-collapse: collapse;
         width: 100%;
     }
-
-    td.ms-cellstyle /*td[role=gridcell]*/ {
+    td.ms-cellstyle/*td[role=gridcell]*/
+        {
         padding: 2px;
         vertical-align: top;
     }
-
     td[role=gridcell] .ms-noWrap {
         white-space: normal;
     }
-
     td.ms-cellstyle .ms-list-itemLink {
         height: auto;
     }
@@ -678,7 +798,6 @@
     .ms-viewlsts .ms-vl-sectionHeaderRow .ms-splinkbutton-text {
         display: none;
     }
-
     .ms-viewlsts .ms-vl-sectionHeaderRow .ms-vl-settingsmarginleft {
         margin-left: 5px;
     }
@@ -687,11 +806,9 @@
     .ms-listviewtable tbody tr td:nth-child(n+5) {
         display: none;
     }
-
     .ms-qcb-button {
         padding-right: 5px;
     }
-
     div.ms-dragDropAttract-subtle {
         min-width: auto;
     }
@@ -703,17 +820,31 @@
     .ms-microfeed-rootText {
         min-width: 200px;
     }
-
     .ms-microfeed-replyArea {
         min-width: 150px !important;
         margin-left: 20px !important;
     }
-
     .ms-secondaryCommandLink {
         word-break: break-all;
     }
+    /* People Picker width, search */
+    .sp-peoplepicker-topLevel, .sp-peoplepicker-topLevelDisabled, .ms-srch-sbLarge-navWidth, .ms-srch-sbLarge-fullWidth {
+        width: auto;
+    }
+    /* Force width auto top and bottom search section */
+    #UpScopeLinkTop, #UpScopeLinkBottom {
+        width: auto !important;
+    }
+    /* Form return line */
+    td.ms-formdescriptioncolumn-wide,
+    td.ms-inputformcontrols {
+        display: table-row;
+    }
+    /* Force return line in search WP */
+    #UpScopeLinkTop > div {
+        display: table-row !important;
+    }
 }
-
 
 /* SETTINGS */
 
@@ -726,10 +857,10 @@
     margin-bottom: 20px;
 }
 
-    .pnp-settingsdiv:nth-child(last):after {
-        clear: both;
-    }
+.pnp-settingsdiv:nth-child(last)::after {
+    clear: both;
+}
 
-    .pnp-settingsdiv img {
-        display: none;
-    }
+.pnp-settingsdiv img {
+    display: none;
+}
