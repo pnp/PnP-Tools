@@ -21,7 +21,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPnP.Modernization
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPnP.Modernization.DocsGenerator", "SharePointPnP.Modernization.DocsGenerator\SharePointPnP.Modernization.DocsGenerator.csproj", "{92B96A1A-F2A3-45F6-B77C-36E4DF823BF4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPnP.Modernization.Framework.Profiler", "SharePointPnP.Modernization.Framework.Profiler\SharePointPnP.Modernization.Framework.Profiler.csproj", "{184B8275-F8EA-4011-BCE6-E44E03ECFF01}"
+EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -51,6 +56,10 @@ Global
 		{92B96A1A-F2A3-45F6-B77C-36E4DF823BF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92B96A1A-F2A3-45F6-B77C-36E4DF823BF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92B96A1A-F2A3-45F6-B77C-36E4DF823BF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{184B8275-F8EA-4011-BCE6-E44E03ECFF01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{184B8275-F8EA-4011-BCE6-E44E03ECFF01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{184B8275-F8EA-4011-BCE6-E44E03ECFF01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{184B8275-F8EA-4011-BCE6-E44E03ECFF01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
