@@ -424,12 +424,30 @@ namespace SharePointPnP.Modernization.Framework.Functions
         [OutputDocumentation(Name = "{ImageUniqueId}", Description = "UniqueId of the file")]
         public Dictionary<string,string> ImageLookup(string serverRelativeImagePath)
         {
+
+            bool stop = false;
             if (string.IsNullOrEmpty(serverRelativeImagePath))
             {
-                return null;
+                stop = true;
+            }
+
+            this.clientContext.Web.EnsureProperties(p => p.ServerRelativeUrl);
+
+            // Check if this url is pointing to content living in this site
+            if (!stop && !serverRelativeImagePath.StartsWith(this.clientContext.Web.ServerRelativeUrl, StringComparison.InvariantCultureIgnoreCase))
+            {
+                // TODO: add handling of files living in another web
+                stop = true;
             }
 
             Dictionary<string, string> results = new Dictionary<string, string>();
+
+            if (stop)
+            {
+                results.Add("ImageListId", "");
+                results.Add("ImageUniqueId", "");
+                return results;
+            }
 
             try
             {
@@ -536,7 +554,7 @@ namespace SharePointPnP.Modernization.Framework.Functions
             {
                 if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
                 {
-                    // provided file link does not exist...we're eating the exception and the page will end up with a default page header
+                    // provided file is not retrievable...we're eating the exception this file not be used in the target web part
                     //TODO: log error
                     return null;
                 }
