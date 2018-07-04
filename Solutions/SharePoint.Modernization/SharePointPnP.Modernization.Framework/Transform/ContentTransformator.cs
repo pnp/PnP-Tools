@@ -388,13 +388,18 @@ namespace SharePointPnP.Modernization.Framework.Transform
                     webPart.Properties.Add(token.Key, token.Value);
                 }
 
-                // Add parameter to model
-                tempList.Add(new Property()
+                // Only add the global property once as the webPartData.Properties collection is reused across web parts and pages
+                var propAlreadyAdded = tempList.Where(p => p.Name.Equals(token.Key, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                if (propAlreadyAdded == null)
                 {
-                    Functions = "",
-                    Name = token.Key,
-                    Type = PropertyType.@string
-                });
+                    // Add parameter to model
+                    tempList.Add(new Property()
+                    {
+                        Functions = "",
+                        Name = token.Key,
+                        Type = PropertyType.@string
+                    });
+                }
             }
             webPartData.Properties = tempList.ToArray();
         }

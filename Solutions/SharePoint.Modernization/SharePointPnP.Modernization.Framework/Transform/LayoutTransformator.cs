@@ -52,12 +52,14 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 case PageLayout.Wiki_TwoColumnsWithSidebar:
                 case PageLayout.WebPart_HeaderRightColumnBody:
                     {
-                        page.AddSection(CanvasSectionTemplate.TwoColumnLeft, 1);
+                        page.AddSection(CanvasSectionTemplate.OneColumn, 1);
+                        page.AddSection(CanvasSectionTemplate.TwoColumnLeft, 2);
                         return;
                     }
                 case PageLayout.WebPart_HeaderLeftColumnBody:
                     {
-                        page.AddSection(CanvasSectionTemplate.TwoColumnRight, 1);
+                        page.AddSection(CanvasSectionTemplate.OneColumn, 1);
+                        page.AddSection(CanvasSectionTemplate.TwoColumnRight, 2);
                         return;
                     }
                 case PageLayout.Wiki_TwoColumnsWithHeader:

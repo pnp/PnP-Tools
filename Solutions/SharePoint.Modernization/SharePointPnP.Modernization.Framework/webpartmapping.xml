@@ -116,7 +116,7 @@ Page transformation file. Describes:
         <!-- This selector outputs: Library, List, Issue, DiscussionBoard, Survey or Undefined  -->
         <Mappings Selector="ListSelectorListLibrary({ListId})">
           <Mapping Name="List" Default="true">
-            <ClientSideText Text="You can map a source web part ({Title}) to a combination of client side controls :-)" Order="10" />
+            <!--<ClientSideText Text="You can map a source web part ({Title}) to a combination of client side controls :-)" Order="10" />-->
             <ClientSideWebPart Type="List" Order="20" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;false,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" />
           </Mapping>
           <Mapping Name="Library" Default="false">
@@ -526,7 +526,7 @@ Page transformation file. Describes:
           <Property Name="WebId" Type="guid"/>
           <Property Name="ListViewXml" Type="string" Functions="{ListViewId} = ListDetectUsedView({ListId},{ListViewXml})"/>
           <Property Name="ListName" Type="string"/>
-          <Property Name="ListId" Type="string" Functions="{ListWebRelativeUrl} = ListAddWebRelativeUrl({ListId}); {ListServerRelativeUrl} = ListAddServerRelativeUrl({ListId})"/>
+          <Property Name="ListId" Type="guid" Functions="{ListWebRelativeUrl} = ListAddWebRelativeUrl({ListId}); {ListServerRelativeUrl} = ListAddServerRelativeUrl({ListId})"/>
           <Property Name="ViewFlag" Type="integer"/>
           <Property Name="ViewFlags" Type="string"/>
           <Property Name="ViewContentTypeId" Type="string"/>
