@@ -257,11 +257,17 @@ namespace SharePointPnP.Modernization.Framework.Functions
                 var list = this.clientContext.Web.GetListById(listId);
                 list.EnsureProperties(p => p.BaseType, p => p.BaseTemplate);
 
+                // "Detailed" inspection based on template
                 if (list.BaseTemplate == (int)ListTemplateType.Tasks || list.BaseTemplate == (int)ListTemplateType.TasksWithTimelineAndHierarchy)
                 {
                     return "TaskList";
                 }
+                else if (list.BaseTemplate == (int)ListTemplateType.DiscussionBoard)
+                {
+                    return "DiscussionBoard";
+                }
 
+                // "Generic" inspection based on type
                 if (list.BaseType == BaseType.DocumentLibrary)
                 {
                     return "Library";
