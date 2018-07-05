@@ -439,7 +439,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
             Uri hostUri = new Uri(cc.Web.Url);
             siteTokens.Add("Host", $"{hostUri.Scheme}://{hostUri.DnsSafeHost}");
             siteTokens.Add("Web", cc.Web.ServerRelativeUrl.TrimEnd('/'));
-            siteTokens.Add("Sitecollection", cc.Site.RootWeb.ServerRelativeUrl.TrimEnd('/'));
+            siteTokens.Add("SiteCollection", cc.Site.RootWeb.ServerRelativeUrl.TrimEnd('/'));
             siteTokens.Add("WebId", cc.Web.Id.ToString());
             siteTokens.Add("SiteId", cc.Site.Id.ToString());
 

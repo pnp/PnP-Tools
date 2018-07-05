@@ -231,13 +231,14 @@ namespace SharePointPnP.Modernization.Framework.Functions
         [SelectorDocumentation(Description = "Analyzes a list and returns the list base type.",
                                Example = "ListSelectorListLibrary({ListId})")]
         [InputDocumentation(Name = "{ListId}", Description = "Guid of the list to use")]
+        [InputDocumentation(Name = "{ViewXml}", Description = "Definition of the selected view")]
         [OutputDocumentation(Name = "Library", Description = "The list is a document library")]
         [OutputDocumentation(Name = "List", Description = "The list is a document list")]
         [OutputDocumentation(Name = "Issue", Description = "The list is an issue list")]
         [OutputDocumentation(Name = "DiscussionBoard", Description = "The list is a discussion board")]
         [OutputDocumentation(Name = "Survey", Description = "The list is a survey")]
         [OutputDocumentation(Name = "Undefined", Description = "The list base type is undefined")]
-        public string ListSelectorListLibrary(Guid listId)
+        public string ListSelectorListLibrary(Guid listId, string viewXml)
         {
             if (listId == Guid.Empty)
             {
@@ -245,6 +246,14 @@ namespace SharePointPnP.Modernization.Framework.Functions
             }
             else
             {
+                if (!string.IsNullOrEmpty(viewXml))
+                {
+                    if (viewXml.IndexOf("Type=\"CALENDAR\"", StringComparison.InvariantCultureIgnoreCase) > -1)
+                    {
+                        return "Calendar";
+                    }
+                }
+
                 var list = this.clientContext.Web.GetListById(listId);
                 list.EnsureProperties(p => p.BaseType);
 

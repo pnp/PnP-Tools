@@ -106,7 +106,7 @@ Page transformation file. Describes:
           <Property Name="InplaceSearchEnabled" Type="bool" />
           <Property Name="GhostedXslLink" Type="string" />
           <Property Name="DisableViewSelectorMenu" Type="bool"/>
-          <Property Name="XmlDefinition" Type="string" Functions="{ListViewId} = ListDetectUsedView({ListId},{XmlDefinition})"/>
+          <Property Name="XmlDefinition" Type="string" Functions="{FullPath} = Concatenate({Host},{SiteCollection}); {EncodedSiteCollectionUrl} = HtmlEncodeForJson({FullPath}); {ListViewId} = ListDetectUsedView({ListId},{XmlDefinition})"/>
           <Property Name="DataSourceMode" Type="string" />
           <Property Name="AutoRefreshInterval" Type="integer" />
           <Property Name="AsyncRefresh" Type="bool" />
@@ -114,13 +114,16 @@ Page transformation file. Describes:
           <Property Name="SelectParameters" Type="string"/>
         </Properties>
         <!-- This selector outputs: Library, List, Issue, DiscussionBoard, Survey or Undefined  -->
-        <Mappings Selector="ListSelectorListLibrary({ListId})">
+        <Mappings Selector="ListSelectorListLibrary({ListId},{XmlDefinition})">
           <Mapping Name="List" Default="true">
             <!--<ClientSideText Text="You can map a source web part ({Title}) to a combination of client side controls :-)" Order="10" />-->
             <ClientSideWebPart Type="List" Order="20" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;false,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" />
           </Mapping>
           <Mapping Name="Library" Default="false">
             <ClientSideWebPart Type="List" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;true,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" />
+          </Mapping>
+          <Mapping Name="Calendar" Default="false">
+            <ClientSideWebPart Type="Events" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;title&quot;&#58;&quot;&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&quot;baseUrl&quot;&#58;&quot;{EncodedSiteCollectionUrl}&quot;&#125;,&quot;componentDependencies&quot;&#58;&#123;&quot;layoutComponentId&quot;&#58;&quot;8ac0c53c-e8d0-4e3e-87d0-7449eb0d4027&quot;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;selectedCategory&quot;&#58;&quot;&quot;,&quot;dateRangeOption&quot;&#58;0,&quot;startDate&quot;&#58;&quot;&quot;,&quot;endDate&quot;&#58;&quot;&quot;,&quot;isOnSeeAllPage&quot;&#58;false,&quot;layoutId&quot;&#58;&quot;FilmStrip&quot;,&quot;dataProviderId&quot;&#58;&quot;Event&quot;,&quot;webId&quot;&#58;&quot;{WebId}&quot;,&quot;siteId&quot;&#58;&quot;{SiteId}&quot;&#125;&#125;"/>
           </Mapping>
           <Mapping Name="Issue" Default="false">            
             <ClientSideText Text="Mapping for web part {Title} still to be defined" Order="10"/>
@@ -523,8 +526,7 @@ Page transformation file. Describes:
       <!-- List View Web part: SP 2007/2010 way of displaying list data -->
       <WebPart Type="Microsoft.SharePoint.WebPartPages.ListViewWebPart, Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
         <Properties>
-          <Property Name="WebId" Type="guid"/>
-          <Property Name="ListViewXml" Type="string" Functions="{ListViewId} = ListDetectUsedView({ListId},{ListViewXml})"/>
+          <Property Name="ListViewXml" Type="string" Functions="{FullPath} = Concatenate({Host},{SiteCollection}); {EncodedSiteCollectionUrl} = HtmlEncodeForJson({FullPath}); {ListViewId} = ListDetectUsedView({ListId},{ListViewXml})"/>
           <Property Name="ListName" Type="string"/>
           <Property Name="ListId" Type="guid" Functions="{ListWebRelativeUrl} = ListAddWebRelativeUrl({ListId}); {ListServerRelativeUrl} = ListAddServerRelativeUrl({ListId})"/>
           <Property Name="ViewFlag" Type="integer"/>
@@ -533,12 +535,15 @@ Page transformation file. Describes:
           <Property Name="PageType" Type="string"/>
         </Properties>
         <!-- TODO: validate this mapping -->
-        <Mappings Selector="ListSelectorListLibrary({ListId})">
+        <Mappings Selector="ListSelectorListLibrary({ListId},{ListViewXml})">
           <Mapping Name="List" Default="true">
             <ClientSideWebPart Type="List" Order="20" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;false,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" />
           </Mapping>
           <Mapping Name="Library" Default="false">
             <ClientSideWebPart Type="List" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;isDocumentLibrary&quot;&#58;true,&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;listTitle&quot;&#58;&quot;{Title}&quot;,&quot;selectedListUrl&quot;&#58;&quot;{ListServerRelativeUrl}&quot;,&quot;webRelativeListUrl&quot;&#58;&quot;{ListWebRelativeUrl}&quot;,&quot;webpartHeightKey&quot;&#58;4,&quot;selectedViewId&quot;&#58;&quot;{ListViewId}&quot;&#125;&#125;" />
+          </Mapping>
+          <Mapping Name="Calendar" Default="false">
+            <ClientSideWebPart Type="Events" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;title&quot;&#58;&quot;&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&quot;baseUrl&quot;&#58;&quot;{EncodedSiteCollectionUrl}&quot;&#125;,&quot;componentDependencies&quot;&#58;&#123;&quot;layoutComponentId&quot;&#58;&quot;8ac0c53c-e8d0-4e3e-87d0-7449eb0d4027&quot;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;1.0&quot;,&quot;properties&quot;&#58;&#123;&quot;selectedListId&quot;&#58;&quot;{ListId}&quot;,&quot;selectedCategory&quot;&#58;&quot;&quot;,&quot;dateRangeOption&quot;&#58;0,&quot;startDate&quot;&#58;&quot;&quot;,&quot;endDate&quot;&#58;&quot;&quot;,&quot;isOnSeeAllPage&quot;&#58;false,&quot;layoutId&quot;&#58;&quot;FilmStrip&quot;,&quot;dataProviderId&quot;&#58;&quot;Event&quot;,&quot;webId&quot;&#58;&quot;{WebId}&quot;,&quot;siteId&quot;&#58;&quot;{SiteId}&quot;&#125;&#125;"/>
           </Mapping>
           <Mapping Name="Issue" Default="false">            
             <ClientSideText Text="Mapping for web part {Title} still to be defined" Order="10"/>
