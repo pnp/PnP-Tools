@@ -235,6 +235,7 @@ namespace SharePointPnP.Modernization.Framework.Functions
         [OutputDocumentation(Name = "Library", Description = "The list is a document library")]
         [OutputDocumentation(Name = "List", Description = "The list is a document list")]
         [OutputDocumentation(Name = "Issue", Description = "The list is an issue list")]
+        [OutputDocumentation(Name = "TaskList", Description = "The list is an task list")]
         [OutputDocumentation(Name = "DiscussionBoard", Description = "The list is a discussion board")]
         [OutputDocumentation(Name = "Survey", Description = "The list is a survey")]
         [OutputDocumentation(Name = "Undefined", Description = "The list base type is undefined")]
