@@ -331,6 +331,11 @@
     margin: auto;
 }
 
+/* Fix horizontal scroll */
+div#s4-bodyContainer {
+    max-width: 100%;
+}
+
 /*======================== END of V2 ========================*/
 
 /* Tablet/smartphones common styles for collapsibles */
