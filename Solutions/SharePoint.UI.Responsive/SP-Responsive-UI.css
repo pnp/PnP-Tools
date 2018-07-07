@@ -357,6 +357,7 @@ div#s4-bodyContainer {
     /* Add smooth scroll on iOS */
     #s4-workspace {
         -webkit-overflow-scrolling: touch;
+        max-width: 100%;
     }
     /* Fix SharePoint position from Top Bar when Burger is present */
     #suiteBar #suiteBarLeft .ms-verticalAlignMiddle {
