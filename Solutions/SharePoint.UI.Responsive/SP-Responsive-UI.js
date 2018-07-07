@@ -195,21 +195,11 @@ PnPResponsiveApp.Main = (function () {
      */
     function ensureElemCreation(p, c) {
         var r = false;
-        var evExist = false;
         if (!c) {
-            try {
-                var ev = getEventListeners(p);
-                for (var e in ev) {
-                    if (e == 'DOMNodeInserted') {
-                        evExist = true;
-                        break;
-                    }
-                }
-            } catch (err) {
-                console.log('Error: ' + err);
-            }
-            if (!evExist) {
-                p.addEventListener('DOMNodeInserted', function () {
+            /* Custom CSS class is added to add only once the event */
+            if (!hasClass(p, 'pnp-nodeListener')) {
+                p.className += ' pnp-nodeListener';
+                p.addEventListener('DOMNodeInserted', function() {
                     PnPResponsiveApp.Main.setUpToggling();
                 });
             }
@@ -284,22 +274,25 @@ PnPResponsiveApp.Main = (function () {
                 PnPResponsiveApp.Main.setUpSuiteBarToogling();
 
                 responsivizeSettings();
-                // also listen for dynamic page change to Settings page
-                window.onhashchange = function () { responsivizeSettings(); };
+                /* also listen for dynamic page change to Settings page */
+                window.onhashchange = function() { responsivizeSettings(); };
 
-                // Extend/override some SP native functions to fix resizing quirks
-
-                // First of all save the original function definition
+                /* 
+                 * Extend/override some SP native functions to fix resizing quirks
+                 * First of all save the original function definition
+                 */
                 var originalResizeFunction = FixRibbonAndWorkspaceDimensions;
 
-                // Then define a new one
                 FixRibbonAndWorkspaceDimensions = function () {
-                    // let sharepoint do its thing
+                /* Then define a new one */
+                FixRibbonAndWorkspaceDimensions = function() {
+                    /* let sharepoint do its thing */
                     originalResizeFunction();
-                    // fix the body container width
+                    /* fix the body container width */
                     document.getElementById('s4-bodyContainer').style.width = document.getElementById('s4-workspace').offsetWidth + 'px';
                 };
             }
+            /* Init function is done */
             initState = true;
         },
         /**
@@ -340,7 +333,7 @@ PnPResponsiveApp.Main = (function () {
             /* Get Top Bar */
             var topBar = document.getElementById('suiteBarTop');
             var topNavLeft = null;
-            /* If suiteBarTop of SP2016/online doesn't exists, it is because is a SP2013 ? */
+            /* If suiteBarTop of SP2016/online doesn't exists, it is maybe because is a SP2013 ? */
             if (!topBar) {
                 topBar = document.getElementById('suiteBar');
                 topNavLeft = topBar.querySelector('.ms-verticalAlignMiddle');
@@ -366,7 +359,8 @@ PnPResponsiveApp.Main = (function () {
 
                 var pnpNavPanel = document.createElement('div');
                 pnpNavPanel.id = 'PnPNavPanel';
-                pnpNavPanel.className = 'ms-rteThemeBackColor-1-0 ms-dialogHidden mobile-only';
+                /* Hide with ms-hide to avoid UI load effect */
+                pnpNavPanel.className = 'ms-rteThemeBackColor-1-0 ms-dialogHidden mobile-only ms-hide';
 
                 var pnpContentNavPanel = document.createElement('div');
                 /* Content Panel */
@@ -496,4 +490,4 @@ function responsiveStartup() {
 /* Register Responsive Behavior after SP.js is loaded (used for SharePoint On-Premise) */
 SP.SOD.executeFunc('sp.js', 'SP.ClientContext', responsiveStartup);
 /* Register Responsive Behavior after SP page is loaded (used for SharePoint Online) */
-_spBodyOnLoadFunctionNames.push("responsiveStartup");
+_spBodyOnLoadFunctionNames.push('responsiveStartup');
