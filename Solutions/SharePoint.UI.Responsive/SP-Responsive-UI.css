@@ -98,7 +98,7 @@
 }
 
 #PnPNavPanel.PnPPanelEnabled {
-    left: 0;
+    left: -302px;
     opacity: 1;
     display: block;
 }
@@ -326,6 +326,9 @@
     /* Overwrite default SP Class in device mode */
     #PnP_MainLink_Hamburger.mobile-only {
         display: inline-block;
+    }
+    #PnPNavPanel.PnPPanelEnabled {
+        left: 0;
     }
     .no-mobile {
         display: none;
