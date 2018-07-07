@@ -537,6 +537,10 @@ div#s4-bodyContainer {
         /* Start out as collapsed */
         margin-left: -200px;
     }
+    /* When fullscreen mode is enbale, there are no left menu so remove negative margin-left to hide menu */
+    body.ms-fullscreenmode #contentRow {
+        margin-left: 0;
+    }
     .ms-dialog #contentRow {
         /* Make sure this is not applied to dialog windows */
         margin-left: 0;
