@@ -233,8 +233,7 @@ PnPResponsiveApp.Main = (function () {
         newTopNavText.setAttribute('aria-hidden', 'true');
 
         newTopNavItem.addEventListener('click', function () {
-            var panel = document.getElementById('PnPNavPanel');
-            toggleClass(panel, 'PnPPanelEnabled');
+            displayPnPPanel();
             return false;
         });
         
@@ -243,6 +242,21 @@ PnPResponsiveApp.Main = (function () {
         newTopItem.appendChild(newTopItemChild);
 
         return newTopItem;
+    }
+
+    /**
+     * Manage Show or Hide PnP Panel
+     * @private
+     */
+    function displayPnPPanel() {
+        var panel = document.getElementById('PnPNavPanel');
+        var panelPage = document.getElementById('PnPPanelPage');
+        if (panel) {
+            toggleClass(panel, 'PnPPanelEnabled');
+        }
+        if (panelPage) {
+            toggleClass(panelPage, 'PnPPanelEnabled');
+        }
     }
 
     return {
@@ -358,6 +372,10 @@ PnPResponsiveApp.Main = (function () {
                 }
                 if (!spSuiteBar) { return; }
 
+                /* Create PnP Panel Page that separate PnPPanel from Page content and allow click anywhere to close the panel */
+                var pnpPanelPage = document.createElement('div');
+                pnpPanelPage.id = 'PnPPanelPage';
+
                 var pnpNavPanel = document.createElement('div');
                 pnpNavPanel.id = 'PnPNavPanel';
                 /* Hide with ms-hide to avoid UI load effect */
@@ -399,6 +417,13 @@ PnPResponsiveApp.Main = (function () {
                 /* Add Left Panel to page */
                 pnpNavPanel.appendChild(pnpContentNavPanel);
                 spSuiteBar.parentElement.insertBefore(pnpNavPanel, spSuiteBar.nextSibling);
+                /* Add PnPPanel Page to content */
+                spSuiteBar.parentElement.insertBefore(pnpPanelPage, pnpNavPanel.nextSibling);
+                /* Add event click on PnP Panel Page to close PnP Panel menu when click on it */
+                pnpPanelPage.addEventListener('click', function() {
+                    displayPnPPanel();
+                    return false;
+                });
             }
         },
         /**
