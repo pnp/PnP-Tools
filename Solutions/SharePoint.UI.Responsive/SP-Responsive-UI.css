@@ -130,12 +130,8 @@
     margin-left: 0;
 }
 
-/* Manage separators between menus */
-#PnPNavPanel>#PnPContentNavPanel>.ms-picker-line {
-    border-top-width: 1px;
-}
-/* Rempove border for the first menu */
-#PnPNavPanel>#PnPContentNavPanel>.ms-picker-line:first-child {
+/* Remove border for the first menu */
+#PnPNavPanel>#PnPContentNavPanel>.ms-qSuggest-listSeparator:first-child {
     border-top: 0;
 }
 

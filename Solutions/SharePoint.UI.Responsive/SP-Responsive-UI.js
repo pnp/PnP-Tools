@@ -146,6 +146,7 @@ PnPResponsiveApp.Main = (function () {
         if (nav) {
             clonedNav = nav.cloneNode(true);
             clonedNav = cloneSPIdNodes(clonedNav);
+            clonedNav.className += ' ms-qSuggest-listSeparator';
 
             /* Sub nodes accordion */
             var navNodes = clonedNav.querySelectorAll('li');
@@ -375,21 +376,18 @@ PnPResponsiveApp.Main = (function () {
                 /* TOP NAV support */
                 var spTopNav = pnpNavGeneration('DeltaTopNavigation');
                 if (spTopNav) {
-                    spTopNav.className += ' ms-picker-line';
                     pnpContentNavPanel.appendChild(spTopNav);
                 }
 
                 /* QUICK LAUNCH nav support */
                 var spQLNav = pnpNavGeneration('DeltaPlaceHolderLeftNavBar');
                 if (spQLNav) {
-                    spQLNav.className += ' ms-picker-line';
                     pnpContentNavPanel.appendChild(spQLNav);
                 }
 
                 /* Oslo nav support */
                 var spHQLNav = pnpNavGeneration('DeltaHorizontalQuickLaunch');
                 if (spHQLNav) {
-                    spHQLNav.className += ' ms-picker-line';
                     pnpContentNavPanel.appendChild(spHQLNav);
                 }
 
