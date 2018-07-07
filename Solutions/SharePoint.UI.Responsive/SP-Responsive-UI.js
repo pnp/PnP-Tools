@@ -290,26 +290,24 @@ PnPResponsiveApp.Main = (function () {
 
                 responsivizeSettings();
                 /* also listen for dynamic page change to Settings page */
-                window.onhashchange = function() { responsivizeSettings(); };
+                window.onhashchange = function () { responsivizeSettings(); };
 
-                /* 
+                /*
                  * Extend/override some SP native functions to fix resizing quirks
                  * First of all save the original function definition
                  */
                 var originalResizeFunction = FixRibbonAndWorkspaceDimensions;
 
+                /* Then define a new one */
                 FixRibbonAndWorkspaceDimensions = function () {
-                    /* Then define a new one */
-                    FixRibbonAndWorkspaceDimensions = function() {
-                        /* let sharepoint do its thing */
-                        originalResizeFunction();
-                        /* fix the body container width */
-                        document.getElementById('s4-bodyContainer').style.width = document.getElementById('s4-workspace').offsetWidth + 'px';
-                    };
-                }
-                /* Init function is done */
-                initState = true;
+                    /* let sharepoint do its thing */
+                    originalResizeFunction();
+                    /* fix the body container width */
+                    document.getElementById('s4-bodyContainer').style.width = document.getElementById('s4-workspace').offsetWidth + 'px';
+                };
             }
+            /* Init function is done */
+            initState = true;
         },
         /**
          * Add viewport and support retina devices
