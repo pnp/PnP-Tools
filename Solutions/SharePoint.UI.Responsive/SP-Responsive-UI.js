@@ -299,16 +299,17 @@ PnPResponsiveApp.Main = (function () {
                 var originalResizeFunction = FixRibbonAndWorkspaceDimensions;
 
                 FixRibbonAndWorkspaceDimensions = function () {
-                /* Then define a new one */
-                FixRibbonAndWorkspaceDimensions = function() {
-                    /* let sharepoint do its thing */
-                    originalResizeFunction();
-                    /* fix the body container width */
-                    document.getElementById('s4-bodyContainer').style.width = document.getElementById('s4-workspace').offsetWidth + 'px';
-                };
+                    /* Then define a new one */
+                    FixRibbonAndWorkspaceDimensions = function() {
+                        /* let sharepoint do its thing */
+                        originalResizeFunction();
+                        /* fix the body container width */
+                        document.getElementById('s4-bodyContainer').style.width = document.getElementById('s4-workspace').offsetWidth + 'px';
+                    };
+                }
+                /* Init function is done */
+                initState = true;
             }
-            /* Init function is done */
-            initState = true;
         },
         /**
          * Add viewport and support retina devices
