@@ -134,8 +134,6 @@ namespace SharePointPnP.Modernization.Framework.Transform
             }
             #endregion
 
-            // TODO: add logic to implement page level permission settings to be copied as well
-
             #region Home page handling
             bool replacedByOOBHomePage = false;
             // Check if the transformed page is the web's home page
@@ -252,10 +250,55 @@ namespace SharePointPnP.Modernization.Framework.Transform
             }
             #endregion
 
-            #region Page persisting
+            #region Page persisting + permissions
             // Persist the client side page
             targetPage.Save(pageTransformationInformation.TargetPageName);
             targetPage.Publish();
+
+            #region Permission handling
+            if (pageTransformationInformation.KeepPageSpecificPermissions)
+            {
+                pageTransformationInformation.SourcePage.EnsureProperty(p => p.HasUniqueRoleAssignments);
+                if (pageTransformationInformation.SourcePage.HasUniqueRoleAssignments)
+                {
+                    // Copy the unique permissions from source to target
+                    // Get the unique permissions
+                    this.clientContext.Load(pageTransformationInformation.SourcePage, a => a.RoleAssignments.Include(roleAsg => roleAsg.Member.LoginName,
+                        roleAsg => roleAsg.RoleDefinitionBindings.Include(roleDef => roleDef.Name, roleDef => roleDef.Description)));
+                    this.clientContext.ExecuteQueryRetry();
+
+                    // Get target page information
+                    this.clientContext.Load(targetPage.PageListItem, p => p.HasUniqueRoleAssignments, a => a.RoleAssignments.Include(roleAsg => roleAsg.Member.LoginName,
+                        roleAsg => roleAsg.RoleDefinitionBindings.Include(roleDef => roleDef.Name, roleDef => roleDef.Description)));
+                    this.clientContext.ExecuteQueryRetry();
+
+                    // Break permission inheritance on the target page if not done yet
+                    if (!targetPage.PageListItem.HasUniqueRoleAssignments)
+                    {
+                        targetPage.PageListItem.BreakRoleInheritance(false, false);
+                        this.clientContext.ExecuteQueryRetry();
+                    }
+
+                    // Apply new permissions
+                    foreach(var roleAssignment in pageTransformationInformation.SourcePage.RoleAssignments)
+                    {
+                        var principal = this.clientContext.Web.SiteUsers.GetByLoginName(roleAssignment.Member.LoginName);
+                        if (principal != null)
+                        {
+                            var roleDefinitionBindingCollection = new RoleDefinitionBindingCollection(this.clientContext);
+                            foreach(var roleDef in roleAssignment.RoleDefinitionBindings)
+                            {
+                                roleDefinitionBindingCollection.Add(roleDef);
+                            }
+
+                            targetPage.PageListItem.RoleAssignments.Add(principal, roleDefinitionBindingCollection);
+                        }
+                    }
+                    this.clientContext.ExecuteQueryRetry();
+                }
+            }
+            #endregion
+
 
             // All went well so far...swap pages if that's needed
             if (pageTransformationInformation.TargetPageTakesSourcePageName)

@@ -231,13 +231,14 @@ namespace SharePointPnP.Modernization.Framework.Functions
         [SelectorDocumentation(Description = "Analyzes a list and returns the list base type.",
                                Example = "ListSelectorListLibrary({ListId})")]
         [InputDocumentation(Name = "{ListId}", Description = "Guid of the list to use")]
+        [InputDocumentation(Name = "{ViewXml}", Description = "Definition of the selected view")]
         [OutputDocumentation(Name = "Library", Description = "The list is a document library")]
         [OutputDocumentation(Name = "List", Description = "The list is a document list")]
         [OutputDocumentation(Name = "Issue", Description = "The list is an issue list")]
         [OutputDocumentation(Name = "DiscussionBoard", Description = "The list is a discussion board")]
         [OutputDocumentation(Name = "Survey", Description = "The list is a survey")]
         [OutputDocumentation(Name = "Undefined", Description = "The list base type is undefined")]
-        public string ListSelectorListLibrary(Guid listId)
+        public string ListSelectorListLibrary(Guid listId, string viewXml)
         {
             if (listId == Guid.Empty)
             {
@@ -245,9 +246,28 @@ namespace SharePointPnP.Modernization.Framework.Functions
             }
             else
             {
-                var list = this.clientContext.Web.GetListById(listId);
-                list.EnsureProperties(p => p.BaseType);
+                if (!string.IsNullOrEmpty(viewXml))
+                {
+                    if (viewXml.IndexOf("Type=\"CALENDAR\"", StringComparison.InvariantCultureIgnoreCase) > -1)
+                    {
+                        return "Calendar";
+                    }
+                }
 
+                var list = this.clientContext.Web.GetListById(listId);
+                list.EnsureProperties(p => p.BaseType, p => p.BaseTemplate);
+
+                // "Detailed" inspection based on template
+                if (list.BaseTemplate == (int)ListTemplateType.Tasks || list.BaseTemplate == (int)ListTemplateType.TasksWithTimelineAndHierarchy)
+                {
+                    return "TaskList";
+                }
+                else if (list.BaseTemplate == (int)ListTemplateType.DiscussionBoard)
+                {
+                    return "DiscussionBoard";
+                }
+
+                // "Generic" inspection based on type
                 if (list.BaseType == BaseType.DocumentLibrary)
                 {
                     return "Library";
@@ -424,12 +444,30 @@ namespace SharePointPnP.Modernization.Framework.Functions
         [OutputDocumentation(Name = "{ImageUniqueId}", Description = "UniqueId of the file")]
         public Dictionary<string,string> ImageLookup(string serverRelativeImagePath)
         {
+
+            bool stop = false;
             if (string.IsNullOrEmpty(serverRelativeImagePath))
             {
-                return null;
+                stop = true;
+            }
+
+            this.clientContext.Web.EnsureProperties(p => p.ServerRelativeUrl);
+
+            // Check if this url is pointing to content living in this site
+            if (!stop && !serverRelativeImagePath.StartsWith(this.clientContext.Web.ServerRelativeUrl, StringComparison.InvariantCultureIgnoreCase))
+            {
+                // TODO: add handling of files living in another web
+                stop = true;
             }
 
             Dictionary<string, string> results = new Dictionary<string, string>();
+
+            if (stop)
+            {
+                results.Add("ImageListId", "");
+                results.Add("ImageUniqueId", "");
+                return results;
+            }
 
             try
             {
@@ -536,7 +574,7 @@ namespace SharePointPnP.Modernization.Framework.Functions
             {
                 if (ex.ServerErrorTypeName == "System.IO.FileNotFoundException")
                 {
-                    // provided file link does not exist...we're eating the exception and the page will end up with a default page header
+                    // provided file is not retrievable...we're eating the exception this file not be used in the target web part
                     //TODO: log error
                     return null;
                 }
