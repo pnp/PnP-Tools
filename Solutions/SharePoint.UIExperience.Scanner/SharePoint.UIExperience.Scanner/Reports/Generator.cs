@@ -93,6 +93,12 @@ namespace SharePoint.UIExperience.Scanner.Reports
                 }
             }
 
+            if (blockedListsTable.Rows.Count == 0)
+            {
+                Console.WriteLine($"No blocked lists found...skipping report generation");
+                return;
+            }
+
             // Get the template Excel file
             using (Stream stream = typeof(Generator).Assembly.GetManifestResourceStream($"SharePoint.UIExperience.Scanner.Reports.{ListMasterFile}"))
             {
