@@ -535,6 +535,9 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 if (this.properties.Query.Filters.Any())
                 {
                     this.properties.Caml = CamlQueryBuilder(list, cbq);
+                    
+                    // ContentRollup web part first needs to be fixed to have it handle the CAML query generation 
+                    //this.properties.Caml = "";
                 }
             }
             else

@@ -1,4 +1,5 @@
-﻿using AngleSharp.Dom;
+﻿using AngleSharp;
+using AngleSharp.Dom;
 using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
 using System;
@@ -19,8 +20,8 @@ namespace SharePointPnP.Modernization.Framework.Transform
         /// </summary>
         public HtmlTransformator()
         {
-            // Instantiate the AngleSharp Html parser
-            parser = new HtmlParser(new HtmlParserOptions() { IsEmbedded = true });
+            // Instantiate the AngleSharp Html parser, configure to load the Style property as well
+            parser = new HtmlParser(new HtmlParserOptions() { IsEmbedded = true }, Configuration.Default.WithDefaultLoader().WithCss());
         }
         #endregion
 
@@ -43,8 +44,10 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 TransformHeadings(document, 2, 3);
                 TransformHeadings(document, 1, 2);
 
-                // Process spans
-                TransformSpans(document.QuerySelectorAll("span"), document);
+                // Process elements that can hold forecolor, backcolor, fontsize, underline and strikethrough information
+                TransformElements(document.QuerySelectorAll("span"), document);
+                TransformElements(document.QuerySelectorAll("sup"), document);
+                TransformElements(document.QuerySelectorAll("sub"), document);
 
                 // Process blockquotes
                 TransformBlockQuotes(document.QuerySelectorAll("blockquote"), document);
@@ -270,7 +273,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                         // Drop P as nested P is not allowed in clean html
                         // TODO: do this in a better way
                         newElement.InnerHtml = blockQuote.InnerHtml.Replace("<p>", "").Replace("</p>", "").Replace("<P>", "").Replace("</P>", "");
-                        newElement.SetAttribute($"style", $"margin-left:{level * 40}px;");
+                        newElement.Style.MarginLeft = $"{level * 40}px";
 
                         switch (level)
                         {
@@ -328,57 +331,44 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 {
                     var newElement = document.CreateElement($"h{to}");
                     newElement.TextContent = fromNode.TextContent;
+
+                    // Copy the text alignment style
+                    if (fromNode.Style != null && !string.IsNullOrEmpty(fromNode.Style.TextAlign))
+                    {
+                        newElement.Style.TextAlign = fromNode.Style.TextAlign;
+                    }
                     parent.ReplaceChild(newElement, fromNode);
                 }
             }
         }
 
-        protected virtual void TransformSpans(IHtmlCollection<IElement> spans, IHtmlDocument document)
+        protected virtual void TransformElements(IHtmlCollection<IElement> elementsToTransform, IHtmlDocument document)
         {
-            foreach(var span in spans)
+            foreach (var element in elementsToTransform)
             {
-                var parent = span.Parent;
+                var parent = element.Parent;
 
                 // rewrite normal style
                 // <span class="ms-rteStyle-Normal">Norm</span>
-                if (span.ClassName != null && span.ClassName.ToLower().Contains("ms-rtestyle-normal"))
+                var rtestylenormal = element.ClassList.PartialMatch("ms-rtestyle-normal");
+                if (!string.IsNullOrEmpty(rtestylenormal))
                 {
-                    ReplaceChildElementByText(parent, span, document);
-                    continue;
-                }
-
-                // rewrite striked
-                // <span style="text-decoration&#58;line-through;">striked</span>
-                if (span.OuterHtml.ToLower().Contains("text-decoration:line-through;"))
-                {
-                    var newElement = document.CreateElement("s");
-                    newElement.TextContent = span.InnerHtml;
-                    parent.ReplaceChild(newElement, span);
-                    continue;
-                }
-
-                // rewrite underline
-                // <span style="text-decoration&#58;underline;">underline</span>
-                if (span.OuterHtml.ToLower().Contains("text-decoration:underline;"))
-                {
-                    var newElement = document.CreateElement("u");
-                    newElement.TextContent = span.InnerHtml;
-                    parent.ReplaceChild(newElement, span);
-                    continue;
+                    element.ClassList.Remove(rtestylenormal);
                 }
 
                 // ================================
-                // rewrite colors
+                // rewrite colors, back and fore color + size can be defined as class on a single span element
                 // ================================
                 // <span class="ms-rteThemeForeColor-5-0">red</span>
-                if (span.ClassName != null && (span.ClassName.ToLower().StartsWith("ms-rtethemeforecolor-")))
+                var themeForeColor = element.ClassList.PartialMatch("ms-rtethemeforecolor-");
+                if (!string.IsNullOrEmpty(themeForeColor))
                 {
                     string newClass = null;
 
                     // Modern Theme colors
                     // Darker, Dark, Dark Alternate, Primary, Secondary
                     // Neutral Tertiary, Neutral Secondary, Primary alternate, Neutral primary, Neutral Dark
-                    if (int.TryParse(span.ClassName.ToLower()[span.ClassName.ToLower().Length - 1].ToString(), out int themeCode))
+                    if (int.TryParse(themeForeColor.ToLower()[themeForeColor.ToLower().Length - 1].ToString(), out int themeCode))
                     {
                         string colorName = ThemeCodeToForegroundColorName(themeCode);
                         if (!string.IsNullOrEmpty(colorName))
@@ -387,37 +377,33 @@ namespace SharePointPnP.Modernization.Framework.Transform
                         }
                     }
 
+                    element.ClassList.Remove(themeForeColor);
                     if (!string.IsNullOrEmpty(newClass))
                     {
                         // We mapped a color
-                        span.ClassName = newClass;
-                        continue;
-                    }
-                    else
-                    {
-                        // For now drop the color span
-                        ReplaceChildElementByText(parent, span, document);
-                        continue;
+                        element.ClassList.Add(newClass);
                     }
                 }
 
                 // <span class="ms-rteThemeBackColor-5-0">red</span>
-                if (span.ClassName != null && span.ClassName.ToLower().StartsWith("ms-rtethemebackcolor-"))
+                var rtethemebackcolor = element.ClassList.PartialMatch("ms-rtethemebackcolor-");
+                if (!string.IsNullOrEmpty(rtethemebackcolor))
                 {
                     // There are no themed back colors in modern, so for now drop the color span and the background color
-                    ReplaceChildElementByText(parent, span, document);
-                    continue;
+                    element.ClassList.Remove(rtethemebackcolor);
                 }
 
                 //<span class="ms-rteForeColor-2" style="">Red,&#160;</span>
-                if (span.ClassName != null && span.ClassName.ToLower().StartsWith("ms-rteforecolor-"))
+                //<sup class="ms-rteForeColor-10" style=""><strong style="">superscript</strong></sup>
+                var rteforecolor = element.ClassList.PartialMatch("ms-rteforecolor-");
+                if (!string.IsNullOrEmpty(rteforecolor))
                 {
                     // Modern Theme colors
                     // Dark Red, Red, Orange, Yellow, Light green
                     // Green, Light Blue, Blue, Dark Blue, Purple
 
                     string newClass = null;
-                    if (int.TryParse(span.ClassName.ToLower().Replace("ms-rteforecolor-", ""), out int colorCode))
+                    if (int.TryParse(rteforecolor.ToLower().Replace("ms-rteforecolor-", ""), out int colorCode))
                     {
                         string colorName = ColorCodeToForegroundColorName(colorCode);
                         if (!string.IsNullOrEmpty(colorName))
@@ -426,28 +412,24 @@ namespace SharePointPnP.Modernization.Framework.Transform
                         }
                     }
 
+                    element.ClassList.Remove(rteforecolor);
                     if (!string.IsNullOrEmpty(newClass))
                     {
                         // We mapped a color
-                        span.ClassName = newClass;
-                        continue;
-                    }
-                    else
-                    {
-                        // Let's go to default...meaning drop color info
-                        ReplaceChildElementByText(parent, span, document);
-                        continue;
+                        element.ClassList.Add(newClass);
                     }
                 }
 
-                if (span.ClassName != null && span.ClassName.ToLower().StartsWith("ms-rtebackcolor-"))
+                // <sub class="ms-rteBackColor-2">lowerscript</sub>
+                var rtebackcolor = element.ClassList.PartialMatch("ms-rtebackcolor-");
+                if (!string.IsNullOrEmpty(rtebackcolor))
                 {
                     // Modern Theme colors
                     // Dark Red, Red, Orange, Yellow, Light green
                     // Green, Light Blue, Blue, Dark Blue, Purple
 
                     string newClass = null;
-                    if (int.TryParse(span.ClassName.ToLower().Replace("ms-rtebackcolor-", ""), out int colorCode))
+                    if (int.TryParse(rtebackcolor.ToLower().Replace("ms-rtebackcolor-", ""), out int colorCode))
                     {
                         string colorName = ColorCodeToBackgroundColorName(colorCode);
                         if (!string.IsNullOrEmpty(colorName))
@@ -456,31 +438,26 @@ namespace SharePointPnP.Modernization.Framework.Transform
                         }
                     }
 
+                    element.ClassList.Remove(rtebackcolor);
                     if (!string.IsNullOrEmpty(newClass))
                     {
                         // We mapped a color
-                        span.ClassName = newClass;
-                        continue;
-                    }
-                    else
-                    {
-                        // Let's go to default...meaning drop color info
-                        ReplaceChildElementByText(parent, span, document);
-                        continue;
+                        element.ClassList.Add(newClass);
                     }
                 }
 
                 // ================================
                 // rewrite font size
                 // ================================
-                if (span.ClassName != null && span.ClassName.ToLower().StartsWith("ms-rtefontsize-"))
+                var rtefontsize = element.ClassList.PartialMatch("ms-rtefontsize-");
+                if (!string.IsNullOrEmpty(rtefontsize))
                 {
                     // Modern Theme colors
                     // Dark Red, Red, Orange, Yellow, Light green
                     // Green, Light Blue, Blue, Dark Blue, Purple
 
                     string newClass = null;
-                    if (int.TryParse(span.ClassName.ToLower().Replace("ms-rtefontsize-", ""), out int fontsizeCode))
+                    if (int.TryParse(rtefontsize.ToLower().Replace("ms-rtefontsize-", ""), out int fontsizeCode))
                     {
                         string fontSize = FontCodeToName(fontsizeCode);
                         if (!string.IsNullOrEmpty(fontSize))
@@ -489,18 +466,67 @@ namespace SharePointPnP.Modernization.Framework.Transform
                         }
                     }
 
+                    element.ClassList.Remove(rtefontsize);
                     if (!string.IsNullOrEmpty(newClass))
                     {
                         // We mapped a color
-                        span.ClassName = newClass;
-                        continue;
+                        element.ClassList.Add(newClass);
+                    }
+                }
+
+                // rewrite striked and underline
+                // <span style="text-decoration&#58;line-through;">striked</span>
+                // <span style="text-decoration&#58;underline;">underline</span>
+                bool replacementDone = false;
+                if (element.Style != null && (!string.IsNullOrEmpty(element.Style.TextDecoration) && element.Style.TextDecoration.Equals("line-through", StringComparison.InvariantCultureIgnoreCase) ||
+                                           !string.IsNullOrEmpty(element.Style.GetPropertyValue("text-decoration-line")) && element.Style.GetPropertyValue("text-decoration-line").Equals("line-through", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    var newElement = document.CreateElement("s");
+                    if (element.ClassList.Length == 0)
+                    {
+                        newElement.TextContent = element.InnerHtml;
                     }
                     else
                     {
-                        // Let's go to default...meaning font size info will be dropped
-                        ReplaceChildElementByText(parent, span, document);
-                        continue;
+                        newElement.InnerHtml = element.OuterHtml;
                     }
+
+                    parent.ReplaceChild(newElement, element);
+                    replacementDone = true;
+                }
+                else if (element.Style != null && (!string.IsNullOrEmpty(element.Style.TextDecoration) && element.Style.TextDecoration.Equals("underline", StringComparison.InvariantCultureIgnoreCase) ||
+                                                !string.IsNullOrEmpty(element.Style.GetPropertyValue("text-decoration-line")) && element.Style.GetPropertyValue("text-decoration-line").Equals("underline", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    var newElement = document.CreateElement("u");
+                    if (element.ClassList.Length == 0)
+                    {
+                        newElement.TextContent = element.InnerHtml;
+                    }
+                    else
+                    {
+                        newElement.InnerHtml = element.OuterHtml;
+                    }
+                    parent.ReplaceChild(newElement, element);
+                    replacementDone = true;
+                }
+
+                // No need to wrap a span into a new span
+                if (element is IHtmlSpanElement)
+                {
+                    // if we still did not replace the span element and the span has no classes set anymore then we can replace it by text
+                    if (!replacementDone && element.ClassList.Length == 0)
+                    {
+                        ReplaceChildElementByText(parent, element, document);
+                    }
+                }
+                else
+                {
+                    // Non span element with styling that was transformed will be wrapped in a span containing the styling which wraps a "clean" element
+                    var newElement = document.CreateElement("span");
+                    newElement.ClassList.Add(element.ClassList.ToArray());
+                    element.ClassList.Remove(element.ClassList.ToArray());
+                    newElement.InnerHtml = element.OuterHtml;
+                    parent.ReplaceChild(newElement, element);
                 }
             }
         }

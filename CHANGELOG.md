@@ -11,7 +11,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 - SharePoint.UIExperience.Scanner v1.8: Issue tracking list (base template 1100) and Contacts (base template 105) are now supported in modern, custom lists can use gridview in modern (= quick edit) (see https://techcommunity.microsoft.com/t5/Microsoft-SharePoint-Blog/Updates-to-metadata-handling-and-list-templates/ba-p/202113)
-
+- Improvements in the SharePoint Modernization Framework
+	- Header alignment is retained when transforming wiki text
+	- Combined styles (e.g. forecolor with strike-through and fontsize) is now correctly handled when transforming wiki text
+	
 ## [July 2018]
 
 ### Added
