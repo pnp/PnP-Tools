@@ -11,6 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePoint.Scanning.Framewo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{9B8FFE29-4905-4F4D-B52D-ED1FB777341C}"
 	ProjectSection(SolutionItems) = preProject
+		Modernization Framework release notes.md = Modernization Framework release notes.md
 		README.md = README.md
 		TransformationModel.md = TransformationModel.md
 	EndProjectSection
@@ -24,9 +25,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPnP.Modernization.Framework.Profiler", "SharePointPnP.Modernization.Framework.Profiler\SharePointPnP.Modernization.Framework.Profiler.csproj", "{184B8275-F8EA-4011-BCE6-E44E03ECFF01}"
 EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -66,6 +64,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1D95235B-C088-4A4A-8719-B9026897FF50}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
