@@ -1,19 +1,19 @@
 # Modernization Framework release notes
 
-## [Beta release - version 0.1.1808.0]
+## How to get and use
 
-### How to get and use
-
-#### How to get
+### How to get
 
 - Get binaries via nuget: https://www.nuget.org/packages/SharePointPnPModernizationOnline. You can rename the .nupkg package to .zip and extract the binaries from it
 - Optionally self-service compile the binaries by pulling down the https://github.com/SharePoint/PnP-Tools/tree/master/Solutions/SharePoint.Modernization/SharePointPnP.Modernization.Framework project from GitHub
 
-#### How to use
+### How to use
 
 - From .Net: see https://github.com/SharePoint/PnP/tree/dev/Samples/Modernization.PageTransformation as nice sample to start with
 - From PnP PowerShell: see https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Scripts/PageTransformation/TransformPageSample.ps1 for a sample
 
+
+## [Beta release - version 0.1.1808.0]
 
 ### Added
 
