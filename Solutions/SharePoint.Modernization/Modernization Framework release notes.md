@@ -12,6 +12,13 @@
 - From .Net: see https://github.com/SharePoint/PnP/tree/dev/Samples/Modernization.PageTransformation as nice sample to start with
 - From PnP PowerShell: see https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Scripts/PageTransformation/TransformPageSample.ps1 for a sample
 
+## [unreleased]
+
+### Added
+
+- Wiki text handling: Headers (H1 to H3), STRONG and EM tags with custom formatting do retain their formatting
+
+### Changed
 
 ## [Beta release - version 0.1.1808.0]
 

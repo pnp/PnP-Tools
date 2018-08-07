@@ -48,6 +48,8 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 TransformElements(document.QuerySelectorAll("span"), document);
                 TransformElements(document.QuerySelectorAll("sup"), document);
                 TransformElements(document.QuerySelectorAll("sub"), document);
+                TransformElements(document.QuerySelectorAll("strong"), document);
+                TransformElements(document.QuerySelectorAll("em"), document);
 
                 // Process blockquotes
                 TransformBlockQuotes(document.QuerySelectorAll("blockquote"), document);
@@ -330,7 +332,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 else
                 {
                     var newElement = document.CreateElement($"h{to}");
-                    newElement.TextContent = fromNode.TextContent;
+                    newElement.InnerHtml = fromNode.InnerHtml;
 
                     // Copy the text alignment style
                     if (fromNode.Style != null && !string.IsNullOrEmpty(fromNode.Style.TextAlign))
@@ -482,14 +484,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                                            !string.IsNullOrEmpty(element.Style.GetPropertyValue("text-decoration-line")) && element.Style.GetPropertyValue("text-decoration-line").Equals("line-through", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     var newElement = document.CreateElement("s");
-                    if (element.ClassList.Length == 0)
-                    {
-                        newElement.TextContent = element.InnerHtml;
-                    }
-                    else
-                    {
-                        newElement.InnerHtml = element.OuterHtml;
-                    }
+                    newElement.InnerHtml = element.OuterHtml;
 
                     parent.ReplaceChild(newElement, element);
                     replacementDone = true;
@@ -498,14 +493,8 @@ namespace SharePointPnP.Modernization.Framework.Transform
                                                 !string.IsNullOrEmpty(element.Style.GetPropertyValue("text-decoration-line")) && element.Style.GetPropertyValue("text-decoration-line").Equals("underline", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     var newElement = document.CreateElement("u");
-                    if (element.ClassList.Length == 0)
-                    {
-                        newElement.TextContent = element.InnerHtml;
-                    }
-                    else
-                    {
-                        newElement.InnerHtml = element.OuterHtml;
-                    }
+                    newElement.InnerHtml = element.OuterHtml;
+
                     parent.ReplaceChild(newElement, element);
                     replacementDone = true;
                 }
@@ -518,6 +507,10 @@ namespace SharePointPnP.Modernization.Framework.Transform
                     {
                         ReplaceChildElementByText(parent, element, document);
                     }
+                }
+                else if (element.TagName.Equals("strong", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // do nothing special here
                 }
                 else
                 {

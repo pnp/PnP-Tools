@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Improvements in the SharePoint Modernization Framework
+	- Wiki text handling: Headers (H1 to H3), STRONG and EM tags with custom formatting do retain their formatting
+
 ### Changed
 
 ## [August 2018]
