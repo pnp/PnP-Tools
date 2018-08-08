@@ -49,9 +49,10 @@ namespace SharePoint.Modernization.Scanner
                     };
 
                     var generator = new Generator();
+
                     generator.CreateGroupifyReport(paths);
 
-                    if (options.Mode != Mode.GroupifyOnly)
+                    if (Options.IncludePage(options.Mode))
                     {
                         generator.CreatePageReport(paths);
                     }

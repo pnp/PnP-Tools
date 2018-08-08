@@ -144,10 +144,14 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                 if (web.IsSubSite() && web.HasUniqueRoleAssignments)
                 {
                     scanResult.BrokenPermissionInheritance = web.HasUniqueRoleAssignments;
-                    scanResult.Owners = web.GetOwners();
-                    scanResult.Members = web.GetMembers();
-                    scanResult.Visitors = web.GetVisitors();
-                    scanResult.EveryoneClaimsGranted = web.ClaimsHaveRoleAssignment(this.ScanJob.EveryoneClaim, this.ScanJob.EveryoneExceptExternalUsersClaim);
+
+                    if (!this.ScanJob.SkipUserInformation)
+                    {
+                        scanResult.Owners = web.GetOwners();
+                        scanResult.Members = web.GetMembers();
+                        scanResult.Visitors = web.GetVisitors();
+                        scanResult.EveryoneClaimsGranted = web.ClaimsHaveRoleAssignment(this.ScanJob.EveryoneClaim, this.ScanJob.EveryoneExceptExternalUsersClaim);
+                    }
                 }
 
                 // If the web template is STS#0, GROUP#0 or SITEPAGEPUBLISHING#0 then the feature was activated by SPO, other templates never got it
@@ -171,6 +175,7 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                         }
                     }
                 }
+
 
                 // Get information about the master pages used
                 if (!string.IsNullOrEmpty(web.MasterUrl) && !excludeMasterPage.Contains(web.MasterUrl.Substring(web.MasterUrl.LastIndexOf("/") + 1).ToLower()))
@@ -213,6 +218,7 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                         }
                     }
                 }
+
 
                 // Push information from root web to respective SiteScanResult object
                 if (!cc.Web.IsSubSite())
@@ -257,12 +263,28 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                     this.ScanJob.ScanErrors.Push(error);
                 }
 
-                if (this.ScanJob.Mode == Mode.Full)
+                if (Options.IncludePage(this.ScanJob.Mode))
                 {
                     // Kickoff the page analysing
                     var pageAnalyzer = new PageAnalyzer(this.SiteUrl, this.SiteCollectionUrl, this.ScanJob, this.pageSearchResults);
                     pageAnalyzer.Analyze(cc);
                 }
+
+                if (Options.IncludePublishing(this.ScanJob.Mode))
+                {
+                    // Kickoff publishing analysis
+                    PublishingAnalyzer publishingAnalyzer = null;
+                    if (this.ScanJob.SiteScanResults.TryGetValue(this.SiteCollectionUrl, out SiteScanResult siteScanData))
+                    {
+                        publishingAnalyzer = new PublishingAnalyzer(this.SiteUrl, this.SiteCollectionUrl, this.ScanJob, scanResult, siteScanData);
+                    }
+                    else
+                    {
+                        publishingAnalyzer = new PublishingAnalyzer(this.SiteUrl, this.SiteCollectionUrl, this.ScanJob, scanResult, null);
+                    }
+                    publishingAnalyzer.Analyze(cc);
+                }
+
             }
             finally
             {

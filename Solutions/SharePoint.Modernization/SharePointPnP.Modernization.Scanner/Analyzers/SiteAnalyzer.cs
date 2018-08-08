@@ -14,7 +14,7 @@ namespace SharePoint.Modernization.Scanner.Analyzers
     /// <summary>
     /// Site collection analyzer
     /// </summary>
-    public class SiteAnalyzer: BaseAnalyzer
+    public class SiteAnalyzer : BaseAnalyzer
     {
         // Modern list experience - Site block feature that can be enabled to prevent modern library experience in the complete site collection
         public static readonly Guid FeatureId_Site_ModernList = new Guid("E3540C7D-6BEA-403C-A224-1A12EAFEE4C4");
@@ -49,23 +49,27 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                 Web web = cc.Web;
                 cc.Web.EnsureProperties(p => p.WebTemplate, p => p.Configuration);
 
-                // Perform specific analysis work
                 SiteScanResult scanResult = new SiteScanResult()
                 {
                     SiteColUrl = this.SiteCollectionUrl,
                     SiteURL = this.SiteUrl,
                 };
-                    
+
+                // Perform specific analysis work
+
                 // Persist web template of the root site
                 scanResult.WebTemplate = $"{web.WebTemplate}#{web.Configuration}";
 
                 // Get security information for this site
-                scanResult.Admins = web.GetAdmins();
-                scanResult.Owners = web.GetOwners();
-                scanResult.Members = web.GetMembers();
-                scanResult.Visitors = web.GetVisitors();
-                scanResult.Office365GroupId = site.GroupId;
-                scanResult.EveryoneClaimsGranted = web.ClaimsHaveRoleAssignment(this.ScanJob.EveryoneClaim, this.ScanJob.EveryoneExceptExternalUsersClaim);
+                if (!this.ScanJob.SkipUserInformation)
+                {
+                    scanResult.Admins = web.GetAdmins();
+                    scanResult.Owners = web.GetOwners();
+                    scanResult.Members = web.GetMembers();
+                    scanResult.Visitors = web.GetVisitors();
+                    scanResult.Office365GroupId = site.GroupId;
+                    scanResult.EveryoneClaimsGranted = web.ClaimsHaveRoleAssignment(this.ScanJob.EveryoneClaim, this.ScanJob.EveryoneExceptExternalUsersClaim);
+                }
 
                 scanResult.ModernListSiteBlockingFeatureEnabled = site.Features.Where(f => f.DefinitionId == FeatureId_Site_ModernList).Count() > 0;
                 scanResult.SitePublishingFeatureEnabled = site.Features.Where(f => f.DefinitionId == FeatureId_Site_Publishing).Count() > 0;
@@ -110,7 +114,8 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                 // TODO move to single loop after scanning has been done - post processing
                 catch { }
 
-                if (this.ScanJob.Mode == Mode.Full)
+
+                if (Options.IncludePage(this.ScanJob.Mode))
                 {
                     // Use search to retrieve all view information for the indexed webpart/wiki/clientside pages in this site collection
                     // Need to use search inside this site collection?

@@ -199,8 +199,10 @@
   <ItemGroup>
     <Compile Include="Analyzers\IBaseAnalyzer.cs" />
     <Compile Include="Analyzers\PageAnalyzer.cs" />
+    <Compile Include="Analyzers\PublishingAnalyzer.cs" />
     <Compile Include="Analyzers\SiteAnalyzer.cs" />
     <Compile Include="Analyzers\WebAnalyzer.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\UserCustomActionCollectionExtensions.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
     <Compile Include="ModernizationScanJob.cs" />
@@ -211,6 +213,7 @@
     <Compile Include="Reports\Generator.cs" />
     <Compile Include="Reports\ScanSummary.cs" />
     <Compile Include="Results\PageScanResult.cs" />
+    <Compile Include="Results\PublishingScanResult.cs" />
     <Compile Include="Results\SiteScanResult.cs" />
     <Compile Include="Results\UserCustomActionResult.cs" />
     <Compile Include="Results\WebScanResult.cs" />
