@@ -11,7 +11,10 @@ namespace SharePoint.Modernization.Scanner
     public enum Mode
     {
         Full = 0,
-        GroupifyOnly
+        GroupifyOnly, // this mode is always included, is part of the default scan
+        PageOnly,
+        PublishingOnly,
+        PublishingWithPagesOnly
     }
 
     /// <summary>
@@ -22,7 +25,7 @@ namespace SharePoint.Modernization.Scanner
         // Important:
         // Following chars are already used as shorthand in the base options class: i, s, u, p, f, x, a, t, e, r, v, o, h, z
 
-        [Option('m', "mode", HelpText = "Execution mode. Use following modes: full, GroupifyOnly. Omit or use full for a full scan", DefaultValue = Mode.Full, Required = false)]
+        [Option('m', "mode", HelpText = "Execution mode. Use following modes: full, GroupifyOnly, PageOnly, PublishingOnly, PublishingWithPagesOnly. Omit or use full for a full scan", DefaultValue = Mode.Full, Required = false)]
         public Mode Mode { get; set; }
 
         [Option('b', "exportwebpartproperties", HelpText = "Export the web part property data", DefaultValue = false, Required = false)]
@@ -31,12 +34,14 @@ namespace SharePoint.Modernization.Scanner
         [Option('c', "skipusageinformation", HelpText = "Don't use search to get the site/page usage information and don't export that data", DefaultValue = false, Required = false)]
         public bool SkipUsageInformation { get; set; }
 
+        [Option('j', "skipuserinformation", HelpText = "Don't include user information in the exported data", DefaultValue = false, Required = false)]
+        public bool SkipUserInformation { get; set; }
+
         [Option('d', "skipreport", HelpText = "Don't generate an Excel report for the found data", DefaultValue = false, Required = false)]
         public bool SkipReport { get; set; }
 
         [OptionList('g', "exportpaths", HelpText = "List of paths (e.g. c:\\temp\\636529695601669598,c:\\temp\\636529695601656430) containing scan results you want to add to the report", Separator = ',')]
         public virtual IList<string> ExportPaths { get; set; }
-
 
         /// <summary>
         /// Validate the provided commandline options, will exit the program when not valid
@@ -53,6 +58,71 @@ namespace SharePoint.Modernization.Scanner
             // Perform base validation
             base.ValidateOptions(args);
 
+        }
+
+        /// <summary>
+        /// Include detailed site page analysis
+        /// </summary>
+        /// <param name="mode">mode that was provided</param>
+        /// <returns>True if included, false otherwise</returns>
+        public static bool IncludePage(Mode mode)
+        {
+            if (mode == Mode.Full)
+            {
+                return true;
+            }
+
+            if (mode == Mode.PageOnly)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Include detailed publishing analysis
+        /// </summary>
+        /// <param name="mode">mode that was provided</param>
+        /// <returns>True if included, false otherwise</returns>
+        public static bool IncludePublishing(Mode mode)
+        {
+            if (mode == Mode.Full)
+            {
+                return true;
+            }
+
+            if (mode == Mode.PublishingOnly)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Include detailed publishing page analysis
+        /// </summary>
+        /// <param name="mode">mode that was provided</param>
+        /// <returns>True if included, false otherwise</returns>
+        public static bool IncludePublishingWithPages(Mode mode)
+        {
+            if (mode == Mode.Full)
+            {
+                return true;
+            }
+
+            if (mode == Mode.PublishingOnly)
+            {
+                return true;
+            }
+
+            if (mode == Mode.PublishingWithPagesOnly)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>

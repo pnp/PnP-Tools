@@ -20,6 +20,7 @@ SharePoint.UIExperience.Scanner | Bert Jansen (**Microsoft**)
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
+1.8 | July 31st 2018 | Issue tracking list (base template 1100) and Contacts (base template 105) are now supported in modern, custom lists can use gridview in modern (= quick edit) (see https://techcommunity.microsoft.com/t5/Microsoft-SharePoint-Blog/Updates-to-metadata-handling-and-list-templates/ba-p/202113)
 1.7 | June 22th 2018 | Upgraded to use latest CSOM version + small Excel template improvements
 1.6 | June 4th 2018 | Added Excel based report generation to make it easier to consume the generated data
 1.5 | March 1st 2018 | Reliability improvements + fix to always fill the list basetemplate value
@@ -48,7 +49,7 @@ Using the reports you can streamline the "modern" experience in your tenant: you
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [UIExperience scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.UIExperience.Scanner/Releases/UI%20Experience%20scanner%20for%20SharePoint%20Online%20v1.7.zip?raw=true)
+ - [UIExperience scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.UIExperience.Scanner/Releases/UI%20Experience%20scanner%20for%20SharePoint%20Online%20v1.8.zip?raw=true)
 
 Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder containing the tool **UIExperienceScanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 

@@ -84,6 +84,9 @@ function Invoke-PnPModernizationPageTransformation
 # variables
 $CAMLQueryByExtension = "<View Scope='Recursive'><Query><Where><Contains><FieldRef Name='File_x0020_Type'/><Value Type='text'>aspx</Value></Contains></Where></Query></View>"
 $CAMLQueryByExtensionAndName = "<View Scope='Recursive'><Query><Where><And><Contains><FieldRef Name='File_x0020_Type'/><Value Type='text'>aspx</Value></Contains><BeginsWith><FieldRef Name='FileLeafRef'/><Value Type='text'>{0}</Value></BeginsWith></And></Where></Query></View>"
+
+# !!!!!!!!!!!!
+# Update below variable to point to the location that holds SharePointPnP.Modernization.Framework.dll and webpartmapping.xml
 $binaryFolder = "C:\github\BertPnPTools\Solutions\SharePoint.Modernization\SharePointPnP.Modernization.Framework\bin\Debug"
 
 # Load the SharePoint Modernization framework

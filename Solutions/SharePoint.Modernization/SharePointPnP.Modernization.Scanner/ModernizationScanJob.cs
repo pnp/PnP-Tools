@@ -21,11 +21,13 @@ namespace SharePoint.Modernization.Scanner
         public Mode Mode;
         public bool ExportWebPartProperties;
         public bool SkipUsageInformation;
+        public bool SkipUserInformation;
         public string EveryoneExceptExternalUsersClaim = "";
         public readonly string EveryoneClaim = "c:0(.s|true";
         public ConcurrentDictionary<string, WebScanResult> WebScanResults;
         public ConcurrentDictionary<string, SiteScanResult> SiteScanResults;
         public ConcurrentDictionary<string, PageScanResult> PageScanResults;
+        public ConcurrentDictionary<string, PublishingScanResult> PublishingScanResults;
         public Tenant SPOTenant;
         public PageTransformation PageTransformation;
         #endregion
@@ -41,10 +43,12 @@ namespace SharePoint.Modernization.Scanner
             Mode = options.Mode;
             ExportWebPartProperties = options.ExportWebPartProperties;
             SkipUsageInformation = options.SkipUsageInformation;
+            SkipUserInformation = options.SkipUserInformation;
 
             this.WebScanResults = new ConcurrentDictionary<string, WebScanResult>(options.Threads, 50000);
             this.SiteScanResults = new ConcurrentDictionary<string, SiteScanResult>(options.Threads, 10000);
             this.PageScanResults = new ConcurrentDictionary<string, PageScanResult>(options.Threads, 1000000);
+            this.PublishingScanResults = new ConcurrentDictionary<string, PublishingScanResult>(options.Threads, 1000);
 
             this.TimerJobRun += ModernizationScanJob_TimerJobRun;
         }
@@ -120,16 +124,19 @@ namespace SharePoint.Modernization.Scanner
                             ccWeb.Load(ccWeb.Web, p => p.Features); // Features web level
                             ccWeb.Load(ccWeb.Web, p => p.RootFolder); // web home page
                             ccWeb.ExecuteQueryRetry();
-                            
-                            // Split load in multiple batches to minimize timeout exceptions
-                            ccWeb.Load(ccWeb.Web, p => p.SiteUsers, p => p.AssociatedOwnerGroup, p => p.AssociatedMemberGroup, p => p.AssociatedVisitorGroup); // site user and groups
-                            ccWeb.Load(ccWeb.Web, p => p.HasUniqueRoleAssignments, p => p.RoleAssignments, p => p.SiteGroups.Include(s => s.Users)); // permission inheritance at web level
-                            ccWeb.ExecuteQueryRetry();
 
-                            ccWeb.Load(ccWeb.Web.AssociatedOwnerGroup, p => p.Users); // users in the Owners group
-                            ccWeb.Load(ccWeb.Web.AssociatedMemberGroup, p => p.Users); // users in the Members group
-                            ccWeb.Load(ccWeb.Web.AssociatedVisitorGroup, p => p.Users); // users in the Visitors group
-                            ccWeb.ExecuteQueryRetry();
+                            // Split load in multiple batches to minimize timeout exceptions
+                            if (!SkipUserInformation)
+                            {
+                                ccWeb.Load(ccWeb.Web, p => p.SiteUsers, p => p.AssociatedOwnerGroup, p => p.AssociatedMemberGroup, p => p.AssociatedVisitorGroup); // site user and groups
+                                ccWeb.Load(ccWeb.Web, p => p.HasUniqueRoleAssignments, p => p.RoleAssignments, p => p.SiteGroups.Include(s => s.Users)); // permission inheritance at web level
+                                ccWeb.ExecuteQueryRetry();
+
+                                ccWeb.Load(ccWeb.Web.AssociatedOwnerGroup, p => p.Users); // users in the Owners group
+                                ccWeb.Load(ccWeb.Web.AssociatedMemberGroup, p => p.Users); // users in the Members group
+                                ccWeb.Load(ccWeb.Web.AssociatedVisitorGroup, p => p.Users); // users in the Visitors group
+                                ccWeb.ExecuteQueryRetry();
+                            }
 
                             // Do things only once per site collection
                             if (string.IsNullOrEmpty(siteCollectionUrl))
@@ -371,7 +378,7 @@ namespace SharePoint.Modernization.Scanner
                 }
             }
 
-            if (this.Mode == Mode.Full)
+            if (Options.IncludePage(this.Mode))
             {
                 outputfile = string.Format("{0}\\PageScanResults.csv", this.OutputFolder);
                 outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl", "PageUrl", "Library", "HomePage",

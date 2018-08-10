@@ -25,7 +25,7 @@ namespace Microsoft.SharePoint.Client
             web.Context.RequestTimeout = Timeout.Infinite;
 
             ListCollection listCollection = web.Lists;
-            listCollection.EnsureProperties(coll => coll.Include(li => li.ForceCheckout, li => li.Title, li => li.Hidden, li => li.DefaultViewUrl, li => li.BaseTemplate, li => li.RootFolder, li => li.ListExperienceOptions));
+            listCollection.EnsureProperties(coll => coll.Include(li => li.ForceCheckout, li => li.Title, li => li.Hidden, li => li.DefaultViewUrl, li => li.BaseTemplate, li => li.RootFolder, li => li.ListExperienceOptions, li => li.ItemCount));
 
             // Let's process the visible lists
             foreach (List list in listCollection.Where(p => p.Hidden == false))

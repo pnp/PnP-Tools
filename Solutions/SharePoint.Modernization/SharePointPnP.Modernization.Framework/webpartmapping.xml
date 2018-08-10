@@ -346,8 +346,8 @@ Page transformation file. Describes:
           <Property Name="ContentTypeName" Type="string" />
           <Property Name="ViewFieldsOverride" Type="string" />
         </Properties>
-        <Mappings>
-          <Mapping Default="true" Name="test">
+        <Mappings Selector="ContentByQuerySelector({ListGuid},{ListName})">
+          <Mapping Default="true" Name="Default">
             <!--
               WebUrl (= scope) = ~sitecollection, ~site, ~sitecollection/sub1 to indicate scope from a given subsite or empty (= current site)
               
@@ -381,6 +381,9 @@ Page transformation file. Describes:
               LinkUrl:{94f89715-e097-4e8b-ba79-ea02aa8b7adb},FileRef,Lookup;|              
               -->
             <ClientSideWebPart Type="ContentRollup" Order="10" JsonControlData="&#123;&quot;serverProcessedContent&quot;&#58;&#123;&quot;htmlStrings&quot;&#58;&#123;&#125;,&quot;searchablePlainTexts&quot;&#58;&#123;&quot;title&quot;&#58;&quot;{Title}&quot;&#125;,&quot;imageSources&quot;&#58;&#123;&#125;,&quot;links&quot;&#58;&#123;&quot;baseUrl&quot;&#58;&quot;{EncodedWeb}&quot;&#125;,&quot;componentDependencies&quot;&#58;&#123;&quot;layoutComponentId&quot;&#58;&quot;cea5863a-b857-46bb-aaf0-ae5f7cb447b6&quot;&#125;&#125;,&quot;dataVersion&quot;&#58;&quot;2.1&quot;,&quot;properties&quot;&#58;{JsonProperties}&#125;"/>
+          </Mapping>
+          <Mapping Name="NoTransformation" Default="false">
+            <ClientSideText Text="There's no OOB replacement for web part {Title}. Custom web parts might be helpfull here" Order="10"/>
           </Mapping>
         </Mappings>
       </WebPart>      

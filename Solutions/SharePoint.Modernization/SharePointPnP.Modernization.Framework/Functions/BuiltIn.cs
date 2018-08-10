@@ -235,6 +235,7 @@ namespace SharePointPnP.Modernization.Framework.Functions
         [OutputDocumentation(Name = "Library", Description = "The list is a document library")]
         [OutputDocumentation(Name = "List", Description = "The list is a document list")]
         [OutputDocumentation(Name = "Issue", Description = "The list is an issue list")]
+        [OutputDocumentation(Name = "TaskList", Description = "The list is an task list")]
         [OutputDocumentation(Name = "DiscussionBoard", Description = "The list is a discussion board")]
         [OutputDocumentation(Name = "Survey", Description = "The list is a survey")]
         [OutputDocumentation(Name = "Undefined", Description = "The list base type is undefined")]
@@ -715,6 +716,43 @@ namespace SharePointPnP.Modernization.Framework.Functions
             ContentByQuerySearchTransformator cqs = new ContentByQuerySearchTransformator(this.clientContext);
             var res = cqs.TransformContentByQueryWebPartToHighlightedContent(cbq);
             return res;
+        }
+
+        [SelectorDocumentation(Description = "Analyzes a list and returns if the list can be transformed.",
+                               Example = "ContentByQuerySelector({ListGuid},{ListName})")]
+        [InputDocumentation(Name = "{ListGuid}", Description = "Guid of the list used by the CBQ web part")]
+        [InputDocumentation(Name = "{ListName}", Description = "Name of the list used by the CBQ web part")]
+        [OutputDocumentation(Name = "Default", Description = "Transform the list")]
+        [OutputDocumentation(Name = "NoTransformation", Description = "Don't transform the list")]
+        public string ContentByQuerySelector(string listGuid, string listName)
+        {
+
+            // Scoped to list?
+            Guid.TryParse(listGuid, out Guid listId);
+
+            if (!string.IsNullOrEmpty(listName) || listId != Guid.Empty)
+            {
+                // Scope to list
+                List list = null;
+                if (listId != Guid.Empty)
+                {
+                    list = this.clientContext.Web.GetListById(listId);
+                }
+                else
+                {
+                    list = this.clientContext.Web.GetListByTitle(listName);
+                }
+
+                this.clientContext.Load(list, p => p.BaseType);
+                this.clientContext.ExecuteQueryRetry();
+
+                if (list.BaseType != BaseType.DocumentLibrary)
+                {
+                    return "NoTransformation";
+                }
+            }
+
+            return "Default";
         }
         #endregion
 
