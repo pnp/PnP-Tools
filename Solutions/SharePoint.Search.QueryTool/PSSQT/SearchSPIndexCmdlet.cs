@@ -823,7 +823,7 @@ namespace PSSQT
             }
         }
 
-        private void SPOLegacyLogin(SearchQueryRequest searchQueryRequest)
+        internal void SPOLegacyLogin(SearchQueryRequest searchQueryRequest)
         {
             Guid runspaceId = Guid.Empty;
             using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
@@ -854,7 +854,7 @@ namespace PSSQT
             }
         }
 
-        private static void AdalLogin(SearchQueryRequest searchQueryRequest)
+        internal static void AdalLogin(SearchQueryRequest searchQueryRequest)
         {
             AdalAuthentication adalAuth = new AdalAuthentication();
 
@@ -895,8 +895,7 @@ namespace PSSQT
         {
             int totalRows = 0;
             bool keepTrying = true;
-            int retryCount = 0;
-            int MaxRetries = 3;
+ 
 
             // Pick default result processor
             if (!ResultProcessor.HasValue)     // user has not specified one
@@ -942,37 +941,13 @@ namespace PSSQT
                 }
                 catch (Exception ex)
                 {
-                    // for long running queries retrieving 100s of thousands of results, I have seen that we get a 401 after the token expires (in my case after 30 minutes)
-                    // we'll try to login again here
-                    if (ex.Message.Contains("HTTP 401"))
-                    {
-                        if (retryCount++ < MaxRetries)
-                        {
-                            WriteVerbose($"Received HTTP 401. Retrying authentication. (Attempt {retryCount} of {MaxRetries})");
-                            keepTrying = true;
-
-                            switch (searchQueryRequest.AuthenticationType)
-                            {
-                                case AuthenticationType.SPO:
-                                    SPOLegacyLogin(searchQueryRequest);
-                                    break;
-
-                                case AuthenticationType.SPOManagement:
-                                    AdalLogin(searchQueryRequest);
-                                    break;
-                            }
-
-                        }
-                        else
-                        {
-                            WriteWarning("Received HTTP 401. Max number of retries exhausted. Giving up.");
-                            throw;
-                        }
-                    }
-                    else if (!queryResultProcessor.HandleException(ex))
+                    if (!queryResultProcessor.HandleException(ex, searchQueryRequest))
                     {
                         throw;
                     }
+
+                    // if exception was handled, we will try again
+                    keepTrying = true;
                 }
 
             }

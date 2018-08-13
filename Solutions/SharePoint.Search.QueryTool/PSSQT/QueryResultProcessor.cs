@@ -1,4 +1,5 @@
-﻿using PSSQT.RankLogParser;
+﻿using PSSQT.Helpers;
+using PSSQT.RankLogParser;
 using SearchQueryTool.Model;
 using System;
 using System.Collections.Generic;
@@ -31,8 +32,8 @@ namespace PSSQT
 
         void Process(SearchQueryResult searchQueryResult);
 
-        bool HandleException(Exception ex); 
-      }
+        bool HandleException(Exception ex, SearchQueryRequest searchQueryRequest);
+    }
 
     public static class QueryResultProcessorFactory
     {
@@ -105,11 +106,13 @@ namespace PSSQT
 
     public abstract class AbstractQueryResultProcessor : IQueryResultProcessor
     {
- 
+
+        protected RetryHandler retryHandler;
 
         public AbstractQueryResultProcessor(SearchSPIndexCmdlet cmdlet)
         {
             this.Cmdlet = cmdlet;
+            retryHandler = new RetryHandler(Cmdlet);
         }
 
         public SearchSPIndexCmdlet Cmdlet { get; private set; }
@@ -133,9 +136,13 @@ namespace PSSQT
             // do nothing by default
         }
 
-        public virtual bool HandleException(Exception ex)
+        public virtual bool HandleException(Exception ex, SearchQueryRequest searchQueryRequest)
         {
-            return false;   // just rethrow
+            ExceptionHandler handler = ExceptionHandlerFactory.Create(Cmdlet, ex);
+
+            retryHandler.DelegateHandler = handler;
+
+            return retryHandler.HandleException(ex, searchQueryRequest);
         }
 
      }
@@ -652,7 +659,7 @@ namespace PSSQT
             Cmdlet.AddSelectProperty("RankDetail");
         }
 
-        public override bool HandleException(Exception ex)
+        public override bool HandleException(Exception ex, SearchQueryRequest searchQueryRequest)
         {
             //Cmdlet.WriteWarning(">>>" + ex.GetType().ToString());
 
@@ -661,7 +668,7 @@ namespace PSSQT
                 Cmdlet.WriteWarning("Please note that you need Search Service Application administrative rights to use rank result processors.");
             }
 
-            return base.HandleException(ex);
+            return base.HandleException(ex, searchQueryRequest);
         }
 
     }
