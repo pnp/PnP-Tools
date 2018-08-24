@@ -5,7 +5,7 @@
  */
 
 /*
- * PnPResponsiveApp
+ * PnPResponsiveApp Namespace
  * @namespace
  */
 if (window.hasOwnProperty('Type')) {
@@ -15,27 +15,40 @@ if (window.hasOwnProperty('Type')) {
 }
 
 /**
- * PnP Responsive
+ * PnP Responsive Main Class
  * @class
  */
 PnPResponsiveApp.Main = (function () {
     /**
      * Current instance class
+     * @type {PnPResponsiveApp.Main}
+     * @private
      */
     var instance;
 
     /**
      * Current init statement
+     * @type {boolean}
+     * @private
      */
     var initState = false;
 
     /**
      * Current viewport statement
+     * @type {boolean}
+     * @private
      */
     var viewportState = false;
-    
+
     /**
-     * Toggle element class
+     * Current DesignBuilder State
+     * @type {boolean}
+     * @private
+     */
+    var designbuilderState = false;
+
+    /**
+     * Toggle element className
      * @param {element} el - Element
      * @param {string} cls - CSS Class Name
      * @private
@@ -65,7 +78,8 @@ PnPResponsiveApp.Main = (function () {
     }
 
     /**
-     * Dynamic CSS/JS embedding and loading
+     * Dynamic CSS embedding and loading
+     * @param {string} url Full url address of StyleSheet file
      * @private
      */
     function loadCSS(url) {
@@ -135,8 +149,184 @@ PnPResponsiveApp.Main = (function () {
     }
 
     /**
-     * Retrieve Navigation nodes and adapt them to the custom responsive menu
-     * @param {string} Delta Navigation ID
+     * Render Designbuilder page into PnPPanelNav
+     * @private
+     */
+    function responsivizeDesignbuilder() {
+        /* return if no longer on Settings page */
+        if (window.location.href.indexOf('/designbuilder.aspx') < 0) return;
+        if (!designbuilderState) {
+            PnPInitializeDesignBuilderCUI(_spPageContextInfo.currentCultureLCID, _spPageContextInfo.currentCultureName, ".", document.getElementsByTagName('html')[0].getAttribute('dir'));
+        }
+    }
+
+    /**
+     * Reuse SharePoint function to display designbuilder elements
+     * @see SharePoint designgallery.js
+     * @private
+     */
+    function PnPInitializeDesignBuilderCUI(k, h, e, f) {
+        try {
+            var i = new CUI.BuildOptions
+        } catch (l) {
+            return
+        }
+        var b = new CUI.BuildOptions;
+        b.lazyMenuInit = true;
+        b.trimmedIds = {};
+        b.attachToDOM = false;
+        b.validateServerRendering = false;
+        b.fixedPositioningEnabled = false;
+        b.dataExtensions = null;
+        b.clientID = "ms-designbuilder-cuicontainer_mobileClone";
+        try {
+            var j = SP.Ribbon.PageManager.get_instance();
+        } catch (l) {
+            return
+        }
+        var c = document.getElementById("ms-designbuilder-cuicontainer_mobileClone");
+        if (!Boolean(c))
+            return;
+        var a = new CUI.RootProperties;
+        a.Culture = h;
+        a.DecimalSeparator = e;
+        a.RootEventCommand = "designBuilderRootEventCommand";
+        a.ImageDownArrow = GetThemedImageUrl("spcommon.png");
+        a.ImageDownArrowTop = "-256";
+        a.ImageDownArrowLeft = "-104";
+        a.TextDirection = f;
+        var d = SP.Ribbon.PageManager.get_instance(),
+            g = new CUI.Builder(b, c, d);
+        g_designBuilderControlRoot = new CUI.StandaloneRoot("DesignBuilderTools", a);
+        g_designBuilderControlRoot.setBuilder(g);
+        d.addRoot(g_designBuilderControlRoot);
+        PnPAddControlsToCUI();
+    }
+
+    /**
+     * Reuse SharePoint function to display designbuilder elements
+     * @see SharePoint designgallery.js
+     * @private
+     */
+    function PnPAddControlsToCUI() {
+        a:
+        ;
+        var d = g_designData,
+            i = g_designBuilderControlRoot,
+            f = null,
+            j = encodeURIComponent(d.newThemesLocation.toUpperCase()),
+            g = true,
+            o = d.overrideThemesLocation.toLowerCase() == "true";
+        if (o) {
+            var B = g_desbld_designGuid,
+                y = g_desbld_designVersion;
+            g = g_desbld_designGuid == null || g_desbld_designGuid == "undefined" || g_desbld_designVersion == null || g_desbld_designVersion == "undefined";
+            f = GetSelectedDesignPackageFolder(g, B, y);
+            if (f != null && f != "")
+                f = f.toUpperCase()
+        }
+        var k = document.getElementById("ms-designbuilder-cuicontainer_mobileClone"),
+            D = CreateLabelElement(Strings.STS.L_DesignBuilderToolsPaletteLabel, "ms-designbuilder-palette-Medium");
+        k.appendChild(D);
+        var n = 0,
+            h = [],
+            c = false,
+            e,
+            a,
+            b,
+            w = g_desbld_themeUrl;
+        for (a in d.themes) {
+            b = a.toUpperCase();
+            if (!o || g && b.indexOf(j) == -1 || !g && (b.indexOf(j) == -1 || b.indexOf(f) != -1)) {
+                var s = d.themes[a];
+                if (!(window.OffSwitch == null || OffSwitch.IsActive("F21AA66C-5CE7-4EA8-AE05-BA6E16A1A182"))) {
+                    if (!c && unescapeProperly(s.ServerRelativeUrl.toUpperCase()) == unescapeProperly(w.toUpperCase())) {
+                        e = a;
+                        c = true
+                    }
+                } else if (!c && decodeURI(s.ServerRelativeUrl.toUpperCase()) == decodeURI(w.toUpperCase())) {
+                    e = a;
+                    c = true
+                }
+                h.push(CreatePaletteGalleryButtonXml(a, s, n++))
+            }
+        }
+        var m = h.join(""),
+            z = ['<DropDown Id="ms-designbuilder-palette" Alt="', Strings.STS.L_DesignBuilderToolsPaletteAlt, '" Command="PalettePickerSelected" QueryCommand="PalettePickerQuery" CommandPreview="PalettePickerPreview" CommandRevert="PalettePickerPreviewRevert" Width="111px" SelectedItemDisplayMode="Menu" InitialItem="', e, '"><Menu Id="DesignBuilderTools.Palette.Menu"><MenuSection Id="ms-designbuilder-palette-menusection" MaxHeight="269px" Scrollable="true"><Controls Id="DesignBuilderTools.Palette.Menu.MenuSection.Controls">', m, "</Controls></MenuSection></Menu></DropDown>"];
+        i.addControl("DesignBuilderTools.Palette", z.join(""));
+        var H = i.getDOMElementForControlDisplayMode("DesignBuilderTools.Palette", "Medium");
+        k.appendChild(H);
+        var E = CreateLabelElement(Strings.STS.L_DesignBuilderToolsLayoutLabel, "ms-designbuilder-layout-Medium");
+        k.appendChild(E);
+        n = 0;
+        h = [];
+        c = false;
+        e = null;
+        var v = g_desbld_masterUrl;
+        for (a in d.preview) {
+            b = a.toUpperCase();
+            if (!o || g && b.indexOf(j) == -1 || !g && (b.indexOf(j) == -1 || b.indexOf(f) != -1)) {
+                var K = d.preview[a];
+                if (!c && decodeURI(a.toUpperCase()) == decodeURI(v.toUpperCase())) {
+                    e = a;
+                    c = true
+                }
+                h.push(CreateLayoutButtonXml(a, K, n++))
+            }
+        }
+        m = h.join("");
+        var A = ['<DropDown Id="ms-designbuilder-layout" Alt="', Strings.STS.L_DesignBuilderToolsLayoutAlt, '" Command="LayoutPickerSelected" QueryCommand="LayoutPickerQuery" CommandPreview="LayoutPickerPreview" CommandRevert="LayoutPickerPreviewRevert" Width="103px" InitialItem="', e, '"><Menu Id="DesignBuilderTools.Layout.Menu"><MenuSection Id="ms-designbuilder-layout-menusection"><Controls Id="DesignBuilderTools.Layout.Menu.MenuSection.Controls">', m, "</Controls></MenuSection></Menu></DropDown>"];
+        i.addControl("DesignBuilderTools.Layout", A.join(""));
+        var J = i.getDOMElementForControlDisplayMode("DesignBuilderTools.Layout", "Medium");
+        k.appendChild(J);
+        var G = CreateLabelElement(Strings.STS.L_DesignBuilderToolsFontLabel, "ms-designbuilder-fontscheme-Medium");
+        k.appendChild(G);
+        n = 0;
+        h = [];
+        c = false;
+        e = null;
+        var p = null === g_desbld_fontSchemeUrl ? null : g_desbld_fontSchemeUrl;
+        if (null === p || "DEFAULT" === p.toUpperCase()) {
+            var r = GetItemIgnoreCase(d.preview, v);
+            if (Boolean(r) && Boolean(r.defaultFontScheme))
+                p = r.defaultFontScheme
+        }
+        var u = p.toUpperCase(),
+            C = d.fontSchemeDuplicateKeyCount,
+            l = new Array(C),
+            q;
+        for (a in d.fontSchemes) {
+            q = d.fontSchemeDuplicateKeys[a];
+            if (!Boolean(l[q]))
+                l[q] = a;
+            else if (!c && decodeURI(a.toUpperCase()) == decodeURI(u))
+                l[q] = a
+        }
+        c = false;
+        for (var t = 0; t < l.length; t++) {
+            a = l[t];
+            b = a.toUpperCase();
+            if (!o || g && b.indexOf(j) == -1 || !g && (b.indexOf(j) == -1 || b.indexOf(f) != -1)) {
+                var I = d.fontSchemes[a];
+                if (!c && decodeURI(b) == decodeURI(u)) {
+                    e = a;
+                    c = true
+                }
+                h.push(CreateFontSchemeButtonXml(a, I, n++))
+            }
+        }
+        m = h.join("");
+        var x = ['<DropDown Id="ms-designbuilder-fontscheme" Alt="', Strings.STS.L_DesignBuilderToolsFontSchemeAlt, '" Command="FontSchemePickerSelected" QueryCommand="FontSchemePickerQuery" Width="132px" SelectedItemDisplayMode="Menu" InitialItem="', e, '"><Menu Id="DesignBuilderTools.FontScheme.Menu"><MenuSection Id="ms-designbuilder-fontscheme-menusection"><Controls Id="DesignBuilderTools.FontScheme.Menu.MenuSection.Controls">', m, "</Controls></MenuSection></Menu></DropDown>"];
+        i.addControl("DesignBuilderTools.FontScheme", x.join(""));
+        var F = i.getDOMElementForControlDisplayMode("DesignBuilderTools.FontScheme", "Medium");
+        k.appendChild(F);
+        i.pollForStateAndUpdate();
+        designbuilderState = true;
+    }
+
+    /**
+     * Retrieve navigation nodes and adapt them to the custom responsive menu
+     * @param {string} navId Delta Navigation ID
      * @returns {element} Customized Cloned Navigation
      * @private
      */
@@ -154,7 +344,7 @@ PnPResponsiveApp.Main = (function () {
                 var navItem = navNodes[n].getElementsByClassName('menu-item')[0];
                 var navRow = document.createElement('div');
                 navRow.className = 'ms-core-menu-item';
-                
+
                 var checkChild = navNodes[n].getElementsByTagName('ul');
                 if (checkChild.length > 0 && navItem) {
                     if (!hasClass(navNodes[n], 'dynamic-children')) {
@@ -174,7 +364,7 @@ PnPResponsiveApp.Main = (function () {
                     navNodes[n].insertBefore(navRow, navNodes[n].firstElementChild);
                     navRow.appendChild(navItem);
                 }
-                
+
                 navNodes[n].insertBefore(navRow, navNodes[n].firstElementChild);
                 /* Change Edit Link navigation */
                 var l = navNodes[n].querySelector('a.ms-navedit-editLinksText');
@@ -200,7 +390,7 @@ PnPResponsiveApp.Main = (function () {
             /* Custom CSS class is added to add only once the event */
             if (!hasClass(p, 'pnp-nodeListener')) {
                 p.className += ' pnp-nodeListener';
-                p.addEventListener('DOMNodeInserted', function() {
+                p.addEventListener('DOMNodeInserted', function () {
                     PnPResponsiveApp.Main.setUpToggling();
                 });
             }
@@ -234,9 +424,10 @@ PnPResponsiveApp.Main = (function () {
 
         newTopNavItem.addEventListener('click', function () {
             displayPnPPanel();
+            responsivizeDesignbuilder();
             return false;
         });
-        
+
         newTopNavItem.appendChild(newTopNavText);
         newTopItemChild.appendChild(newTopNavItem);
         newTopItem.appendChild(newTopItemChild);
@@ -259,10 +450,16 @@ PnPResponsiveApp.Main = (function () {
         }
     }
 
+    /**
+     * Public function
+     */
     return {
         /**
          * PnP Responsive Initialization
          * @constructor
+         * @see setUpToggling Manage navigation responsive
+         * @see setUpSuiteBarToogling (Only for SharePoint 2013)
+         * @see responsivizeSettings Used to manage to classic settings page in responsive
          * @public
          */
         init: function () {
@@ -284,12 +481,12 @@ PnPResponsiveApp.Main = (function () {
                     var currentScriptBaseUrl = currentScriptUrl.substring(0, currentScriptUrl.lastIndexOf('/') + 1);
                     loadCSS(currentScriptBaseUrl + 'sp-responsive-ui.css');
                 }
-                
+
                 PnPResponsiveApp.Main.setUpToggling();
                 PnPResponsiveApp.Main.setUpSuiteBarToogling();
 
                 responsivizeSettings();
-                /* also listen for dynamic page change to Settings page */
+                /* Also listen for dynamic page change to Settings page */
                 window.onhashchange = function () { responsivizeSettings(); };
 
                 /*
@@ -300,9 +497,9 @@ PnPResponsiveApp.Main = (function () {
 
                 /* Then define a new one */
                 FixRibbonAndWorkspaceDimensions = function () {
-                    /* let sharepoint do its thing */
+                    /* Let sharepoint do its thing */
                     originalResizeFunction();
-                    /* fix the body container width */
+                    /* Fix the body container width */
                     document.getElementById('s4-bodyContainer').style.width = document.getElementById('s4-workspace').offsetWidth + 'px';
                 };
             }
@@ -333,6 +530,8 @@ PnPResponsiveApp.Main = (function () {
         },
         /**
          * Set up Toggle Button to Hide or Show responsive menu
+         * @see pnpNavGeneration Used to rebuild the navigation
+         * @see displayPnPPanel Used to manage hide/show PnP Panel 
          * @public
          */
         setUpToggling: function () {
@@ -419,7 +618,7 @@ PnPResponsiveApp.Main = (function () {
                 /* Add PnPPanel Page to content */
                 spSuiteBar.parentElement.insertBefore(pnpPanelPage, pnpNavPanel.nextSibling);
                 /* Add event click on PnP Panel Page to close PnP Panel menu when click on it */
-                pnpPanelPage.addEventListener('click', function() {
+                pnpPanelPage.addEventListener('click', function () {
                     displayPnPPanel();
                     return false;
                 });
@@ -452,8 +651,8 @@ PnPResponsiveApp.Main = (function () {
         },
         /**
          * Build and render Suite Bar Rwd Mode
-         * @public
          * @see setUpSuiteBarToogling
+         * @public
          */
         setUpSuiteBarRwd: function () {
             /* if it is already responsivized, return */
@@ -493,6 +692,10 @@ PnPResponsiveApp.Main = (function () {
                 document.getElementById('suiteBar').parentNode.insertBefore(suiteBarRwd, document.getElementById('suiteBar'));
             }
         },
+        /**
+         * Get instance of PnPResponsiveApp.Main Class (Singleton)
+         * @public
+         */
         getInstance: function () {
             if (!instance) {
                 instance = this;
@@ -502,7 +705,7 @@ PnPResponsiveApp.Main = (function () {
     };
 })();
 
-/* exported responsiveStartup */
+/* Exported responsiveStartup */
 function responsiveStartup() {
     var ui = PnPResponsiveApp.Main.getInstance();
     ui.addViewport();

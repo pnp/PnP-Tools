@@ -336,6 +336,22 @@ div#s4-bodyContainer {
     max-width: 100%;
 }
 
+/* Fix DesignBuilder imagecontrol-box */
+#ms-designbuilder-imagecontrol-box_mobileClone {
+    width: 178px;
+    height: 132px;
+    border: 1px solid #c6c6c6;
+    background-color: #f1f1f1;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+    line-height: 0px;
+}
+/* DesignBuilder control position to PnPPanelNav (center) */
+#ms-designbuilder-imagecontrol_mobileClone, #ms-designbuilder-cuicontainer_mobileClone, a[id$=btnBackToGallery_mobileClone] {
+    padding-left: 15%;
+}
+
 /*======================== END of V2 ========================*/
 
 /* Tablet/smartphones common styles for collapsibles */
@@ -513,11 +529,19 @@ div#s4-bodyContainer {
     .ms-pub-contentLayout {
         padding: 0;
     }
+    /* design builder preview size */
+    #ms-designbuilder-main, #ms-designbuilder-thumbnail, #designbuilder-preview, #ms-designbuilder-previewglass {
+        width: 100%;
+    }
+    #ms-designbuilder-previewContainer {
+        max-width: 100%;
+        min-width: 100%;
+    }
 }
 
 /* Tablets */
 
-@media only screen and (min-width: 640px) and (max-width: 1023px) {
+@media only screen and (min-width: 640px) and (max-width: 1024px) {
     /* Sidebar navigation toggling */
     #titleAreaBox {
         position: relative;
