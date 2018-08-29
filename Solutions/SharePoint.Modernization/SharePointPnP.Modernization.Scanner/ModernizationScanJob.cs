@@ -514,7 +514,7 @@ namespace SharePoint.Modernization.Scanner
                     outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "PageRelativeUrl", "PageName",
                                                    "ContentType", "ContentTypeId", "PageLayout", "PageLayoutFile",
                                                    "GlobalAudiences", "SecurityGroupAudiences", "SharePointGroupAudiences",
-                                                   "ModifiedAt", "ModifiedBy"
+                                                   "ModifiedAt", "ModifiedBy", "Mapping %"
                                                  };
 
                     string header1 = string.Join(this.Separator, outputHeaders);
@@ -540,7 +540,7 @@ namespace SharePoint.Modernization.Scanner
                             var part1 = string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.WebRelativeUrl), ToCsv(item.Value.PageRelativeUrl), ToCsv(item.Value.PageName),
                                                                     ToCsv(item.Value.ContentType), ToCsv(item.Value.ContentTypeId), ToCsv(item.Value.PageLayout), ToCsv(item.Value.PageLayoutFile),
                                                                     ToCsv(PublishingPageScanResult.FormatList(item.Value.GlobalAudiences)), ToCsv(PublishingPageScanResult.FormatList(item.Value.SecurityGroupAudiences, "|")), ToCsv(PublishingPageScanResult.FormatList(item.Value.SharePointGroupAudiences)),
-                                                                    item.Value.ModifiedAt, ToCsv(item.Value.ModifiedBy)
+                                                                    item.Value.ModifiedAt, ToCsv(item.Value.ModifiedBy), "{MappingPercentage}"
                                 );
 
                             string part2 = "";
