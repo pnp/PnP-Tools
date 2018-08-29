@@ -5,9 +5,7 @@ using SharePointPnP.Modernization.Framework.Transform;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OfficeDevPnP.Core.Pages;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.SharePoint.Client
 {
@@ -43,6 +41,11 @@ namespace Microsoft.SharePoint.Client
                 return "ClientSidePage";
             }
 
+            if (FieldExists(item, Constants.PublishingRollupImageField) && FieldExists(item, Constants.AudienceField))
+            {
+                return "PublishingPage";
+            }
+
             if (FieldExistsAndUsed(item, Constants.WikiField))
             {
                 return "WikiPage";
@@ -68,6 +71,10 @@ namespace Microsoft.SharePoint.Client
             else if (pageType.Equals("WebPartPage", StringComparison.InvariantCultureIgnoreCase))
             {
                 return new WebPartPage(item, pageTransformation).Analyze();
+            }
+            else if (pageType.Equals("PublishingPage", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return new PublishingPage(item, pageTransformation).Analyze();
             }
 
             return null;
@@ -115,6 +122,75 @@ namespace Microsoft.SharePoint.Client
         }
         #endregion
 
+        #region Publishing Page information
+        /// <summary>
+        /// Get's the page page layout file
+        /// </summary>
+        /// <param name="item">Page list item</param>
+        /// <returns>Page layout file defined for this page</returns>
+        public static string PageLayoutFile(this ListItem item)
+        {
+            if (FieldExistsAndUsed(item, Constants.PublishingPageLayoutField) && !String.IsNullOrEmpty(item[Constants.PublishingPageLayoutField].ToString()))
+            {
+                string pageLayoutUrl = ((FieldUrlValue)item[Constants.PublishingPageLayoutField]).Url;
+                if (string.IsNullOrEmpty(pageLayoutUrl))
+                {
+                    pageLayoutUrl = "";
+                }
+                return pageLayoutUrl;
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// Get's the page page layout
+        /// </summary>
+        /// <param name="item">Page list item</param>
+        /// <returns>Page layout defined for this page</returns>
+        public static string PageLayout(this ListItem item)
+        {
+            if (FieldExistsAndUsed(item, Constants.PublishingPageLayoutField) && !String.IsNullOrEmpty(item[Constants.PublishingPageLayoutField].ToString()))
+            {
+                string pageLayoutName = ((FieldUrlValue)item[Constants.PublishingPageLayoutField]).Description;
+                if (string.IsNullOrEmpty(pageLayoutName))
+                {
+                    pageLayoutName = "";
+                }
+                return pageLayoutName;
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// Get's the page audience(s)
+        /// </summary>
+        /// <param name="item">Page list item</param>
+        /// <returns>Page layout defined for this page</returns>
+        public static AudienceEntity Audiences(this ListItem item)
+        {
+            if (FieldExistsAndUsed(item, Constants.AudienceField) && !String.IsNullOrEmpty(item[Constants.AudienceField].ToString()))
+            {
+                AudienceEntity audienceEntity = new AudienceEntity();
+
+                string audiences = (item[Constants.AudienceField]).ToString();
+                if (!string.IsNullOrEmpty(audiences))
+                {
+                    String[] audienceIDsStringArray = Regex.Split(audiences, ";;");
+
+                    audienceEntity.GlobalAudiences = audienceIDsStringArray[0].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    audienceEntity.SecurityGroups = audienceIDsStringArray[1].Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    audienceEntity.SharePointGroups = audienceIDsStringArray[2].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                }
+                return audienceEntity;
+            }
+
+            return null;
+        }
+
+        #endregion
+
         #region Transform page
         /// <summary>
         /// Transforms a classic wiki/webpart page into a modern page, using the default page transformation model (webpartmapping.xml)
@@ -150,6 +226,17 @@ namespace Microsoft.SharePoint.Client
         public static bool FieldExistsAndUsed(this ListItem item, string fieldName)
         {
             return (item.FieldValues.ContainsKey(fieldName) && item[fieldName] != null);
+        }
+
+        /// <summary>
+        /// Checks if a listitem contains a field
+        /// </summary>
+        /// <param name="item">List item to check</param>
+        /// <param name="fieldName">Name of the field to check</param>
+        /// <returns></returns>
+        public static bool FieldExists(this ListItem item, string fieldName)
+        {
+            return item.FieldValues.ContainsKey(fieldName);
         }
         #endregion
 

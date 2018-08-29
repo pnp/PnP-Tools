@@ -28,6 +28,7 @@ namespace SharePoint.Modernization.Scanner
         public ConcurrentDictionary<string, SiteScanResult> SiteScanResults;
         public ConcurrentDictionary<string, PageScanResult> PageScanResults;
         public ConcurrentDictionary<string, PublishingScanResult> PublishingScanResults;
+        public ConcurrentDictionary<string, PublishingPageScanResult> PublishingPageScanResults;
         public Tenant SPOTenant;
         public PageTransformation PageTransformation;
         #endregion
@@ -49,6 +50,7 @@ namespace SharePoint.Modernization.Scanner
             this.SiteScanResults = new ConcurrentDictionary<string, SiteScanResult>(options.Threads, 10000);
             this.PageScanResults = new ConcurrentDictionary<string, PageScanResult>(options.Threads, 1000000);
             this.PublishingScanResults = new ConcurrentDictionary<string, PublishingScanResult>(options.Threads, 1000);
+            this.PublishingPageScanResults = new ConcurrentDictionary<string, PublishingPageScanResult>(options.Threads, 10000);
 
             this.TimerJobRun += ModernizationScanJob_TimerJobRun;
         }
@@ -468,6 +470,122 @@ namespace SharePoint.Modernization.Scanner
                         outfile.Write(string.Format("{0}\r\n", $"{ToCsv(type)}{this.Separator}{found != null}"));
                     }
                 }
+            }
+
+            if (Options.IncludePublishing(this.Mode))
+            {
+                outputfile = string.Format("{0}\\ModernizationPublishingScanResults.csv", this.OutputFolder);
+                outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", 
+                                               "WebTemplate", "Level", "PageCount", "Language", "VariationLabels", "VariationSourceLabel",
+                                               "SiteMasterPage", "SystemMasterPage", "AlternateCSS",
+                                               "AllowedPageLayouts", "PageLayoutsConfiguration", "DefaultPageLayout",
+                                               "GlobalNavigationType", "GlobalStructuralNavigationShowSubSites", "GlobalStructuralNavigationShowPages","GlobalStructuralNavigationShowSiblings","GlobalStructuralNavigationMaxCount","GlobalManagedNavigationTermSetId",
+                                               "CurrentNavigationType","CurrentStructuralNavigationShowSubSites","CurrentStructuralNavigationShowPages","CurrentStructuralNavigationShowSiblings","CurrentStructuralNavigationMaxCount","CurrentManagedNavigationTermSetId",
+                                               "ManagedNavigationAddNewPages", "ManagedNavigationCreateFriendlyUrls",
+                                               "LibraryItemScheduling","LibraryEnableModeration","LibraryEnableVersioning","LibraryEnableMinorVersions","LibraryApprovalWorkflowDefined",
+                                               "BrokenPermissionInheritance",
+                                               "Admins",
+                                               "Owners"
+                                             };
+                Console.WriteLine("Outputting scan results to {0}", outputfile);
+                using (StreamWriter outfile = new StreamWriter(outputfile))
+                {
+                    outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
+                    foreach (var item in this.PublishingScanResults)
+                    {
+                        outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.WebRelativeUrl),
+                                                                                           ToCsv(item.Value.WebTemplate), item.Value.Level.ToString(), item.Value.PageCount.ToString(), item.Value.Language.ToString(), ToCsv(item.Value.VariationLabels), ToCsv(item.Value.VariationSourceLabel),
+                                                                                           ToCsv(item.Value.SiteMasterPage), ToCsv(item.Value.SystemMasterPage), ToCsv(item.Value.AlternateCSS),
+                                                                                           ToCsv(item.Value.AllowedPageLayouts), ToCsv(item.Value.PageLayoutsConfiguration), ToCsv(item.Value.DefaultPageLayout),
+                                                                                           ToCsv(item.Value.GlobalNavigationType), item.Value.GlobalStructuralNavigationShowSubSites.HasValue ? item.Value.GlobalStructuralNavigationShowSubSites.Value.ToString() : "", item.Value.GlobalStructuralNavigationShowPages.HasValue ? item.Value.GlobalStructuralNavigationShowPages.Value.ToString() : "", item.Value.GlobalStructuralNavigationShowSiblings.HasValue ? item.Value.GlobalStructuralNavigationShowSiblings.Value.ToString() : "", item.Value.GlobalStructuralNavigationMaxCount.HasValue ? item.Value.GlobalStructuralNavigationMaxCount.Value.ToString() : "", ToCsv(item.Value.GlobalManagedNavigationTermSetId),
+                                                                                           ToCsv(item.Value.CurrentNavigationType), item.Value.CurrentStructuralNavigationShowSubSites.HasValue ? item.Value.CurrentStructuralNavigationShowSubSites.Value.ToString() : "", item.Value.CurrentStructuralNavigationShowPages.HasValue ? item.Value.CurrentStructuralNavigationShowPages.Value.ToString() : "", item.Value.CurrentStructuralNavigationShowSiblings.HasValue ? item.Value.CurrentStructuralNavigationShowSiblings.Value.ToString() : "", item.Value.CurrentStructuralNavigationMaxCount.HasValue ? item.Value.CurrentStructuralNavigationMaxCount.Value.ToString() : "", ToCsv(item.Value.CurrentManagedNavigationTermSetId),
+                                                                                           item.Value.ManagedNavigationAddNewPages.HasValue ? item.Value.ManagedNavigationAddNewPages.ToString() : "", item.Value.ManagedNavigationCreateFriendlyUrls.HasValue ? item.Value.ManagedNavigationCreateFriendlyUrls.ToString() : "",
+                                                                                           item.Value.LibraryItemScheduling.ToString(), item.Value.LibraryEnableModeration.ToString(), item.Value.LibraryEnableVersioning.ToString(), item.Value.LibraryEnableMinorVersions.ToString(), item.Value.LibraryApprovalWorkflowDefined.ToString(),
+                                                                                           item.Value.BrokenPermissionInheritance.ToString(),
+                                                                                           ToCsv(SiteScanResult.FormatUserList(item.Value.Admins, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim)),
+                                                                                           ToCsv(SiteScanResult.FormatUserList(item.Value.Owners, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim))
+                                                    )));
+                    }
+                }
+
+                if (Options.IncludePublishingWithPages(this.Mode))
+                {
+                    outputfile = string.Format("{0}\\ModernizationPublishingPageScanResults.csv", this.OutputFolder);
+                    outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "PageRelativeUrl", "PageName",
+                                                   "ContentType", "ContentTypeId", "PageLayout", "PageLayoutFile",
+                                                   "GlobalAudiences", "SecurityGroupAudiences", "SharePointGroupAudiences",
+                                                   "ModifiedAt", "ModifiedBy"
+                                                 };
+
+                    string header1 = string.Join(this.Separator, outputHeaders);
+                    string header2 = "";
+                    for (int i = 1; i <= 20; i++)
+                    {
+                        if (ExportWebPartProperties)
+                        {
+                            header2 = header2 + $"{this.Separator}WPType{i}{this.Separator}WPTitle{i}{this.Separator}WPData{i}";
+                        }
+                        else
+                        {
+                            header2 = header2 + $"{this.Separator}WPType{i}{this.Separator}WPTitle{i}";
+                        }
+                    }
+
+                    Console.WriteLine("Outputting scan results to {0}", outputfile);
+                    using (StreamWriter outfile = new StreamWriter(outputfile))
+                    {
+                        outfile.Write(string.Format("{0}\r\n", header1 + header2));
+                        foreach (var item in this.PublishingPageScanResults)
+                        {
+                            var part1 = string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.WebRelativeUrl), ToCsv(item.Value.PageRelativeUrl), ToCsv(item.Value.PageName),
+                                                                    ToCsv(item.Value.ContentType), ToCsv(item.Value.ContentTypeId), ToCsv(item.Value.PageLayout), ToCsv(item.Value.PageLayoutFile),
+                                                                    ToCsv(PublishingPageScanResult.FormatList(item.Value.GlobalAudiences)), ToCsv(PublishingPageScanResult.FormatList(item.Value.SecurityGroupAudiences, "|")), ToCsv(PublishingPageScanResult.FormatList(item.Value.SharePointGroupAudiences)),
+                                                                    item.Value.ModifiedAt, ToCsv(item.Value.ModifiedBy)
+                                );
+
+                            string part2 = "";
+                            if (item.Value.WebParts != null)
+                            {
+                                int webPartsOnPage = item.Value.WebParts.Count();
+                                int webPartsOnPageMapped = 0;
+                                List<string> nonMappedWebParts = new List<string>();
+                                foreach (var webPart in item.Value.WebParts.OrderBy(p => p.Row).ThenBy(p => p.Column).ThenBy(p => p.Order))
+                                {
+                                    var found = this.PageTransformation.WebParts.Where(p => p.Type.Equals(webPart.Type, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                                    if (found != null && found.Mappings != null)
+                                    {
+                                        webPartsOnPageMapped++;
+                                    }
+                                    else
+                                    {
+                                        var t = webPart.Type.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries)[0];
+                                        if (!nonMappedWebParts.Contains(t))
+                                        {
+                                            nonMappedWebParts.Add(t);
+                                        }
+                                    }
+
+                                    if (ExportWebPartProperties)
+                                    {
+                                        part2 = part2 + $"{this.Separator}{ToCsv(webPart.TypeShort())}{this.Separator}{ToCsv(webPart.Title)}{this.Separator}{ToCsv(webPart.Json())}";
+                                    }
+                                    else
+                                    {
+                                        part2 = part2 + $"{this.Separator}{ToCsv(webPart.TypeShort())}{this.Separator}{ToCsv(webPart.Title)}";
+                                    }
+                                }
+                                part1 = part1.Replace("{MappingPercentage}", webPartsOnPage == 0 ? "100" : String.Format("{0:0}", (((double)webPartsOnPageMapped / (double)webPartsOnPage) * 100))).Replace("{UnmappedWebParts}", SiteScanResult.FormatList(nonMappedWebParts));
+                            }
+                            else
+                            {
+                                part1 = part1.Replace("{MappingPercentage}", "").Replace("{UnmappedWebParts}", "");
+                            }
+
+                            outfile.Write(string.Format("{0}\r\n", part1 + (!string.IsNullOrEmpty(part2) ? part2 : "")));
+                        }
+                    }
+                }
+
             }
 
             Console.WriteLine("=====================================================");

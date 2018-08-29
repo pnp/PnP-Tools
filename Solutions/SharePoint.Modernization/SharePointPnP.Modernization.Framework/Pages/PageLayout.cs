@@ -22,6 +22,8 @@
         WebPart_HeaderFooter4ColumnsTopRow = 25,
         WebPart_LeftColumnHeaderFooterTopRow3Columns = 26,
         WebPart_RightColumnHeaderFooterTopRow3Columns = 27,
-        WebPart_Custom = 28
+        WebPart_Custom = 28,
+        PublishingPage_Custom = 40
+
     }
 }

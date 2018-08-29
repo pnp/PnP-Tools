@@ -1,10 +1,7 @@
 ﻿using OfficeDevPnP.Core.Entities;
 using SharePoint.Scanning.Framework;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharePoint.Modernization.Scanner.Results
 {
@@ -62,11 +59,6 @@ namespace SharePoint.Modernization.Scanner.Results
         public uint Language { get; set; }
 
         /// <summary>
-        /// Variation label set (if any)
-        /// </summary>
-        public string VariationLabel { get; set; }
-
-        /// <summary>
         /// Available page layouts
         /// </summary>
         public string AllowedPageLayouts { get; set; }
@@ -94,14 +86,14 @@ namespace SharePoint.Modernization.Scanner.Results
 
         public string CurrentNavigationType { get; set; }
 
-        public bool? GlobalStruturalNavigationShowSubSites { get; set; }
-        public bool? GlobalStruturalNavigationShowPages { get; set; }
-        public bool? GlobalStruturalNavigationShowSiblings { get; set; }
-        public int? GlobalStruturalNavigationMaxCount { get; set; }
-        public bool? CurrentStruturalNavigationShowSubSites { get; set; }
-        public bool? CurrentStruturalNavigationShowPages { get; set; }
-        public bool? CurrentStruturalNavigationShowSiblings { get; set; }
-        public int? CurrentStruturalNavigationMaxCount { get; set; }
+        public bool? GlobalStructuralNavigationShowSubSites { get; set; }
+        public bool? GlobalStructuralNavigationShowPages { get; set; }
+        public bool? GlobalStructuralNavigationShowSiblings { get; set; }
+        public int? GlobalStructuralNavigationMaxCount { get; set; }
+        public bool? CurrentStructuralNavigationShowSubSites { get; set; }
+        public bool? CurrentStructuralNavigationShowPages { get; set; }
+        public bool? CurrentStructuralNavigationShowSiblings { get; set; }
+        public int? CurrentStructuralNavigationMaxCount { get; set; }
 
         public string GlobalManagedNavigationTermSetId { get; set; }
         public string CurrentManagedNavigationTermSetId { get; set; }

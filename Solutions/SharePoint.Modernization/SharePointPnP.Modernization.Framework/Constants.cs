@@ -16,6 +16,9 @@ namespace SharePointPnP.Modernization.Framework
         public const string WikiField = "WikiField";
         public const string ModifiedField = "Modified";
         public const string ModifiedByField = "Editor";
+        public const string PublishingPageLayoutField = "PublishingPageLayout";
+        public const string AudienceField = "Audience";
+        public const string PublishingRollupImageField = "PublishingRollupImage";       
 
         // Features
         public static readonly Guid FeatureId_Web_ModernPage = new Guid("B6917CB1-93A0-4B97-A84D-7CF49975D4EC");

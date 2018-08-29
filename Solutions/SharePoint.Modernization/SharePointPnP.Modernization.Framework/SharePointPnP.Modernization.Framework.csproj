@@ -188,6 +188,7 @@
     <Compile Include="Caml\Value.cs" />
     <Compile Include="Caml\ValueType.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Entities\AudienceEntity.cs" />
     <Compile Include="Entities\WebPartEntity.cs" />
     <Compile Include="Extensions\ListItemExtensions.cs" />
     <Compile Include="Extensions\SiteExtensions.cs" />
@@ -201,6 +202,7 @@
     <Compile Include="Functions\XmlEqualityResult.cs" />
     <Compile Include="Pages\BasePage.cs" />
     <Compile Include="Pages\PageLayout.cs" />
+    <Compile Include="Pages\PublishingPage.cs" />
     <Compile Include="Pages\WebPartPage.cs" />
     <Compile Include="Pages\WikiPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
