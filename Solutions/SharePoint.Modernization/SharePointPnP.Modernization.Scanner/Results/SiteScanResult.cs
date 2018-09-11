@@ -348,6 +348,11 @@ namespace SharePoint.Modernization.Scanner.Results
         /// <returns>True if found, false otherwise</returns>
         public bool HasClaim(List<UserEntity> users, string claim)
         {
+            if (users == null)
+            {
+                return false;
+            }
+
             return users.Where(p => p.LoginName.ToLower() == claim.ToLower()).Any();
         }
 
@@ -360,6 +365,11 @@ namespace SharePoint.Modernization.Scanner.Results
         /// <returns>True if found, false otherwise</returns>
         public bool HasClaim(List<UserEntity> users, string claim1, string claim2)
         {
+            if (users == null)
+            {
+                return false;
+            }
+
             return users.Where(p => p.LoginName.ToLower() == claim1.ToLower() || p.LoginName.ToLower() == claim2.ToLower()).Any();
         }
 
@@ -425,6 +435,11 @@ namespace SharePoint.Modernization.Scanner.Results
         /// <returns>True if it contains an AD group, false otherwise</returns>
         public bool ContainsADGroup(List<UserEntity> users)
         {
+            if (users == null)
+            {
+                return false;
+            }
+
             return users.Where(p => p.LoginName.ToLower().StartsWith("c:0-.f|rolemanager|s-")).Any();
         }
 
