@@ -24,10 +24,11 @@ namespace SharePoint.Modernization.Scanner
         public bool SkipUserInformation;
         public string EveryoneExceptExternalUsersClaim = "";
         public readonly string EveryoneClaim = "c:0(.s|true";
-        public ConcurrentDictionary<string, WebScanResult> WebScanResults;
         public ConcurrentDictionary<string, SiteScanResult> SiteScanResults;
+        public ConcurrentDictionary<string, WebScanResult> WebScanResults;
         public ConcurrentDictionary<string, PageScanResult> PageScanResults;
-        public ConcurrentDictionary<string, PublishingScanResult> PublishingScanResults;
+        public Dictionary<string, PublishingSiteScanResult> PublishingSiteScanResults;
+        public ConcurrentDictionary<string, PublishingWebScanResult> PublishingWebScanResults;
         public ConcurrentDictionary<string, PublishingPageScanResult> PublishingPageScanResults;
         public Tenant SPOTenant;
         public PageTransformation PageTransformation;
@@ -46,10 +47,13 @@ namespace SharePoint.Modernization.Scanner
             SkipUsageInformation = options.SkipUsageInformation;
             SkipUserInformation = options.SkipUserInformation;
 
-            this.WebScanResults = new ConcurrentDictionary<string, WebScanResult>(options.Threads, 50000);
+            // Site scan results
             this.SiteScanResults = new ConcurrentDictionary<string, SiteScanResult>(options.Threads, 10000);
+            this.WebScanResults = new ConcurrentDictionary<string, WebScanResult>(options.Threads, 50000);
             this.PageScanResults = new ConcurrentDictionary<string, PageScanResult>(options.Threads, 1000000);
-            this.PublishingScanResults = new ConcurrentDictionary<string, PublishingScanResult>(options.Threads, 1000);
+            // Publishing portal scan results
+            this.PublishingSiteScanResults = new Dictionary<string, PublishingSiteScanResult>(500);
+            this.PublishingWebScanResults = new ConcurrentDictionary<string, PublishingWebScanResult>(options.Threads, 1000);
             this.PublishingPageScanResults = new ConcurrentDictionary<string, PublishingPageScanResult>(options.Threads, 10000);
 
             this.TimerJobRun += ModernizationScanJob_TimerJobRun;
@@ -474,7 +478,30 @@ namespace SharePoint.Modernization.Scanner
 
             if (Options.IncludePublishing(this.Mode))
             {
-                outputfile = string.Format("{0}\\ModernizationPublishingScanResults.csv", this.OutputFolder);
+                // "Calculate" publishing site results based upon the web/page level data we retrieved
+                this.PublishingSiteScanResults = PublishingAnalyzer.GeneratePublishingSiteResults(this.Mode, this.PublishingWebScanResults, this.PublishingPageScanResults);
+
+                // Export the site publishing data
+                outputfile = string.Format("{0}\\ModernizationPublishingSiteScanResults.csv", this.OutputFolder);
+                outputHeaders = new string[] { "SiteCollectionUrl", "NumberOfWebs", "NumberOfPages",
+                                               "UsedSiteMasterPages", "UsedSystemMasterPages",
+                                               "UsedPageLayouts", "LastPageUpdateDate"
+                                             };
+                Console.WriteLine("Outputting scan results to {0}", outputfile);
+                using (StreamWriter outfile = new StreamWriter(outputfile))
+                {
+                    outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
+                    foreach (var item in this.PublishingSiteScanResults)
+                    {
+                        outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), item.Value.NumberOfWebs, item.Value.NumberOfPages,
+                                                                                           ToCsv(PublishingPageScanResult.FormatList(item.Value.UsedSiteMasterPages)), ToCsv(PublishingPageScanResult.FormatList(item.Value.UsedSystemMasterPages)),
+                                                                                           ToCsv(PublishingPageScanResult.FormatList(item.Value.UsedPageLayouts)), item.Value.LastPageUpdateDate.HasValue ? item.Value.LastPageUpdateDate.ToString() : ""
+                                                   )));
+                    }
+                }
+
+                // Export the web publishing data
+                outputfile = string.Format("{0}\\ModernizationPublishingWebScanResults.csv", this.OutputFolder);
                 outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", 
                                                "WebTemplate", "Level", "PageCount", "Language", "VariationLabels", "VariationSourceLabel",
                                                "SiteMasterPage", "SystemMasterPage", "AlternateCSS",
@@ -491,7 +518,7 @@ namespace SharePoint.Modernization.Scanner
                 using (StreamWriter outfile = new StreamWriter(outputfile))
                 {
                     outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
-                    foreach (var item in this.PublishingScanResults)
+                    foreach (var item in this.PublishingWebScanResults)
                     {
                         outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.WebRelativeUrl),
                                                                                            ToCsv(item.Value.WebTemplate), item.Value.Level.ToString(), item.Value.PageCount.ToString(), item.Value.Language.ToString(), ToCsv(item.Value.VariationLabels), ToCsv(item.Value.VariationSourceLabel),
@@ -510,6 +537,7 @@ namespace SharePoint.Modernization.Scanner
 
                 if (Options.IncludePublishingWithPages(this.Mode))
                 {
+                    // Export the page publishing data
                     outputfile = string.Format("{0}\\ModernizationPublishingPageScanResults.csv", this.OutputFolder);
                     outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "PageRelativeUrl", "PageName",
                                                    "ContentType", "ContentTypeId", "PageLayout", "PageLayoutFile",

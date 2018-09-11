@@ -2,6 +2,7 @@
 using SharePoint.Modernization.Scanner.Results;
 using SharePoint.Scanning.Framework;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -72,7 +73,7 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                 {
                     try
                     {
-                        PublishingScanResult scanResult = new PublishingScanResult()
+                        PublishingWebScanResult scanResult = new PublishingWebScanResult()
                         {
                             SiteColUrl = this.SiteCollectionUrl,
                             SiteURL = this.SiteUrl,
@@ -346,7 +347,7 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                         }
 
                         // Persist publishing scan results
-                        if (!this.ScanJob.PublishingScanResults.TryAdd(this.SiteUrl, scanResult))
+                        if (!this.ScanJob.PublishingWebScanResults.TryAdd(this.SiteUrl, scanResult))
                         {
                             ScanError error = new ScanError()
                             {
@@ -418,6 +419,87 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                 }
             }
             return 0;
+        }
+
+        internal static Dictionary<string, PublishingSiteScanResult> GeneratePublishingSiteResults(Mode mode,
+                                                                                                   ConcurrentDictionary<string, PublishingWebScanResult> webScanResults,
+                                                                                                   ConcurrentDictionary<string, PublishingPageScanResult> pageScanResults)
+        {
+            Dictionary<string, PublishingSiteScanResult> siteScanResults = new Dictionary<string, PublishingSiteScanResult>(500);
+
+            // bail out when no work todo
+            if (!Options.IncludePublishing(mode) || webScanResults.Count == 0)
+            {
+                return null;
+            }
+
+            // iterate the web publishing results and consolidate into a single site level data line
+            foreach (var item in webScanResults)
+            {
+                PublishingSiteScanResult siteResult = null;
+
+                // Create or get the result instance
+                if (!siteScanResults.ContainsKey(item.Value.SiteColUrl))
+                {
+                    siteResult = new PublishingSiteScanResult()
+                    {
+                        SiteColUrl = item.Value.SiteColUrl,
+                        SiteURL = item.Value.SiteURL,
+                    };
+                    siteScanResults.Add(item.Value.SiteColUrl, siteResult);
+                }
+                else
+                {
+                    siteScanResults.TryGetValue(item.Key, out siteResult);
+                }
+
+                // Update the result instance
+                siteResult.NumberOfWebs++;
+                siteResult.NumberOfPages = siteResult.NumberOfPages + item.Value.PageCount;
+
+                if (item.Value.SiteMasterPage != null && !siteResult.UsedSiteMasterPages.Contains(item.Value.SiteMasterPage))
+                {
+                    siteResult.UsedSiteMasterPages.Add(item.Value.SiteMasterPage);
+                }
+
+                if (item.Value.SystemMasterPage != null && !siteResult.UsedSystemMasterPages.Contains(item.Value.SystemMasterPage))
+                {
+                    siteResult.UsedSystemMasterPages.Add(item.Value.SystemMasterPage);
+                }
+            }
+
+            // Iterate the publishing page results (if collected) and consolidate into a single site level data line
+            if (Options.IncludePublishingWithPages(mode) && pageScanResults.Count > 0)
+            {
+                foreach (var item in pageScanResults)
+                {
+                    // Get the previously created record
+                    siteScanResults.TryGetValue(item.Value.SiteColUrl, out PublishingSiteScanResult siteResult);
+
+                    if (siteResult == null)
+                    {
+                        // Should not be possible...
+                        continue;
+                    }
+
+                    // Update the result instance
+                    if (item.Value.PageLayout != null && !siteResult.UsedPageLayouts.Contains(item.Value.PageLayout))
+                    {
+                        siteResult.UsedPageLayouts.Add(item.Value.PageLayout);
+                    }
+
+                    // Update last updated date               
+                    if (item.Value.ModifiedAt != DateTime.MinValue && item.Value.ModifiedAt != DateTime.MaxValue)
+                    {
+                        if (siteResult.LastPageUpdateDate == null || item.Value.ModifiedAt > siteResult.LastPageUpdateDate)
+                        {
+                            siteResult.LastPageUpdateDate = item.Value.ModifiedAt;
+                        }
+                    }
+                }
+            }
+
+            return siteScanResults;
         }
 
     }

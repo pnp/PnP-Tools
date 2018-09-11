@@ -215,7 +215,8 @@
     <Compile Include="Reports\ScanSummary.cs" />
     <Compile Include="Results\PageScanResult.cs" />
     <Compile Include="Results\PublishingPageScanResult.cs" />
-    <Compile Include="Results\PublishingScanResult.cs" />
+    <Compile Include="Results\PublishingSiteScanResult.cs" />
+    <Compile Include="Results\PublishingWebScanResult.cs" />
     <Compile Include="Results\SiteScanResult.cs" />
     <Compile Include="Results\UserCustomActionResult.cs" />
     <Compile Include="Results\WebScanResult.cs" />

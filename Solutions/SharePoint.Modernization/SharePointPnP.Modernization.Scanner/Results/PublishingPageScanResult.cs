@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace SharePoint.Modernization.Scanner.Results
 {
+    /// <summary>
+    /// Publishing page scan results
+    /// </summary>
     public class PublishingPageScanResult: Scan
     {
         /// <summary>
@@ -60,14 +63,27 @@ namespace SharePoint.Modernization.Scanner.Results
         /// </summary>
         public string ContentTypeId { get; set; }
 
-        // Page web part information
+        /// <summary>
+        /// Page web part information
+        /// </summary>
         public List<WebPartEntity> WebParts { get; set; }
 
+        /// <summary>
+        /// Format list content as string
+        /// </summary>
+        /// <param name="list">List to format</param>
+        /// <returns>Formatted list as string</returns>
         public static string FormatList(List<string> list)
         {
             return FormatList(list, ",");
         }
 
+        /// <summary>
+        /// Format list content as string
+        /// </summary>
+        /// <param name="list">List to format</param>
+        /// <param name="delim">Delimiter to use in the formatted list string</param>
+        /// <returns>Formatted list as string</returns>
         public static string FormatList(List<string> list, string delim)
         {
             string formattedList = "";
