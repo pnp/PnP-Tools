@@ -450,7 +450,7 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                 }
                 else
                 {
-                    siteScanResults.TryGetValue(item.Key, out siteResult);
+                    siteScanResults.TryGetValue(item.Value.SiteColUrl, out siteResult);
                 }
 
                 // Update the result instance

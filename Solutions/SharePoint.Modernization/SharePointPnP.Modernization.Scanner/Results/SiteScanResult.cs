@@ -48,6 +48,10 @@ namespace SharePoint.Modernization.Scanner.Results
         public bool SitePublishingFeatureEnabled { get; set; }
 
         /// <summary>
+        /// Are there publishing pages used in any of the webs in this site?
+        /// </summary>
+        public bool PublishingPagesUsed { get; set; }
+        /// <summary>
         /// Modern page feature was disabled
         /// </summary>
         public bool ModernPageWebFeatureDisabled { get; set; }
@@ -111,11 +115,29 @@ namespace SharePoint.Modernization.Scanner.Results
         /// </summary>
         public Guid Office365GroupId { get; set; }
         
+        /// <summary>
+        /// Site sharing capabilities
+        /// </summary>
         public string SharingCapabilities { get; set; }
 
+        /// <summary>
+        /// Views in the last 14 days for this site
+        /// </summary>
         public int ViewsRecent { get; set; }
+
+        /// <summary>
+        /// Number of unique users that viewed this site in the last 14 days
+        /// </summary>
         public int ViewsRecentUniqueUsers { get; set; }
+
+        /// <summary>
+        /// Total number of views for this site
+        /// </summary>
         public int ViewsLifeTime { get; set; }
+
+        /// <summary>
+        /// Total number of unique visitors for this site
+        /// </summary>
         public int ViewsLifeTimeUniqueUsers { get; set; }
 
 
@@ -134,6 +156,7 @@ namespace SharePoint.Modernization.Scanner.Results
                 ModernHomePage = this.ModernHomePage,
                 SitePublishingFeatureEnabled = this.SitePublishingFeatureEnabled,
                 WebPublishingFeatureEnabled = this.WebPublishingFeatureEnabled,
+                PublishingPagesUsed = this.PublishingPagesUsed,
                 ModernPageWebFeatureDisabled = this.ModernPageWebFeatureDisabled,
                 ModernPageFeatureWasEnabledBySPO = this.ModernPageFeatureWasEnabledBySPO,
                 ModernListWebBlockingFeatureEnabled = this.ModernListWebBlockingFeatureEnabled,
@@ -179,7 +202,7 @@ namespace SharePoint.Modernization.Scanner.Results
                 groupifyBlockReasons.Add("SiteHasOffice365Group");
             }
 
-            if (SitePublishingFeatureEnabled || WebPublishingFeatureEnabled)
+            if ((SitePublishingFeatureEnabled || WebPublishingFeatureEnabled) && DefineAsPublishingPortal())
             {
                 groupifyBlockReasons.Add("PublishingFeatureEnabled");
             }
@@ -217,6 +240,26 @@ namespace SharePoint.Modernization.Scanner.Results
             }
 
             return groupifyWarningReasons;
+        }
+
+        private bool DefineAsPublishingPortal()
+        {
+            // Check web template
+            if (WebTemplate.Equals("BICENTERSITE#0", StringComparison.InvariantCultureIgnoreCase)   || WebTemplate.Equals("BLANKINTERNET#0", StringComparison.InvariantCultureIgnoreCase) ||
+                WebTemplate.Equals("ENTERWIKI#0", StringComparison.InvariantCultureIgnoreCase)      || WebTemplate.Equals("SRCHCEN#0", StringComparison.InvariantCultureIgnoreCase) ||
+                WebTemplate.Equals("SRCHCENTERLITE#0", StringComparison.InvariantCultureIgnoreCase) || WebTemplate.Equals("POINTPUBLISHINGHUB#0", StringComparison.InvariantCultureIgnoreCase) ||
+                WebTemplate.Equals("POINTPUBLISHINGTOPIC#0", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
+
+            // Check publishing page library usage
+            if (PublishingPagesUsed)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private string SiteTemplateCheck(bool blocker)

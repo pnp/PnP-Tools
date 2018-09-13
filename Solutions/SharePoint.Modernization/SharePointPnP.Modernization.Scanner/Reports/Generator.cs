@@ -24,7 +24,190 @@ namespace SharePoint.Modernization.Scanner.Reports
         private const string PageCSV = "PageScanResults.csv";
         private const string PageMasterFile = "pagemaster.xlsx";
         private const string PageReport = "Office 365 Page Transformation Readiness.xlsx";
+        // Publishing report variables
+        private const string PublishingWebCSV = "ModernizationPublishingWebScanResults.csv";
+        private const string PublishingPageCSV = "ModernizationPublishingPageScanResults.csv";
+        private const string PublishingMasterFile = "publishingmaster.xlsx";
+        private const string PublishingReport = "Office 365 Publishing Portal Transformation Readiness.xlsx";
 
+        /// <summary>
+        /// Create the publishing dashboard
+        /// </summary>
+        /// <param name="exportPaths">Paths to read data from</param>
+        public void CreatePublishingReport(IList<string> exportPaths)
+        {
+            DataTable pubWebsBaseTable = null;
+            DataTable pubPagesBaseTable = null;
+            DataTable pubWebsTable = null;
+            DataTable pubPagesTable = null;
+            ScanSummary scanSummary = null;
+
+            var outputfolder = ".";
+            DateTime dateCreationTime = DateTime.MinValue;
+            if (exportPaths.Count == 1)
+            {
+                outputfolder = new DirectoryInfo(exportPaths[0]).FullName;
+                var pathToUse = exportPaths[0].TrimEnd(new char[] { '\\' });
+                dateCreationTime = File.GetCreationTime($"{pathToUse}\\{PublishingWebCSV}");
+            }
+
+            // import the data and "clean" it
+            foreach (var path in exportPaths)
+            {
+                var pathToUse = path.TrimEnd(new char[] { '\\' });
+
+                string csvToLoad = $"{pathToUse}\\{PublishingWebCSV}";
+
+                if (!File.Exists(csvToLoad))
+                {
+                    // Skipping as one does not always have this report 
+                    continue;
+                }
+
+                Console.WriteLine($"Generating Publishing transformation report based upon data coming from {path}");
+
+                using (GenericParserAdapter parser = new GenericParserAdapter(csvToLoad))
+                {
+                    parser.FirstRowHasHeader = true;
+                    parser.MaxBufferSize = 200000;
+                    parser.ColumnDelimiter = DetectUsedDelimiter(csvToLoad);
+
+                    // Read the file                    
+                    pubWebsBaseTable = parser.GetDataTable();
+
+                    var pubWebsTable1 = pubWebsBaseTable.Copy();
+                    // clean table
+                    string[] columnsToKeep = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "WebTemplate", "Level", "PageCount", "Language", "VariationLabels", "VariationSourceLabel", "SiteMasterPage", "SystemMasterPage", "AlternateCSS", "AllowedPageLayouts", "PageLayoutsConfiguration", "DefaultPageLayout", "GlobalNavigationType", "GlobalStructuralNavigationShowSubSites", "GlobalStructuralNavigationShowPages", "GlobalStructuralNavigationShowSiblings", "GlobalStructuralNavigationMaxCount", "GlobalManagedNavigationTermSetId", "CurrentNavigationType", "CurrentStructuralNavigationShowSubSites", "CurrentStructuralNavigationShowPages", "CurrentStructuralNavigationShowSiblings", "CurrentStructuralNavigationMaxCount", "CurrentManagedNavigationTermSetId", "ManagedNavigationAddNewPages", "ManagedNavigationCreateFriendlyUrls", "LibraryItemScheduling", "LibraryEnableModeration", "LibraryEnableVersioning", "LibraryEnableMinorVersions", "LibraryApprovalWorkflowDefined", "BrokenPermissionInheritance" };
+                    pubWebsTable1 = DropTableColumns(pubWebsTable1, columnsToKeep);
+
+                    if (pubWebsTable == null)
+                    {
+                        pubWebsTable = pubWebsTable1;
+                    }
+                    else
+                    {
+                        pubWebsTable.Merge(pubWebsTable1);
+                    }
+
+                    // Read scanner summary data
+                    var scanSummary1 = DetectScannerSummary($"{pathToUse}\\{ScannerSummaryCSV}");
+
+                    if (scanSummary == null)
+                    {
+                        scanSummary = scanSummary1;
+                    }
+                    else
+                    {
+                        MergeScanSummaries(scanSummary, scanSummary1);
+                    }
+                }
+
+                csvToLoad = $"{pathToUse}\\{PublishingPageCSV}";
+
+                if (!File.Exists(csvToLoad))
+                {
+                    // Skipping as one does not always have this report 
+                    continue;
+                }
+
+                using (GenericParserAdapter parser = new GenericParserAdapter(csvToLoad))
+                {
+                    parser.FirstRowHasHeader = true;
+                    parser.MaxBufferSize = 200000;
+                    parser.ColumnDelimiter = DetectUsedDelimiter(csvToLoad);
+
+                    // Read the file                    
+                    pubPagesBaseTable = parser.GetDataTable();
+
+                    var pubPagesTable1 = pubPagesBaseTable.Copy();
+                    // clean table
+                    string[] columnsToKeep = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "PageRelativeUrl", "PageName", "ContentType", "ContentTypeId", "PageLayout", "PageLayoutFile", "GlobalAudiences", "SecurityGroupAudiences", "SharePointGroupAudiences", "ModifiedAt", "Mapping %" };
+                    pubPagesTable1 = DropTableColumns(pubPagesTable1, columnsToKeep);
+
+                    if (pubPagesTable == null)
+                    {
+                        pubPagesTable = pubPagesTable1;
+                    }
+                    else
+                    {
+                        pubPagesTable.Merge(pubPagesTable1);
+                    }
+                }
+
+                // Get the template Excel file
+                using (Stream stream = typeof(Generator).Assembly.GetManifestResourceStream($"SharePoint.Modernization.Scanner.Reports.{PublishingMasterFile}"))
+                {
+                    if (File.Exists($"{outputfolder}\\{PublishingMasterFile}"))
+                    {
+                        File.Delete($"{outputfolder}\\{PublishingMasterFile}");
+                    }
+
+                    using (var fileStream = File.Create($"{outputfolder}\\{PublishingMasterFile}"))
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                        stream.CopyTo(fileStream);
+                    }
+                }
+
+                // Push the data to Excel, starting from an Excel template
+                using (var excel = new ExcelPackage(new FileInfo($"{outputfolder}\\{PublishingMasterFile}"), false))
+                {
+
+                    var dashboardSheet = excel.Workbook.Worksheets["Dashboard"];
+                    if (scanSummary != null)
+                    {
+                        if (scanSummary.SiteCollections.HasValue)
+                        {
+                            dashboardSheet.SetValue("U7", scanSummary.SiteCollections.Value);
+                        }
+                        if (scanSummary.Duration != null)
+                        {
+                            dashboardSheet.SetValue("U8", scanSummary.Duration);
+                        }
+                        if (scanSummary.Version != null)
+                        {
+                            dashboardSheet.SetValue("U9", scanSummary.Version);
+                        }
+                    }
+
+                    if (dateCreationTime > DateTime.Now.Subtract(new TimeSpan(5*365,0,0,0,0)))
+                    {
+                        dashboardSheet.SetValue("U6", dateCreationTime.ToString("G", DateTimeFormatInfo.InvariantInfo));
+                    }
+                    else
+                    {
+                        dashboardSheet.SetValue("U6", "-");
+                    }
+
+                    var pubWebsSheet = excel.Workbook.Worksheets["PubWebs"];
+                    InsertTableData(pubWebsSheet.Tables[0], pubWebsTable);
+
+                    var pubPagesSheet = excel.Workbook.Worksheets["PubPages"];
+                    if (pubPagesTable != null)
+                    {
+                        InsertTableData(pubPagesSheet.Tables[0], pubPagesTable);
+                    }
+
+                    // Save the resulting file
+                    if (File.Exists($"{outputfolder}\\{PublishingReport}"))
+                    {
+                        File.Delete($"{outputfolder}\\{PublishingReport}");
+                    }
+                    excel.SaveAs(new FileInfo($"{outputfolder}\\{PublishingReport}"));
+                }
+
+                // Clean the template file
+                if (File.Exists($"{outputfolder}\\{PublishingMasterFile}"))
+                {
+                    File.Delete($"{outputfolder}\\{PublishingMasterFile}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create the site page dashboard
+        /// </summary>
+        /// <param name="exportPaths">Paths to read data from</param>
         public void CreatePageReport(IList<string> exportPaths)
         {
             DataTable readyForPageTransformationTable = null;
@@ -165,7 +348,7 @@ namespace SharePoint.Modernization.Scanner.Reports
                     }
                 }
 
-                if (dateCreationTime != DateTime.MinValue)
+                if (dateCreationTime > DateTime.Now.Subtract(new TimeSpan(5 * 365, 0, 0, 0, 0)))
                 {
                     dashboardSheet.SetValue("X6", dateCreationTime.ToString("G", DateTimeFormatInfo.InvariantInfo));
                 }
@@ -201,6 +384,10 @@ namespace SharePoint.Modernization.Scanner.Reports
             }
         }
 
+        /// <summary>
+        /// Create the groupify dashboard
+        /// </summary>
+        /// <param name="exportPaths">Paths to read data from</param>
         public void CreateGroupifyReport(IList<string> exportPaths)
         {
             DataTable readyForGroupifyTable = null;
@@ -216,7 +403,7 @@ namespace SharePoint.Modernization.Scanner.Reports
             {
                 outputfolder = new DirectoryInfo(exportPaths[0]).FullName;
                 var pathToUse = exportPaths[0].TrimEnd(new char[] { '\\' });
-                dateCreationTime = File.GetCreationTime($"{pathToUse}\\{PageCSV}");
+                dateCreationTime = File.GetCreationTime($"{pathToUse}\\{GroupifyCSV}");
             }
 
             // import the data and "clean" it
@@ -383,7 +570,7 @@ namespace SharePoint.Modernization.Scanner.Reports
                     }
                 }
 
-                if (dateCreationTime != DateTime.MinValue)
+                if (dateCreationTime > DateTime.Now.Subtract(new TimeSpan(5 * 365, 0, 0, 0, 0)))
                 {
                     dashboardSheet.SetValue("U6", dateCreationTime.ToString("G", DateTimeFormatInfo.InvariantInfo));
                 }

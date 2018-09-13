@@ -140,6 +140,28 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                 // Publishing web feature enabled
                 scanResult.WebPublishingFeatureEnabled = web.Features.Where(f => f.DefinitionId == FeatureId_Web_Publishing).Count() > 0;
 
+                // Site is using the publishing "Pages" library?
+                if (scanResult.WebPublishingFeatureEnabled)
+                {
+                    if (!(scanResult.WebTemplate.Equals("BICENTERSITE#0", StringComparison.InvariantCultureIgnoreCase) ||
+                          scanResult.WebTemplate.Equals("BLANKINTERNET#0", StringComparison.InvariantCulture) ||
+                          scanResult.WebTemplate.Equals("SRCHCEN#0", StringComparison.InvariantCulture) ||
+                          scanResult.WebTemplate.Equals("SRCHCENTERLITE#0", StringComparison.InvariantCulture) ||
+                          scanResult.WebTemplate.Equals("POINTPUBLISHINGHUB#0", StringComparison.InvariantCulture) ||
+                          scanResult.WebTemplate.Equals("POINTPUBLISHINGTOPIC#0", StringComparison.InvariantCulture) ||
+                          scanResult.WebTemplate.Equals("ENTERWIKI#0", StringComparison.InvariantCulture)))
+                    {
+                        var pagesLibrary = web.GetListsToScan().Where(p => p.BaseTemplate == 850).FirstOrDefault();
+                        if (pagesLibrary != null)
+                        {
+                            if (pagesLibrary.ItemCount > 0)
+                            {
+                                scanResult.PublishingPagesLibraryContainsPages = true;
+                            }
+                        }
+                    }
+                }
+
                 // Log permission inheritance details
                 if (web.IsSubSite() && web.HasUniqueRoleAssignments)
                 {
@@ -236,6 +258,11 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                         clonedSiteScandata.AlternateCSS = !String.IsNullOrEmpty(scanResult.AlternateCSS);
                         clonedSiteScandata.WebUserCustomActions = scanResult.WebUserCustomActions;
 
+                        if (scanResult.PublishingPagesLibraryContainsPages && clonedSiteScandata.PublishingPagesUsed == false)
+                        {
+                            clonedSiteScandata.PublishingPagesUsed = true;
+                        }
+
                         if (!this.ScanJob.SiteScanResults.TryUpdate(this.SiteCollectionUrl, clonedSiteScandata, siteScanData))
                         {
                             ScanError error = new ScanError()
@@ -246,6 +273,33 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                                 Field1 = "WebAnalyzer",
                             };
                             this.ScanJob.ScanErrors.Push(error);
+                        }
+                    }
+                }
+                else
+                {
+                    if (scanResult.PublishingPagesLibraryContainsPages)
+                    {
+                        if (this.ScanJob.SiteScanResults.TryGetValue(this.SiteCollectionUrl, out SiteScanResult siteScanData))
+                        {
+                            var clonedSiteScandata = siteScanData.Clone();
+
+                            if (clonedSiteScandata.PublishingPagesUsed == false)
+                            {
+                                clonedSiteScandata.PublishingPagesUsed = true;
+                            }
+
+                            if (!this.ScanJob.SiteScanResults.TryUpdate(this.SiteCollectionUrl, clonedSiteScandata, siteScanData))
+                            {
+                                ScanError error = new ScanError()
+                                {
+                                    Error = $"Could not add update site scan result for {this.SiteCollectionUrl} from web scan of {this.SiteUrl}",
+                                    SiteColUrl = this.SiteCollectionUrl,
+                                    SiteURL = this.SiteUrl,
+                                    Field1 = "WebAnalyzer",
+                                };
+                                this.ScanJob.ScanErrors.Push(error);
+                            }
                         }
                     }
                 }
