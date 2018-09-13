@@ -287,7 +287,10 @@ namespace SharePoint.Modernization.Scanner.Analyzers
 
                                         // Get page change information
                                         pageScanResult.ModifiedAt = page.LastModifiedDateTime();
-                                        pageScanResult.ModifiedBy = page.LastModifiedBy();
+                                        if (!this.ScanJob.SkipUserInformation)
+                                        {
+                                            pageScanResult.ModifiedBy = page.LastModifiedBy();
+                                        }
 
                                         // Page layout
                                         pageScanResult.PageLayout = page.PageLayout();
