@@ -25,6 +25,7 @@ namespace SharePoint.Modernization.Scanner.Reports
         private const string PageMasterFile = "pagemaster.xlsx";
         private const string PageReport = "Office 365 Page Transformation Readiness.xlsx";
         // Publishing report variables
+        private const string PublishingSiteCSV = "ModernizationPublishingSiteScanResults.csv";
         private const string PublishingWebCSV = "ModernizationPublishingWebScanResults.csv";
         private const string PublishingPageCSV = "ModernizationPublishingPageScanResults.csv";
         private const string PublishingMasterFile = "publishingmaster.xlsx";
@@ -56,6 +57,7 @@ namespace SharePoint.Modernization.Scanner.Reports
             {
                 var pathToUse = path.TrimEnd(new char[] { '\\' });
 
+                // Load the webs CSV file
                 string csvToLoad = $"{pathToUse}\\{PublishingWebCSV}";
 
                 if (!File.Exists(csvToLoad))
@@ -102,35 +104,50 @@ namespace SharePoint.Modernization.Scanner.Reports
                     }
                 }
 
-                csvToLoad = $"{pathToUse}\\{PublishingPageCSV}";
-
-                if (!File.Exists(csvToLoad))
+                // Load the site CSV file to count the site collection rows
+                csvToLoad = $"{pathToUse}\\{PublishingSiteCSV}";
+                if (File.Exists(csvToLoad))
                 {
-                    // Skipping as one does not always have this report 
-                    continue;
+                    using (GenericParserAdapter parser = new GenericParserAdapter(csvToLoad))
+                    {
+                        parser.FirstRowHasHeader = true;
+                        parser.MaxBufferSize = 200000;
+                        parser.ColumnDelimiter = DetectUsedDelimiter(csvToLoad);
+
+                        var siteData = parser.GetDataTable();
+                        if (siteData != null)
+                        {
+                            scanSummary.SiteCollections = siteData.Rows.Count;
+                        }
+                    }
                 }
 
-                using (GenericParserAdapter parser = new GenericParserAdapter(csvToLoad))
+                // Load the pages CSV file, if available
+                csvToLoad = $"{pathToUse}\\{PublishingPageCSV}";
+                if (File.Exists(csvToLoad))
                 {
-                    parser.FirstRowHasHeader = true;
-                    parser.MaxBufferSize = 200000;
-                    parser.ColumnDelimiter = DetectUsedDelimiter(csvToLoad);
-
-                    // Read the file                    
-                    pubPagesBaseTable = parser.GetDataTable();
-
-                    var pubPagesTable1 = pubPagesBaseTable.Copy();
-                    // clean table
-                    string[] columnsToKeep = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "PageRelativeUrl", "PageName", "ContentType", "ContentTypeId", "PageLayout", "PageLayoutFile", "GlobalAudiences", "SecurityGroupAudiences", "SharePointGroupAudiences", "ModifiedAt", "Mapping %" };
-                    pubPagesTable1 = DropTableColumns(pubPagesTable1, columnsToKeep);
-
-                    if (pubPagesTable == null)
+                    using (GenericParserAdapter parser = new GenericParserAdapter(csvToLoad))
                     {
-                        pubPagesTable = pubPagesTable1;
-                    }
-                    else
-                    {
-                        pubPagesTable.Merge(pubPagesTable1);
+                        parser.FirstRowHasHeader = true;
+                        parser.MaxBufferSize = 200000;
+                        parser.ColumnDelimiter = DetectUsedDelimiter(csvToLoad);
+
+                        // Read the file                    
+                        pubPagesBaseTable = parser.GetDataTable();
+
+                        var pubPagesTable1 = pubPagesBaseTable.Copy();
+                        // clean table
+                        string[] columnsToKeep = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "PageRelativeUrl", "PageName", "ContentType", "ContentTypeId", "PageLayout", "PageLayoutFile", "GlobalAudiences", "SecurityGroupAudiences", "SharePointGroupAudiences", "ModifiedAt", "Mapping %" };
+                        pubPagesTable1 = DropTableColumns(pubPagesTable1, columnsToKeep);
+
+                        if (pubPagesTable == null)
+                        {
+                            pubPagesTable = pubPagesTable1;
+                        }
+                        else
+                        {
+                            pubPagesTable.Merge(pubPagesTable1);
+                        }
                     }
                 }
 
