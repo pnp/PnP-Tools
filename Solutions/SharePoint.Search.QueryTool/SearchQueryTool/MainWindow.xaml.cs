@@ -2973,6 +2973,12 @@ namespace SearchQueryTool
 
         private void CopyClipboardButton_OnClickButton_OnClick(object sender, RoutedEventArgs e)
         {
+            if (_searchResults == null)
+            {
+                StateBarTextBlock.Text = "No search result to copy";
+                return;
+            }
+
             string content;
             if (AcceptJsonRadioButton.IsChecked.HasValue && AcceptJsonRadioButton.IsChecked.Value)
             {
@@ -2984,7 +2990,6 @@ namespace SearchQueryTool
                 content = XmlHelper.PrintXml(_searchResults.ResponseContent);
             }
             Clipboard.SetText(content);
-
         }
     }
 }

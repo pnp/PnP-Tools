@@ -1,0 +1,74 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2020
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPnP.Modernization.Framework", "SharePointPnP.Modernization.Framework\SharePointPnP.Modernization.Framework.csproj", "{2C80435C-340A-4E6B-B4E3-F13451ABB6C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPnP.Modernization.Scanner", "SharePointPnP.Modernization.Scanner\SharePointPnP.Modernization.Scanner.csproj", "{74E4621E-6ED0-4138-80C4-0ADF70DFC202}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePoint.Scanning.Framework", "..\SharePoint.Scanning\SharePoint.Scanning.Framework\SharePoint.Scanning.Framework.csproj", "{024BC1C5-2892-43B5-AF34-D85AE595A2BA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{9B8FFE29-4905-4F4D-B52D-ED1FB777341C}"
+	ProjectSection(SolutionItems) = preProject
+		Modernization Framework release notes.md = Modernization Framework release notes.md
+		README.md = README.md
+		TransformationModel.md = TransformationModel.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPnP.Modernization.Framework.Tests", "SharePointPnP.Modernization.Framework.Tests\SharePointPnP.Modernization.Framework.Tests.csproj", "{07492D38-21DE-4D09-A07D-AA1369819464}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPnP.Modernization.Framework.SampleAddOn", "SharePointPnP.Modernization.Framework.SampleAddOn\SharePointPnP.Modernization.Framework.SampleAddOn.csproj", "{7A31933F-BDAD-4B95-A774-EDD4B0F47908}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPnP.Modernization.DocsGenerator", "SharePointPnP.Modernization.DocsGenerator\SharePointPnP.Modernization.DocsGenerator.csproj", "{92B96A1A-F2A3-45F6-B77C-36E4DF823BF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPnP.Modernization.Framework.Profiler", "SharePointPnP.Modernization.Framework.Profiler\SharePointPnP.Modernization.Framework.Profiler.csproj", "{184B8275-F8EA-4011-BCE6-E44E03ECFF01}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C80435C-340A-4E6B-B4E3-F13451ABB6C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C80435C-340A-4E6B-B4E3-F13451ABB6C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C80435C-340A-4E6B-B4E3-F13451ABB6C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C80435C-340A-4E6B-B4E3-F13451ABB6C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74E4621E-6ED0-4138-80C4-0ADF70DFC202}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74E4621E-6ED0-4138-80C4-0ADF70DFC202}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74E4621E-6ED0-4138-80C4-0ADF70DFC202}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74E4621E-6ED0-4138-80C4-0ADF70DFC202}.Release|Any CPU.Build.0 = Release|Any CPU
+		{024BC1C5-2892-43B5-AF34-D85AE595A2BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{024BC1C5-2892-43B5-AF34-D85AE595A2BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{024BC1C5-2892-43B5-AF34-D85AE595A2BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{024BC1C5-2892-43B5-AF34-D85AE595A2BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07492D38-21DE-4D09-A07D-AA1369819464}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07492D38-21DE-4D09-A07D-AA1369819464}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07492D38-21DE-4D09-A07D-AA1369819464}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07492D38-21DE-4D09-A07D-AA1369819464}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A31933F-BDAD-4B95-A774-EDD4B0F47908}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A31933F-BDAD-4B95-A774-EDD4B0F47908}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A31933F-BDAD-4B95-A774-EDD4B0F47908}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A31933F-BDAD-4B95-A774-EDD4B0F47908}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92B96A1A-F2A3-45F6-B77C-36E4DF823BF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92B96A1A-F2A3-45F6-B77C-36E4DF823BF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92B96A1A-F2A3-45F6-B77C-36E4DF823BF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92B96A1A-F2A3-45F6-B77C-36E4DF823BF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{184B8275-F8EA-4011-BCE6-E44E03ECFF01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{184B8275-F8EA-4011-BCE6-E44E03ECFF01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{184B8275-F8EA-4011-BCE6-E44E03ECFF01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{184B8275-F8EA-4011-BCE6-E44E03ECFF01}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1D95235B-C088-4A4A-8719-B9026897FF50}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
+EndGlobal
