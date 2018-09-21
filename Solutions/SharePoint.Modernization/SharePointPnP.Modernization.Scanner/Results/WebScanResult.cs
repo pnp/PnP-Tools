@@ -35,6 +35,11 @@ namespace SharePoint.Modernization.Scanner.Results
         public bool WebPublishingFeatureEnabled { get; set; }
 
         /// <summary>
+        /// Are there pages created in the publishing page library?
+        /// </summary>
+        public bool PublishingPagesLibraryContainsPages { get; set; }
+
+        /// <summary>
         /// Does this web have a modern home page?
         /// </summary>
         public bool ModernHomePage { get; set; }

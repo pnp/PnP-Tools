@@ -26,6 +26,7 @@ namespace SharePoint.Modernization.Scanner
                 Generator generator = new Generator();
                 generator.CreateGroupifyReport(options.ExportPaths);
                 generator.CreatePageReport(options.ExportPaths);
+                generator.CreatePublishingReport(options.ExportPaths);
             }
             else
             {
@@ -55,6 +56,11 @@ namespace SharePoint.Modernization.Scanner
                     if (Options.IncludePage(options.Mode))
                     {
                         generator.CreatePageReport(paths);
+                    }
+
+                    if (Options.IncludePublishing(options.Mode))
+                    {
+                        generator.CreatePublishingReport(paths);
                     }
                 }
             }            

@@ -97,6 +97,11 @@ namespace SharePoint.Modernization.Scanner
                 return true;
             }
 
+            if (mode == Mode.PublishingWithPagesOnly)
+            {
+                return true;
+            }
+
             return false;
         }
 
@@ -108,11 +113,6 @@ namespace SharePoint.Modernization.Scanner
         public static bool IncludePublishingWithPages(Mode mode)
         {
             if (mode == Mode.Full)
-            {
-                return true;
-            }
-
-            if (mode == Mode.PublishingOnly)
             {
                 return true;
             }

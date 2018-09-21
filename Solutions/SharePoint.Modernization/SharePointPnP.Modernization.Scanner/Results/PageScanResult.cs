@@ -1,10 +1,7 @@
-﻿using SharePointPnP.Modernization.Framework.Entities;
-using SharePoint.Scanning.Framework;
+﻿using SharePoint.Scanning.Framework;
+using SharePointPnP.Modernization.Framework.Entities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharePoint.Modernization.Scanner.Results
 {
