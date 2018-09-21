@@ -190,7 +190,25 @@ namespace SharePointPnP.Modernization.Framework.Transform
                             foreach (var tableCell in tableCells)
                             {
                                 var newTableCell = document.CreateElement("td");
-                                newTableCell.TextContent = tableCell.TextContent;
+
+                                // Rewrite the current cell content where needed
+                                if (IsStrikeThrough(tableCell))
+                                {
+
+                                    var newElement = document.CreateElement("s");
+                                    newElement.InnerHtml = tableCell.InnerHtml;
+                                    tableCell.InnerHtml = newElement.OuterHtml;
+                                }
+                                else if (IsUnderline(tableCell))
+                                {
+                                    var newElement = document.CreateElement("u");
+                                    newElement.InnerHtml = tableCell.InnerHtml;
+                                    tableCell.InnerHtml = newElement.OuterHtml;
+                                }
+
+                                // Copy over the content, take over html content as cell can have formatting inside
+                                //newTableCell.TextContent = tableCell.TextContent;
+                                newTableCell.InnerHtml = tableCell.InnerHtml;
 
                                 // take over row and col spans
                                 var rowSpan = tableCell.GetAttribute("rowspan");
@@ -480,8 +498,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 // <span style="text-decoration&#58;line-through;">striked</span>
                 // <span style="text-decoration&#58;underline;">underline</span>
                 bool replacementDone = false;
-                if (element.Style != null && (!string.IsNullOrEmpty(element.Style.TextDecoration) && element.Style.TextDecoration.Equals("line-through", StringComparison.InvariantCultureIgnoreCase) ||
-                                           !string.IsNullOrEmpty(element.Style.GetPropertyValue("text-decoration-line")) && element.Style.GetPropertyValue("text-decoration-line").Equals("line-through", StringComparison.InvariantCultureIgnoreCase)))
+                if (IsStrikeThrough(element))
                 {
                     var newElement = document.CreateElement("s");
                     newElement.InnerHtml = element.OuterHtml;
@@ -489,8 +506,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                     parent.ReplaceChild(newElement, element);
                     replacementDone = true;
                 }
-                else if (element.Style != null && (!string.IsNullOrEmpty(element.Style.TextDecoration) && element.Style.TextDecoration.Equals("underline", StringComparison.InvariantCultureIgnoreCase) ||
-                                                !string.IsNullOrEmpty(element.Style.GetPropertyValue("text-decoration-line")) && element.Style.GetPropertyValue("text-decoration-line").Equals("underline", StringComparison.InvariantCultureIgnoreCase)))
+                else if (IsUnderline(element))
                 {
                     var newElement = document.CreateElement("u");
                     newElement.InnerHtml = element.OuterHtml;
@@ -784,6 +800,32 @@ namespace SharePointPnP.Modernization.Framework.Transform
             {
                 // If no content then drop the element
                 parent.RemoveChild(child);
+            }
+        }
+
+        private bool IsStrikeThrough(IElement element)
+        {
+            if (element.Style != null && (!string.IsNullOrEmpty(element.Style.TextDecoration) && element.Style.TextDecoration.Equals("line-through", StringComparison.InvariantCultureIgnoreCase) ||
+                                          !string.IsNullOrEmpty(element.Style.GetPropertyValue("text-decoration-line")) && element.Style.GetPropertyValue("text-decoration-line").Equals("line-through", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool IsUnderline(IElement element)
+        {
+            if (element.Style != null && (!string.IsNullOrEmpty(element.Style.TextDecoration) && element.Style.TextDecoration.Equals("underline", StringComparison.InvariantCultureIgnoreCase) ||
+                                          !string.IsNullOrEmpty(element.Style.GetPropertyValue("text-decoration-line")) && element.Style.GetPropertyValue("text-decoration-line").Equals("underline", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
         #endregion
