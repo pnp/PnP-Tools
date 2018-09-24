@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- SharePoint.Modernization.Scanner v1.6: .exe is X64 version only, beta version of classic publishing portal analysis, simplified group connection dashboard
+
 ## [September 2018]
 
 ### Added
