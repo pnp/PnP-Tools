@@ -60,6 +60,9 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                 // Persist web template of the root site
                 scanResult.WebTemplate = $"{web.WebTemplate}#{web.Configuration}";
 
+                // Is this the root site collection of the tenant
+                scanResult.IsRootSite = new Uri(this.SiteCollectionUrl).PathAndQuery.Equals("/");
+
                 // Get security information for this site
                 if (!this.ScanJob.SkipUserInformation)
                 {
