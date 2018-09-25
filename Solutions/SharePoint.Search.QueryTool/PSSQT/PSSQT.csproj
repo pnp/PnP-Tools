@@ -189,6 +189,7 @@
     <Compile Include="Helpers\HttpRequestResponsePairExtensions.cs" />
     <Compile Include="Helpers\PSWebAuthentication.cs" />
     <Compile Include="Helpers\ResultItemExtensions.cs" />
+    <Compile Include="NewMultiGeoSearchConfiguration.cs" />
     <Compile Include="QueryResultProcessor.cs" />
     <Compile Include="RankDetailTooManyResults.cs" />
     <Compile Include="RankingFeatureHelper.cs" />

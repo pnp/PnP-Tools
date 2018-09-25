@@ -269,6 +269,15 @@ namespace PSSQT
             Mandatory = false,
             ValueFromPipelineByPropertyName = false,
             ValueFromPipeline = false,
+            HelpMessage = "Array of MultiGeoSearchConfigurations. The use of this implies EnableMultiGeoSearch:true."
+        )]
+
+        public MultiGeoSearchConfiguration[] MultiGeoSearchConfiguration { get; set; }
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
             HelpMessage = "Disable nicknames. Default is <X>."
         )]
 
@@ -746,9 +755,14 @@ namespace PSSQT
             switchValue = GetThreeWaySwitchValue(EnableNickNames, DisableNickNames);
             if (switchValue.HasValue) searchQueryRequest.EnableNicknames = switchValue;
 
-            if (EnableMultiGeoSearch)
+            if (EnableMultiGeoSearch || MultiGeoSearchConfiguration != null)
             {
                 searchQueryRequest.EnableMultiGeoSearch = true;
+
+                if (MultiGeoSearchConfiguration != null)
+                {
+                    searchQueryRequest.MultiGeoSearchConfiguration = PSSQT.MultiGeoSearchConfiguration.Format(MultiGeoSearchConfiguration);
+                }
             }
 
             switchValue = GetThreeWaySwitchValue(EnableTrimDuplicates, DisableTrimDuplicates);

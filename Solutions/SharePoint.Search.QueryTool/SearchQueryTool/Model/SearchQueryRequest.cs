@@ -44,6 +44,7 @@ namespace SearchQueryTool.Model
         public string ClientType { get; set; }
         public string PersonalizationData { get; set; }
         public bool? EnableMultiGeoSearch { get; set; }
+        public string MultiGeoSearchConfiguration { get; set; }
 
         public SearchQueryRequest Clone()
         {
@@ -171,6 +172,11 @@ namespace SearchQueryTool.Model
             if (this.EnableMultiGeoSearch == true)
             {
                 customPropertyParts.Add("EnableMultiGeoSearch:true");
+
+                if (! String.IsNullOrWhiteSpace(MultiGeoSearchConfiguration))
+                {
+                    customPropertyParts.Add($"MultiGeoSearchConfiguration:{MultiGeoSearchConfiguration}");
+                }
             }
 
 
