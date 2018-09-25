@@ -6,6 +6,7 @@ using SharePointPnP.Modernization.Framework.Transform;
 using OfficeDevPnP.Core.Pages;
 using SharePointPnP.Modernization.Framework.Pages;
 using SharePointPnP.Modernization.Framework.Entities;
+using System.Linq;
 
 namespace SharePointPnP.Modernization.Framework.Tests.Transform
 {
@@ -84,7 +85,7 @@ namespace SharePointPnP.Modernization.Framework.Tests.Transform
                 //webparts.aspx
                 //contentbyquery1.aspx
                 //how to use this library.aspx
-                var pages = cc.Web.GetPages("wikitext.aspx");
+                var pages = cc.Web.GetPages("navtest");
 
                 foreach (var page in pages)
                 {
@@ -94,7 +95,7 @@ namespace SharePointPnP.Modernization.Framework.Tests.Transform
                         Overwrite = true,
 
                         // Migrated page gets the name of the original page
-                        //TargetPageTakesSourcePageName = false,
+                        //TargetPageTakesSourcePageName = true,
 
                         // Give the migrated page a specific prefix, default is Migrated_
                         //TargetPagePrefix = "Yes_",
