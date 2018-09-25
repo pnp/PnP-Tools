@@ -300,7 +300,7 @@ namespace SharePoint.Modernization.Scanner
                 foreach (var item in this.SiteScanResults)
                 {
                     var groupifyBlockers = item.Value.GroupifyBlockers();
-                    var groupifyWarnings = item.Value.GroupifyWarnings();
+                    var groupifyWarnings = item.Value.GroupifyWarnings(this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim);
                     var modernWarnings = item.Value.ModernWarnings();
                     var groupSecurity = item.Value.PermissionModel(this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim);
 

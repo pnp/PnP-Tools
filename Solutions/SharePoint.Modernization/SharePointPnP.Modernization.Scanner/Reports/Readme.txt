@@ -10,6 +10,6 @@
 7. Close Power Query Editor that was opened -> Keep
 8. Delete the added sheet (as it's a duplicate)
 9. Data -> Queries and Connections -> Rename table if needed + "Load to...", check "Add this data to the data model" -> OK
-10. Data -> Manage Data Model -> Add relationships + furhter data configuration
+10. Data -> Manage Data Model -> Add relationships + further data configuration
 11. Data -> Manage Data Model -> Insert PivotCharts and/or PivotTables
 12. Hide the "original" sheet with imported data

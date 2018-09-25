@@ -34,6 +34,11 @@ namespace SharePoint.Modernization.Scanner.Results
         public bool ModernHomePage { get; set; }
 
         /// <summary>
+        /// Is this the root site of the tenant
+        /// </summary>
+        public bool IsRootSite { get; set; }
+
+        /// <summary>
         /// Does this site collection have sub sites with broken permission inheritance
         /// </summary>
         public bool SubSitesWithBrokenPermissionInheritance { get; set; }
@@ -154,6 +159,7 @@ namespace SharePoint.Modernization.Scanner.Results
                 SiteURL = this.SiteURL,
                 ModernListSiteBlockingFeatureEnabled = this.ModernListSiteBlockingFeatureEnabled,
                 ModernHomePage = this.ModernHomePage,
+                IsRootSite = this.IsRootSite,
                 SitePublishingFeatureEnabled = this.SitePublishingFeatureEnabled,
                 WebPublishingFeatureEnabled = this.WebPublishingFeatureEnabled,
                 PublishingPagesUsed = this.PublishingPagesUsed,
@@ -191,11 +197,12 @@ namespace SharePoint.Modernization.Scanner.Results
         {
             List<string> groupifyBlockReasons = new List<string>();
 
-            var blocker = SiteTemplateCheck(true);
-            if (!String.IsNullOrEmpty(blocker))
-            {
-                groupifyBlockReasons.Add(blocker);
-            }
+            // Don't use this as a blocker as it overlaps with the publishingFeature blocker and as such is confusing
+            //var blocker = SiteTemplateCheck(true);
+            //if (!String.IsNullOrEmpty(blocker))
+            //{
+            //    groupifyBlockReasons.Add(blocker);
+            //}
 
             if (Office365GroupId != Guid.Empty)
             {
@@ -207,6 +214,12 @@ namespace SharePoint.Modernization.Scanner.Results
                 groupifyBlockReasons.Add("PublishingFeatureEnabled");
             }
 
+            // We prevent a root site from being group connected
+            if (IsRootSite)
+            {
+                groupifyBlockReasons.Add("IsTenantRootSite");
+            }
+
             return groupifyBlockReasons;
         }
 
@@ -214,13 +227,14 @@ namespace SharePoint.Modernization.Scanner.Results
         /// Lists the reasons for not (yet) groupifying this site
         /// </summary>
         /// <returns>List of groupify warnings</returns>
-        public List<string> GroupifyWarnings()
+        public List<string> GroupifyWarnings(string everyoneClaim, string everyoneExceptExternalUsersClaim)
         {
             List<string> groupifyWarningReasons = new List<string>();
 
-            if (ContainsADGroup(Owners) || ContainsADGroup(Admins) || ContainsADGroup(Members))
+            var permissionWarnings = this.PermissionModel(everyoneClaim, everyoneExceptExternalUsersClaim);
+            if (permissionWarnings.Item2 != null && permissionWarnings.Item2.Count > 0)
             {
-                groupifyWarningReasons.Add("ADGroupWillNotBeExpanded");
+                groupifyWarningReasons.Add("PermissionWarnings");
             }
 
             if (SubSites)
@@ -230,7 +244,7 @@ namespace SharePoint.Modernization.Scanner.Results
 
             if (this.ModernWarnings().Count > 0)
             {
-                groupifyWarningReasons.Add("ModernUIIssues");
+                groupifyWarningReasons.Add("ModernUIWarnings");
             }
 
             var warning = SiteTemplateCheck(false);
@@ -299,22 +313,22 @@ namespace SharePoint.Modernization.Scanner.Results
         public Tuple<string, List<string>> PermissionModel(string claim1, string claim2)
         {
             // Do we have a public claim in Members, Owners or Admins? ==> PUBLIC site
-            bool hasPublicClaim = HasClaim(Admins, claim1, claim2);
-            if (!hasPublicClaim)
+            bool hasPublicClaimWithEditPermissions = HasClaim(Admins, claim1, claim2);
+            if (!hasPublicClaimWithEditPermissions)
             {
-                hasPublicClaim = HasClaim(Owners, claim1, claim2);
+                hasPublicClaimWithEditPermissions = HasClaim(Owners, claim1, claim2);
             }
-            if (!hasPublicClaim)
+            if (!hasPublicClaimWithEditPermissions)
             {
-                hasPublicClaim = HasClaim(Members, claim1, claim2);
+                hasPublicClaimWithEditPermissions = HasClaim(Members, claim1, claim2);
             }
 
             List<string> permissionDelta = new List<string>();
             // Potential issue 1: private group, but public claim has been used outside of Site Admins, Owners, Members
-            if (EveryoneClaimsGranted && !hasPublicClaim)
-            {
-                permissionDelta.Add("PrivateGroupButEveryoneUsedOutsideOfAdminOwnerMemberGroups");
-            }
+            //if (EveryoneClaimsGranted && !hasPublicClaimWithEditPermissions)
+            //{
+            //    permissionDelta.Add("PrivateGroupButEveryoneUsedOutsideOfAdminOwnerMemberGroups");
+            //}
 
             //// Potential issue 2: public claim in visitors group will lead to private site while still allow everyone view access
             //if (HasClaim(Visitors, claim1, claim2) && !hasPublicClaim)
@@ -337,7 +351,13 @@ namespace SharePoint.Modernization.Scanner.Results
                 permissionDelta.Add("SubSiteWithBrokenPermissionInheritance");
             }
 
-            return new Tuple<string, List<string>>(hasPublicClaim ? "PUBLIC" : "PRIVATE", permissionDelta);
+            // Potential issue 5: ad groups used which will not expand into the Office 365 group
+            if (ContainsADGroup(Owners) || ContainsADGroup(Admins) || ContainsADGroup(Members))
+            {
+                permissionDelta.Add("ADGroupWillNotBeExpanded");
+            }
+
+            return new Tuple<string, List<string>>(hasPublicClaimWithEditPermissions ? "PUBLIC" : "PRIVATE", permissionDelta);
         }
 
         /// <summary>

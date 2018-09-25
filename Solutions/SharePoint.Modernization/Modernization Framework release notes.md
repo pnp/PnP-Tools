@@ -17,6 +17,7 @@
 ### Added
 
 - Wiki text handling: Headers (H1 to H3), STRONG and EM tags with custom formatting do retain their formatting
+- Supported formatting in table cells is retained when the table is rewritten
 
 ### Changed
 
