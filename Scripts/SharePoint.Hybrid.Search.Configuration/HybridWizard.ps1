@@ -44,92 +44,95 @@ Add-Type -AssemblyName System.Windows.Forms
 # Import-ModulesAndConnect                                           #
 # Prompts for O365 tenant login creds                                #
 ######################################################################
-function Import-ModulesAndConnect(){
-Write-Host "Entering Import-Modules and Connect"
-
-Update-WizardProgress "Importing required PowerShell Modules and Connecting to O365" 
-
-# Import MSOnline Modules
-# To Add - if msol modules are not available we need to add a section to prompt for download and install
-
-#Import the Microsoft Online Services Sign-In Assistant.
-Import-Module -Name MSOnline
-#Import the Microsoft Online Services Module for Windows Powershell.
-Import-Module MSOnlineExtended –force 
-$O365Creds = ""
-$ExitConnect = $false
-#We are going to use the $error output to track the last error message to see if it corresponds to an invalid login attempt
-$error.Clear()
-do
+function Import-ModulesAndConnect()
 {
-  $error.Clear()
-  $O365Creds = Get-Credential -Message "Tenant Admin credentials"
-  Connect-MsolService -Credential $O365Creds
-  $Theuser = $O365Creds.UserName
-If ($error[0].Exception -match "The user name or password is incorrect")
-{
-Update-WizardProgress "Login Unsuccessful"
-$O365Connected = $false, $Theuser
-$ExitConnect = $false
-}
-else
-{
-Update-WizardProgress "Logged into MSOL as $TheUser"
-$O365Connected = $true, $Theuser
-$ExitConnect = $true
-}
+    Write-Host "Entering Import-Modules and Connect"
 
-if ($ExitConnect -eq $false)
-{
-Update-WizardProgress "Connection to MSOL failed - Try Again?"
+    Update-WizardProgress "Importing required PowerShell Modules and Connecting to O365" 
 
-$msgBox = Show-MessageBox "You failed to authenticate to Office 365 as a global admin.`nWould you like to try again?" -YesNo
+    # Import MSOnline Modules
+    # To Add - if msol modules are not available we need to add a section to prompt for download and install
 
-# Checking if user wants to exit the login attempt
-    if ($msgbox -eq "No"){ 
-        $ExitConnect = $true
-        }
-    else{
-        $ExitConnect = $false
-        }
-}
-}
-until ($ExitConnect -eq $true)
-
-
-#Check for dirsync active - warn if not
-#Report last time sync - warn is last dirsync time > 24 hours
-
-$msolcompany = Get-MsolCompanyInformation
-$IsDirSyncEnabled = $msolcompany.DirectorySynchronizationEnabled
-$LastDirsynctime = $msolcompany.LastDirSyncTime
-$thedate = Get-Date
-
-$SyncDelay = (get-date) - ($msolcompany.LastDirSyncTime)
-$SyncDelayDays = $SyncDelay.Days
-$SyncDelayHours = $SyncDelay.Hours
-$SyncDelayMinutes = $SyncDelay.Minutes
-
-if ($IsDirSyncEnabled -eq $true)
-{
-    Update-WizardProgress "Dirsync is enabled for the O365 Tenancy"
-    Write-Host "Dirsync is enabled for the O365 Tenancy"
-    Update-WizardProgress "Last Dirsync was $SyncDelayHours hours and $SyncDelayMinutes minutes ago"
-    Write-Host "Last Dirsync was $SyncDelayHours hours and $SyncDelayMinutes minutes ago"
-
-    if($SyncDelay.Days -gt 0)
+    #Import the Microsoft Online Services Sign-In Assistant.
+    Import-Module -Name MSOnline
+    #Import the Microsoft Online Services Module for Windows Powershell.
+    Import-Module MSOnlineExtended –force 
+    $O365Creds = ""
+    $ExitConnect = $false
+    #We are going to use the $error output to track the last error message to see if it corresponds to an invalid login attempt
+    $error.Clear()
+    do
     {
-    Show-MessageBox -Title "Dirsync Warning" "Your Dirsync process has not completed for $SyncDelayDays Days and $SyncDelayHours Hours`nYou can continue with the Wizard but it is recommended you investigate and fix and errors with the sync process as soon as possible" -Warning | out-null
-    Update-WizardProgress "Dirsync Warning - Over 24 Hours since last sync"
-    }
-}
-else
-{
-    Show-MessageBox -Title "Dirsync Critcal" "Dirsync is not enabled for the Tenancy!`n`nYou can continue with the Wizard but it is required that you complete this process to enable hybrid user experiences" -Critical | out-null
-    Update-WizardProgress "Dirsync is NOT enabled for the O365 Tenancy"
-}
+        $error.Clear()
+        $O365Creds = Get-Credential -Message "Tenant Admin credentials"
+        Connect-MsolService -Credential $O365Creds
+        $Theuser = $O365Creds.UserName
+        If ($error[0].Exception -match "The user name or password is incorrect")
+        {
+            Update-WizardProgress "Login Unsuccessful"
+            $O365Connected = $false, $Theuser
+            $ExitConnect = $false
+        }
+        else
+        {
+            Update-WizardProgress "Logged into MSOL as $TheUser"
+            $O365Connected = $true, $Theuser
+            $ExitConnect = $true
+        }
 
-return $O365Connected
+        if ($ExitConnect -eq $false)
+        {
+            Update-WizardProgress "Connection to MSOL failed - Try Again?"
+
+            $msgBox = Show-MessageBox "You failed to authenticate to Office 365 as a global admin.`nWould you like to try again?" -YesNo
+
+            # Checking if user wants to exit the login attempt
+            if ($msgbox -eq "No")
+            { 
+                $ExitConnect = $true
+            }
+            else
+            {
+                $ExitConnect = $false
+            }
+        }
+    }
+    until ($ExitConnect -eq $true)
+
+
+    #Check for dirsync active - warn if not
+    #Report last time sync - warn is last dirsync time > 24 hours
+
+    $msolcompany = Get-MsolCompanyInformation
+    $IsDirSyncEnabled = $msolcompany.DirectorySynchronizationEnabled
+    $LastDirsynctime = $msolcompany.LastDirSyncTime
+    $thedate = Get-Date
+
+    $SyncDelay = (get-date) - ($msolcompany.LastDirSyncTime)
+    $SyncDelayDays = $SyncDelay.Days
+    $SyncDelayHours = $SyncDelay.Hours
+    $SyncDelayMinutes = $SyncDelay.Minutes
+
+    if ($IsDirSyncEnabled -eq $true)
+    {
+        Update-WizardProgress "Dirsync is enabled for the O365 Tenancy"
+        Write-Host "Dirsync is enabled for the O365 Tenancy"
+        Update-WizardProgress "Last Dirsync was $SyncDelayHours hours and $SyncDelayMinutes minutes ago"
+        Write-Host "Last Dirsync was $SyncDelayHours hours and $SyncDelayMinutes minutes ago"
+
+        if($SyncDelay.Days -gt 0)
+        {
+            Show-MessageBox -Title "Dirsync Warning" "Your Dirsync process has not completed for $SyncDelayDays Days and $SyncDelayHours Hours`nYou can continue with the Wizard but it is recommended you investigate and fix and errors with the sync process as soon as possible" -Warning | out-null
+            Update-WizardProgress "Dirsync Warning - Over 24 Hours since last sync"
+        }
+    }
+    else
+    {
+        Show-MessageBox -Title "Dirsync Critcal" "Dirsync is not enabled for the Tenancy!`n`nYou can continue with the Wizard but it is required that you complete this process to enable hybrid user experiences" -Critical | out-null
+        Update-WizardProgress "Dirsync is NOT enabled for the O365 Tenancy"
+    }
+
+    return $O365Connected
 
 }
 
@@ -139,22 +142,22 @@ return $O365Connected
 # $spo_appid = Standared SPO App ID GUID                             #
 # $cred_value = Base64 encoding of the STS.cer certificate           #
 ######################################################################
-function Register-ServicePrincipalO365($spo_appid, $cred_value){
+function Register-ServicePrincipalO365($spo_appid, $cred_value)
+{
+    write-host "Entering Register-ServicePrincipalO365 with parameters" $spo_appid $cred_value
 
-write-host "Entering Register-ServicePrincipalO365 with parameters" $spo_appid $cred_value
+    Update-WizardProgress "Registering Service App Principal" 
 
-Update-WizardProgress "Registering Service App Principal" 
+    #Register the On-Premise STS as Service Principal in Office 365
 
-#Register the On-Premise STS as Service Principal in Office 365
+    New-MsolServicePrincipalCredential -AppPrincipalId $spo_appid -Type asymmetric -Usage Verify -Value $cred_Value 
+    $spocontextID = (Get-MsolCompanyInformation).ObjectID
+    $spoappprincipalID = (Get-MsolServicePrincipal -ServicePrincipalName $spo_appid).ObjectID
+    $sponameidentifier = "$spoappprincipalID@$spocontextID"
 
-New-MsolServicePrincipalCredential -AppPrincipalId $spo_appid -Type asymmetric -Usage Verify -Value $cred_Value 
-$spocontextID = (Get-MsolCompanyInformation).ObjectID
-$spoappprincipalID = (Get-MsolServicePrincipal -ServicePrincipalName $spo_appid).ObjectID
-$sponameidentifier = "$spoappprincipalID@$spocontextID"
+    $SPO365 = $spocontextID, $sponameidentifier
 
-$SPO365 = $spocontextID, $sponameidentifier
-
-return $SPO365
+    return $SPO365
 }
 
 ######################################################################
@@ -164,24 +167,24 @@ return $SPO365
 # $spo_name_identifier = SPOID and Tenant ContextID                  #
 # $spo_context_ID = Establishes Authentication Realm                 #
 ######################################################################
-function Establish-ACSTrust($SPSite, $spo_name_identifier, $spo_context_ID){
+function Establish-ACSTrust($SPSite, $spo_name_identifier, $spo_context_ID)
+{
+    write-host "Entering Establish_ACSTrust with parameters" $spsite $spo_name_identifier $spo_context_ID
 
-write-host "Entering Establish_ACSTrust with parameters" $spsite $spo_name_identifier $spo_context_ID
+    Update-WizardProgress "Establishing ACS Trust and Deploying Proxy"
 
-Update-WizardProgress "Establishing ACS Trust and Deploying Proxy"
+    #First we remove old ACS Proxy and SecurityTokenIssues
+    $OldACSProxy = Get-SPServiceApplicationProxy | ? {$_.typename -match "Azure Access Control Service Application Proxy"} | Remove-SPServiceApplicationProxy
+    $OldTSTI = Get-SPTrustedSecurityTokenIssuer | ? {$_.name -match "ACS"} | Remove-SPTrustedSecurityTokenIssuer
 
-#First we remove old ACS Proxy and SecurityTokenIssues
-$OldACSProxy = Get-SPServiceApplicationProxy | ? {$_.typename -match "Azure Access Control Service Application Proxy"} | Remove-SPServiceApplicationProxy
-$OldTSTI = Get-SPTrustedSecurityTokenIssuer | ? {$_.name -match "ACS"} | Remove-SPTrustedSecurityTokenIssuer
+    #Finally Establish in the On-Premise Farm a Trust with the ACS
 
-#Finally Establish in the On-Premise Farm a Trust with the ACS
+    $rootsite = Get-SPSite $SPSite
 
-$rootsite = Get-SPSite $SPSite
-
-$appPrincipal = Register-SPAppPrincipal -site $rootsite.rootweb -nameIdentifier $spo_name_identifier -displayName "SharePoint Online" #Error here
-Set-SPAuthenticationRealm -realm $spo_context_ID 
-New-SPAzureAccessControlServiceApplicationProxy -Name "ACS" -MetadataServiceEndpointUri "https://accounts.accesscontrol.windows.net/metadata/json/1/" -DefaultProxyGroup
-New-SPTrustedSecurityTokenIssuer -MetadataEndpoint "https://accounts.accesscontrol.windows.net/metadata/json/1/" -IsTrustBroker -Name "ACS"
+    $appPrincipal = Register-SPAppPrincipal -site $rootsite.rootweb -nameIdentifier $spo_name_identifier -displayName "SharePoint Online" #Error here
+    Set-SPAuthenticationRealm -realm $spo_context_ID 
+    New-SPAzureAccessControlServiceApplicationProxy -Name "ACS" -MetadataServiceEndpointUri "https://accounts.accesscontrol.windows.net/metadata/json/1/" -DefaultProxyGroup
+    New-SPTrustedSecurityTokenIssuer -MetadataEndpoint "https://accounts.accesscontrol.windows.net/metadata/json/1/" -IsTrustBroker -Name "ACS"
 }
 
 ######################################################################
@@ -192,95 +195,97 @@ New-SPTrustedSecurityTokenIssuer -MetadataEndpoint "https://accounts.accesscontr
 # $spoapplid = SPO App ID GUID                                       #
 # $spcname = on premises SP domain name for SPN                      #
 ######################################################################
-function Manage-STSCertificate($spoapplid, $SPSite, $CommonName){
-
-Write-Host "Entering manage-stscertificate with parameters $spoapplid $SPSite $commonname"
-
-Update-WizardProgress "Beginning Certificate Management Process"
-
-$indexHostName = $SPSite.IndexOf('://') + 3
-        $HostName = $SPSite.Substring($indexHostName)
-		$indexHostName = $HostName.IndexOf('/')
-		if ($indexhostName -ge 0) {
-			$HostName = $HostName.Substring(0,$indexHostName)
-		}
-
-$partfqdn = $Hostname.Indexof('.')
-
-# Check for single part domain name, ie http://spweb as this will result in $partfqdn value of -1
-if($partfqdn -lt 0)
+function Manage-STSCertificate($spoapplid, $SPSite, $CommonName)
 {
-    $Hostname = "*" + $Hostname
-}
-else
-{
-    $Hostname = "*" + $Hostname.Substring($partfqdn)   ##substring error here
-}
+    Write-Host "Entering manage-stscertificate with parameters $spoapplid $SPSite $commonname"
 
-        $NewSPN = '{0}/{1}' -f $spoapplid, $HostName
+    Update-WizardProgress "Beginning Certificate Management Process"
 
-        $SPAppPrincipal = Get-MsolServicePrincipal -AppPrincipalId $spoapplid
-        if ($SPAppPrincipal.ServicePrincipalNames -notcontains $NewSPN) {
-            $SPAppPrincipal.ServicePrincipalNames.Add($NewSPN)
-            Set-MsolServicePrincipal -AppPrincipalId $SPAppPrincipal.AppPrincipalId -ServicePrincipalNames $SPAppPrincipal.ServicePrincipalNames
-        }
+    $indexHostName = $SPSite.IndexOf('://') + 3
+            $HostName = $SPSite.Substring($indexHostName)
+            $indexHostName = $HostName.IndexOf('/')
+            if ($indexhostName -ge 0) {
+                $HostName = $HostName.Substring(0,$indexHostName)
+            }
 
-$UpdateWizardProgress = "SPN in O365 configured for $Hostname"
+    $partfqdn = $Hostname.Indexof('.')
 
-Update-WizardProgress $UpdateWizardProgress
+    # Check for single part domain name, ie http://spweb as this will result in $partfqdn value of -1
+    if($partfqdn -lt 0)
+    {
+        $Hostname = "*" + $Hostname
+    }
+    else
+    {
+        $Hostname = "*" + $Hostname.Substring($partfqdn)   ##substring error here
+    }
 
-if($radiobuttonUsePublicAuthoritySi.Checked)
-{
-#Use Public Authority Certificate
-}
+    $NewSPN = '{0}/{1}' -f $spoapplid, $HostName
 
-if($radiobuttonUseNewSelfSignedSTSC.Checked){
-#Use Auto Generated Self Signed Certificate
+    $SPAppPrincipal = Get-MsolServicePrincipal -AppPrincipalId $spoapplid
+    if ($SPAppPrincipal.ServicePrincipalNames -notcontains $NewSPN)
+    {
+        $SPAppPrincipal.ServicePrincipalNames.Add($NewSPN)
+        Set-MsolServicePrincipal -AppPrincipalId $SPAppPrincipal.AppPrincipalId -ServicePrincipalNames $SPAppPrincipal.ServicePrincipalNames
+    }
 
-Update-WizardProgress "New selfsigned certificate selected"
-$CertPass = read-host -Prompt "Please enter the password to secure the self signed certificate" -AsSecureString
-Update-WizardProgress "Creating selfsigned certificate and adding to trusted root store" 
-$CreateCert = Add-SelfSignedCertificate $CommonName 
-Update-WizardProgress "Updating Farm Secure Token Service with new Certificate"
-$UpdateFarmSTS = Update-FarmSTS $CommonName $CertPass
-Update-WizardProgress "Generating Credentials for O365 S2S trust"
-$CredentialValue = Convert-CertsForUpload $CommonName $CertPass
-Update-WizardProgress "Registering the Service App Principal"
-$RegServiceAppPrin = Register-ServicePrincipalO365 $spoapplid $CredentialValue
+    $UpdateWizardProgress = "SPN in O365 configured for $Hostname"
 
-$spo_contextID = $RegServiceAppPrin[0]
-$spo_nameidentifier = $RegServiceAppPrin[1]
-Update-WizardProgress "Setting up the S2S trust and deploying ACS Proxy"
-$EstablishACSTrust = Establish-ACSTrust $SPSite  $spo_nameidentifier  $spo_contextID
+    Update-WizardProgress $UpdateWizardProgress
 
-#At this Point Hybrid identity setup is complete for NewSelfSignedCertificate
+    if($radiobuttonUsePublicAuthoritySi.Checked)
+    {
+        #Use Public Authority Certificate
+    }
 
-Update-WizardProgress "Hybrid Certificate Management process is complete"
-Write-Host "Hybrid Certificate Management process is complete"
-}
+    if($radiobuttonUseNewSelfSignedSTSC.Checked)
+    {
+        #Use Auto Generated Self Signed Certificate
 
-if($radiobuttonUseBuiltInSharePoint.Checked){
-#Use Built In STS Certificate
+        Update-WizardProgress "New selfsigned certificate selected"
+        $CertPass = read-host -Prompt "Please enter the password to secure the self signed certificate" -AsSecureString
+        Update-WizardProgress "Creating selfsigned certificate and adding to trusted root store" 
+        $CreateCert = Add-SelfSignedCertificate $CommonName 
+        Update-WizardProgress "Updating Farm Secure Token Service with new Certificate"
+        $UpdateFarmSTS = Update-FarmSTS $CommonName $CertPass
+        Update-WizardProgress "Generating Credentials for O365 S2S trust"
+        $CredentialValue = Convert-CertsForUpload $CommonName $CertPass
+        Update-WizardProgress "Registering the Service App Principal"
+        $RegServiceAppPrin = Register-ServicePrincipalO365 $spoapplid $CredentialValue
 
-Update-WizardProgress"Built in certificate selected"
-#$sp_site = $labelOnPremisesSharePoin.Text  # future where user gets option to choose which on prem site to configure
-Update-WizardProgress"Exporting Default STS Cert"
-$LocalCertCred = Export-LocalSTSCert
-#Register the Service Principal
-Update-WizardProgress"Registering the Service App Principal"
-$RegServiceAppPrin = Register-ServicePrincipalO365 $spoapplid $LocalCertCred
+        $spo_contextID = $RegServiceAppPrin[0]
+        $spo_nameidentifier = $RegServiceAppPrin[1]
+        Update-WizardProgress "Setting up the S2S trust and deploying ACS Proxy"
+        $EstablishACSTrust = Establish-ACSTrust $SPSite  $spo_nameidentifier  $spo_contextID
 
-$spo_contextID = $RegServiceAppPrin[0]
-$spo_nameidentifier = $RegServiceAppPrin[1]
-Update-WizardProgress"Setting up the S2S trust and deploying ACS Proxy"
-$EstablishACSTrust = Establish-ACSTrust $SPSite $spo_nameidentifier $spo_contextID
+        #At this Point Hybrid identity setup is complete for NewSelfSignedCertificate
 
-#At this Point Hybrid identity setup is complete for ExportingTheDefaultCertificate
+        Update-WizardProgress "Hybrid Certificate Management process is complete"
+        Write-Host "Hybrid Certificate Management process is complete"
+    }
 
-Update-WizardProgress "Hybrid Certificate Management process is complete"
-Write-Host "Hybrid Certificate Management process is complete"
+    if($radiobuttonUseBuiltInSharePoint.Checked)
+    {
+        #Use Built In STS Certificate
 
-}
+        Update-WizardProgress"Built in certificate selected"
+        #$sp_site = $labelOnPremisesSharePoin.Text  # future where user gets option to choose which on prem site to configure
+        Update-WizardProgress"Exporting Default STS Cert"
+        $LocalCertCred = Export-LocalSTSCert
+        #Register the Service Principal
+        Update-WizardProgress"Registering the Service App Principal"
+        $RegServiceAppPrin = Register-ServicePrincipalO365 $spoapplid $LocalCertCred
+
+        $spo_contextID = $RegServiceAppPrin[0]
+        $spo_nameidentifier = $RegServiceAppPrin[1]
+        Update-WizardProgress"Setting up the S2S trust and deploying ACS Proxy"
+        $EstablishACSTrust = Establish-ACSTrust $SPSite $spo_nameidentifier $spo_contextID
+
+        #At this Point Hybrid identity setup is complete for ExportingTheDefaultCertificate
+
+        Update-WizardProgress "Hybrid Certificate Management process is complete"
+        Write-Host "Hybrid Certificate Management process is complete"
+    }
 }
 
 ######################################################################
@@ -288,13 +293,14 @@ Write-Host "Hybrid Certificate Management process is complete"
 # Exports local STS Cert and converts for use as CredValue           #
 # for settings up the trust                                          #
 ######################################################################
-function Export-LocalSTSCert(){
-#Uses the local signing key for upload to O365 instead of creating a new one
-$SPSigningCert = (Get-SPSecurityTokenServiceConfig).LocalLoginProvider.SigningCertificate
-$ExportedCert = $SPSigningCert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Cert)
-$CertValue = [System.Convert]::ToBase64String($ExportedCert,[System.Base64formattingoptions]::InsertLineBreaks)
+function Export-LocalSTSCert()
+{
+    #Uses the local signing key for upload to O365 instead of creating a new one
+    $SPSigningCert = (Get-SPSecurityTokenServiceConfig).LocalLoginProvider.SigningCertificate
+    $ExportedCert = $SPSigningCert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Cert)
+    $CertValue = [System.Convert]::ToBase64String($ExportedCert,[System.Base64formattingoptions]::InsertLineBreaks)
 
-return $CertValue
+    return $CertValue
 }
 
 ######################################################################
@@ -303,37 +309,32 @@ return $CertValue
 # $commonname = Certificate common name                              #
 # $CertSecret = Password to use to secure the certificate            #
 ######################################################################
-function Update-FarmSTS($commonname, $SecCertSecret){
+function Update-FarmSTS($commonname, $SecCertSecret)
+{
+    write-host "Entering Update-FarmSTS with parameters $commonname $SecCertSecret"
+    #$SecCertSecret = ConvertTo-SecureString $CertSecret -AsPlainText -Force
+    #Export the required certificates for Updating STS and Uploading to ACS
 
-write-host "Entering Update-FarmSTS with parameters $commonname $SecCertSecret"
+    $certstore = dir Cert:\LocalMachine\Root `
+        | where-object {$_.Subject -eq "CN=$commonname"} `
+        | foreach-object{
+            [system.IO.file]::WriteAllBytes(    "$home\$($_.subject).pfx",     ($_.Export('PFX', $SecCertSecret)) ) 
+            [system.IO.file]::WriteAllBytes(    "$home\$($_.subject).cer",     ($_.Export('CER', $SecCertSecret)) )
+        }
 
-#$SecCertSecret = ConvertTo-SecureString $CertSecret -AsPlainText -Force
+    $pfxcertname = "$home\CN=$commonname"+".pfx"
 
-#Export the required certificates for Updating STS and Uploading to ACS
+    $pfxCertificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 $pfxcertname, $SecCertSecret, 20
+    Set-SPSecurityTokenServiceConfig -ImportSigningCertificate $pfxCertificate
+    
+    #Restart IIS so STS Picks up the New Certificate
+    Update-WizardProgress "The IIS Services and the SharePoint Timer Service are now going to be recycled."
 
-  $certstore = dir Cert:\LocalMachine\Root `
-  | where-object {$_.Subject -eq "CN=$commonname"} `
-  | foreach-object{
-  [system.IO.file]::WriteAllBytes(    "$home\$($_.subject).pfx",     ($_.Export('PFX', $SecCertSecret)) ) 
-  [system.IO.file]::WriteAllBytes(    "$home\$($_.subject).cer",     ($_.Export('CER', $SecCertSecret)) )
-  }
+    & iisreset
+    & net stop SPTimerV4
+    & net start SPTimerV4
 
-  $pfxcertname = "$home\CN=$commonname"+".pfx"
-
-  $pfxCertificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 $pfxcertname, $SecCertSecret, 20
-  Set-SPSecurityTokenServiceConfig -ImportSigningCertificate $pfxCertificate
-
-   
-#Restart IIS so STS Picks up the New Certificate
-
-Update-WizardProgress "The IIS Services and the SharePoint Timer Service are now going to be recycled."
-
-& iisreset
-& net stop SPTimerV4
-& net start SPTimerV4
-
-#(Get-SPSecurityTokenServiceConfig).LocalLoginProvider.SigningCertificate  #DEBUG ONLY
-
+    #(Get-SPSecurityTokenServiceConfig).LocalLoginProvider.SigningCertificate  #DEBUG ONLY
 }
 
 ######################################################################
@@ -342,23 +343,23 @@ Update-WizardProgress "The IIS Services and the SharePoint Timer Service are now
 # $LocalDN = Certificate common name                              #
 # $CertSecret = Password to use to secure the certificate            #
 ######################################################################
-function Convert-CertsForUpload($LocalCN, $CertSecret){
-#Do Some Conversions With the Certificates to Base64 
-#Return $credValue for use in Adding App Principal
+function Convert-CertsForUpload($LocalCN, $CertSecret)
+{
+    #Do Some Conversions With the Certificates to Base64 
+    #Return $credValue for use in Adding App Principal
 
-$stscertpfx = "$home\CN=$LocalCN.pfx"
-$stscertpassword = $CertSecret
-$stscertcer = "$home\CN=$LocalCN.cer"
+    $stscertpfx = "$home\CN=$LocalCN.pfx"
+    $stscertpassword = $CertSecret
+    $stscertcer = "$home\CN=$LocalCN.cer"
 
-$pfxCertificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList $stscertpfx,$stscertpassword
-$pfxCertificateBin = $pfxCertificate.GetRawCertData()
-$cerCertificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
-$cerCertificate.Import($stscertcer)
-$cerCertificateBin = $cerCertificate.GetRawCertData()
-$credValue = [System.Convert]::ToBase64String($cerCertificateBin)
+    $pfxCertificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList $stscertpfx,$stscertpassword
+    $pfxCertificateBin = $pfxCertificate.GetRawCertData()
+    $cerCertificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
+    $cerCertificate.Import($stscertcer)
+    $cerCertificateBin = $cerCertificate.GetRawCertData()
+    $credValue = [System.Convert]::ToBase64String($cerCertificateBin)
 
-Return $credValue
-
+    Return $credValue
 }
 
 ######################################################################
@@ -366,7 +367,8 @@ Return $credValue
 # Adds a Self Signed Certificate to the Local Machine Personal Store #
 # $commonname defines the certificate subject to be used             #
 ######################################################################
-function Add-SelfSignedCertificate($commonname){
+function Add-SelfSignedCertificate($commonname)
+{
     
     #Remove and existing certificates with the same common name from personal and root stores
     #Need to be very wary of this as could break something
@@ -374,15 +376,13 @@ function Add-SelfSignedCertificate($commonname){
     $certs = dir Cert:\LocalMachine\my | ?{$_.Subject -eq "CN=$commonname"}
     $mystore = get-item Cert:\LocalMachine\My
     $mystore.open("ReadWrite")
-    Foreach($acert in $certs){
-    $mystore.Remove($acert)}
+    Foreach($acert in $certs) { $mystore.Remove($acert) }
     $mystore.close()
 
     $certs = dir Cert:\LocalMachine\Root | ?{$_.Subject -eq "CN=$commonname"}
     $rootstore = get-item Cert:\LocalMachine\Root
     $rootstore.open("ReadWrite")
-    Foreach($acert in $certs){
-    $rootstore.Remove($acert)}
+    Foreach($acert in $certs) { $rootstore.Remove($acert) }
     $rootstore.close()
 
     $name = new-object -com "X509Enrollment.CX500DistinguishedName.1"
@@ -434,8 +434,8 @@ function Add-SelfSignedCertificate($commonname){
 # $Title = Alert box title                                           #
 # Various button option in parameters
 ######################################################################
-function Show-MessageBox(){ 
- 
+function Show-MessageBox()
+{
     Param( 
     [Parameter(Mandatory=$True)][Alias('M')][String]$Msg, 
     [Parameter(Mandatory=$False)][Alias('T')][String]$Title = "", 
@@ -478,25 +478,26 @@ function Show-MessageBox(){
 # Check-FarmAdmin                                                    #
 # Checks if current user is a farm admin and returns true or false   #
 ######################################################################
-function Check-FarmAdmin(){
-#Must return true else send message to use different user and exit app
+function Check-FarmAdmin()
+{
+    #Must return true else send message to use different user and exit app
 
-#(Get-SPFarm).DefaultServiceAccount.Name 
-$FarmAdmin = (Get-Spfarm).CurrentUserIsAdministrator()
-Return $FarmAdmin
-
+    #(Get-SPFarm).DefaultServiceAccount.Name 
+    $FarmAdmin = (Get-Spfarm).CurrentUserIsAdministrator()
+    Return $FarmAdmin
 }
 
 ######################################################################
 # Get-SPFarmAdministrators                                           #
 # Returns the farm adminstrators group membership                    #
 ######################################################################
-function Get-SPfarmAdministrators() {
-  $adminwebapp = Get-SPwebapplication -includecentraladministration | where {$_.IsAdministrationWebApplication}
-  $adminsite = Get-SPweb($adminwebapp.Url)
-  $AdminGroupName = $adminsite.AssociatedOwnerGroup
-  $farmAdministratorsGroup = $adminsite.SiteGroups[$AdminGroupName]
-  return $farmAdministratorsGroup.users
+function Get-SPfarmAdministrators()
+{
+    $adminwebapp = Get-SPwebapplication -includecentraladministration | where {$_.IsAdministrationWebApplication}
+    $adminsite = Get-SPweb($adminwebapp.Url)
+    $AdminGroupName = $adminsite.AssociatedOwnerGroup
+    $farmAdministratorsGroup = $adminsite.SiteGroups[$AdminGroupName]
+    return $farmAdministratorsGroup.users
 }
  
 ######################################################################
@@ -505,133 +506,140 @@ function Get-SPfarmAdministrators() {
 # Checks if the required service application instances are enabled   #
 # Warning or Error message is delivered to user                      #
 ######################################################################
- function Validate-ServiceApps(){
+function Validate-ServiceApps()
+{
+    #Create Response to Required Service App Check"
+    $ServiceCheck = ""
+    $ServiceStatus = 1
 
-#Create Response to Required Service App Check"
-$ServiceCheck = ""
-$ServiceStatus = 1
+    #Validate User Profile Service Application Status
+    $upa=Get-SPServiceApplication | where-object {$_.TypeName -match "User profile"}
+    if ($upa.status -eq "Online") { $ServiceCheck = "UPA Service Application Check Successful`r`n" }
+    else
+    {
+        $ServiceCheck = "UPA Service Application Check Failed`r`n"
+        $ServiceStatus = 0
+    }
+    #$upa | Out-Null
 
-#Validate User Profile Service Application Status
-$upa=Get-SPServiceApplication | where-object {$_.TypeName -match "User profile"}
-if ($upa.status -eq "Online") {
-$ServiceCheck = "UPA Service Application Check Successful`r`n"}
-else
-{$ServiceCheck = "UPA Service Application Check Failed`r`n"
-$ServiceStatus = 0}
-#$upa | Out-Null
+    #validate userprofile service instance status
+    $upaservinst = Get-SPServiceInstance | where-object{$_.typename -match "User Profile Service" -AND $_.status -eq "Online"}
+    if($upaservinst) { $ServiceCheck =  $ServiceCheck + "UPA Service Instance Check Successful`r`n" }
+    else
+    {
+        $ServiceCheck =  $ServiceCheck + "UPA Service Instance Check Failed`r`n"
+        $ServiceStatus = 0
+    }
 
-#validate userprofile service instance status
-$upaservinst = Get-SPServiceInstance | where-object{$_.typename -match "User Profile Service" -AND $_.status -eq "Online"}
-if($upaservinst) {
-$ServiceCheck =  $ServiceCheck + "UPA Service Instance Check Successful`r`n"}
-else
-{$ServiceCheck =  $ServiceCheck + "UPA Service Instance Check Failed`r`n"
-$ServiceStatus = 0}
+    #validate user profile sync service instance status
+    $upasyncinst = Get-SPServiceInstance | where-object{$_.typename -match "User Profile Synchronization Service" -AND $_.status -eq "Online"}
+    if($upasyncinst) { $ServiceCheck =  $ServiceCheck + "UPA Sync Service Instance Check Successful`r`n" }
+    else
+    {
+        if($upa.NoILMUsed -eq $true) { $ServiceCheck =  $ServiceCheck + "Sync Service is disabled, ensure you have run AD import synchronization `r`n" }
+    else
+    {
+        #We cannot yet determine the difference between internal and external FIM so do not fail just in case - see windows service on sync machine
+        $ServiceCheck =  $ServiceCheck + "UPA Sync Service Instance Check Failed - Check UPA Import Config `r`n"}
+    }
 
-#validate user profile sync service instance status
-$upasyncinst = Get-SPServiceInstance | where-object{$_.typename -match "User Profile Synchronization Service" -AND $_.status -eq "Online"}
-if($upasyncinst) {
-$ServiceCheck =  $ServiceCheck + "UPA Sync Service Instance Check Successful`r`n"}
-else
-{if($upa.NoILMUsed -eq $true){
-$ServiceCheck =  $ServiceCheck + "Sync Service is disabled, ensure you have run AD import synchronization `r`n"}
-else{
-#We cannot yet determine the difference between internal and external FIM so do not fail just in case - see windows service on sync machine
-$ServiceCheck =  $ServiceCheck + "UPA Sync Service Instance Check Failed - Check UPA Import Config `r`n"}
-}
+    #Validate Search Service Application Status
+    $ssa=Get-SPServiceApplication | where-object {$_.TypeName -match "Search Service"} 
+    if ($ssa.status -eq "Online") { $ServiceCheck = $ServiceCheck + "Search Service Application Check Successful`r`n" }
+    else
+    {
+        $ServiceCheck = "Search Service Application Check Failed`r`n"
+        $ServiceStatus = 0
+    }
 
-#Validate Search Service Application Status
-$ssa=Get-SPServiceApplication | where-object {$_.TypeName -match "Search Service"} 
-if ($ssa.status -eq "Online") {
-$ServiceCheck = $ServiceCheck + "Search Service Application Check Successful`r`n"}
-else
-{$ServiceCheck = "Search Service Application Check Failed`r`n"
-$ServiceStatus = 0}
+    #Validate Search Admin Service Application  Status
+    $sas=Get-SPServiceApplication | where-object {$_.TypeName -match "Search Admin"} 
+    if ($sas.status -eq "Online") { $ServiceCheck = $ServiceCheck + "Search Admin Service Application Check Successful`r`n" }
+    else
+    {
+        $ServiceCheck = "Search Admin Service Application Check Failed`r`n"
+        $ServiceStatus = 0
+    }
 
-#Validate Search Admin Service Application  Status
-$sas=Get-SPServiceApplication | where-object {$_.TypeName -match "Search Admin"} 
-if ($sas.status -eq "Online") {
-$ServiceCheck = $ServiceCheck + "Search Admin Service Application Check Successful`r`n"}
-else
-{$ServiceCheck = "Search Admin Service Application Check Failed`r`n"
-$ServiceStatus = 0}
+    #validate Search host controller service instance status
+    $shcservinst = Get-SPServiceInstance | where-object {$_.typename -match "Search Host Controller Service" -AND $_.status -eq "Online"}
+    if($shcservinst) { $ServiceCheck =  $ServiceCheck + "Search Host Controller Service Instance Check Successful`r`n" }
+    else
+    {
+        $ServiceCheck =  $ServiceCheck + "Search Host Controller Service Instance Check Failed`r`n"
+        $ServiceStatus = 0
+    }
 
-#validate Search host controller service instance status
-$shcservinst = Get-SPServiceInstance | where-object{$_.typename -match "Search Host Controller Service" -AND $_.status -eq "Online"}
-if($shcservinst) {
-$ServiceCheck =  $ServiceCheck + "Search Host Controller Service Instance Check Successful`r`n"}
-else
-{$ServiceCheck =  $ServiceCheck + "Search Host Controller Service Instance Check Failed`r`n"
-$ServiceStatus = 0}
+    #validate SharePoint Server Search service instance status
+    $seaservinst = Get-SPServiceInstance | where-object{$_.typename -match "SharePoint Server Search" -AND $_.status -eq "Online"}
+    if($seaservinst) { $ServiceCheck =  $ServiceCheck + "SharePoint Server Search Service Instance Check Successful`r`n" }
+    else
+    {
+        $ServiceCheck =  $ServiceCheck + "SharePoint Server Search Service Instance Check Failed`r`n"
+        $ServiceStatus = 0
+    }
 
-#validate SharePoint Server Search service instance status
-$seaservinst = Get-SPServiceInstance | where-object{$_.typename -match "SharePoint Server Search" -AND $_.status -eq "Online"}
-if($seaservinst) {
-$ServiceCheck =  $ServiceCheck + "SharePoint Server Search Service Instance Check Successful`r`n"}
-else
-{$ServiceCheck =  $ServiceCheck + "SharePoint Server Search Service Instance Check Failed`r`n"
-$ServiceStatus = 0}
+    #validate Search Query and Site Settings Service instance status
+    $sqsservinst = Get-SPServiceInstance | where-object{$_.typename -match "Search Query and Site Settings Service" -AND $_.status -eq "Online"}
+    if($sqsservinst) { $ServiceCheck =  $ServiceCheck + "Search Query and Site Settings Service Instance Check Successful`r`n" }
+    else
+    {
+        $ServiceCheck =  $ServiceCheck + "Search Query and Site Settings Service Instance Check Failed`r`n"
+        $ServiceStatus = 0
+    }
 
-#validate Search Query and Site Settings Service instance status
-$sqsservinst = Get-SPServiceInstance | where-object{$_.typename -match "Search Query and Site Settings Service" -AND $_.status -eq "Online"}
-if($sqsservinst) {
-$ServiceCheck =  $ServiceCheck + "Search Query and Site Settings Service Instance Check Successful`r`n"}
-else
-{$ServiceCheck =  $ServiceCheck + "Search Query and Site Settings Service Instance Check Failed`r`n"
-$ServiceStatus = 0}
+    #Validate Subscription Settings Application Status
+    $sss=Get-SPServiceApplication | where-object {$_.TypeName -match "Subscription"} 
+    if ($sss.status -eq "Online") { $ServiceCheck = $ServiceCheck + "Subscription Settings Service Application Check Successful`r`n" }
+    else
+    {
+        $ServiceCheck = "Subscription Settings Service Application Check Failed`r`n"
+        $ServiceStatus = 0
+    }
 
+    #Validate Microsoft SharePoint Foundation Subscription Settings Service Instance Status
+    $sfsservinst = Get-SPServiceInstance | where-object{$_.typename -match "Microsoft SharePoint Foundation Subscription Settings Service" -AND $_.status -eq "Online"}
+    if($sfsservinst) { $ServiceCheck =  $ServiceCheck + "SharePoint Subscription Settings Service Instance Check Successful`r`n" }
+    else
+    {
+        $ServiceCheck =  $ServiceCheck + "SharePoint Subscription Settings Service Instance Check Failed`r`n"
+        $ServiceStatus = 0
+    }
 
-#Validate Subscription Settings Application Status
-$sss=Get-SPServiceApplication | where-object {$_.TypeName -match "Subscription"} 
-if ($sss.status -eq "Online") {
-$ServiceCheck = $ServiceCheck + "Subscription Settings Service Application Check Successful`r`n"}
-else
-{$ServiceCheck = "Subscription Settings Service Application Check Failed`r`n"
-$ServiceStatus = 0}
+    #Validate App Management Application Status
+    $app=Get-SPServiceApplication | where-object {$_.TypeName -match "App Management"} 
+    if ($app.status -eq "Online") { $ServiceCheck = $ServiceCheck + "App Management Service Application Check Successful`r`n" }
+    else
+    {
+        $ServiceCheck = "App Management Service Application Check Failed`r`n"
+        $ServiceStatus = 0
+    }
 
-#Validate Microsoft SharePoint Foundation Subscription Settings Service Instance Status
-$sfsservinst = Get-SPServiceInstance | where-object{$_.typename -match "Microsoft SharePoint Foundation Subscription Settings Service" -AND $_.status -eq "Online"}
-if($sfsservinst) {
-$ServiceCheck =  $ServiceCheck + "SharePoint Subscription Settings Service Instance Check Successful`r`n"}
-else
-{$ServiceCheck =  $ServiceCheck + "SharePoint Subscription Settings Service Instance Check Failed`r`n"
-$ServiceStatus = 0}
+    #Validate App Management Service Instance Status
+    $samservinst = Get-SPServiceInstance | where-object{$_.typename -match "App Management Service" -AND $_.status -eq "Online"}
+    if($samservinst) { $ServiceCheck =  $ServiceCheck + "App Management Service Instance Check Successful`r`n" }
+    else
+    {
+        $ServiceCheck =  $ServiceCheck + "App Management Service Instance Check Failed`r`n"
+        $ServiceStatus = 0
+    }
 
-#Validate App Management Application Status
-$app=Get-SPServiceApplication | where-object {$_.TypeName -match "App Management"} 
-if ($app.status -eq "Online") {
-$ServiceCheck = $ServiceCheck + "App Management Service Application Check Successful`r`n"}
-else
-{$ServiceCheck = "App Management Service Application Check Failed`r`n"
-$ServiceStatus = 0}
+    #Validate Security Token Service Application Status
+    $sts=Get-SPServiceApplication | where-object {$_.TypeName -match "Security Token"} 
+    if ($sts.status -eq "Online") { $ServiceCheck = $ServiceCheck + "Security Token Service Check Successful`r`n" }
+    else
+    {
+        $ServiceCheck = "Security Token Service Check Failed`r`n"
+        $ServiceStatus = 0
+    }
 
-#Validate App Management Service Instance Status
-$samservinst = Get-SPServiceInstance | where-object{$_.typename -match "App Management Service" -AND $_.status -eq "Online"}
-if($samservinst) {
-$ServiceCheck =  $ServiceCheck + "App Management Service Instance Check Successful`r`n"}
-else
-{$ServiceCheck =  $ServiceCheck + "App Management Service Instance Check Failed`r`n"
-$ServiceStatus = 0}
-
-#Validate Security Token Service Application Status
-$sts=Get-SPServiceApplication | where-object {$_.TypeName -match "Security Token"} 
-if ($sts.status -eq "Online") {
-$ServiceCheck = $ServiceCheck + "Security Token Service Check Successful`r`n"}
-else
-{$ServiceCheck = "Security Token Service Check Failed`r`n"
-$ServiceStatus = 0}
-
-if ($ServiceStatus -eq 1)
-{Show-MessageBox "All Required Services are deployed and Online `r`n$ServiceCheck" | out-null
-}
-else
-{Show-MessageBox "Services not correctly setup `r `n$ServiceCheck" -Critical | out-null
-
-Show-MessageBox "Wizard will now exit!" | Out-Null
-
-
-}
-return $ServiceStatus, $ServiceCheck
+    if ($ServiceStatus -eq 1) { Show-MessageBox "All Required Services are deployed and Online `r`n$ServiceCheck" | out-null }
+    else
+    {
+        Show-MessageBox "Services not correctly setup `r `n$ServiceCheck" -Critical | out-null
+        Show-MessageBox "Wizard will now exit!" | Out-Null
+    }
+    return $ServiceStatus, $ServiceCheck
 }
 
 <#
@@ -689,27 +697,34 @@ Update-WizardProgress "MSO IDCRL Service Restarted!"
 # Recycles services if they are deployed                             #
 # Raises error and exits if they are not installed                   #
 ######################################################################
-function Prepare-Environment(){
+function Prepare-Environment()
+{
     $MSOIdCRLRegKey = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\MSOIdentityCRL" -ErrorAction SilentlyContinue
-    if ($MSOIdCRLRegKey -eq $null) {
+    if ($MSOIdCRLRegKey -eq $null)
+    {
         Write-Host "Office Single Sign On Assistant required, see http://www.microsoft.com/en-us/download/details.aspx?id=39267." -Foreground Red
         Update-WizardProgress "Office Single Sign on Assistant not found"
-    } else {
+    }
+    else
+    {
         Write-Host "Found Office Single Sign On Assistant!" -Foreground Green
         Update-WizardProgress "Office Single Sign on Assistant found"
     }
 
     $MSOLPSRegKey = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\MSOnlinePowershell" -ErrorAction SilentlyContinue
-    if ($MSOLPSRegKey -eq $null) {
+    if ($MSOLPSRegKey -eq $null)
+    {
         Write-Host "AAD PowerShell required, see http://go.microsoft.com/fwlink/p/?linkid=236297." -Foreground Red
         Update-WizardProgress "AAD PowerShell not found"
-
-    } else {
+    }
+    else
+    {
         Write-Host "Found AAD PowerShell!" -Foreground Green
         Update-WizardProgress "AAD PowerShell found"
     }
 
-    if ($MSOIdCRLRegKey -eq $null -or $MSOLPSRegKey -eq $null) {
+    if ($MSOIdCRLRegKey -eq $null -or $MSOLPSRegKey -eq $null)
+    {
         Update-WizardProgress "Please manually install the prerequisites."
         throw "Manual installation of prerequisites required."
     }
@@ -725,13 +740,17 @@ function Prepare-Environment(){
     Update-WizardProgress "Restarting MSO IDCRL Service"
 
     # Service takes time to get provisioned, retry restart.
-    for ($i = 1; $i -le 10; $i++) {
-        try {
+    for ($i = 1; $i -le 10; $i++)
+    {
+        try
+        {
             Stop-Service -Name msoidsvc -Force -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
             $svc = Get-Service msoidsvc
             $svc.WaitForStatus("Stopped")
             Start-Service -Name msoidsvc
-        } catch {
+        }
+        catch
+        {
             Write-Host "Failed to start msoidsvc service, retrying..."
             Update-WizardProgress "Failed to start msoidsvc service, retrying..."
             Start-Sleep -seconds 2
@@ -747,69 +766,67 @@ function Prepare-Environment(){
 # Validate-MSOLDomain                                                #
 # Checks for domains added to the tenant and prompts to use dirsync  #
 ######################################################################
-function Validate-MSOLDomain(){
-$domainlist = ""
-$domains = get-msoldomain | ?{$_.name -notmatch "onmicrosoft.com"}
+function Validate-MSOLDomain()
+{
+    $domainlist = ""
+    $domains = get-msoldomain | ?{$_.name -notmatch "onmicrosoft.com"}
 
- foreach ($domain in $domains)
-  {
-      $domainlist = $domainlist + $domain.name + "`n"
+    foreach ($domain in $domains)
+    {
+        $domainlist = $domainlist + $domain.name + "`n"
+    }
+    $updatetxt = "The following domain(s) are associated with your tenant. Please ensure you have completed the Azure AD Sync process for these domains. `n `n$domainlist`n"
+    Update-WizardProgress $updatetxt
 
-  }
-$updatetxt = "The following domain(s) are associated with your tenant. Please ensure you have completed the Azure AD Sync process for these domains. `n `n$domainlist`n"
-Update-WizardProgress $updatetxt
+    $spodomains = get-msoldomain | ?{$_.name -match "onmicrosoft.com"}
+    $firstspodomainname=$spodomains[0].name
+    $thespotenantdomain=$firstspodomainname.split(".")
+    $SPORootSite="https://" + $thespotenantdomain[0] +".sharepoint.com"
+    $labelSPOTenantURL.text = $SPORootSite
 
-$spodomains = get-msoldomain | ?{$_.name -match "onmicrosoft.com"}
-$firstspodomainname=$spodomains[0].name
-$thespotenantdomain=$firstspodomainname.split(".")
-$SPORootSite="https://" + $thespotenantdomain[0] +".sharepoint.com"
-$labelSPOTenantURL.text = $SPORootSite
+    #Need to isolate a domain for later when adding an SPN - Grab the first returned SPWeb and use that
+    #Might need to consider adding a selection for the web app into here
 
-#Need to isolate a domain for later when adding an SPN - Grab the first returned SPWeb and use that
-#Might need to consider adding a selection for the web app into here
-
- $SharePointWeb = Get-SPSite | Select-Object -First 1 | Get-SPWeb | Select-Object -First 1 | % Url
- $labelOnPremisesSharePoin.Text = $SharePointWeb
- return $SharePointWeb
+    $SharePointWeb = Get-SPSite | Select-Object -First 1 | Get-SPWeb | Select-Object -First 1 | % Url
+    $labelOnPremisesSharePoin.Text = $SharePointWeb
+    return $SharePointWeb
  }
  
 ######################################################################
 # Creates new query rule and search result source                    #
 #                                                                    #
 ######################################################################
-function New-SCSearchResultSourceAndQueryRule($siteUrl, $remoteUrl, $resultSourceName, $queryRuleName){
-
-#$sspApp = Get-SPEnterpriseSearchServiceApplication | select -first 1
-#$SearchServiceApplicationName = $sspApp.Name
-$RootSiteCollection = Get-SPSite $siteUrl -ErrorAction SilentlyContinue
-
-#-----------------------------------------------------
-# Get the Search Service application
-#-----------------------------------------------------
-# Select the first search service application in case there are multiple - can add choices later
-$SearchServiceApplication = Get-SPEnterpriseSearchServiceApplication | select -first 1 # -Identity $SearchServiceApplicationName -ErrorAction SilentlyContinue
-$FederationManager = New-Object Microsoft.Office.Server.Search.Administration.Query.FederationManager($SearchServiceApplication)
-
-#--------------------------------------------------------------------------
-# The below line creates a Search Object owner at the site collection level
-# and this can be changed to Search Application or Site level by passing 
-# different SearchObjectLevel argument.
-#--------------------------------------------------------------------------
-$SearchOwner = New-Object Microsoft.Office.Server.Search.Administration.SearchObjectOwner –ArgumentList @([Microsoft.Office.Server.Search.Administration.SearchObjectLevel]::SPSite,$RootSiteCollection.RootWeb)
-
-$Query = "{searchTerms}"
-
-$ResultSource = $FederationManager.GetSourceByName($resultSourceName,$SearchOwner)
-
-if($ResultSource)
+function New-SCSearchResultSourceAndQueryRule($siteUrl, $remoteUrl, $resultSourceName, $queryRuleName)
 {
-    Update-WizardProgress "Result Source : $ResultSourceName exist - appending remote url to name"
-    $resultsourcename = $resultsourcename + "-" + $remoteurl  
-}
+
+    #$sspApp = Get-SPEnterpriseSearchServiceApplication | select -first 1
+    #$SearchServiceApplicationName = $sspApp.Name
+    $RootSiteCollection = Get-SPSite $siteUrl -ErrorAction SilentlyContinue
+
+    #-----------------------------------------------------
+    # Get the Search Service application
+    #-----------------------------------------------------
+    # Select the first search service application in case there are multiple - can add choices later
+    $SearchServiceApplication = Get-SPEnterpriseSearchServiceApplication | select -first 1 # -Identity $SearchServiceApplicationName -ErrorAction SilentlyContinue
+    $FederationManager = New-Object Microsoft.Office.Server.Search.Administration.Query.FederationManager($SearchServiceApplication)
+
+    #--------------------------------------------------------------------------
+    # The below line creates a Search Object owner at the site collection level
+    # and this can be changed to Search Application or Site level by passing 
+    # different SearchObjectLevel argument.
+    #--------------------------------------------------------------------------
+    $SearchOwner = New-Object Microsoft.Office.Server.Search.Administration.SearchObjectOwner –ArgumentList @([Microsoft.Office.Server.Search.Administration.SearchObjectLevel]::SPSite,$RootSiteCollection.RootWeb)
+    $Query = "{searchTerms}"
+    $ResultSource = $FederationManager.GetSourceByName($resultSourceName,$SearchOwner)
+
+    if($ResultSource)
+    {
+        Update-WizardProgress "Result Source : $ResultSourceName exist - appending remote url to name"
+        $resultsourcename = $resultsourcename + "-" + $remoteurl  
+    }
 
     Update-WizardProgress "Creating Result Source : $ResultSourceName"
 
-    
     $resultSource = $FederationManager.CreateSource($SearchOwner)
     $resultSource.Name = $resultSourceName
     $resultSource.CreateQueryTransform($queryProperties, $query)
@@ -819,90 +836,88 @@ if($ResultSource)
     $resultSource.Commit()
 
 
-#-------------------------------------------------------------------
-# Configure a Query Rule
-#-------------------------------------------------------------------
+    #-------------------------------------------------------------------
+    # Configure a Query Rule
+    #-------------------------------------------------------------------
 
-#$QueryRuleConditionTerm = "test"
-$QueryRuleManager = New-Object Microsoft.Office.Server.Search.Query.Rules.QueryRuleManager($SearchServiceApplication) 
+    #$QueryRuleConditionTerm = "test"
+    $QueryRuleManager = New-Object Microsoft.Office.Server.Search.Query.Rules.QueryRuleManager($SearchServiceApplication) 
 
-# Create a search object filter using a $SearchOwner object  (Site collection level - in this case)
-$SearchObjectFilter =  New-Object Microsoft.Office.Server.Search.Administration.SearchObjectFilter($SearchOwner) 
+    # Create a search object filter using a $SearchOwner object  (Site collection level - in this case)
+    $SearchObjectFilter =  New-Object Microsoft.Office.Server.Search.Administration.SearchObjectFilter($SearchOwner) 
 
-$QueryRules = $QueryRuleManager.GetQueryRules($SearchObjectFilter)
-ForEach($Rule in $QueryRules)
-{
-    if($Rule.DisplayName -eq $queryRuleName)
+    $QueryRules = $QueryRuleManager.GetQueryRules($SearchObjectFilter)
+    ForEach($Rule in $QueryRules)
     {
-        Update-WizardProgress "Query Rule : $QueryRuleName already exist. Appending remoteurl to name."
-        $queryrulename = $queryrulename + "-" + $remoteurl
+        if($Rule.DisplayName -eq $queryRuleName)
+        {
+            Update-WizardProgress "Query Rule : $QueryRuleName already exist. Appending remoteurl to name."
+            $queryrulename = $queryrulename + "-" + $remoteurl
+        }
     }
-}
 
-Update-WizardProgress "Creating Query Rule : $QueryRuleName"
+    Update-WizardProgress "Creating Query Rule : $QueryRuleName"
 
-$QueryRules = $QueryRuleManager.GetQueryRules($SearchObjectFilter)
+    $QueryRules = $QueryRuleManager.GetQueryRules($SearchObjectFilter)
 
-# Create a new rule as a active one.
-$QueryRule = $QueryRules.CreateQueryRule($QueryRuleName,$null,$null,$true)
+    # Create a new rule as a active one.
+    $QueryRule = $QueryRules.CreateQueryRule($QueryRuleName,$null,$null,$true)
 
-# Set the Query Rule condition...
-#[string[]] $QueryRuleTerms = @($QueryRuleConditionTerm)
-#$QueryRuleConditions = $QueryRule.QueryConditions
-#$QueryRuleCondition = $QueryRuleConditions.CreateKeywordCondition($QueryRuleTerms,$true)
+    # Set the Query Rule condition...
+    #[string[]] $QueryRuleTerms = @($QueryRuleConditionTerm)
+    #$QueryRuleConditions = $QueryRule.QueryConditions
+    #$QueryRuleCondition = $QueryRuleConditions.CreateKeywordCondition($QueryRuleTerms,$true)
 
-#Bind it to the Result Source...
-#$QuerySourceContextCondition = $QueryRule.CreateSourceContextCondition($ResultSource)
+    #Bind it to the Result Source...
+    #$QuerySourceContextCondition = $QueryRule.CreateSourceContextCondition($ResultSource)
 
-# Set the Query Condition action to change ranked results...
-#$QueryRuleAction = $QueryRule.CreateQueryAction([Microsoft.Office.Server.Search.Query.Rules.QueryActionType]::ChangeQuery)   
-#$QueryRuleAction.QueryTransform.OverrideProperties = new-object Microsoft.Office.Server.Search.Query.Rules.QueryTransformProperties
-#$QueryRuleAction.QueryTransform.SourceId = $ResultSource.Id
+    # Set the Query Condition action to change ranked results...
+    #$QueryRuleAction = $QueryRule.CreateQueryAction([Microsoft.Office.Server.Search.Query.Rules.QueryActionType]::ChangeQuery)   
+    #$QueryRuleAction.QueryTransform.OverrideProperties = new-object Microsoft.Office.Server.Search.Query.Rules.QueryTransformProperties
+    #$QueryRuleAction.QueryTransform.SourceId = $ResultSource.Id
 
-# define a custom sorting - Order by FileName
-#$QueryRuleSortCollection = New-Object Microsoft.Office.Server.Search.Query.SortCollection
-#$QueryRuleSortCollection.Add("FileName", [Microsoft.Office.Server.Search.Query.SortDirection]::Descending)
+    # define a custom sorting - Order by FileName
+    #$QueryRuleSortCollection = New-Object Microsoft.Office.Server.Search.Query.SortCollection
+    #$QueryRuleSortCollection.Add("FileName", [Microsoft.Office.Server.Search.Query.SortDirection]::Descending)
 
-#$QueryRule.ChangeQueryAction.QueryTransform.OverrideProperties["SortList"] = [Microsoft.Office.Server.Search.Query.SortCollection]$QueryRuleSortCollection 
-#$QueryRule.ChangeQueryAction.QueryTransform.QueryTemplate = "{searchTerms}" 
+    #$QueryRule.ChangeQueryAction.QueryTransform.OverrideProperties["SortList"] = [Microsoft.Office.Server.Search.Query.SortCollection]$QueryRuleSortCollection 
+    #$QueryRule.ChangeQueryAction.QueryTransform.QueryTemplate = "{searchTerms}" 
 
-$difqueryblock = $QueryRule.CreateQueryAction("CreateResultBlock")
-$difqueryblock.ResultTitle.DefaultLanguageString = "Results from {searchTerms}"
+    $difqueryblock = $QueryRule.CreateQueryAction("CreateResultBlock")
+    $difqueryblock.ResultTitle.DefaultLanguageString = "Results from {searchTerms}"
 
-#look into changing the number of returned items within the result block
-$difqueryblock.QueryTransform.SourceId = $resultSource.Id
-$difqueryblock.QueryTransform.QueryTemplate = "{searchTerms}"
-$difqueryblock.AlwaysShow = $true
+    #look into changing the number of returned items within the result block
+    $difqueryblock.QueryTransform.SourceId = $resultSource.Id
+    $difqueryblock.QueryTransform.QueryTemplate = "{searchTerms}"
+    $difqueryblock.AlwaysShow = $true
 
-$QueryRule.Update()
-
-
-
+    $QueryRule.Update()
 }
 
 ##################################################
 #Update-WizardProgress                           #
 #Adds status messages to the progress check box  #
 ##################################################
-function Update-WizardProgress($update){
+function Update-WizardProgress($update)
+{
+    $progress = $textboxWizardProgress.text + "`r`n"
+    $progress = $progress + $update
+    $textboxWizardProgress.Text = $progress
 
-$progress = $textboxWizardProgress.text + "`r`n"
-$progress = $progress + $update
-$textboxWizardProgress.Text = $progress
-
-$textboxWizardProgress.SelectionStart= $textboxWizardProgress.TextLength
-$textboxWizardProgress.ScrollToCaret()
+    $textboxWizardProgress.SelectionStart= $textboxWizardProgress.TextLength
+    $textboxWizardProgress.ScrollToCaret()
 }
 
 ##########################################
 # CHECK IF CURRENT USER IS A LOCAL ADMIN #
 # Todo: check all farm servers           #
 ##########################################
-function Check-IsLocalAdmin {  
-    $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()  
-      $principal = new-object System.Security.Principal.WindowsPrincipal($identity)  
-      $admin = [System.Security.Principal.WindowsBuiltInRole]::Administrator  
-      $principal.IsInRole($admin)  
+function Check-IsLocalAdmin
+{
+    $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()  
+    $principal = new-object System.Security.Principal.WindowsPrincipal($identity)  
+    $admin = [System.Security.Principal.WindowsBuiltInRole]::Administrator  
+    $principal.IsInRole($admin)  
 } 
 
 ##########################################
@@ -912,53 +927,50 @@ function Check-IsLocalAdmin {  
 # 3. LOOK FOR AND REMOVE DEFAULT RESULT  #
 #    SOURCE AND QUERY RULE               #
 ##########################################
-
 function Remove-HybridConfiguration($SPSite)
 {
-$app = Get-MsolServicePrincipal -AppPrincipalId "00000003-0000-0ff1-ce00-000000000000"
-$app.ServicePrincipalNames
+    $app = Get-MsolServicePrincipal -AppPrincipalId "00000003-0000-0ff1-ce00-000000000000"
+    $app.ServicePrincipalNames
 
-$indexHostName = $SPSite.IndexOf('://') + 3
-        $HostName = $SPSite.Substring($indexHostName)
-		$indexHostName = $HostName.IndexOf('/')
-		if ($indexhostName -ge 0) {
-			$HostName = $HostName.Substring(0,$indexHostName)
-		}
-
-$partfqdn = $Hostname.Indexof('.')
-
-# Check for single part domain name, ie http://spweb as this will result in $partfqdn value of -1
-if($partfqdn -lt 0)
-{
-    $Hostname = $Hostname #No change since single name website
-}
-else
-{
-    $Hostname = "*" + $Hostname.Substring($partfqdn)   
-}
-
-# Loop through the service principal names and clean up the one matching the local SharePoint url
-
-for ($i = 0; $i -lt $app.ServicePrincipalNames.count; $i++)
-{ 
-    if($app[$i] -match $Hostname)
-    { 
-    $app.ServicePrincipalNames.RemoveAt($i)
+    $indexHostName = $SPSite.IndexOf('://') + 3
+    $HostName = $SPSite.Substring($indexHostName)
+    $indexHostName = $HostName.IndexOf('/')
+    if ($indexhostName -ge 0) {
+        $HostName = $HostName.Substring(0,$indexHostName)
     }
-}
 
-Set-MsolServicePrincipal -AppPrincipalId $app.AppPrincipalId -ServicePrincipalNames $app.ServicePrincipalNames
+    $partfqdn = $Hostname.Indexof('.')
 
-# Remove the ACS Proxy - will remove them all so be careful
+    # Check for single part domain name, ie http://spweb as this will result in $partfqdn value of -1
+    if($partfqdn -lt 0)
+    {
+        $Hostname = $Hostname #No change since single name website
+    }
+    else
+    {
+        $Hostname = "*" + $Hostname.Substring($partfqdn)   
+    }
 
-Get-SPServiceApplicationProxy | ? {$_.TypeName -eq "Azure Access Control Service Application Proxy"} | Remove-SPServiceApplicationProxy
-Update-WizardProgress "Azure ACS Proxy has been removed"
+    # Loop through the service principal names and clean up the one matching the local SharePoint url
 
-#Remove the TrustedSecurityTokenIssuer based on metadata endpoint
-Get-SPTrustedSecurityTokenIssuer |?{$_.MetadataEndPoint -eq "https://accounts.accesscontrol.windows.net/metadata/json/1/"} | Remove-SPTrustedSecurityTokenIssuer 
+    for ($i = 0; $i -lt $app.ServicePrincipalNames.count; $i++)
+    { 
+        if($app[$i] -match $Hostname)
+        { 
+           $app.ServicePrincipalNames.RemoveAt($i)
+        }
+    }
 
+    Set-MsolServicePrincipal -AppPrincipalId $app.AppPrincipalId -ServicePrincipalNames $app.ServicePrincipalNames
 
-Update-WizardProgress "Trusted Security Token Issuer has been removed"
+    # Remove the ACS Proxy - will remove them all so be careful
+    Get-SPServiceApplicationProxy | ? {$_.TypeName -eq "Azure Access Control Service Application Proxy"} | Remove-SPServiceApplicationProxy
+    Update-WizardProgress "Azure ACS Proxy has been removed"
+
+    #Remove the TrustedSecurityTokenIssuer based on metadata endpoint
+    Get-SPTrustedSecurityTokenIssuer |?{$_.MetadataEndPoint -eq "https://accounts.accesscontrol.windows.net/metadata/json/1/"} | Remove-SPTrustedSecurityTokenIssuer 
+
+    Update-WizardProgress "Trusted Security Token Issuer has been removed"
 }
 
 ##########################################
@@ -967,15 +979,13 @@ Update-WizardProgress "Trusted Security Token Issuer has been removed"
 ##########################################
 function Warmup-SPSite()
 {
-$Warmup = get-spsite -Limit 1
-$warmupurl = $warmup.Url
+    $Warmup = get-spsite -Limit 1
+    $warmupurl = $warmup.Url
 
-Update-WizardProgress "Warming up site $warmupurl after IISRESET"
-Write-Host "Warming up site $warmupurl after IISRESET"
+    Update-WizardProgress "Warming up site $warmupurl after IISRESET"
+    Write-Host "Warming up site $warmupurl after IISRESET"
 
-$WarmItUp = Invoke-WebRequest -Uri $warmupurl -UseDefaultCredentials 
-
-
+    $WarmItUp = Invoke-WebRequest -Uri $warmupurl -UseDefaultCredentials 
 }
 
 #endregion
@@ -984,203 +994,194 @@ $WarmItUp = Invoke-WebRequest -Uri $warmupurl -UseDefaultCredentials
 # mainflow                                                           #
 # Main program execution flow                                        #
 ######################################################################
-function mainflow(){
-
-$spsite= ""
-$spoappid="00000003-0000-0ff1-ce00-000000000000"
-$Update = ""
-$wizstatus=$true
-$wizstatusmsg = ""
-#############################################################
-# CHECK IF CURRENT USER IS A LOCAL ADMIN ON ALL FARM SERVERS#
-#          REQUIRED                                         #
-#############################################################
-
-$Isboxadmin = Check-IsLocalAdmin
-
-If($Isboxadmin -eq $false)
+function mainflow()
 {
-Update-WizardProgress "Is User Local Admin returns FALSE"
-Show-MessageBox "You are not logged in as a Local Machine administrator account.`nPlease ensure you are logged in with an account that has local machine admin rights and is a SharePoint Farm Administrator then re-start this wizard`n`nThe Hybrid Wizard will now Exit!`n" -Critical | out-null
-#Show-MessageBox "Wizard will now exit!" | out-null
-$wizstatus=$false
-$wizstatusmsg = "`nLocal Admin Check Failed"
-}
-Else
-{
-Show-MessageBox "Current User is Local Machine Admin`nPlease ensure the user is a local admin on all other farm servers before proceeding" | out-null
-Update-WizardProgress "Is User Local Admin returns TRUE"
-}
 
-################################################
-#CHECK CURRENT USER IS A MEMBER OF FARM ADMINS.# 
-#IF NOT THE DISPLAY LIST OF ADMINS AND EXIT    #
-#         REQUIRED                             #
-################################################
+    $spsite= ""
+    $spoappid="00000003-0000-0ff1-ce00-000000000000"
+    $Update = ""
+    $wizstatus=$true
+    $wizstatusmsg = ""
+    #############################################################
+    # CHECK IF CURRENT USER IS A LOCAL ADMIN ON ALL FARM SERVERS#
+    #          REQUIRED                                         #
+    #############################################################
 
-$IsFarmAdmin = Check-FarmAdmin
-if($IsFarmAdmin){}
-else{
-$farmadmins = Get-SPfarmAdministrators | ? {$_.Name -notmatch "BUILTIN"}
+    $Isboxadmin = Check-IsLocalAdmin
 
-$listoffarmadmins = ""
-foreach ($farmadmin in $farmadmins)
-{
-    $listoffarmadmins = $listoffarmadmins + $farmadmin.Name + "`n"
-}
-Update-WizardProgress "Is User Farm Admin returns FALSE"
-Show-MessageBox "You are not logged in as a farm administrator account. Please login as one of the following accounts and rerun this wizard `n`n$listoffarmadmins" -Critical | out-null
-
-$wizstatus=$false
-$wizstatusmsg = $wizstatusmsg + "`nFarm Admin Check Failed"
-#Show-MessageBox "Wizard will now exit!" | out-null
-#break
-}
-Update-WizardProgress "Is User Farm Admin returns TRUE"
-
-#######################################################
-#VALIDATE ALL REQUIRED SERVICE APPLICATIONS ARE ONLINE#
-#IF NOT THE DISPLAY LIST OF APP STATUSES AND QUIT     #
-#                 REQUIRED                            #
-#######################################################
-
-$validateserviceapps = Validate-ServiceApps
-
-   Update-WizardProgress $validateserviceapps[1]
-if($validateserviceapps[0] -eq 0)
-    {try
+    If($Isboxadmin -eq $false)
     {
-    #$MainForm.Close()
-        Update-WizardProgress "Service Application minimum configuration is not setup correctly"
-    $wizstatus=$false
-    $wizstatusmsg = $wizstatusmsg + "`nService Application Check Failed "
+        Update-WizardProgress "Is User Local Admin returns FALSE"
+        Show-MessageBox "You are not logged in as a Local Machine administrator account.`nPlease ensure you are logged in with an account that has local machine admin rights and is a SharePoint Farm Administrator then re-start this wizard`n`nThe Hybrid Wizard will now Exit!`n" -Critical | out-null
+        #Show-MessageBox "Wizard will now exit!" | out-null
+        $wizstatus=$false
+        $wizstatusmsg = "`nLocal Admin Check Failed"
     }
-    catch [Exception]
-		{ }
-    
-}
-Update-WizardProgress "All Service Application minimum requirements are met"
+    Else
+    {
+        Show-MessageBox "Current User is Local Machine Admin`nPlease ensure the user is a local admin on all other farm servers before proceeding" | out-null
+        Update-WizardProgress "Is User Local Admin returns TRUE"
+    }
+
+    ################################################
+    #CHECK CURRENT USER IS A MEMBER OF FARM ADMINS.# 
+    #IF NOT THE DISPLAY LIST OF ADMINS AND EXIT    #
+    #         REQUIRED                             #
+    ################################################
+
+    $IsFarmAdmin = Check-FarmAdmin
+    if($IsFarmAdmin){}
+    else
+    {
+        $farmadmins = Get-SPfarmAdministrators | ? {$_.Name -notmatch "BUILTIN"}
+
+        $listoffarmadmins = ""
+        foreach ($farmadmin in $farmadmins)
+        {
+            $listoffarmadmins = $listoffarmadmins + $farmadmin.Name + "`n"
+        }
+        Update-WizardProgress "Is User Farm Admin returns FALSE"
+        Show-MessageBox "You are not logged in as a farm administrator account. Please login as one of the following accounts and rerun this wizard `n`n$listoffarmadmins" -Critical | out-null
+
+        $wizstatus=$false
+        $wizstatusmsg = $wizstatusmsg + "`nFarm Admin Check Failed"
+        #Show-MessageBox "Wizard will now exit!" | out-null
+        #break
+    }
+    Update-WizardProgress "Is User Farm Admin returns TRUE"
+
+    #######################################################
+    #VALIDATE ALL REQUIRED SERVICE APPLICATIONS ARE ONLINE#
+    #IF NOT THE DISPLAY LIST OF APP STATUSES AND QUIT     #
+    #                 REQUIRED                            #
+    #######################################################
+
+    $validateserviceapps = Validate-ServiceApps
+
+    Update-WizardProgress $validateserviceapps[1]
+    if($validateserviceapps[0] -eq 0)
+    {
+        try
+        {
+            #$MainForm.Close()
+            Update-WizardProgress "Service Application minimum configuration is not setup correctly"
+            $wizstatus=$false
+            $wizstatusmsg = $wizstatusmsg + "`nService Application Check Failed "
+        }
+        catch [Exception] { }
+    }
+    Update-WizardProgress "All Service Application minimum requirements are met"
 
 
-#######################################################
-#CHECK FOR MSOL AND IDCRL INSTALLED                   #
-#REQUIREMENTs .NET 3.5SP1 .NET 4.5                    #
-#             REQUIRED                                #
-#######################################################
-try{
-$prepareenv = prepare-environment
-}
-catch
-{
-    Update-WizardProgress "Prerequisite Software not met. Exiting Wizard. Please refer to the pre requisites section of the documentation"
-    Write-Host "Prerequisite Software not met. Exiting Wizard. Please refer to the pre requisites section of the documentation"
-    $wizstatus=$false
-    $wizstatusmsg = $wizstatusmsg + "`nPrerequisite Software Check Failed "
-    
-    #$MainForm.close()
-    #[environment]::exit(0) 
-    #break
-}
+    #######################################################
+    #CHECK FOR MSOL AND IDCRL INSTALLED                   #
+    #REQUIREMENTs .NET 3.5SP1 .NET 4.5                    #
+    #             REQUIRED                                #
+    #######################################################
+    try
+    {
+        $prepareenv = prepare-environment
+    }
+    catch
+    {
+        Update-WizardProgress "Prerequisite Software not met. Exiting Wizard. Please refer to the pre requisites section of the documentation"
+        Write-Host "Prerequisite Software not met. Exiting Wizard. Please refer to the pre requisites section of the documentation"
+        $wizstatus=$false
+        $wizstatusmsg = $wizstatusmsg + "`nPrerequisite Software Check Failed "
+        
+        #$MainForm.close()
+        #[environment]::exit(0) 
+        #break
+    }
 
 
-#######################################################
-# Check if all Required Checks Passed or Failed       #
-#                                                     #
-#######################################################
+    #######################################################
+    # Check if all Required Checks Passed or Failed       #
+    #                                                     #
+    #######################################################
 
     if($wizstatus -eq $false)
     {
-    Update-WizardProgress $wizstatusmsg
-    Write-Host $wizstatusmsg
-    Show-MessageBox "Required Checks Failed`n$wizstatusmsg `nThe wizard cannot continue until these errors are remediated" -Critical
-    
-    $mainform.close()
-    
-    #[environment]::exit(0)
-    pause
+        Update-WizardProgress $wizstatusmsg
+        Write-Host $wizstatusmsg
+        Show-MessageBox "Required Checks Failed`n$wizstatusmsg `nThe wizard cannot continue until these errors are remediated" -Critical
+        
+        $mainform.close()
+        
+        #[environment]::exit(0)
+        pause
     }
 
 
-#######################################################
-#IMPORT MSOL AND IDCRL MODULES                        #
-#CONNECT TO O365 TENANT                               #
-#######################################################
+    #######################################################
+    #IMPORT MSOL AND IDCRL MODULES                        #
+    #CONNECT TO O365 TENANT                               #
+    #######################################################
 
-$connect = Import-ModulesAndConnect
+    $connect = Import-ModulesAndConnect
 
-if ($connect[0] -eq $true)
-{Update-WizardProgress "continue login success"
-}
-else {Update-WizardProgress "quit failed login"
-}
+    if ($connect[0] -eq $true) { Update-WizardProgress "continue login success" }
+    else { Update-WizardProgress "quit failed login" }
 
+    #######################################################
+    #VALIDATE MSOLDOMAIN                                  #
+    #The $SharePointWeb will match the tenant root site   #
+    #######################################################
 
+    $SharePointWeb = Validate-MSOLDomain
 
-#######################################################
-#VALIDATE MSOLDOMAIN                                  #
-#The $SharePointWeb will match the tenant root site   #
-#######################################################
+    if($SharePointWeb -eq "") { break } #Started seeing some odd WCF errors causing blank Urls and we must stop if this happens 
 
-$SharePointWeb = Validate-MSOLDomain
+    # We can test for clean up here since $SharePointWeb will match the SPN we want to remove (hopefully)
 
-if($SharePointWeb -eq ""){break} #Started seeing some odd WCF errors causing blank Urls and we must stop if this happens 
+    #######################################################
+    #REMOVE HYBRID CONFIG if Selected                     #
+    #######################################################
 
-# We can test for clean up here since $SharePointWeb will match the SPN we want to remove (hopefully)
+    if($checkboxcleanuphybridstatus.checked)
+    {
+        Remove-HybridConfiguration $SharePointWeb
+        Update-WizardProgress "Hybrid Configuration Removed - Exiting Wizard"
+        Break
+    }
 
-#######################################################
-#REMOVE HYBRID CONFIG if Selected                     #
-#######################################################
+    #######################################################
+    #MANAGE STS CERTIFICATE                               #
+    #Lot goes on here to set cert for ACS trust and SPN   #
+    #######################################################
 
-if($checkboxcleanuphybridstatus.checked)
-{
-Remove-HybridConfiguration $SharePointWeb
-Update-WizardProgress "Hybrid Configuration Removed - Exiting Wizard"
+    $spoappid="00000003-0000-0ff1-ce00-000000000000"
+    $CommonName = $textboxSelfSignedCertCN.Text
+    $stscertificate = Manage-STSCertificate $spoappid $SharePointWeb $CommonName
 
-Break
-}
+    #######################################################
+    #WARM UP WEB APP                                      #
+    #Hits the first site collection from get-spsite       #
+    #######################################################
 
-#######################################################
-#MANAGE STS CERTIFICATE                               #
-#Lot goes on here to set cert for ACS trust and SPN   #
-#######################################################
+    Warmup-spsite
 
-$spoappid="00000003-0000-0ff1-ce00-000000000000"
-$CommonName = $textboxSelfSignedCertCN.Text
-$stscertificate = Manage-STSCertificate $spoappid $SharePointWeb $CommonName
+    #######################################################
+    #CREATE RESULT SOURCE                                 #
+    #Uses Certificate Common Name as ResultSource Name    #
+    #Uses Certificate Common Name as the Query Rule Name  #
+    #######################################################
 
-#######################################################
-#WARM UP WEB APP                                      #
-#Hits the first site collection from get-spsite       #
-#######################################################
+    New-SCSearchResultSourceAndQueryRule $labelOnPremisesSharePoin.text $labelSPOTenantURL.Text $textboxSelfSignedCertCN.Text $textboxSelfSignedCertCN.Text 
 
-Warmup-spsite
+    Update-WizardProgress "Hybrid wizard setup is completed - Please test to validate success"
 
-#######################################################
-#CREATE RESULT SOURCE                                 #
-#Uses Certificate Common Name as ResultSource Name    #
-#Uses Certificate Common Name as the Query Rule Name  #
-#######################################################
+    $buttonStart.Enabled=$true
+    $buttonStart.Text = "Exit Wizard"
+    #ALL DONE
 
-New-SCSearchResultSourceAndQueryRule $labelOnPremisesSharePoin.text $labelSPOTenantURL.Text $textboxSelfSignedCertCN.Text $textboxSelfSignedCertCN.Text 
-
-Update-WizardProgress "Hybrid wizard setup is completed - Please test to validate success"
-
-
-$buttonStart.Enabled=$true
-$buttonStart.Text = "Exit Wizard"
-
-
-
-#ALL DONE
-
-
-#GUI
-#Things to Capture
-#LocalCN for SelfSignedCert
-#Use New SelfSigned STS Cert or Use Existing STS Cert or public
-#On Premises Site Url
-#SPO Url of Tenant
-#Check for Farm Account and Local Admin or prompt for admin creds
+    #GUI
+    #Things to Capture
+    #LocalCN for SelfSignedCert
+    #Use New SelfSigned STS Cert or Use Existing STS Cert or public
+    #On Premises Site Url
+    #SPO Url of Tenant
+    #Check for Farm Account and Local Admin or prompt for admin creds
 }
 
 #region Generate Wizard Form
@@ -1216,30 +1217,30 @@ Add-Type -AssemblyName System.Windows.Forms
 	#----------------------------------------------
 	
 	$OnLoadFormEvent={
-	#TODO: Initialize Form Controls here
-	$MainForm.Focused
+        #TODO: Initialize Form Controls here
+        $MainForm.Focused
 	}
 
     $Form_FormClosing={
-    # Capture form closing event ie user clicked red X. Prompt for validation and cancel event if user has exietd by mistake
-    
+        # Capture form closing event ie user clicked red X. Prompt for validation and cancel event if user has exietd by mistake
 
-    If ($wizstatus -eq $false)
-        {#Pre requisites failed so kill form
-        [environment]::exit(0)
+        If ($wizstatus -eq $false)
+        {
+            #Pre requisites failed so kill form
+            [environment]::exit(0)
         }
 
-
-    $closeme = Show-MessageBox "Do you want to close down the Wizard?" -YesNo
-    
-	If ($closeme -eq "Yes") {}
-    Else {$_.Cancel = $true # $_.Cancel actually cancels the FormClosing Event and so FormClosed never fires
-    
-    Show-MessageBox "Carry on regardless"}
+        $closeme = Show-MessageBox "Do you want to close down the Wizard?" -YesNo
+        
+        If ($closeme -eq "Yes") {}
+        Else 
+        {
+            $_.Cancel = $true # $_.Cancel actually cancels the FormClosing Event and so FormClosed never fires
+            Show-MessageBox "Carry on regardless"
+        }
 	}
 
 	$buttonStart_Click={
-
         #$buttonStart.Text = "Exit Wizard" #debug
 
         if($buttonStart.Text -eq "Exit Wizard")
@@ -1252,13 +1253,11 @@ Add-Type -AssemblyName System.Windows.Forms
         $buttonStart.Text = "Running"
         $buttonStart.Enabled=$false
 		mainflow
+    }
     
-		
-	}
     $buttonStart_MouseHover={
         $buttonStart.BackColor = 'Blue'
     }
-
 	
 	$Form_StateCorrection_Load=
 	{
@@ -1291,9 +1290,6 @@ Add-Type -AssemblyName System.Windows.Forms
 		catch [Exception]
 		{ }
 	}
-	
-   
-
 	
 	#region Generated Form Code
 	#----------------------------------------------
@@ -1496,7 +1492,7 @@ Add-Type -AssemblyName System.Windows.Forms
     $labelcontactinfo.Text = "Send feedback via the comments on the blog at (https://blogs.msdn.com/spses)"
 	
 
-#Save the initial state of the form
+    #Save the initial state of the form
 	$InitialFormWindowState = $MainForm.WindowState
 	#Init the OnLoad event to correct the initial state of the form
 	$MainForm.add_Load($Form_StateCorrection_Load)
@@ -1506,6 +1502,5 @@ Add-Type -AssemblyName System.Windows.Forms
 	$MainForm.add_Closing($Form_FormClosing)
 	#Show the Form
 	return $MainForm.ShowDialog()
-#endregion Generated Form Code
-#endregion Generate Wizard Form
-
+    #endregion Generated Form Code
+    #endregion Generate Wizard Form

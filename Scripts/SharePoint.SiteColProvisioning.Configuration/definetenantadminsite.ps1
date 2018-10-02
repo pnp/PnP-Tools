@@ -1,6 +1,6 @@
 ﻿param
 (
-[Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()]
+    [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()]
     [String]$siteColUrl
 )
 #
@@ -20,4 +20,3 @@ $site = get-spsite -Identity $siteColUrl
 $site.AdministrationSiteType = [Microsoft.SharePoint.SPAdministrationSiteType]::TenantAdministration
 
 Write-Host "Site $siteColUrl set to AdministrationSiteType" $site.AdministrationSiteType
-  

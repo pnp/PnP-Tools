@@ -35,8 +35,3 @@ Write-Host "Connect-SPFarmToAAD –AADDomain 'MyO365Domain.onmicrosoft.com' –S
 Write-Host "Connect-SPFarmToAAD –AADDomain 'MyO365Domain.onmicrosoft.com' –SharePointOnlineUrl https://MyO365Domain.sharepoint.com –SharePointWeb http://northwind.com –AllowOverHttp –RemoveExistingACS –RemoveExistingSTS –RemoveExistingSPOProxy –RemoveExistingAADCredentials" -ForegroundColor Cyan
 Write-Host "More information can be found at https://msdn.microsoft.com/en-us/library/office/dn155905.aspx"
 Write-Host
-
-
-
-
-
