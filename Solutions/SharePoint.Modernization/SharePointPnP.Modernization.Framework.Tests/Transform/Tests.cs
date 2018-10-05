@@ -85,7 +85,7 @@ namespace SharePointPnP.Modernization.Framework.Tests.Transform
                 //webparts.aspx
                 //contentbyquery1.aspx
                 //how to use this library.aspx
-                var pages = cc.Web.GetPages("navtest");
+                var pages = cc.Web.GetPages("classicpage.aspx");
 
                 foreach (var page in pages)
                 {
@@ -93,6 +93,12 @@ namespace SharePointPnP.Modernization.Framework.Tests.Transform
                     {
                         // If target page exists, then overwrite it
                         Overwrite = true,
+
+                        // ModernizationCenter options
+                        ModernizationCenterInformation = new ModernizationCenterInformation()
+                        {
+                            AddPageAcceptBanner = true
+                        },
 
                         // Migrated page gets the name of the original page
                         //TargetPageTakesSourcePageName = true,

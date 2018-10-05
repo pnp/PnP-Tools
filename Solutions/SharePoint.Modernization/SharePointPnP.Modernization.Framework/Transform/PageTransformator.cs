@@ -234,6 +234,55 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 layoutTransformator.Transform(pageData.Item1);
                 #endregion
 
+                #region Page Banner creation
+                if (!pageTransformationInformation.TargetPageTakesSourcePageName)
+                {
+                    if (pageTransformationInformation.ModernizationCenterInformation != null && pageTransformationInformation.ModernizationCenterInformation.AddPageAcceptBanner)
+                    {
+                        // Bump the row values for the existing web parts as we've inserted a new section
+                        foreach (var section in targetPage.Sections)
+                        {
+                            section.Order = section.Order + 1;
+                        }
+
+                        // Add new section for banner part
+                        targetPage.Sections.Insert(0, new CanvasSection(targetPage, CanvasSectionTemplate.OneColumn, 0));
+
+                        // Bump the row values for the existing web parts as we've inserted a new section
+                        foreach(var webpart in pageData.Item2)
+                        {
+                            webpart.Row = webpart.Row + 1;
+                        }
+
+
+                        var sourcePageUrl = pageTransformationInformation.SourcePage[Constants.FileRefField].ToString();
+                        var orginalSourcePageName = pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString();
+                        clientContext.Web.EnsureProperty(p => p.Url);
+                        Uri host = new Uri(clientContext.Web.Url);
+
+                        string path = $"{host.Scheme}://{host.DnsSafeHost}{sourcePageUrl.Replace(pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString(), "")}";
+
+                        // Add "fake" banner web part that then will be transformed onto the page
+                        Dictionary<string, string> props = new Dictionary<string, string>(2)
+                        {
+                            { "SourcePage", $"{path}{orginalSourcePageName}" },
+                            { "TargetPage", $"{path}{pageTransformationInformation.TargetPageName}" }
+                        };
+
+                        WebPartEntity bannerWebPart = new WebPartEntity()
+                        {
+                            Type = WebParts.PageAcceptanceBanner,
+                            Column = 1,
+                            Row = 1,
+                            Title = "",
+                            Order = 0,
+                            Properties = props,
+                        };
+                        pageData.Item2.Insert(0, bannerWebPart);
+                    }
+                }
+                #endregion  
+
                 #region Content transformation
                 // Use the default content transformator
                 IContentTransformator contentTransformator = new ContentTransformator(targetPage, pageTransformation);
