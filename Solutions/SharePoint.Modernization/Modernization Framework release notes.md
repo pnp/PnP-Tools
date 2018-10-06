@@ -20,6 +20,7 @@
 
 ### Changed
 
+- Lowered minimal .Net framework version from 4.7 to 4.5.1
 - Expose the swap pages logic so that it can be used by folks using the page transformation engine
 
 ## [October release (prod) - version 1.0.1810.0]
