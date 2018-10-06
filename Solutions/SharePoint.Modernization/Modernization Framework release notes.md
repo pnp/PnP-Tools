@@ -12,6 +12,16 @@
 - From .Net: see https://github.com/SharePoint/PnP/tree/dev/Samples/Modernization.PageTransformation as nice sample to start with
 - From PnP PowerShell: see https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Scripts/PageTransformation/TransformPageSample.ps1 for a sample
 
+## [October release (prod) - version 1.0.1810.1]
+
+### Added
+
+- Support for adding a web part of choice as banner on all generated pages. Used to give end users an option to accept/decline the generated page
+
+### Changed
+
+- Expose the swap pages logic so that it can be used by folks using the page transformation engine
+
 ## [October release (prod) - version 1.0.1810.0]
 
 ### Added

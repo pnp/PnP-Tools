@@ -85,7 +85,7 @@ namespace SharePointPnP.Modernization.Framework.Tests.Transform
                 //webparts.aspx
                 //contentbyquery1.aspx
                 //how to use this library.aspx
-                var pages = cc.Web.GetPages("classicpage.aspx");
+                var pages = cc.Web.GetPages("navtest");
 
                 foreach (var page in pages)
                 {
@@ -101,7 +101,7 @@ namespace SharePointPnP.Modernization.Framework.Tests.Transform
                         },
 
                         // Migrated page gets the name of the original page
-                        //TargetPageTakesSourcePageName = true,
+                        TargetPageTakesSourcePageName = true,
 
                         // Give the migrated page a specific prefix, default is Migrated_
                         //TargetPagePrefix = "Yes_",
