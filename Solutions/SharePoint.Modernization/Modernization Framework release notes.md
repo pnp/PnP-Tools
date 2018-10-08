@@ -12,6 +12,12 @@
 - From .Net: see https://github.com/SharePoint/PnP/tree/dev/Samples/Modernization.PageTransformation as nice sample to start with
 - From PnP PowerShell: see https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Scripts/PageTransformation/TransformPageSample.ps1 for a sample
 
+## [October release (prod) - version 1.0.1810.2]
+
+### Changed
+
+- Fixed issue with default page layout transformation for "One Column with Sidebar" wiki pages
+
 ## [October release (prod) - version 1.0.1810.1]
 
 ### Added
