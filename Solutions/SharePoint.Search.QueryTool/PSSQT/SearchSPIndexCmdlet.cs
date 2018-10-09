@@ -12,6 +12,8 @@ using PSSQT.Helpers;
 using PSSQT.Helpers.Authentication;
 using System.Threading;
 
+
+
 /**
  * <ParameterSetName	P1	P2
  * Site                 X   X
@@ -66,6 +68,8 @@ namespace PSSQT
             TrendingTagsQuery,
             Unknown
         }
+
+        internal static ILogger Logger { get; set; }
 
         #endregion
 
@@ -527,6 +531,17 @@ namespace PSSQT
 
 
         public int SleepBetweenQueryBatches { get; set; } = 0;
+
+        [Parameter(
+             Mandatory = false,
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             HelpMessage = "Force a login prompt when you are using -AuthenticationMode SPOManagement."
+        )]
+
+
+        public SwitchParameter ForceLoginPrompt { get; set; }
+
         #endregion
 
         #region Methods
@@ -543,6 +558,11 @@ namespace PSSQT
         //        AddSelectProperty(value);
         //    }
         //}
+
+        public SearchSPIndexCmdlet()
+        {
+            Logger = new CmdletLogger(this);
+        }
 
         protected override void ProcessRecord()
         {
@@ -840,7 +860,7 @@ namespace PSSQT
             }
             else if (AuthenticationMethod == PSAuthenticationMethod.SPOManagement || searchQueryRequest.AuthenticationType == AuthenticationType.SPOManagement)
             {
-                AdalLogin(searchQueryRequest);
+                AdalLogin(searchQueryRequest, ForceLoginPrompt.IsPresent);
                 //searchSuggestionsRequest.Token = token;
             }
             else
@@ -882,11 +902,11 @@ namespace PSSQT
             }
         }
 
-        internal static void AdalLogin(SearchQueryRequest searchQueryRequest)
+        internal static void AdalLogin(SearchQueryRequest searchQueryRequest, bool forceLogin)
         {
             AdalAuthentication adalAuth = new AdalAuthentication();
 
-            var task = adalAuth.Login(searchQueryRequest.SharePointSiteUrl);
+            var task = adalAuth.Login(searchQueryRequest.SharePointSiteUrl, forceLogin);
 
             if (!task.Wait(300000))
             {

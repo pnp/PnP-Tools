@@ -18,18 +18,26 @@ namespace PSSQT.Helpers.Authentication
 
         public AdalAuthentication()
         {
+            CreateTokenCache();
+        }
+
+        private void CreateTokenCache(bool forceRecreate = false)
+        {
             Guid runspaceId = Guid.Empty;
 
             using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
             {
                 runspaceId = ps.Runspace.InstanceId;
+                SearchSPIndexCmdlet.Logger.Log(LogLevel.Debug, $"CreateTokenCache: current runspace id: {runspaceId}");
 
                 ADAL.TokenCache tc;
 
                 bool found = Tokens.TryGetValue(runspaceId, out tc);
 
-                if (!found)
+                if (!found || forceRecreate)
                 {
+                    SearchSPIndexCmdlet.Logger.Log(LogLevel.Debug, "CreateTokenCache: creating new token cache.");
+
                     tc = new ADAL.TokenCache();
 
                     Tokens.AddOrUpdate(runspaceId, tc, (k, v) => v);     // Do I need to use a ConcurrentDictionary?
@@ -39,7 +47,6 @@ namespace PSSQT.Helpers.Authentication
             }
         }
 
- 
         public async Task<string> Login(string sharePointSiteUrl, bool forceLogin = false)
         {
             var spUri = new Uri(sharePointSiteUrl);
@@ -47,31 +54,44 @@ namespace PSSQT.Helpers.Authentication
             string resourceUri = spUri.Scheme + "://" + spUri.Authority;
 
             ADAL.AuthenticationResult authenticationResult;
- 
-            try
-            {
-                authenticationResult = await AuthContext.AcquireTokenSilentAsync(resourceUri, clientId);
-            }
-            catch (ADAL.AdalSilentTokenAcquisitionException)
-            {
-                //Console.WriteLine("Silent Async failed. Use prompt instead.");
 
+            if (forceLogin)
+            {
+                CreateTokenCache(true);
+
+                SearchSPIndexCmdlet.Logger.Log(LogLevel.Debug, "AdalAuthentication.login: forcing re-login");
+
+                var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Always);
+                authenticationResult = await AuthContext.AcquireTokenAsync(resourceUri, clientId, new Uri(redirectUri), authParam);
+            }
+            else
+            {
                 try
                 {
-                    // prevent flashing of login window when credentials are valid
-                    var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Never);
-                    authenticationResult = await AuthContext.AcquireTokenAsync(resourceUri, clientId, new Uri(redirectUri), authParam);
+                    authenticationResult = await AuthContext.AcquireTokenSilentAsync(resourceUri, clientId);
                 }
-                catch (ADAL.AdalException /* e */)
+                catch (ADAL.AdalSilentTokenAcquisitionException)
                 {
-                    //Console.WriteLine(e);
+                    SearchSPIndexCmdlet.Logger.Log(LogLevel.Debug, "Silent Async failed. Try PromptBehavior.Never instead.");
 
-                    var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Auto);
-                    authenticationResult = await AuthContext.AcquireTokenAsync(resourceUri, clientId, new Uri(redirectUri), authParam);
+                    try
+                    {
+                        // prevent flashing of login window when credentials are valid
+                        var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Never);
+                        authenticationResult = await AuthContext.AcquireTokenAsync(resourceUri, clientId, new Uri(redirectUri), authParam);
+                    }
+                    catch (ADAL.AdalException /* e */)
+                    {
+                        SearchSPIndexCmdlet.Logger.Log(LogLevel.Debug, "That didn't work. Try PromptBehavior.Auto as last resort.");
+                        //Console.WriteLine(e);
 
+                        var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Auto);
+                        authenticationResult = await AuthContext.AcquireTokenAsync(resourceUri, clientId, new Uri(redirectUri), authParam);
+
+                    }
                 }
-            }
 
+            }
 
             return authenticationResult.CreateAuthorizationHeader();
         }

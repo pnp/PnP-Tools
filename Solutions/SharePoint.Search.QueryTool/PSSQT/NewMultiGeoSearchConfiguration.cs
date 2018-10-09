@@ -65,9 +65,7 @@ namespace PSSQT
 
             result.Append("[");
 
-            var formattedList = string.Join("\\,", Array.ConvertAll(configurations, c => c.Formatted));
-
-            result.Append(formattedList);
+            result.Append(string.Join("\\,", Array.ConvertAll(configurations, c => c.Formatted)));
 
             result.Append("]");
 
