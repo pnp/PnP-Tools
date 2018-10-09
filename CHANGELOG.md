@@ -5,14 +5,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [October 2018 - Unreleased]
+## [November 2018 - Unreleased]
 
 ### Added
 
 ### Changed
 
-- SharePoint Modernization Framework production release (1.0.1810.0)
+## [October 2018]
+
+### Added
+
+### Changed
+
+- SharePoint Modernization Framework production release (1.0.1810.2):
+	- Wiki text handling: Headers (H1 to H3), STRONG and EM tags with custom formatting do retain their formatting
+	- Supported formatting in table cells is retained when the table html is rewritten
+	- Approach to give newly created modern page the same name as the source page has been fixed: now url's to these pages in navigation or other pages are not rewritten
+	- Lowered minimal .Net framework version from 4.7 to 4.5.1
+	- Expose the swap pages logic so that it can be used by folks using the page transformation engine
+	- Support for adding a web part of choice as banner on all generated pages. Used to give end users an option to accept/decline the generated page
+	- Fixed issue with default page layout transformation for "One Column with Sidebar" wiki pages
 - SharePoint.Modernization.Scanner v1.6: .exe is X64 version only, beta version of classic publishing portal analysis, simplified group connection dashboard
+- Tenant Information Portal: settings cleanup [pschaeflein]
+- Search query tool 2.8.2: Re-added web based SPO login for some people. Updated to .Net 4.6.2 to support TLS 1.2
 
 ## [September 2018]
 

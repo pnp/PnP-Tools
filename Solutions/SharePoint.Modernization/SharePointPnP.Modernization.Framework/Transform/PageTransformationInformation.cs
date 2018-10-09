@@ -80,6 +80,11 @@ namespace SharePointPnP.Modernization.Framework.Transform
         /// Apply the item level page permissions on to the target page, defaults to true
         /// </summary>
         public bool KeepPageSpecificPermissions { get; set; }
+
+        /// <summary>
+        /// Configuration driven by the presence of a modernization center
+        /// </summary>
+        public ModernizationCenterInformation ModernizationCenterInformation { get; set; }
         #endregion
 
         #region Webpart replacement configuration

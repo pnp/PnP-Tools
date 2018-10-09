@@ -234,6 +234,55 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 layoutTransformator.Transform(pageData.Item1);
                 #endregion
 
+                #region Page Banner creation
+                if (!pageTransformationInformation.TargetPageTakesSourcePageName)
+                {
+                    if (pageTransformationInformation.ModernizationCenterInformation != null && pageTransformationInformation.ModernizationCenterInformation.AddPageAcceptBanner)
+                    {
+                        // Bump the row values for the existing web parts as we've inserted a new section
+                        foreach (var section in targetPage.Sections)
+                        {
+                            section.Order = section.Order + 1;
+                        }
+
+                        // Add new section for banner part
+                        targetPage.Sections.Insert(0, new CanvasSection(targetPage, CanvasSectionTemplate.OneColumn, 0));
+
+                        // Bump the row values for the existing web parts as we've inserted a new section
+                        foreach(var webpart in pageData.Item2)
+                        {
+                            webpart.Row = webpart.Row + 1;
+                        }
+
+
+                        var sourcePageUrl = pageTransformationInformation.SourcePage[Constants.FileRefField].ToString();
+                        var orginalSourcePageName = pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString();
+                        clientContext.Web.EnsureProperty(p => p.Url);
+                        Uri host = new Uri(clientContext.Web.Url);
+
+                        string path = $"{host.Scheme}://{host.DnsSafeHost}{sourcePageUrl.Replace(pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString(), "")}";
+
+                        // Add "fake" banner web part that then will be transformed onto the page
+                        Dictionary<string, string> props = new Dictionary<string, string>(2)
+                        {
+                            { "SourcePage", $"{path}{orginalSourcePageName}" },
+                            { "TargetPage", $"{path}{pageTransformationInformation.TargetPageName}" }
+                        };
+
+                        WebPartEntity bannerWebPart = new WebPartEntity()
+                        {
+                            Type = WebParts.PageAcceptanceBanner,
+                            Column = 1,
+                            Row = 1,
+                            Title = "",
+                            Order = 0,
+                            Properties = props,
+                        };
+                        pageData.Item2.Insert(0, bannerWebPart);
+                    }
+                }
+                #endregion  
+
                 #region Content transformation
                 // Use the default content transformator
                 IContentTransformator contentTransformator = new ContentTransformator(targetPage, pageTransformation);
@@ -251,9 +300,11 @@ namespace SharePointPnP.Modernization.Framework.Transform
             #endregion
 
             #region Page persisting + permissions
+            #region Save the page
             // Persist the client side page
             targetPage.Save(pageTransformationInformation.TargetPageName);
             targetPage.Publish();
+            #endregion
 
             #region Permission handling
             if (pageTransformationInformation.KeepPageSpecificPermissions)
@@ -304,104 +355,113 @@ namespace SharePointPnP.Modernization.Framework.Transform
             if (pageTransformationInformation.TargetPageTakesSourcePageName)
             {
                 //Load the source page
-                var sourcePageUrl = pageTransformationInformation.SourcePage[Constants.FileRefField].ToString();
-                var orginalSourcePageName = pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString();
-
-                string path = sourcePageUrl.Replace(pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString(), "");
-
-                var sourcePage = this.clientContext.Web.GetFileByServerRelativeUrl(sourcePageUrl);
-                this.clientContext.Load(sourcePage);
-                this.clientContext.ExecuteQueryRetry();
-
-                if (string.IsNullOrEmpty(pageTransformationInformation.SourcePagePrefix))
-                {
-                    pageTransformationInformation.SetDefaultSourcePagePrefix();
-                }
-                var newSourcePageUrl = $"{pageTransformationInformation.SourcePagePrefix}{pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString()}";
-
-                // Rename source page using the sourcepageprefix
-                // STEP1: First copy the source page to a new name. We on purpose use CopyTo as we want to avoid that "linked" url's get 
-                //        patched up during a MoveTo operation as that would also patch the url's in our new modern page
-                sourcePage.CopyTo($"{path}{newSourcePageUrl}", true);
-                this.clientContext.ExecuteQueryRetry();
-
-                //Load the created target page
-                var targetPageUrl = $"{path}{pageTransformationInformation.TargetPageName}";
-                var targetPageFile = this.clientContext.Web.GetFileByServerRelativeUrl(targetPageUrl);
-                this.clientContext.Load(targetPageFile);
-                this.clientContext.ExecuteQueryRetry();
-
-                // STEP2: Fix possible navigation entries to point to the "copied" source page first
-                // Rename the target page to the original source page name
-                // CopyTo and MoveTo with option to overwrite first internally delete the file to overwrite, which
-                // results in all page navigation nodes pointing to this file to be deleted. Hence let's point these
-                // navigation entries first to the copied version of the page we just created
-                this.clientContext.Web.Context.Load(this.clientContext.Web, w => w.Navigation.QuickLaunch, w => w.Navigation.TopNavigationBar);
-                this.clientContext.Web.Context.ExecuteQueryRetry();
-
-                bool navWasFixed = false;
-                IQueryable<NavigationNode> currentNavNodes = null;
-                IQueryable<NavigationNode> globalNavNodes = null;
-                var currentNavigation = this.clientContext.Web.Navigation.QuickLaunch;
-                var globalNavigation = this.clientContext.Web.Navigation.TopNavigationBar;
-                // Check for nav nodes
-                currentNavNodes = currentNavigation.Where(n => n.Url.Equals(sourcePageUrl, StringComparison.InvariantCultureIgnoreCase));
-                globalNavNodes = globalNavigation.Where(n => n.Url.Equals(sourcePageUrl, StringComparison.InvariantCultureIgnoreCase));
-
-                if (currentNavNodes.Count() > 0 || globalNavNodes.Count() > 0)
-                {
-                    navWasFixed = true;
-                    foreach (var node in currentNavNodes)
-                    {
-                        node.Url = $"{path}{newSourcePageUrl}";
-                        node.Update();
-                    }
-                    foreach (var node in globalNavNodes)
-                    {
-                        node.Url = $"{path}{newSourcePageUrl}";
-                        node.Update();
-                    }
-                    this.clientContext.ExecuteQueryRetry();
-                }
-
-                // STEP3: Now copy the created modern page over the original source page, at this point the new page has the same name as the original page had before transformation
-                targetPageFile.CopyTo($"{path}{orginalSourcePageName}", true);
-                this.clientContext.ExecuteQueryRetry();
-
-                // STEP4: Finish with restoring the page navigation: update the navlinks to point back the original page name
-                if (navWasFixed)
-                {
-                    // Reload the navigation entries as did update them
-                    this.clientContext.Web.Context.Load(this.clientContext.Web, w => w.Navigation.QuickLaunch, w => w.Navigation.TopNavigationBar);
-                    this.clientContext.Web.Context.ExecuteQueryRetry();
-
-                    currentNavigation = this.clientContext.Web.Navigation.QuickLaunch;
-                    globalNavigation = this.clientContext.Web.Navigation.TopNavigationBar;
-                    if (!string.IsNullOrEmpty($"{path}{newSourcePageUrl}"))
-                    {
-                        currentNavNodes = currentNavigation.Where(n => n.Url.Equals($"{path}{newSourcePageUrl}", StringComparison.InvariantCultureIgnoreCase));
-                        globalNavNodes = globalNavigation.Where(n => n.Url.Equals($"{path}{newSourcePageUrl}", StringComparison.InvariantCultureIgnoreCase));
-                    }
-
-                    foreach (var node in currentNavNodes)
-                    {
-                        node.Url = sourcePageUrl;
-                        node.Update();
-                    }
-                    foreach (var node in globalNavNodes)
-                    {
-                        node.Url = sourcePageUrl;
-                        node.Update();
-                    }
-                    this.clientContext.ExecuteQueryRetry();
-                }
-
-                //STEP5: Conclude with deleting the originally created modern page as we did copy that already in step 3
-                targetPageFile.DeleteObject();
-                this.clientContext.ExecuteQueryRetry();
+                SwapPages(pageTransformationInformation);
             }
             #endregion
             #endregion
+        }
+
+        /// <summary>
+        /// Performs the logic needed to swap a genered Migrated_Page.aspx to Page.aspx and then Page.aspx to Old_Page.aspx
+        /// </summary>
+        /// <param name="pageTransformationInformation">Information about the page to transform</param>
+        public void SwapPages(PageTransformationInformation pageTransformationInformation)
+        {
+            var sourcePageUrl = pageTransformationInformation.SourcePage[Constants.FileRefField].ToString();
+            var orginalSourcePageName = pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString();
+
+            string path = sourcePageUrl.Replace(pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString(), "");
+
+            var sourcePage = this.clientContext.Web.GetFileByServerRelativeUrl(sourcePageUrl);
+            this.clientContext.Load(sourcePage);
+            this.clientContext.ExecuteQueryRetry();
+
+            if (string.IsNullOrEmpty(pageTransformationInformation.SourcePagePrefix))
+            {
+                pageTransformationInformation.SetDefaultSourcePagePrefix();
+            }
+            var newSourcePageUrl = $"{pageTransformationInformation.SourcePagePrefix}{pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString()}";
+
+            // Rename source page using the sourcepageprefix
+            // STEP1: First copy the source page to a new name. We on purpose use CopyTo as we want to avoid that "linked" url's get 
+            //        patched up during a MoveTo operation as that would also patch the url's in our new modern page
+            sourcePage.CopyTo($"{path}{newSourcePageUrl}", true);
+            this.clientContext.ExecuteQueryRetry();
+
+            //Load the created target page
+            var targetPageUrl = $"{path}{pageTransformationInformation.TargetPageName}";
+            var targetPageFile = this.clientContext.Web.GetFileByServerRelativeUrl(targetPageUrl);
+            this.clientContext.Load(targetPageFile);
+            this.clientContext.ExecuteQueryRetry();
+
+            // STEP2: Fix possible navigation entries to point to the "copied" source page first
+            // Rename the target page to the original source page name
+            // CopyTo and MoveTo with option to overwrite first internally delete the file to overwrite, which
+            // results in all page navigation nodes pointing to this file to be deleted. Hence let's point these
+            // navigation entries first to the copied version of the page we just created
+            this.clientContext.Web.Context.Load(this.clientContext.Web, w => w.Navigation.QuickLaunch, w => w.Navigation.TopNavigationBar);
+            this.clientContext.Web.Context.ExecuteQueryRetry();
+
+            bool navWasFixed = false;
+            IQueryable<NavigationNode> currentNavNodes = null;
+            IQueryable<NavigationNode> globalNavNodes = null;
+            var currentNavigation = this.clientContext.Web.Navigation.QuickLaunch;
+            var globalNavigation = this.clientContext.Web.Navigation.TopNavigationBar;
+            // Check for nav nodes
+            currentNavNodes = currentNavigation.Where(n => n.Url.Equals(sourcePageUrl, StringComparison.InvariantCultureIgnoreCase));
+            globalNavNodes = globalNavigation.Where(n => n.Url.Equals(sourcePageUrl, StringComparison.InvariantCultureIgnoreCase));
+
+            if (currentNavNodes.Count() > 0 || globalNavNodes.Count() > 0)
+            {
+                navWasFixed = true;
+                foreach (var node in currentNavNodes)
+                {
+                    node.Url = $"{path}{newSourcePageUrl}";
+                    node.Update();
+                }
+                foreach (var node in globalNavNodes)
+                {
+                    node.Url = $"{path}{newSourcePageUrl}";
+                    node.Update();
+                }
+                this.clientContext.ExecuteQueryRetry();
+            }
+
+            // STEP3: Now copy the created modern page over the original source page, at this point the new page has the same name as the original page had before transformation
+            targetPageFile.CopyTo($"{path}{orginalSourcePageName}", true);
+            this.clientContext.ExecuteQueryRetry();
+
+            // STEP4: Finish with restoring the page navigation: update the navlinks to point back the original page name
+            if (navWasFixed)
+            {
+                // Reload the navigation entries as did update them
+                this.clientContext.Web.Context.Load(this.clientContext.Web, w => w.Navigation.QuickLaunch, w => w.Navigation.TopNavigationBar);
+                this.clientContext.Web.Context.ExecuteQueryRetry();
+
+                currentNavigation = this.clientContext.Web.Navigation.QuickLaunch;
+                globalNavigation = this.clientContext.Web.Navigation.TopNavigationBar;
+                if (!string.IsNullOrEmpty($"{path}{newSourcePageUrl}"))
+                {
+                    currentNavNodes = currentNavigation.Where(n => n.Url.Equals($"{path}{newSourcePageUrl}", StringComparison.InvariantCultureIgnoreCase));
+                    globalNavNodes = globalNavigation.Where(n => n.Url.Equals($"{path}{newSourcePageUrl}", StringComparison.InvariantCultureIgnoreCase));
+                }
+
+                foreach (var node in currentNavNodes)
+                {
+                    node.Url = sourcePageUrl;
+                    node.Update();
+                }
+                foreach (var node in globalNavNodes)
+                {
+                    node.Url = sourcePageUrl;
+                    node.Update();
+                }
+                this.clientContext.ExecuteQueryRetry();
+            }
+
+            //STEP5: Conclude with deleting the originally created modern page as we did copy that already in step 3
+            targetPageFile.DeleteObject();
+            this.clientContext.ExecuteQueryRetry();
         }
 
         /// <summary>

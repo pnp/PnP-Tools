@@ -94,8 +94,14 @@ namespace SharePointPnP.Modernization.Framework.Tests.Transform
                         // If target page exists, then overwrite it
                         Overwrite = true,
 
+                        // ModernizationCenter options
+                        ModernizationCenterInformation = new ModernizationCenterInformation()
+                        {
+                            AddPageAcceptBanner = true
+                        },
+
                         // Migrated page gets the name of the original page
-                        //TargetPageTakesSourcePageName = true,
+                        TargetPageTakesSourcePageName = true,
 
                         // Give the migrated page a specific prefix, default is Migrated_
                         //TargetPagePrefix = "Yes_",

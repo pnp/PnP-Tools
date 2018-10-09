@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SharePointPnP.Modernization.Framework</RootNamespace>
     <AssemblyName>SharePointPnP.Modernization.Framework</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -221,6 +221,7 @@
     <Compile Include="Transform\ILayoutTransformator.cs" />
     <Compile Include="Transform\IHtmlTransformator.cs" />
     <Compile Include="Transform\LayoutTransformator.cs" />
+    <Compile Include="Transform\ModernizationCenterInformation.cs" />
     <Compile Include="Transform\PageTransformationInformation.cs" />
     <Compile Include="Transform\PageTransformator.cs" />
     <Compile Include="Transform\HtmlTransformator.cs" />
@@ -233,7 +234,9 @@
     <Compile Include="WebParts.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="webpartmapping.xsc">
       <DependentUpon>webpartmapping.xsd</DependentUpon>
