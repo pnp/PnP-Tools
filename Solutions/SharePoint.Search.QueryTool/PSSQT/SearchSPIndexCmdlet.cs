@@ -39,6 +39,7 @@ namespace PSSQT
 
         private static readonly Dictionary<Guid, CookieCollection> Tokens = new Dictionary<Guid, CookieCollection>();   // SPO Auth tokens
 
+
         public enum QueryLogClientType
         {
             CSOM,
@@ -68,8 +69,6 @@ namespace PSSQT
             TrendingTagsQuery,
             Unknown
         }
-
-        internal static ILogger Logger { get; set; }
 
         #endregion
 
@@ -559,10 +558,7 @@ namespace PSSQT
         //    }
         //}
 
-        public SearchSPIndexCmdlet()
-        {
-            Logger = new CmdletLogger(this);
-        }
+
 
         protected override void ProcessRecord()
         {

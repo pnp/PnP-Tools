@@ -9,7 +9,7 @@ namespace PSSQT.Helpers.Authentication
     class AdalAuthentication
     {
         private static readonly ConcurrentDictionary<Guid, ADAL.TokenCache> Tokens = new ConcurrentDictionary<Guid, ADAL.TokenCache>();   // SPO Auth tokens
-        
+
         private static readonly string AuthorityUri = "https://login.windows.net/common/oauth2/authorize";
         private static readonly string clientId = "9bc3ab49-b65d-410a-85ad-de819febfddc";
         private static readonly string redirectUri = "https://oauth.spops.microsoft.com/";
@@ -28,7 +28,6 @@ namespace PSSQT.Helpers.Authentication
             using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
             {
                 runspaceId = ps.Runspace.InstanceId;
-                SearchSPIndexCmdlet.Logger.Log(LogLevel.Debug, $"CreateTokenCache: current runspace id: {runspaceId}");
 
                 ADAL.TokenCache tc;
 
@@ -36,8 +35,6 @@ namespace PSSQT.Helpers.Authentication
 
                 if (!found || forceRecreate)
                 {
-                    SearchSPIndexCmdlet.Logger.Log(LogLevel.Debug, "CreateTokenCache: creating new token cache.");
-
                     tc = new ADAL.TokenCache();
 
                     Tokens.AddOrUpdate(runspaceId, tc, (k, v) => v);     // Do I need to use a ConcurrentDictionary?
@@ -59,8 +56,6 @@ namespace PSSQT.Helpers.Authentication
             {
                 CreateTokenCache(true);
 
-                SearchSPIndexCmdlet.Logger.Log(LogLevel.Debug, "AdalAuthentication.login: forcing re-login");
-
                 var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Always);
                 authenticationResult = await AuthContext.AcquireTokenAsync(resourceUri, clientId, new Uri(redirectUri), authParam);
             }
@@ -72,7 +67,6 @@ namespace PSSQT.Helpers.Authentication
                 }
                 catch (ADAL.AdalSilentTokenAcquisitionException)
                 {
-                    SearchSPIndexCmdlet.Logger.Log(LogLevel.Debug, "Silent Async failed. Try PromptBehavior.Never instead.");
 
                     try
                     {
@@ -82,7 +76,6 @@ namespace PSSQT.Helpers.Authentication
                     }
                     catch (ADAL.AdalException /* e */)
                     {
-                        SearchSPIndexCmdlet.Logger.Log(LogLevel.Debug, "That didn't work. Try PromptBehavior.Auto as last resort.");
                         //Console.WriteLine(e);
 
                         var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Auto);
@@ -93,7 +86,8 @@ namespace PSSQT.Helpers.Authentication
 
             }
 
-            return authenticationResult.CreateAuthorizationHeader();
+
+           return authenticationResult.CreateAuthorizationHeader();
         }
     }
 }

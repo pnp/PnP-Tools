@@ -129,7 +129,7 @@ namespace PSSQT.Helpers
 
                 case AuthenticationType.SPOManagement:
                     UserNotification();
-                    SearchSPIndexCmdlet.AdalLogin(searchQueryRequest);
+                    SearchSPIndexCmdlet.AdalLogin(searchQueryRequest, false);
                     break;
 
                 default:
