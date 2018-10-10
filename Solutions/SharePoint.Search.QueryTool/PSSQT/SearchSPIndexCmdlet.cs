@@ -73,15 +73,7 @@ namespace PSSQT
         #endregion
 
         #region ScriptParameters
-        [Parameter(
-             Mandatory = true,
-             ValueFromPipelineByPropertyName = false,
-             ValueFromPipeline = false,
-             Position = 0,
-             HelpMessage = "Show a calculated build number.",
-             ParameterSetName = "P3"
-         )]
-        public SwitchParameter Build { get; set; }
+ 
 
         [Parameter(
             Mandatory = true,
@@ -209,7 +201,7 @@ namespace PSSQT
             ValueFromPipeline = false,
             HelpMessage = "Try to retrieve ALL results. USE WITH CAUTION!!"
         )]
-
+        [Alias("RowLimitAll")]
         public SwitchParameter LimitAll { get; set; }
 
         [Parameter(
@@ -544,21 +536,6 @@ namespace PSSQT
         #endregion
 
         #region Methods
-
-        //public string SelectPropertiesAsString
-        //{
-        //    get
-        //    {
-        //        return SelectProperties == null ?  null : string.Join(",", SelectProperties);
-        //    }
-
-        //    private set
-        //    {
-        //        AddSelectProperty(value);
-        //    }
-        //}
-
-
 
         protected override void ProcessRecord()
         {
@@ -970,7 +947,7 @@ namespace PSSQT
                 {
                     var requestResponsePair = HttpRequestRunner.RunWebRequest(SetSelectProperties(searchQueryRequest));
 
-                    var queryResults = requestResponsePair.GetResultItem();
+                    var queryResults = (SearchQueryResult) requestResponsePair.GetResultItem(new SearchQueryResult());
 
                     totalRows = queryResults.PrimaryQueryResult.TotalRows;
 
