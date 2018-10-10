@@ -28,7 +28,7 @@ namespace PSSQT
         : AbstractSearchSPCmdlet
     {
         #region PrivateMembers
- 
+
         #endregion
 
         #region ScriptParameters
@@ -37,25 +37,87 @@ namespace PSSQT
             Mandatory = false,
             ValueFromPipelineByPropertyName = false,
             ValueFromPipeline = false,
-            HelpMessage = "Number of results."
+            HelpMessage = "Number of query suggestions."
         )]
-        public int? RowLimit { get; set; }
-
+        public int? NumberOfQuerySuggestions { get; set; }
 
         [Parameter(
             Mandatory = false,
             ValueFromPipelineByPropertyName = false,
             ValueFromPipeline = false,
-            HelpMessage = "Save parameters as a preset. Load using LoadPreset"
+            HelpMessage = "Number of result suggestions."
         )]
-        public string SavePreset { get; set; }
 
+        public int? NumberOfResultSuggestions { get; set; }
 
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
+            HelpMessage = "Enable hit highlithing of search term in query."
+        )]
+        public SwitchParameter EnableHitHighlighting { get; set; }
+
+        [Parameter(
+             Mandatory = false,
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             HelpMessage = "Disable hit highlithing of search term in query."
+        )]
+        public SwitchParameter DisableHitHighlighting { get; set; }
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
+            HelpMessage = "Enable Capitalize First Letters."
+        )]
+        public SwitchParameter EnableCapitalizeFirstLetters { get; set; }
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
+            HelpMessage = "Disable Capitalize First Letters."
+        )]
+        public SwitchParameter DisableCapitalizeFirstLetters { get; set; }
+
+        [Parameter(
+             Mandatory = false,
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             HelpMessage = "Enable Show People Name Suggestions."
+         )]
+        public SwitchParameter EnableShowPeopleNameSuggestions { get; set; }
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
+            HelpMessage = "Disable Show People Name Suggestions."
+        )]
+        public SwitchParameter DisableShowPeopleNameSuggestions { get; set; }
+
+        [Parameter(
+              Mandatory = false,
+              ValueFromPipelineByPropertyName = false,
+              ValueFromPipeline = false,
+              HelpMessage = "Enable Pre Query Suggestions."
+          )]
+        public SwitchParameter EnablePreQuerySuggestions { get; set; }
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
+            HelpMessage = "Disable Pre Query Suggestions."
+        )]
+        public SwitchParameter DisablePreQuerySuggestions { get; set; }
         #endregion
 
         #region Methods
 
-    
+
         protected override void ProcessRecord()
         {
             try
@@ -78,7 +140,7 @@ namespace PSSQT
 
                 // Save Site/Preset
 
-                if (!(String.IsNullOrWhiteSpace(SaveSite) && String.IsNullOrWhiteSpace(SavePreset)))
+                if (!(String.IsNullOrWhiteSpace(SaveSite) /*&& String.IsNullOrWhiteSpace(SavePreset)*/))
                 {
                     throw new NotImplementedException("TODO: implement save site for suggestions");
                     //if (!String.IsNullOrWhiteSpace(SaveSite))
@@ -96,7 +158,7 @@ namespace PSSQT
                     EnsureValidQuery(searchSuggestionsRequest);
 
                     GetResults(searchSuggestionsRequest);
- 
+
                 }
 
             }
@@ -131,100 +193,38 @@ namespace PSSQT
 
             // TODO: do searchSuggestions specifics
 
-  
- 
-            var requestResponsePair = task.Result;
-            var request = requestResponsePair.Item1;
-
-            using (var response = requestResponsePair.Item2)
+            if (NumberOfQuerySuggestions.HasValue)
             {
-                using (var reader = new StreamReader(response.GetResponseStream()))
-                {
-                    var content = reader.ReadToEnd();
-
-                    NameValueCollection requestHeaders = new NameValueCollection();
-                    foreach (var header in request.Headers.AllKeys)
-                    {
-                        requestHeaders.Add(header, request.Headers[header]);
-                    }
-
-                    NameValueCollection responseHeaders = new NameValueCollection();
-                    foreach (var header in response.Headers.AllKeys)
-                    {
-                        responseHeaders.Add(header, response.Headers[header]);
-                    }
-
-                    var searchResults = new SearchSuggestionsResult
-                    {
-                        RequestUri = request.RequestUri,
-                        RequestMethod = request.Method,
-                        ContentType = response.ContentType,
-
-                        ResponseContent = content,
-                        RequestHeaders = requestHeaders,
-                        ResponseHeaders = responseHeaders,
-                        StatusCode = response.StatusCode,
-                        StatusDescription = response.StatusDescription,
-                        HttpProtocolVersion = response.ProtocolVersion.ToString()
-                    };
-                    searchResults.Process();
-
-                    SetSuggestionsResultItems(searchResults);
-                }
-            }
- 
-        }
-
-        private void foo()
-        {
-            int totalRows = 0;
-            bool keepTrying = true;
-
-
-            IQueryResultProcessor queryResultProcessor = QueryResultProcessorFactory.SelectQueryResultProcessor(ResultProcessor.Value, this, searchQueryRequest);
-
-            queryResultProcessor.Configure();    // May add required properties to retrieve, modify the searchQueryRequest (e.g. rankdetail etc.)
-
-            while (keepTrying)
-            {
-                keepTrying = false;
-
-                try
-                {
-                    var requestResponsePair = HttpRequestRunner.RunWebRequest(searchSuggestionsRequest);
-
-                    var queryResults = requestResponsePair.GetResultItem();
-
-                    totalRows = queryResults.PrimaryQueryResult.TotalRows;
-
-                    queryResultProcessor.Process(queryResults);
-                }
-                catch (RankDetailTooManyResults ex)
-                {
-                    WriteWarning("More than 100 results in result set. Resubmitting query with filter to get RankDetail.");
-
-                    searchQueryRequest.QueryText += ex.QueryFilter;
-                    keepTrying = true;
-                }
-                catch (Exception ex)
-                {
-                    if (!queryResultProcessor.HandleException(ex, searchQueryRequest))
-                    {
-                        throw;
-                    }
-
-                    // if exception was handled, we will try again
-                    keepTrying = true;
-                }
-
+                searchSuggestionsRequest.NumberOfQuerySuggestions = NumberOfQuerySuggestions.Value;
             }
 
+            if (NumberOfResultSuggestions.HasValue)
+            {
+                searchSuggestionsRequest.NumberOfResultSuggestions = NumberOfResultSuggestions;
+            }
+
+            searchSuggestionsRequest.PreQuerySuggestions = GetThreeWaySwitchValue(EnablePreQuerySuggestions, DisablePreQuerySuggestions);
+            searchSuggestionsRequest.HitHighlighting = GetThreeWaySwitchValue(EnableHitHighlighting, DisableHitHighlighting);
+            searchSuggestionsRequest.CapitalizeFirstLetters = GetThreeWaySwitchValue(EnableCapitalizeFirstLetters, DisableCapitalizeFirstLetters);
+            searchSuggestionsRequest.ShowPeopleNameSuggestions = GetThreeWaySwitchValue(EnableShowPeopleNameSuggestions, DisableShowPeopleNameSuggestions);
         }
 
-        private int GetResults(SearchSuggestionsRequest searchSuggestionsRequest)
+
+
+        private void GetResults(SearchSuggestionsRequest searchSuggestionsRequest)
         {
- 
-            return 0;
+            ISuggestionsResultProcessor suggestionResultProcessor = new SuggestionsResultProcessor(this);
+
+            suggestionResultProcessor.Configure();
+
+            WriteVerbose($"Request: {searchSuggestionsRequest.ToString()}");
+
+            var requestResponsePair = HttpRequestRunner.RunWebRequest(searchSuggestionsRequest);
+
+            var suggestionResults = requestResponsePair.GetResultItem<SearchSuggestionsResult>();
+
+
+            suggestionResultProcessor.Process(suggestionResults);
         }
 
 

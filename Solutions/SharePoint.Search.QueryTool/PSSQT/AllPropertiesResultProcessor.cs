@@ -82,7 +82,7 @@ namespace PSSQT
             {
                 var requestResponsePair = HttpRequestRunner.RunWebRequest(clonedRequest);
 
-                var queryResults = requestResponsePair.GetResultItem();
+                var queryResults = requestResponsePair.GetResultItem<SearchQueryResult>();
 
                 // Ensure we got primary results and refiner results
                 if (queryResults.PrimaryQueryResult == null || queryResults.PrimaryQueryResult.RefinerResults == null)
@@ -101,7 +101,7 @@ namespace PSSQT
 
                 requestResponsePair = HttpRequestRunner.RunWebRequest(clonedRequest);
 
-                queryResults = requestResponsePair.GetResultItem();
+                queryResults = requestResponsePair.GetResultItem<SearchQueryResult>();
 
                 if (queryResults.PrimaryQueryResult == null || queryResults.PrimaryQueryResult.RelevantResults == null)
                 {

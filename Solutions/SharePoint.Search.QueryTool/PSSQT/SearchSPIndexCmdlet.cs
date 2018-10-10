@@ -947,7 +947,7 @@ namespace PSSQT
                 {
                     var requestResponsePair = HttpRequestRunner.RunWebRequest(SetSelectProperties(searchQueryRequest));
 
-                    var queryResults = (SearchQueryResult) requestResponsePair.GetResultItem(new SearchQueryResult());
+                    var queryResults = requestResponsePair.GetResultItem<SearchQueryResult>();
 
                     totalRows = queryResults.PrimaryQueryResult.TotalRows;
 
@@ -992,7 +992,6 @@ namespace PSSQT
 
         }
 
-
         private static bool? GetThreeWaySwitchValue(SwitchParameter enable, SwitchParameter disable)
         {
             bool? result = null;
@@ -1002,6 +1001,7 @@ namespace PSSQT
                                             // else  result = null which means use default value
             return result;
         }
+
 
         private string GetPresetFilename(string presetName, bool searchPath = false)
         {

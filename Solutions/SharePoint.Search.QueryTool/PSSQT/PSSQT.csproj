@@ -184,6 +184,7 @@
     <Compile Include="AllPropertiesResultProcessor.cs" />
     <Compile Include="AuthenticationMethod.cs" />
     <Compile Include="ExplainRankResultProcessor.cs" />
+    <Compile Include="FormatSuggestionsCmdlet.cs" />
     <Compile Include="Helpers\Authentication\AdalAuthentication.cs" />
     <Compile Include="Helpers\ExceptionHandler.cs" />
     <Compile Include="Helpers\HttpRequestResponsePairExtensions.cs" />

@@ -836,4 +836,64 @@ namespace PSSQT
     }
 
 
+    //
+    // SearchSuggestions
+    //
+
+    public interface ISuggestionsResultProcessor
+    {
+        void Configure();
+
+        void Process(SearchSuggestionsResult searchSuggestionsResult);
+
+        bool HandleException(Exception ex, SearchSuggestionsRequest searchSuggestionsRequest);
+    }
+
+    public class SuggestionsResultProcessor : ISuggestionsResultProcessor
+    {
+        public SuggestionsResultProcessor(Cmdlet cmdlet)
+        {
+            this.Cmdlet = cmdlet;
+        }
+
+        public Cmdlet Cmdlet { get; }
+
+        public void Configure()
+        {
+            
+        }
+
+        public bool HandleException(Exception ex, SearchSuggestionsRequest searchSuggestionsRequest)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void Process(SearchSuggestionsResult searchSuggestionsResult)
+        {
+            foreach (var resultItem in searchSuggestionsResult.SuggestionResults)
+            {
+                var item = new PSObject();
+
+                item.Properties.Add(new PSVariableProperty(new PSVariable("Query", resultItem.Query)));
+                item.Properties.Add(new PSVariableProperty(new PSVariable("IsPersonal", resultItem.IsPersonal)));
+
+                Cmdlet.WriteObject(item);
+            }
+        }
+    }
+
+    public class RawSuggestionsResultProcessor : SuggestionsResultProcessor
+    {
+        public RawSuggestionsResultProcessor(Cmdlet cmdlet) : base(cmdlet)
+        {
+        }
+
+
+        public override void Process(SearchSuggestionsResult searchSuggestionsResult)
+        {
+            var item = new PSObject(searchSuggestionsResult);
+
+            Cmdlet.WriteObject(item);
+        }
+    }
 }

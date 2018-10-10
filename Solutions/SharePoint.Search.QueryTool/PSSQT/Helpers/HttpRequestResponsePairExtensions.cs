@@ -13,8 +13,9 @@ namespace PSSQT.Helpers
 {
     public static class HttpRequestResponsePairExtensions
     {
-        public static SearchResult GetResultItem(this HttpRequestResponsePair requestResponsePair, SearchResult searchResult)
+        public static TSearchResult GetResultItem<TSearchResult>(this HttpRequestResponsePair requestResponsePair) where TSearchResult : SearchResult, new()
         {
+            TSearchResult searchResult;
             var request = requestResponsePair.Item1;
 
             using (var response = requestResponsePair.Item2)
@@ -46,16 +47,20 @@ namespace PSSQT.Helpers
                         requestContent = requestResponsePair.Item3;
                     }
 
-                    searchResult.RequestUri = request.RequestUri;
-                    searchResult.RequestMethod = request.Method;
-                    searchResult.RequestContent = requestContent;
-                    searchResult.ContentType = response.ContentType;
-                    searchResult.ResponseContent = content;
-                    searchResult.RequestHeaders = requestHeaders;
-                    searchResult.ResponseHeaders = responseHeaders;
-                    searchResult.StatusCode = response.StatusCode;
-                    searchResult.StatusDescription = response.StatusDescription;
-                    searchResult.HttpProtocolVersion = response.ProtocolVersion.ToString();
+
+                    searchResult = new TSearchResult {
+
+                        RequestUri = request.RequestUri,
+                        RequestMethod = request.Method,
+                        RequestContent = requestContent,
+                        ContentType = response.ContentType,
+                        ResponseContent = content,
+                        RequestHeaders = requestHeaders,
+                        ResponseHeaders = responseHeaders,
+                        StatusCode = response.StatusCode,
+                        StatusDescription = response.StatusDescription,
+                        HttpProtocolVersion = response.ProtocolVersion.ToString()
+                    };
 
                     searchResult.Process();
                 }

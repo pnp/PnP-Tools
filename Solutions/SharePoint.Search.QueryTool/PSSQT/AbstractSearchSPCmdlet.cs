@@ -327,6 +327,18 @@ namespace PSSQT
         }
 
 
+        // Hoping that ExclusionSets will be available soon. Would clean this up.
+        protected static bool? GetThreeWaySwitchValue(SwitchParameter enable, SwitchParameter disable)
+        {
+            bool? result = null;
+
+            if (enable) result = true;
+            if (disable) result = false;    // disable overrides enable
+                                            // else  result = null which means use default value
+            return result;
+        }
+
+
         private string GetSPSite()
         {
             if (String.IsNullOrWhiteSpace(Site) || Site.StartsWith("http://") || Site.StartsWith("https://"))
