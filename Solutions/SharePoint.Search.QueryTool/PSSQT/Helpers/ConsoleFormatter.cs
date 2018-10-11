@@ -13,6 +13,12 @@ namespace PSSQT.Helpers
         private static readonly string[] splitOn = new string[] { "<c0>", "</c0>" };
         private static readonly string wspattern = @"\s+";
 
+        // These are used here and in FormatResultsCmdlet
+        public static readonly ConsoleColor DefaultSummaryHitHighlightColor = ConsoleColor.Magenta;
+        public static readonly ConsoleColor DefaultTitleColor = ConsoleColor.Cyan;
+        public static readonly ConsoleColor DefaultNumberColor = ConsoleColor.Yellow;
+        public static readonly ConsoleColor DefaultPathColor = ConsoleColor.DarkGray;
+
         //private bool doHighlight;
         private int resultNumber = 1;
 
@@ -21,7 +27,11 @@ namespace PSSQT.Helpers
         private static readonly int pathPresent = 0x4;
         private static readonly int allPresent = titlePresent | hhsummaryPresent | pathPresent;
 
-        public ConsoleColor Color { get; set; } = ConsoleColor.DarkGreen;
+        public ConsoleColor SummaryHitHighlightColor { get; set; } = DefaultSummaryHitHighlightColor;
+        public ConsoleColor TitleColor { get; set; } = DefaultTitleColor;
+        public ConsoleColor NumberColor { get; set; } = DefaultNumberColor;
+        public ConsoleColor PathColor { get; set; } = DefaultPathColor;
+
         public PSCmdlet Cmdlet { get; set; }
 
         public ConsoleFormatter(PSCmdlet cmdlet)
@@ -121,7 +131,7 @@ namespace PSSQT.Helpers
             Cmdlet.WriteInformation(new HostInformationMessage
             {
                 Message = $"{resultNumber.ToString()}. ",
-                ForegroundColor = ConsoleColor.Yellow,
+                ForegroundColor = NumberColor,
                 BackgroundColor = Cmdlet.Host.UI.RawUI.BackgroundColor,
                 NoNewLine = true
             }, new[] { "PSHOST" });
@@ -129,7 +139,7 @@ namespace PSSQT.Helpers
             Cmdlet.WriteInformation(new HostInformationMessage
             {
                 Message = title,
-                ForegroundColor = ConsoleColor.Cyan,
+                ForegroundColor = TitleColor,
                 BackgroundColor = Cmdlet.Host.UI.RawUI.BackgroundColor,
                 NoNewLine = false
             }, new[] { "PSHOST" });
@@ -153,7 +163,7 @@ namespace PSSQT.Helpers
                 Cmdlet.WriteInformation(new HostInformationMessage
                 {
                     Message = token,
-                    ForegroundColor = doHighlight ? Color : Cmdlet.Host.UI.RawUI.ForegroundColor,
+                    ForegroundColor = doHighlight ? SummaryHitHighlightColor : Cmdlet.Host.UI.RawUI.ForegroundColor,
                     BackgroundColor = Cmdlet.Host.UI.RawUI.BackgroundColor,
                     NoNewLine = true
                 }, new[] { "PSHOST" });
@@ -176,7 +186,7 @@ namespace PSSQT.Helpers
             Cmdlet.WriteInformation(new HostInformationMessage
             {
                 Message = path,
-                ForegroundColor = ConsoleColor.DarkGray,
+                ForegroundColor = PathColor,
                 BackgroundColor = Cmdlet.Host.UI.RawUI.BackgroundColor,
                 NoNewLine = false
             }, new[] { "PSHOST" });

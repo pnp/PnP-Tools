@@ -28,8 +28,32 @@ namespace PSSQT
             ValueFromPipeline = false,
             HelpMessage = "Highlight Color."
         )]
-        public ConsoleColor Color { get; set; } = ConsoleColor.Green;
+        [Alias("SummaryHitHighlightColor")]
+        public ConsoleColor Color { get; set; } = Helpers.ConsoleFormatter.DefaultSummaryHitHighlightColor;
 
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
+            HelpMessage = "Title Color."
+        )]
+        public ConsoleColor TitleColor { get; set; } = Helpers.ConsoleFormatter.DefaultTitleColor;
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
+            HelpMessage = "Number Color."
+        )]
+        public ConsoleColor NumberColor { get; set; } = Helpers.ConsoleFormatter.DefaultNumberColor;
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
+            HelpMessage = "Path Color."
+        )]
+        public ConsoleColor PathColor { get; set; } = Helpers.ConsoleFormatter.DefaultPathColor;
         #endregion
 
         #region Methods
@@ -39,7 +63,10 @@ namespace PSSQT
             base.BeginProcessing();
 
             formatter = new Helpers.ConsoleFormatter(this);
-            formatter.Color = Color;
+            formatter.SummaryHitHighlightColor = Color;
+            formatter.TitleColor = TitleColor;
+            formatter.NumberColor = NumberColor;
+            formatter.PathColor = PathColor;
 
             formatter.FormatDividerLine();
         }
