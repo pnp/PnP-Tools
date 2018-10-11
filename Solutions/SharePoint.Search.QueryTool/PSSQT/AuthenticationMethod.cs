@@ -3,7 +3,7 @@
     public enum PSAuthenticationMethod
     {
         Windows,
-        //SPO,
+        SPO,
         SPOManagement
     }
 }
