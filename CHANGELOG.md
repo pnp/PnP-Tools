@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- SharePoint.PermissiveFile.Scanner v1.8: x64 build
+
 ## [October 2018]
 
 ### Added
