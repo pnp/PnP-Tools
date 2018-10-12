@@ -187,6 +187,7 @@ PnPResponsiveApp.Main = (function () {
         var c = document.getElementById("ms-designbuilder-cuicontainer_mobileClone");
         if (!Boolean(c))
             return;
+        c.innerHTML = '';
         var a = new CUI.RootProperties;
         a.Culture = h;
         a.DecimalSeparator = e;

@@ -90,7 +90,7 @@
     height: 100%;
     position: absolute;
     left: -302px;
-    z-index: 298;
+    z-index: 1001;
     transition: left 367ms ease-out, opacity 367ms ease-out;
     box-shadow: 30px 0 30px -30px rgba(100, 100, 100, 0.4);
     box-sizing: border-box;
@@ -561,6 +561,10 @@ div#s4-bodyContainer {
     #contentRow {
         /* Start out as collapsed */
         margin-left: -200px;
+    }
+    /* Overwrite margin-left to fix an issue with designbuilder on tablet only */
+    #contentRow > #contentBox {
+        margin-left: 220px;
     }
     /* When fullscreen mode is enbale, there are no left menu so remove negative margin-left to hide menu */
     body.ms-fullscreenmode #contentRow {
