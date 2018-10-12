@@ -23,8 +23,8 @@ using System.Threading;
 
 namespace PSSQT
 {
-    public abstract class AbstractSearchSPCmdlet
-         : PSCmdlet
+    public abstract class AbstractSearchSPCmdlet<TSearchRequest>
+         : PSCmdlet where TSearchRequest : SearchRequest, new()
     {
         #region PrivateMembers
 
@@ -98,19 +98,10 @@ namespace PSSQT
 
 
         [Parameter(
-            Mandatory = false,
-            ValueFromPipelineByPropertyName = false,
-            ValueFromPipeline = false,
-            HelpMessage = "Save connection properties to file. E.g. Search-SPindex -Site https://host1/path -SaveSite host1"
-        )]
-        public string SaveSite { get; set; }
-
-
-        [Parameter(
             Mandatory = true,
             ValueFromPipelineByPropertyName = false,
             ValueFromPipeline = false,
-            HelpMessage = "Load parameters from file. Use SavePreset to save a preset. Script parameters on the command line overrides.",
+            HelpMessage = "Load parameters from file. Use Search-SPIndex -SavePreset to save a preset. Script parameters on the command line overrides.",
             ParameterSetName = "P2"
         )]
         [Alias("Preset")]
@@ -143,6 +134,68 @@ namespace PSSQT
         {
         }
 
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                base.ProcessRecord();
+
+                WriteDebug($"Enter {GetType().Name} ProcessRecord");
+
+                SearchConnection searchConnection = new SearchConnection();
+                TSearchRequest searchRequest = new TSearchRequest();
+
+                // Load Preset
+                if (ParameterSetName == "P2")
+                {
+                    SearchPreset preset = LoadPresetFromFile();
+
+                    searchConnection = preset.Connection;
+
+                    PresetLoaded(ref searchRequest, preset);
+                }
+
+                // Set Script Parameters from Command Line. Override in deriving classes
+
+                SetRequestParameters(searchRequest);
+
+                // Save Site/Preset
+
+                if (IsSavePreset())
+                {
+                    SaveRequestPreset(searchConnection, searchRequest);
+                }
+                else
+                {
+                    EnsureValidQuery(searchRequest);
+
+                    ExecuteRequest(searchRequest);
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteError(new ErrorRecord(ex,
+                           GetErrorId(),
+                           ErrorCategory.NotSpecified,
+                           null)
+                          );
+
+                WriteDebug(ex.StackTrace);
+            }
+        }
+
+        protected abstract void SaveRequestPreset(SearchConnection searchConnection, TSearchRequest searchRequest);
+
+        protected abstract bool IsSavePreset();
+
+        protected abstract void PresetLoaded(ref TSearchRequest searchRequest, SearchPreset preset);
+
+        protected abstract void ExecuteRequest(TSearchRequest searchRequest);
+
+        protected virtual string GetErrorId()
+        {
+            return GetType().Name;
+        }
 
         protected SearchPreset LoadPresetFromFile()
         {
@@ -153,34 +206,23 @@ namespace PSSQT
             return new SearchPreset(path, true);
         }
 
-        protected void SaveSiteToFile(SearchConnection searchConnection)
+        protected virtual void EnsureValidQuery(TSearchRequest searchRequest)
         {
-            if (!(Site.StartsWith("http://") || Site.StartsWith("https://")))
+            if (String.IsNullOrWhiteSpace(searchRequest.QueryText))
             {
-                throw new Exception("-Site should be a valid http(s):// URL when you use -SaveSite.");
+                throw new Exception("Query text cannot be null.");
             }
-
-            var fileName = GetPresetFilename(SaveSite);
-
-            WriteDebug(String.Format("Save Site: {0}", searchConnection.SpSiteUrl));
-
-            searchConnection.SaveXml(fileName);
-
-            WriteVerbose("Connection properties saved to " + fileName);
         }
 
-
-
-
-        protected void SetRequestParameters(SearchConnection searchConnection, SearchRequest searchRequest)
+        protected virtual void SetRequestParameters(TSearchRequest searchRequest)
         {
             searchRequest.SharePointSiteUrl = GetSPSite() ?? searchRequest.SharePointSiteUrl;
-            searchConnection.SpSiteUrl = searchRequest.SharePointSiteUrl;
+            //searchConnection.SpSiteUrl = searchRequest.SharePointSiteUrl;
 
             searchRequest.QueryText = GetQuery() ?? searchRequest.QueryText;
 
             searchRequest.HttpMethodType = MethodType.HasValue ? MethodType.Value : searchRequest.HttpMethodType;
-            searchConnection.HttpMethod = searchRequest.HttpMethodType.ToString();
+            //searchConnection.HttpMethod = searchRequest.HttpMethodType.ToString();
 
             searchRequest.AcceptType = AcceptType.HasValue ? AcceptType.Value : searchRequest.AcceptType;
 
@@ -274,8 +316,7 @@ namespace PSSQT
         }
 
 
-
-        private string GetPresetFilename(string presetName, bool searchPath = false)
+        protected string GetPresetFilename(string presetName, bool searchPath = false)
         {
             string path = presetName;
 
@@ -339,7 +380,7 @@ namespace PSSQT
         }
 
 
-        private string GetSPSite()
+        protected string GetSPSite()
         {
             if (String.IsNullOrWhiteSpace(Site) || Site.StartsWith("http://") || Site.StartsWith("https://"))
             {
@@ -349,12 +390,25 @@ namespace PSSQT
 
             var fileName = GetPresetFilename(Site);
 
+            if (! File.Exists(fileName))
+            {
+                throw new RuntimeException($"File not found: \"{fileName}\"");
+            }
+
             SearchConnection sc = new SearchConnection();
 
             sc.Load(fileName);
 
+            if (sc.SpSiteUrl == null)
+            {
+                throw new ArgumentException($"Unable to load valid saved site information from the file \"{fileName}\"");
+            }
+
             return sc.SpSiteUrl;
         }
+
+ 
+
         #endregion
     }
 }

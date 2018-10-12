@@ -222,6 +222,8 @@
     <Compile Include="RankLogParser\RankLogStageStaticFeature.cs" />
     <Compile Include="RankModelNames.cs" />
     <Compile Include="ResultSourceNames.cs" />
+    <Compile Include="SearchConnectionExtensions.cs" />
+    <Compile Include="SearchSuggestionsRequestExtensions.cs" />
     <Compile Include="SearchQueryRequestExtensions.cs" />
     <Compile Include="AbstractSearchSPCmdlet.cs" />
     <Compile Include="SearchSPSuggestionsCmdlet.cs" />

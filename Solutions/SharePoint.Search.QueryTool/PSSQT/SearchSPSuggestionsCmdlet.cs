@@ -25,7 +25,7 @@ namespace PSSQT
 {
     [Cmdlet(VerbsCommon.Search, "SPSuggestions", DefaultParameterSetName = "P1")]
     public class SearchSPSuggestionsCmdlet
-        : AbstractSearchSPCmdlet
+        : AbstractSearchSPCmdlet<SearchSuggestionsRequest>
     {
         #region PrivateMembers
 
@@ -118,78 +118,9 @@ namespace PSSQT
         #region Methods
 
 
-        protected override void ProcessRecord()
+        protected override void SetRequestParameters(SearchSuggestionsRequest searchSuggestionsRequest)
         {
-            try
-            {
-                base.ProcessRecord();
-
-                SearchConnection searchConnection = new SearchConnection();
-                SearchSuggestionsRequest searchSuggestionsRequest = new SearchSuggestionsRequest();
-
-                // Load Preset
-                if (ParameterSetName == "P2")
-                {
-                    SearchPreset preset = LoadPresetFromFile();
-                    searchConnection = preset.Connection;
-                }
-
-                // Set Script Parameters from Command Line
-
-                SetRequestParameters(searchConnection, searchSuggestionsRequest);
-
-                // Save Site/Preset
-
-                if (!(String.IsNullOrWhiteSpace(SaveSite) /*&& String.IsNullOrWhiteSpace(SavePreset)*/))
-                {
-                    throw new NotImplementedException("TODO: implement save site for suggestions");
-                    //if (!String.IsNullOrWhiteSpace(SaveSite))
-                    //{
-                    //    SaveSiteToFile(searchConnection);
-                    //}
-
-                    //if (!String.IsNullOrWhiteSpace(SavePreset))
-                    //{
-                    //    SavePresetToFile(searchConnection, searchSuggestionsRequest);
-                    //}
-                }
-                else // Perform the Search
-                {
-                    EnsureValidQuery(searchSuggestionsRequest);
-
-                    GetResults(searchSuggestionsRequest);
-
-                }
-
-            }
-            catch (Exception ex)
-            {
-                WriteError(new ErrorRecord(ex,
-                           "SearchSPSuggestionsError",
-                           ErrorCategory.NotSpecified,
-                           null)
-                          );
-
-                WriteDebug(ex.StackTrace);
-            }
-        }
-
-
-        private void EnsureValidQuery(SearchSuggestionsRequest searchSuggestionsRequest)
-        {
-            if (String.IsNullOrWhiteSpace(searchSuggestionsRequest.QueryText))
-            {
-                throw new Exception("Query text cannot be null.");
-            }
-        }
-
-
-
-
-
-        private void SetRequestParameters(SearchConnection searchConnection, SearchSuggestionsRequest searchSuggestionsRequest)
-        {
-            base.SetRequestParameters(searchConnection, searchSuggestionsRequest);
+            base.SetRequestParameters(searchSuggestionsRequest);
 
             // TODO: do searchSuggestions specifics
 
@@ -209,8 +140,6 @@ namespace PSSQT
             searchSuggestionsRequest.ShowPeopleNameSuggestions = GetThreeWaySwitchValue(EnableShowPeopleNameSuggestions, DisableShowPeopleNameSuggestions);
         }
 
-
-
         private void GetResults(SearchSuggestionsRequest searchSuggestionsRequest)
         {
             ISuggestionsResultProcessor suggestionResultProcessor = new SuggestionsResultProcessor(this);
@@ -227,7 +156,25 @@ namespace PSSQT
             suggestionResultProcessor.Process(suggestionResults);
         }
 
+        protected override void SaveRequestPreset(SearchConnection searchConnection, SearchSuggestionsRequest searchRequest)
+        {
+            throw new NotImplementedException();   // never called since IsSavePreset is always false
+        }
 
+        protected override bool IsSavePreset()
+        {
+            return false;    // You must use Search-SPIndex to save a preset
+        }
+
+        protected override void PresetLoaded(ref SearchSuggestionsRequest searchRequest, SearchPreset preset)
+        {
+            searchRequest.CopyFrom(preset.Request);
+        }
+
+        protected override void ExecuteRequest(SearchSuggestionsRequest searchRequest)
+        {
+            GetResults(searchRequest);
+        }
 
         #endregion
     }
