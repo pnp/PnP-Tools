@@ -537,6 +537,28 @@ div#s4-bodyContainer {
         max-width: 100%;
         min-width: 100%;
     }
+    /* Search refiners */
+    .ms-ref-refiner #Container_mobileClone {
+        padding: 0;
+        padding-bottom: 23px;
+    }
+    #PnPContentNavPanel #Refinement_mobileClone {
+        padding: 20px 0 0 20px;
+    }
+    /* Search results */
+    .ms-srch-result-groups .ms-srch-item,
+    .ms-srch-result-groups .ms-srch-item-path {
+        max-width: 100%;
+        width: auto;
+    }
+    .ms-srch-siteSearchResults #SearchBox,
+    .ms-srch-siteSearchResults #SearchBox > .ms-srch-sbLarge {
+        width: 100%;
+    }
+    .ms-srch-siteSearchResults #SearchBox .ms-srch-sb-navLink,
+    .ms-srch-siteSearchResults #SearchBox .ms-srch-sb-searchLink {
+        float: right;
+    }
 }
 
 /* Tablets */

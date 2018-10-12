@@ -600,6 +600,22 @@ PnPResponsiveApp.Main = (function () {
                 var spQLNav = pnpNavGeneration('DeltaPlaceHolderLeftNavBar');
                 if (spQLNav) {
                     pnpContentNavPanel.appendChild(spQLNav);
+                    document.getElementById('DeltaPlaceHolderLeftNavBar').addEventListener('DOMSubtreeModified', function () {
+                        var pnpCPanel = document.getElementById('PnPContentNavPanel');
+                        if (pnpCPanel) {
+                            var clonedOrigin = pnpNavGeneration(this.id);
+                            var old = pnpCPanel.querySelector('#' + clonedOrigin.id);
+                            if (old) {
+                                old.parentNode.removeChild(old);
+                            }
+                            var bottomDiv = pnpCPanel.getElementsByClassName('PnPPanelBottom')[0];
+                            if (bottomDiv) {
+                                pnpCPanel.insertBefore(clonedOrigin, bottomDiv);
+                            } else {
+                                pnpCPanel.appendChild(clonedOrigin);
+                            }
+                        }
+                    });
                 }
 
                 /* Oslo nav support */
