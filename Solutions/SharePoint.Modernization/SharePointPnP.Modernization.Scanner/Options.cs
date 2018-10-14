@@ -14,7 +14,8 @@ namespace SharePoint.Modernization.Scanner
         GroupifyOnly, // this mode is always included, is part of the default scan
         PageOnly,
         PublishingOnly,
-        PublishingWithPagesOnly
+        PublishingWithPagesOnly,
+        ListOnly
     }
 
     /// <summary>
@@ -36,6 +37,9 @@ namespace SharePoint.Modernization.Scanner
 
         [Option('j', "skipuserinformation", HelpText = "Don't include user information in the exported data", DefaultValue = false, Required = false)]
         public bool SkipUserInformation { get; set; }
+
+        [Option('k', "skiplistsonlyblockedbyoobreaons", HelpText = "Exclude lists which are blocked due to out of the box reasons: base template, view type of field type", DefaultValue = false)]
+        public bool ExcludeListsOnlyBlockedByOobReasons { get; set; }
 
         [Option('d', "skipreport", HelpText = "Don't generate an Excel report for the found data", DefaultValue = false, Required = false)]
         public bool SkipReport { get; set; }
@@ -118,6 +122,26 @@ namespace SharePoint.Modernization.Scanner
             }
 
             if (mode == Mode.PublishingWithPagesOnly)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Include detailed publishing page analysis
+        /// </summary>
+        /// <param name="mode">mode that was provided</param>
+        /// <returns>True if included, false otherwise</returns>
+        public static bool IncludeLists(Mode mode)
+        {
+            if (mode == Mode.Full)
+            {
+                return true;
+            }
+
+            if (mode == Mode.ListOnly)
             {
                 return true;
             }

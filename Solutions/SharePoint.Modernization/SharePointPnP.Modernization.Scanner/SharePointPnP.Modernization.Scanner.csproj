@@ -208,10 +208,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analyzers\IBaseAnalyzer.cs" />
+    <Compile Include="Analyzers\ListAnalyzer.cs" />
     <Compile Include="Analyzers\PageAnalyzer.cs" />
     <Compile Include="Analyzers\PublishingAnalyzer.cs" />
     <Compile Include="Analyzers\SiteAnalyzer.cs" />
     <Compile Include="Analyzers\WebAnalyzer.cs" />
+    <Compile Include="Extensions\FieldExtensions.cs" />
+    <Compile Include="Extensions\FileExtensions.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\UserCustomActionCollectionExtensions.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
@@ -222,6 +225,7 @@
     <Compile Include="Analyzers\BaseAnalyzer.cs" />
     <Compile Include="Reports\Generator.cs" />
     <Compile Include="Reports\ScanSummary.cs" />
+    <Compile Include="Results\ListScanResult.cs" />
     <Compile Include="Results\PageScanResult.cs" />
     <Compile Include="Results\PublishingPageScanResult.cs" />
     <Compile Include="Results\PublishingSiteScanResult.cs" />
@@ -229,6 +233,7 @@
     <Compile Include="Results\SiteScanResult.cs" />
     <Compile Include="Results\UserCustomActionResult.cs" />
     <Compile Include="Results\WebScanResult.cs" />
+    <Compile Include="Results\XsltViewWebPartCompatability.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -238,6 +243,7 @@
     <EmbeddedResource Include="Reports\groupifymaster.xlsx" />
     <EmbeddedResource Include="Reports\pagemaster.xlsx" />
     <EmbeddedResource Include="Reports\publishingmaster.xlsx" />
+    <EmbeddedResource Include="Reports\listmaster.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xml" />
