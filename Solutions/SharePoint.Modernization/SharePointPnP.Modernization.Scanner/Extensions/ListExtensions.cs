@@ -9,6 +9,31 @@ namespace Microsoft.SharePoint.Client
     public static class ListExtensions
     {
 
+        public static bool CanRenderNewExperience(this List list)
+        {
+            list.EnsureProperty(p => p.BaseTemplate);
+
+            if (list.BaseTemplate == (int)ListTemplateType.Announcements ||
+                list.BaseTemplate == (int)ListTemplateType.Links ||
+                list.BaseTemplate == (int)ListTemplateType.DocumentLibrary ||
+                list.BaseTemplate == (int)ListTemplateType.PictureLibrary ||
+                list.BaseTemplate == (int)ListTemplateType.WebPageLibrary ||
+                list.BaseTemplate == (int)ListTemplateType.Announcements ||
+                list.BaseTemplate == (int)ListTemplateType.IssueTracking ||
+                list.BaseTemplate == (int)ListTemplateType.Contacts ||
+                list.BaseTemplate == 851 || // Assets
+                list.BaseTemplate == 170 || // Promoted Links
+                list.BaseTemplate == (int)ListTemplateType.XMLForm ||
+                list.BaseTemplate == (int)ListTemplateType.GenericList)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         /// <summary>
         /// Checks if item level publishing scheduling is enabled for this page library
         /// </summary>
