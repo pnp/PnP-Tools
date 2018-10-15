@@ -179,8 +179,8 @@ namespace SharePoint.Modernization.Scanner
             help.AddPreOptionsLine("");
             help.AddPreOptionsLine("e.g. SharePoint.Modernization.Scanner.exe -t contoso -u spadmin@contoso.onmicrosoft.com -p pwd");
             help.AddPreOptionsLine("");
-            help.AddPreOptionsLine("Specifying url to your sites and tenant admin (needed for SPO Dedicated):");
-            help.AddPreOptionsLine("=========================================================================");
+            help.AddPreOptionsLine("Specifying url to your sites and tenant admin (needed for SPO with vanity urls):");
+            help.AddPreOptionsLine("================================================================================");
             help.AddPreOptionsLine("Using Azure AD app-only:");
             help.AddPreOptionsLine("SharePoint.Modernization.Scanner.exe -r <wildcard urls> -a <tenant admin site>  -i <your client id> -z <Azure AD domain> -f <PFX file> -x <PFX file password>");
             help.AddPreOptionsLine("e.g. SharePoint.Modernization.Scanner.exe -r \"https://teams.contoso.com/sites/*,https://my.contoso.com/personal/*\" -a https://contoso-admin.contoso.com -i e5808e8b-6119-44a9-b9d8-9003db04a882 -z conto.onmicrosoft.com  -f apponlycert.pfx -x pwd");

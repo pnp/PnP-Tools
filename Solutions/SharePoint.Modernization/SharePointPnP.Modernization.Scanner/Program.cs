@@ -1,6 +1,7 @@
 ﻿using SharePoint.Modernization.Scanner.Reports;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 
 namespace SharePoint.Modernization.Scanner
@@ -15,11 +16,28 @@ namespace SharePoint.Modernization.Scanner
         /// </summary>
         /// <param name="args">Command line arguments</param>
 
+        [STAThread]
         static void Main(string[] args)
         {
-            // Validate commandline options
             var options = new Options();
-            options.ValidateOptions(args);
+
+            // Show wizard to help the user with filling the needed scan configuration
+            if (args.Length == 0)
+            {
+                var wizard = new Forms.Wizard(options);
+                wizard.ShowDialog();
+
+                if (string.IsNullOrEmpty(options.User) && string.IsNullOrEmpty(options.ClientID))
+                {
+                    // Trigger validation which will show usage information
+                    options.ValidateOptions(args);
+                }
+            }
+            else
+            {
+                // Validate commandline options
+                options.ValidateOptions(args);
+            }
 
             if (options.ExportPaths != null && options.ExportPaths.Count > 0)
             {
