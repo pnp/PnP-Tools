@@ -41,6 +41,7 @@ Version  | Date | Comments
 The main purpose of this tool is to give you a set of reports that you can use to:
 
 - Assess which sites are ready for "groupify": this report will give you "groupify" warnings and blockers which you can use to scope the sites to "groupify" and plan the needed remediation work
+- Understand which lists are not showing up in modern, why that's the case and what you can do about them
 - Learn more about the site pages used in your tenant: knowing which pages you have and their characteristics (type, layout, web part data, usage) is important to prepare for modernizing (a subset of) these pages
 - Perform a deep analysis on your classic publishing portals: understanding your classic publishing portals will help you transform them to modern publishing portals
 
@@ -575,7 +576,7 @@ SharePoint.Modernization.Scanner -g <paths>
 SharePoint.Modernization.Scanner -g "c:\temp\636529695601669598,c:\temp\636529695601698765"
 ```
 
-## I'm running SharePoint Online dedicated, is this different? ##
+## I'm running SharePoint with vanity URL's (SharePoint Online Dedicated), is this different? ##
 
 In SharePoint Online Dedicated one can have vanity url's like teams.contoso.com which implies that the tool cannot automatically determine the used url's and tenant admin center url. Using below command line switches you can specify the site url's to scan and the tenant admin center url. Note that the urls need to be separated by a comma.
 
@@ -628,7 +629,7 @@ SharePoint.Modernization.Scanner -t contoso -c admin@contoso.onmicrosoft.com -p 
 # Complete list of command line switches for the SharePoint Online version #
 
 ```Console
-SharePoint PnP Modernization scanner 1.6.0.0
+SharePoint PnP Modernization scanner 1.7.0.0
 Copyright (C) 2018 SharePoint PnP
 ==========================================================
 
@@ -676,56 +677,60 @@ e.g. SharePoint.Modernization.Scanner.exe -r "https://teams.contoso.com/sites/*,
 https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd
 
 
-  -m, --mode                       (Default: Full) Execution mode. Use following modes: full, GroupifyOnly, PageOnly,
-                                   PublishingOnly, PublishingWithPagesOnly. Omit or use full for a full scan
+  -m, --mode                               (Default: Full) Execution mode. Use following modes: full, GroupifyOnly,
+                                           ListOnly, PageOnly, PublishingOnly, PublishingWithPagesOnly. Omit or use full for a
+                                           full scan
 
-  -b, --exportwebpartproperties    (Default: False) Export the web part property data
+  -b, --exportwebpartproperties            (Default: False) Export the web part property data
 
-  -c, --skipusageinformation       (Default: False) Don't use search to get the site/page usage information and don't
-                                   export that data
+  -c, --skipusageinformation               (Default: False) Don't use search to get the site/page usage information and
+                                           don't export that data
 
-  -j, --skipuserinformation        (Default: False) Don't include user information in the exported data
+  -j, --skipuserinformation                (Default: False) Don't include user information in the exported data
 
-  -d, --skipreport                 (Default: False) Don't generate an Excel report for the found data
+  -k, --skiplistsonlyblockedbyoobreaons    (Default: False) Exclude lists which are blocked due to out of the box
+                                           reasons: base template, view type of field type
 
-  -g, --exportpaths                List of paths (e.g. c:\temp\636529695601669598,c:\temp\636529695601656430)
-                                   containing scan results you want to add to the report
+  -d, --skipreport                         (Default: False) Don't generate an Excel report for the found data
 
-  -i, --clientid                   Client ID of the app-only principal used to scan your site collections
+  -g, --exportpaths                        List of paths (e.g. c:\temp\636529695601669598,c:\temp\636529695601656430)
+                                           containing scan results you want to add to the report
 
-  -s, --clientsecret               Client Secret of the app-only principal used to scan your site collections
+  -i, --clientid                           Client ID of the app-only principal used to scan your site collections
 
-  -u, --user                       User id used to scan/enumerate your site collections
+  -s, --clientsecret                       Client Secret of the app-only principal used to scan your site collections
 
-  -p, --password                   Password of the user used to scan/enumerate your site collections
+  -u, --user                               User id used to scan/enumerate your site collections
 
-  -z, --azuretenant                Azure tenant (e.g. contoso.microsoftonline.com)
+  -p, --password                           Password of the user used to scan/enumerate your site collections
 
-  -f, --certificatepfx             Path + name of the pfx file holding the certificate to authenticate
+  -z, --azuretenant                        Azure tenant (e.g. contoso.microsoftonline.com)
 
-  -x, --certificatepfxpassword     Password of the pfx file holding the certificate to authenticate
+  -f, --certificatepfx                     Path + name of the pfx file holding the certificate to authenticate
 
-  -a, --tenantadminsite            Url to your tenant admin site (e.g. https://contoso-admin.contoso.com): only needed
-                                   when your not using SPO MT
+  -x, --certificatepfxpassword             Password of the pfx file holding the certificate to authenticate
 
-  -t, --tenant                     Tenant name, e.g. contoso when your sites are under
-                                   https://contoso.sharepoint.com/sites. This is the recommended model for SharePoint
-                                   Online MT as this way all site collections will be scanned
+  -a, --tenantadminsite                    Url to your tenant admin site (e.g. https://contoso-admin.contoso.com): only
+                                           needed when your not using SPO MT
 
-  -r, --urls                       List of (wildcard) urls (e.g.
-                                   https://contoso.sharepoint.com/*,https://contoso-my.sharepoint.com,https://contoso-my
+  -t, --tenant                             Tenant name, e.g. contoso when your sites are under
+                                           https://contoso.sharepoint.com/sites. This is the recommended model for
+                                           SharePoint Online MT as this way all site collections will be scanned
 
-                                   .sharepoint.com/personal/*) that you want to get scanned
+  -r, --urls                               List of (wildcard) urls (e.g.
+                                           https://contoso.sharepoint.com/*,https://contoso-my.sharepoint.com,https://co
 
-  -o, --includeod4b                (Default: False) Include OD4B sites in the scan
+                                           ntoso-my.sharepoint.com/personal/*) that you want to get scanned
 
-  -v, --csvfile                    CSV file name (e.g. input.csv) which contains the list of site collection urls that
-                                   you want to scan
+  -o, --includeod4b                        (Default: False) Include OD4B sites in the scan
 
-  -h, --threads                    (Default: 10) Number of parallel threads, maximum = 100
+  -v, --csvfile                            CSV file name (e.g. input.csv) which contains the list of site collection
+                                           urls that you want to scan
 
-  -e, --separator                  (Default: ,) Separator used in output CSV files (e.g. ";")
+  -h, --threads                            (Default: 10) Number of parallel threads, maximum = 100
 
-  --help                           Display this help screen.```
+  -e, --separator                          (Default: ,) Separator used in output CSV files (e.g. ";")
+
+  --help                                   Display this help screen.
 
 <img src="https://telemetry.sharepointpnp.com/pnp-tools/solutions/sharepoint-modernizationscanner" />
