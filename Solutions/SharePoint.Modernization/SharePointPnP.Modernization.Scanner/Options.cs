@@ -14,7 +14,8 @@ namespace SharePoint.Modernization.Scanner
         GroupifyOnly, // this mode is always included, is part of the default scan
         PageOnly,
         PublishingOnly,
-        PublishingWithPagesOnly
+        PublishingWithPagesOnly,
+        ListOnly
     }
 
     /// <summary>
@@ -25,7 +26,7 @@ namespace SharePoint.Modernization.Scanner
         // Important:
         // Following chars are already used as shorthand in the base options class: i, s, u, p, f, x, a, t, e, r, v, o, h, z
 
-        [Option('m', "mode", HelpText = "Execution mode. Use following modes: full, GroupifyOnly, PageOnly, PublishingOnly, PublishingWithPagesOnly. Omit or use full for a full scan", DefaultValue = Mode.Full, Required = false)]
+        [Option('m', "mode", HelpText = "Execution mode. Use following modes: full, GroupifyOnly, ListOnly, PageOnly, PublishingOnly, PublishingWithPagesOnly. Omit or use full for a full scan", DefaultValue = Mode.Full, Required = false)]
         public Mode Mode { get; set; }
 
         [Option('b', "exportwebpartproperties", HelpText = "Export the web part property data", DefaultValue = false, Required = false)]
@@ -36,6 +37,9 @@ namespace SharePoint.Modernization.Scanner
 
         [Option('j', "skipuserinformation", HelpText = "Don't include user information in the exported data", DefaultValue = false, Required = false)]
         public bool SkipUserInformation { get; set; }
+
+        [Option('k', "skiplistsonlyblockedbyoobreaons", HelpText = "Exclude lists which are blocked due to out of the box reasons: base template, view type of field type", DefaultValue = false)]
+        public bool ExcludeListsOnlyBlockedByOobReasons { get; set; }
 
         [Option('d', "skipreport", HelpText = "Don't generate an Excel report for the found data", DefaultValue = false, Required = false)]
         public bool SkipReport { get; set; }
@@ -126,6 +130,26 @@ namespace SharePoint.Modernization.Scanner
         }
 
         /// <summary>
+        /// Include detailed publishing page analysis
+        /// </summary>
+        /// <param name="mode">mode that was provided</param>
+        /// <returns>True if included, false otherwise</returns>
+        public static bool IncludeLists(Mode mode)
+        {
+            if (mode == Mode.Full)
+            {
+                return true;
+            }
+
+            if (mode == Mode.ListOnly)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Shows the usage information of the scanner
         /// </summary>
         /// <returns>String with the usage information</returns>
@@ -155,8 +179,8 @@ namespace SharePoint.Modernization.Scanner
             help.AddPreOptionsLine("");
             help.AddPreOptionsLine("e.g. SharePoint.Modernization.Scanner.exe -t contoso -u spadmin@contoso.onmicrosoft.com -p pwd");
             help.AddPreOptionsLine("");
-            help.AddPreOptionsLine("Specifying url to your sites and tenant admin (needed for SPO Dedicated):");
-            help.AddPreOptionsLine("=========================================================================");
+            help.AddPreOptionsLine("Specifying url to your sites and tenant admin (needed for SPO with vanity urls):");
+            help.AddPreOptionsLine("================================================================================");
             help.AddPreOptionsLine("Using Azure AD app-only:");
             help.AddPreOptionsLine("SharePoint.Modernization.Scanner.exe -r <wildcard urls> -a <tenant admin site>  -i <your client id> -z <Azure AD domain> -f <PFX file> -x <PFX file password>");
             help.AddPreOptionsLine("e.g. SharePoint.Modernization.Scanner.exe -r \"https://teams.contoso.com/sites/*,https://my.contoso.com/personal/*\" -a https://contoso-admin.contoso.com -i e5808e8b-6119-44a9-b9d8-9003db04a882 -z conto.onmicrosoft.com  -f apponlycert.pfx -x pwd");

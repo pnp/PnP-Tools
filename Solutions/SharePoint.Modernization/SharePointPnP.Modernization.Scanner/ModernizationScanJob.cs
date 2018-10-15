@@ -22,11 +22,13 @@ namespace SharePoint.Modernization.Scanner
         public bool ExportWebPartProperties;
         public bool SkipUsageInformation;
         public bool SkipUserInformation;
+        public bool ExcludeListsOnlyBlockedByOobReasons;
         public string EveryoneExceptExternalUsersClaim = "";
         public readonly string EveryoneClaim = "c:0(.s|true";
         public ConcurrentDictionary<string, SiteScanResult> SiteScanResults;
         public ConcurrentDictionary<string, WebScanResult> WebScanResults;
         public ConcurrentDictionary<string, PageScanResult> PageScanResults;
+        public ConcurrentDictionary<string, ListScanResult> ListScanResults;
         public Dictionary<string, PublishingSiteScanResult> PublishingSiteScanResults;
         public ConcurrentDictionary<string, PublishingWebScanResult> PublishingWebScanResults;
         public ConcurrentDictionary<string, PublishingPageScanResult> PublishingPageScanResults;
@@ -46,11 +48,14 @@ namespace SharePoint.Modernization.Scanner
             ExportWebPartProperties = options.ExportWebPartProperties;
             SkipUsageInformation = options.SkipUsageInformation;
             SkipUserInformation = options.SkipUserInformation;
+            ExcludeListsOnlyBlockedByOobReasons = options.ExcludeListsOnlyBlockedByOobReasons;
 
             // Site scan results
             this.SiteScanResults = new ConcurrentDictionary<string, SiteScanResult>(options.Threads, 10000);
             this.WebScanResults = new ConcurrentDictionary<string, WebScanResult>(options.Threads, 50000);
+            this.ListScanResults = new ConcurrentDictionary<string, ListScanResult>(options.Threads, 100000);
             this.PageScanResults = new ConcurrentDictionary<string, PageScanResult>(options.Threads, 1000000);
+
             // Publishing portal scan results
             this.PublishingSiteScanResults = new Dictionary<string, PublishingSiteScanResult>(500);
             this.PublishingWebScanResults = new ConcurrentDictionary<string, PublishingWebScanResult>(options.Threads, 1000);
@@ -384,6 +389,34 @@ namespace SharePoint.Modernization.Scanner
                 }
             }
 
+            if (Options.IncludeLists(this.Mode))
+            {
+                outputfile = string.Format("{0}\\ModernizationListScanResults.csv", this.OutputFolder);
+                outputHeaders = new string[] { "Url", "Site Url", "Site Collection Url", "List Title", "Only blocked by OOB reasons",
+                                               "Blocked at site level", "Blocked at web level", "Blocked at list level", "List page render type", "List experience", "Blocked by not being able to load Page", "Blocked by not being able to load page exception",
+                                               "Blocked by managed metadata navigation", "Blocked by view type", "View type", "Blocked by list base template", "List base template",
+                                               "Blocked by zero or multiple web parts", "Blocked by JSLink", "JSLink", "Blocked by XslLink", "XslLink", "Blocked by Xsl",
+                                               "Blocked by JSLink field", "JSLink fields", "Blocked by business data field", "Business data fields", "Blocked by task outcome field", "Task outcome fields",
+                                               "Blocked by publishingField", "Publishing fields", "Blocked by geo location field", "Geo location fields", "Blocked by list custom action", "List custom actions"  };
+
+                Console.WriteLine("Outputting scan results to {0}", outputfile);
+                using (StreamWriter outfile = new StreamWriter(outputfile))
+                {
+                    outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
+                    foreach (var list in this.ListScanResults)
+                    {
+
+                        outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator,ToCsv(list.Key.Substring(36)), ToCsv(list.Value.SiteURL), ToCsv(list.Value.SiteColUrl), ToCsv(list.Value.ListTitle), list.Value.OnlyBlockedByOOBReasons,
+                                                           list.Value.BlockedAtSiteLevel, list.Value.BlockedAtWebLevel, list.Value.BlockedAtListLevel, list.Value.PageRenderType, list.Value.ListExperience, list.Value.BlockedByNotBeingAbleToLoadPage, ToCsv(list.Value.BlockedByNotBeingAbleToLoadPageException),
+                                                           list.Value.XsltViewWebPartCompatibility.BlockedByManagedMetadataNavFeature, list.Value.XsltViewWebPartCompatibility.BlockedByViewType, ToCsv(list.Value.XsltViewWebPartCompatibility.ViewType), list.Value.XsltViewWebPartCompatibility.BlockedByListBaseTemplate, list.Value.XsltViewWebPartCompatibility.ListBaseTemplate,
+                                                           list.Value.BlockedByZeroOrMultipleWebParts, list.Value.XsltViewWebPartCompatibility.BlockedByJSLink, ToCsv(list.Value.XsltViewWebPartCompatibility.JSLink), list.Value.XsltViewWebPartCompatibility.BlockedByXslLink, ToCsv(list.Value.XsltViewWebPartCompatibility.XslLink), list.Value.XsltViewWebPartCompatibility.BlockedByXsl,
+                                                           list.Value.XsltViewWebPartCompatibility.BlockedByJSLinkField, ToCsv(list.Value.XsltViewWebPartCompatibility.JSLinkFields), list.Value.XsltViewWebPartCompatibility.BlockedByBusinessDataField, ToCsv(list.Value.XsltViewWebPartCompatibility.BusinessDataFields), list.Value.XsltViewWebPartCompatibility.BlockedByTaskOutcomeField, ToCsv(list.Value.XsltViewWebPartCompatibility.TaskOutcomeFields),
+                                                           list.Value.XsltViewWebPartCompatibility.BlockedByPublishingField, ToCsv(list.Value.XsltViewWebPartCompatibility.PublishingFields), list.Value.XsltViewWebPartCompatibility.BlockedByGeoLocationField, ToCsv(list.Value.XsltViewWebPartCompatibility.GeoLocationFields), list.Value.XsltViewWebPartCompatibility.BlockedByListCustomAction, ToCsv(list.Value.XsltViewWebPartCompatibility.ListCustomActions)
+                                                    )));
+                    }
+                }
+            }
+
             if (Options.IncludePage(this.Mode))
             {
                 outputfile = string.Format("{0}\\PageScanResults.csv", this.OutputFolder);
@@ -491,12 +524,15 @@ namespace SharePoint.Modernization.Scanner
                 using (StreamWriter outfile = new StreamWriter(outputfile))
                 {
                     outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
-                    foreach (var item in this.PublishingSiteScanResults)
+                    if (PublishingSiteScanResults != null)
                     {
-                        outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), item.Value.NumberOfWebs, item.Value.NumberOfPages,
-                                                                                           ToCsv(PublishingPageScanResult.FormatList(item.Value.UsedSiteMasterPages)), ToCsv(PublishingPageScanResult.FormatList(item.Value.UsedSystemMasterPages)),
-                                                                                           ToCsv(PublishingPageScanResult.FormatList(item.Value.UsedPageLayouts)), item.Value.LastPageUpdateDate.HasValue ? item.Value.LastPageUpdateDate.ToString() : ""
-                                                   )));
+                        foreach (var item in this.PublishingSiteScanResults)
+                        {
+                            outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), item.Value.NumberOfWebs, item.Value.NumberOfPages,
+                                                                                               ToCsv(PublishingPageScanResult.FormatList(item.Value.UsedSiteMasterPages)), ToCsv(PublishingPageScanResult.FormatList(item.Value.UsedSystemMasterPages)),
+                                                                                               ToCsv(PublishingPageScanResult.FormatList(item.Value.UsedPageLayouts)), item.Value.LastPageUpdateDate.HasValue ? item.Value.LastPageUpdateDate.ToString() : ""
+                                                       )));
+                        }
                     }
                 }
 
