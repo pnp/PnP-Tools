@@ -577,7 +577,7 @@ namespace PSSQT
 
         protected override void SaveRequestPreset(SearchConnection searchConnection, SearchQueryRequest searchRequest)
         {
-            if (!String.IsNullOrWhiteSpace(SavePreset))
+            if (IsSavePreset())
             {
                 SearchPreset newPreset = new SearchPreset();
                 var path = GetPresetFilename(SavePreset);
@@ -597,7 +597,13 @@ namespace PSSQT
 
                 newPreset.Save();
 
-                WriteVerbose("Preset saved to " + newPreset.Path);
+                WriteInformation(new HostInformationMessage
+                {
+                    Message = $"Preset saved to {newPreset.Path}",
+                    ForegroundColor = Host.UI.RawUI.BackgroundColor,        // invert
+                    BackgroundColor = Host.UI.RawUI.ForegroundColor,
+                    NoNewLine = false
+                }, new[] { "PSHOST" });
             }
         }
 

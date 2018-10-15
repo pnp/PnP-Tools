@@ -11,8 +11,8 @@ using System.Collections.Generic;
 using PSSQT.Helpers;
 using PSSQT.Helpers.Authentication;
 using System.Threading;
-
-
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 /**
  * <ParameterSetName	P1	P2
@@ -31,6 +31,7 @@ namespace PSSQT
 
         private static readonly Dictionary<Guid, CookieCollection> Tokens = new Dictionary<Guid, CookieCollection>();   // SPO Auth tokens
 
+        private static bool SkipSSLValidation;
 
         #endregion
 
@@ -125,6 +126,12 @@ namespace PSSQT
         )]
         public SwitchParameter ForceLoginPrompt { get; set; }
 
+        [Parameter(
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
+            HelpMessage = "Skip validation of SSL certificate."
+        )]
+        public SwitchParameter SkipServerCertificateValidation { get; set; }
         #endregion
 
         #region Methods
@@ -132,6 +139,8 @@ namespace PSSQT
 
         protected AbstractSearchSPCmdlet()
         {
+            ServicePointManager.ServerCertificateValidationCallback +=
+                new RemoteCertificateValidationCallback(ValidateServerCertificate);
         }
 
         protected override void ProcessRecord()
@@ -139,6 +148,8 @@ namespace PSSQT
             try
             {
                 base.ProcessRecord();
+
+                SkipSSLValidation = SkipServerCertificateValidation.IsPresent;
 
                 WriteDebug($"Enter {GetType().Name} ProcessRecord");
 
@@ -182,6 +193,20 @@ namespace PSSQT
 
                 WriteDebug(ex.StackTrace);
             }
+        }
+
+        public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+
+            if (!SkipSSLValidation)
+            {
+                Console.WriteLine($"Certificate error: {sslPolicyErrors}");
+            }
+
+            // Do not allow this client to communicate with unauthenticated servers unless Skip validation is set.
+            return SkipSSLValidation;
         }
 
         protected abstract void SaveRequestPreset(SearchConnection searchConnection, TSearchRequest searchRequest);
