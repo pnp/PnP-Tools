@@ -244,6 +244,7 @@
             this.wizardPageContainer1.Controls.Add(this.scopePage);
             this.wizardPageContainer1.Controls.Add(this.modePage);
             this.wizardPageContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.wizardPageContainer1.FinishButtonText = "&Start scan";
             this.wizardPageContainer1.Location = new System.Drawing.Point(0, 59);
             this.wizardPageContainer1.Name = "wizardPageContainer1";
             this.wizardPageContainer1.NextButton = this.nextButton;
@@ -622,8 +623,8 @@
             this.cmbAuthOption.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbAuthOption.FormattingEnabled = true;
             this.cmbAuthOption.Items.AddRange(new object[] {
-            "Azure AD App Only (prefered)",
-            "Azure ACS App Only (prefered)",
+            "Azure AD App Only (preferred)",
+            "Azure ACS App Only (preferred)",
             "Username and password"});
             this.cmbAuthOption.Location = new System.Drawing.Point(176, 17);
             this.cmbAuthOption.Name = "cmbAuthOption";

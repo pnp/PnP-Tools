@@ -377,8 +377,8 @@ namespace SharePoint.Modernization.Scanner.Forms
                 tgModePublishingDetailed.Checked = true;
             }
 
-            tgListBlockedDueToOOB.Enabled = cmbScanMode.SelectedIndex == 1;
-            tgExportDetailedWebPartData.Enabled = (cmbScanMode.SelectedIndex == 2);
+            tgListBlockedDueToOOB.Enabled = cmbScanMode.SelectedIndex == 1 || cmbScanMode.SelectedIndex == 5;
+            tgExportDetailedWebPartData.Enabled = cmbScanMode.SelectedIndex == 2 || cmbScanMode.SelectedIndex == 5;
 
         }
 

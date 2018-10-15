@@ -21,6 +21,7 @@ SharePoint.Modernization.Scanner | Bert Jansen (**Microsoft**)
 
 Version  | Date | Comments
 ---------| -----| --------
+2.0 | October 15th 2018 | Built-in wizard will help you configure the scan parameters...you can forget about these long complex command lines!
 1.7 | October 14th 2018 | Integrated SharePoint UI Experience scanner results + bug fixes
 1.6 | September 25th 2018 | Added support for scanning classic Publishing Portals, simplified Group Connection dashboard, Compiled as X64 to avoid memory constraints during large scans
 1.5 | June 1st 2018 | Added generation of Excel based reports which make it easier to consume the generated data
@@ -57,7 +58,7 @@ The main purpose of this tool is to give you a set of reports that you can use t
 
 You can download the tool from here:
 
-- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v1.7.zip?raw=true)
+- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v2.0.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.Modernization.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -74,6 +75,14 @@ Since this tool needs to be able to scan all site collections it's recommended t
 Once the preparation work is done, let's continue with doing a scan.
 
 ### Scanning SharePoint Online environment ###
+
+#### Using the built-in wizard
+
+When you run the scanner executable without specifying command line parameters a wizard will show that walks you through the needed steps to collect scanner configuration data. Once all data has been collected the scan will be executed. This approach is the easiest if you don't like to configure a potential complex command line. Below is an image showing the wizard in action:
+
+![wizard](wizard.png)
+
+#### Using the command line
 
 Below option is the default usage of the tool for most customers: you specify the mode, your tenant name and the created client id and secret:
 
