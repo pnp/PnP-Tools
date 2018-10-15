@@ -26,7 +26,7 @@ namespace SharePoint.Modernization.Scanner
         // Important:
         // Following chars are already used as shorthand in the base options class: i, s, u, p, f, x, a, t, e, r, v, o, h, z
 
-        [Option('m', "mode", HelpText = "Execution mode. Use following modes: full, GroupifyOnly, PageOnly, PublishingOnly, PublishingWithPagesOnly. Omit or use full for a full scan", DefaultValue = Mode.Full, Required = false)]
+        [Option('m', "mode", HelpText = "Execution mode. Use following modes: full, GroupifyOnly, ListOnly, PageOnly, PublishingOnly, PublishingWithPagesOnly. Omit or use full for a full scan", DefaultValue = Mode.Full, Required = false)]
         public Mode Mode { get; set; }
 
         [Option('b', "exportwebpartproperties", HelpText = "Export the web part property data", DefaultValue = false, Required = false)]
