@@ -45,8 +45,8 @@ The main purpose of this tool is to give you a set of reports that you can use t
 - Learn more about the site pages used in your tenant: knowing which pages you have and their characteristics (type, layout, web part data, usage) is important to prepare for modernizing (a subset of) these pages
 - Perform a deep analysis on your classic publishing portals: understanding your classic publishing portals will help you transform them to modern publishing portals
 
-Group connection readiness | List readiness
----------|----------
+**Group connection readiness** | **List readiness**
+:---------|:----------
 ![Group connection readiness report](groupconnection.png) | ![List readiness report](lismodernization.png)
 **Page transformation readiness** | **Publishing portal transformation**
 ![Page transformation readiness report](pagetransformation.png) | ![Publishing portal transformation readiness report](publishingportal.png)
@@ -732,5 +732,6 @@ https://contoso-admin.contoso.com -u spadmin@contoso.com -p pwd
   -e, --separator                          (Default: ,) Separator used in output CSV files (e.g. ";")
 
   --help                                   Display this help screen.
+```
 
 <img src="https://telemetry.sharepointpnp.com/pnp-tools/solutions/sharepoint-modernizationscanner" />
