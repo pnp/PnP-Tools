@@ -20,6 +20,10 @@ namespace SharePoint.Modernization.Scanner.Reports
         private const string GroupifyCSV = "ModernizationSiteScanResults.csv";
         private const string GroupifyMasterFile = "groupifymaster.xlsx";
         private const string GroupifyReport = "Office 365 Group Connection Readiness.xlsx";
+        // List report variables
+        private const string ListCSV = "ModernizationListScanResults.csv";
+        private const string ListMasterFile = "listmaster.xlsx";
+        private const string ListReport = "Office 365 List Readiness.xlsx";
         // Page report variables
         private const string PageCSV = "PageScanResults.csv";
         private const string PageMasterFile = "pagemaster.xlsx";
@@ -30,6 +34,166 @@ namespace SharePoint.Modernization.Scanner.Reports
         private const string PublishingPageCSV = "ModernizationPublishingPageScanResults.csv";
         private const string PublishingMasterFile = "publishingmaster.xlsx";
         private const string PublishingReport = "Office 365 Publishing Portal Transformation Readiness.xlsx";
+
+
+        /// <summary>
+        /// Create the list dashboard
+        /// </summary>
+        /// <param name="exportPaths">Paths to read data from</param>
+        public void CreateListReport(IList<string> exportPaths)
+        {
+            DataTable blockedListsTable = null;
+            ScanSummary scanSummary = null;
+
+            var outputfolder = ".";
+            DateTime dateCreationTime = DateTime.MinValue;
+            if (exportPaths.Count == 1)
+            {
+                outputfolder = new DirectoryInfo(exportPaths[0]).FullName;
+                var pathToUse = exportPaths[0].TrimEnd(new char[] { '\\' });
+                dateCreationTime = File.GetCreationTime($"{pathToUse}\\{ListCSV}");
+            }
+
+            // import the data and "clean" it
+            foreach (var path in exportPaths)
+            {
+                var pathToUse = path.TrimEnd(new char[] { '\\' });
+
+                string csvToLoad = $"{pathToUse}\\{ListCSV}";
+
+                if (!File.Exists(csvToLoad))
+                {
+                    // Skipping as one does not always have this report 
+                    continue;
+                }
+
+                Console.WriteLine($"Generating Modern UI List Readiness report based upon data coming from {path}");
+
+                using (GenericParserAdapter parser = new GenericParserAdapter(csvToLoad))
+                {
+                    parser.FirstRowHasHeader = true;
+                    parser.MaxBufferSize = 200000;
+                    parser.ColumnDelimiter = DetectUsedDelimiter(csvToLoad);
+
+                    // Read the file                    
+                    var baseTable = parser.GetDataTable();
+
+                    // Handle "wrong" column name used in older versions
+                    if (baseTable.Columns.Contains("Only blocked by OOB reaons"))
+                    {
+                        baseTable.Columns["Only blocked by OOB reaons"].ColumnName = "Only blocked by OOB reasons";
+                    }
+
+                    // Table 1
+                    var blockedListsTable1 = baseTable.Copy();
+                    // clean table
+                    string[] columnsToKeep = new string[] { "Url", "Site Url", "Site Collection Url", "List Title", "Only blocked by OOB reasons", "Blocked at site level", "Blocked at web level", "Blocked at list level", "List page render type", "List experience", "Blocked by not being able to load Page", "Blocked by view type", "View type", "Blocked by list base template", "List base template", "Blocked by zero or multiple web parts", "Blocked by JSLink", "Blocked by XslLink", "Blocked by Xsl", "Blocked by JSLink field", "Blocked by business data field", "Blocked by task outcome field", "Blocked by publishingField", "Blocked by geo location field", "Blocked by list custom action" };
+                    blockedListsTable1 = DropTableColumns(blockedListsTable1, columnsToKeep);
+
+                    if (blockedListsTable == null)
+                    {
+                        blockedListsTable = blockedListsTable1;
+                    }
+                    else
+                    {
+                        blockedListsTable.Merge(blockedListsTable1);
+                    }
+
+                    // Read scanner summary data
+                    var scanSummary1 = DetectScannerSummary($"{pathToUse}\\{ScannerSummaryCSV}");
+
+                    if (scanSummary == null)
+                    {
+                        scanSummary = scanSummary1;
+                    }
+                    else
+                    {
+                        MergeScanSummaries(scanSummary, scanSummary1);
+                    }
+                }
+            }
+
+            if (blockedListsTable.Rows.Count == 0)
+            {
+                Console.WriteLine($"No blocked lists found...skipping report generation");
+                return;
+            }
+
+            // Get the template Excel file
+            using (Stream stream = typeof(Generator).Assembly.GetManifestResourceStream($"SharePoint.Modernization.Scanner.Reports.{ListMasterFile}"))
+            {
+                if (File.Exists($"{outputfolder}\\{ListMasterFile}"))
+                {
+                    File.Delete($"{outputfolder}\\{ListMasterFile}");
+                }
+
+                using (var fileStream = File.Create($"{outputfolder}\\{ListMasterFile}"))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.CopyTo(fileStream);
+                }
+            }
+
+            // Push the data to Excel, starting from an Excel template
+            using (var excel = new ExcelPackage(new FileInfo($"{outputfolder}\\{ListMasterFile}"), false))
+            //using (var excel = new ExcelPackage())
+            {
+                var dashboardSheet = excel.Workbook.Worksheets["Dashboard"];
+
+                if (scanSummary != null)
+                {
+                    if (scanSummary.SiteCollections.HasValue)
+                    {
+                        dashboardSheet.SetValue("AA7", scanSummary.SiteCollections.Value);
+                    }
+                    if (scanSummary.Webs.HasValue)
+                    {
+                        dashboardSheet.SetValue("AC7", scanSummary.Webs.Value);
+                    }
+                    if (scanSummary.Lists.HasValue)
+                    {
+                        dashboardSheet.SetValue("AE7", scanSummary.Lists.Value);
+                    }
+                    if (scanSummary.Duration != null)
+                    {
+                        dashboardSheet.SetValue("AA8", scanSummary.Duration);
+                    }
+                    if (scanSummary.Version != null)
+                    {
+                        dashboardSheet.SetValue("AA9", scanSummary.Version);
+                    }
+                }
+
+                if (dateCreationTime != DateTime.MinValue)
+                {
+                    dashboardSheet.SetValue("AA6", dateCreationTime.ToString("G", DateTimeFormatInfo.InvariantInfo));
+                }
+                else
+                {
+                    dashboardSheet.SetValue("AA6", "-");
+                }
+
+                var blockedListsSheet = excel.Workbook.Worksheets["BlockedLists"];
+                //var blockedListsSheet = excel.Workbook.Worksheets.Add("BlockedLists");
+                InsertTableData(blockedListsSheet.Tables[0], blockedListsTable);
+                //blockedListsSheet.Cells["A1"].LoadFromDataTable(blockedListsTable, true);
+
+                // Save the resulting file $"{outputfolder}\\{ListMasterFile}"
+                if (File.Exists($"{outputfolder}\\{ListReport}"))
+                {
+                    File.Delete($"{outputfolder}\\{ListReport}");
+                }
+                excel.SaveAs(new FileInfo($"{outputfolder}\\{ListReport}"));
+                //excel.SaveAs(new FileInfo(ListMasterFile));
+            }
+
+            // Clean the template file
+            if (File.Exists($"{outputfolder}\\{ListMasterFile}"))
+            {
+                File.Delete($"{outputfolder}\\{ListMasterFile}");
+            }
+        }
+
 
         /// <summary>
         /// Create the publishing dashboard
@@ -635,11 +799,14 @@ namespace SharePoint.Modernization.Scanner.Reports
 
             var outRange = body.LoadFromDataTable(data, false);
 
-            // Refresh the table ranges so that Excel understands the current size of the table
-            var newRange = string.Format("{0}:{1}", start.Address, outRange.End.Address);
-            var tableElement = table.TableXml.DocumentElement;
-            tableElement.Attributes["ref"].Value = newRange;
-            tableElement["autoFilter"].Attributes["ref"].Value = newRange;
+            if (outRange != null)
+            {
+                // Refresh the table ranges so that Excel understands the current size of the table
+                var newRange = string.Format("{0}:{1}", start.Address, outRange.End.Address);
+                var tableElement = table.TableXml.DocumentElement;
+                tableElement.Attributes["ref"].Value = newRange;
+                tableElement["autoFilter"].Attributes["ref"].Value = newRange;
+            }
         }
 
         private ScanSummary MergeScanSummaries(ScanSummary baseSummary, ScanSummary summaryToAdd)

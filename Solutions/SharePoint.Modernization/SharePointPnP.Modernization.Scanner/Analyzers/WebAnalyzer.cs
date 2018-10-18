@@ -317,6 +317,13 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                     this.ScanJob.ScanErrors.Push(error);
                 }
 
+                if (Options.IncludeLists(this.ScanJob.Mode))
+                {
+                    // Kickoff the list analyzer
+                    var listAnalyzer = new ListAnalyzer(this.SiteUrl, this.SiteCollectionUrl, this.ScanJob);
+                    listAnalyzer.Analyze(cc);
+                }
+
                 if (Options.IncludePage(this.ScanJob.Mode))
                 {
                     // Kickoff the page analysing
