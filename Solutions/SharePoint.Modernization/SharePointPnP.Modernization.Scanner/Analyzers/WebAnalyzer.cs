@@ -47,6 +47,8 @@ namespace SharePoint.Modernization.Scanner.Analyzers
         /// </summary>
         /// <param name="url">Url of the web to be analyzed</param>
         /// <param name="siteColUrl">Url of the site collection hosting this web</param>
+        /// <param name="scanJob">Job that launched this analyzer</param>
+        /// <param name="pageSearchResults">Site collection level search results that were already loaded</param>
         public WebAnalyzer(string url, string siteColUrl, ModernizationScanJob scanJob, List<Dictionary<string, string>> pageSearchResults) : base(url, siteColUrl, scanJob)
         {
             this.pageSearchResults = pageSearchResults;
