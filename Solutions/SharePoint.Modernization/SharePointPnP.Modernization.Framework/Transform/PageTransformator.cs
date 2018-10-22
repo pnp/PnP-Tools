@@ -86,6 +86,11 @@ namespace SharePointPnP.Modernization.Framework.Transform
             {
                 throw new ArgumentException("Page is an basic aspx page...can't transform that one, sorry!");
             }
+
+            if (pageType.Equals("PublishingPage", StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new ArgumentException("Page transformation for publishing pages is currently not supported.");
+            }
             #endregion
 
             #region Telemetry
