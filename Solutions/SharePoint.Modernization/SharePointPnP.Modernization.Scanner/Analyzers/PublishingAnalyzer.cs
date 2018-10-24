@@ -45,8 +45,11 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                   </ViewFields>  
                 </View>";
 
-        WebScanResult webScanResult;
-        SiteScanResult siteScanResult;
+        // Stores page customization information
+        public Dictionary<string, CustomizedPageStatus> MasterPageGalleryCustomization = null;
+
+        private WebScanResult webScanResult;
+        private SiteScanResult siteScanResult;
 
         #region Construction
         /// <summary>
@@ -295,6 +298,50 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                                         // Page layout
                                         pageScanResult.PageLayout = page.PageLayout();
                                         pageScanResult.PageLayoutFile = page.PageLayoutFile().Replace(pageScanResult.SiteColUrl, "").Replace("/_catalogs/masterpage/", "");
+
+                                        // Customization status                                        
+                                        if (this.MasterPageGalleryCustomization == null)
+                                        {
+                                            this.MasterPageGalleryCustomization = new Dictionary<string, CustomizedPageStatus>();
+                                        }
+
+                                        // Load the file to check the customization status, only do this if the file was not loaded before for this site collection
+                                        Uri uri = new Uri(page.PageLayoutFile());
+                                        var url = page.PageLayoutFile().Replace($"{uri.Scheme}://{uri.DnsSafeHost}".ToLower(), "");
+                                        if (!this.MasterPageGalleryCustomization.ContainsKey(url))
+                                        {
+                                            try
+                                            {
+                                                var publishingPageLayout = cc.Site.RootWeb.GetFileByServerRelativeUrl(url);
+                                                cc.Load(publishingPageLayout);
+                                                cc.ExecuteQueryRetry();
+
+                                                this.MasterPageGalleryCustomization.Add(url, publishingPageLayout.CustomizedPageStatus);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                // eat potential exceptions
+                                            }
+                                        }
+
+                                        // store the page layout customization status 
+                                        if (this.MasterPageGalleryCustomization.TryGetValue(url, out CustomizedPageStatus pageStatus))
+                                        {
+                                            if (pageStatus == CustomizedPageStatus.Uncustomized)
+                                            {
+                                                pageScanResult.PageLayoutWasCustomized = false;
+                                            }
+                                            else
+                                            {
+                                                pageScanResult.PageLayoutWasCustomized = true;
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            // If the file was not loaded for some reason then assume it was customized
+                                            pageScanResult.PageLayoutWasCustomized = true;
+                                        }
 
                                         // Page audiences
                                         var audiences = page.Audiences();

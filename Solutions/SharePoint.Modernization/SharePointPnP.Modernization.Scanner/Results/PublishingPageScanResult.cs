@@ -39,6 +39,11 @@ namespace SharePoint.Modernization.Scanner.Results
         public string PageLayoutFile { get; set; }
 
         /// <summary>
+        /// Was this layout customized
+        /// </summary>
+        public bool PageLayoutWasCustomized { get; set; }
+
+        /// <summary>
         /// Page audiences: global
         /// </summary>
         public List<string> GlobalAudiences { get; set; }

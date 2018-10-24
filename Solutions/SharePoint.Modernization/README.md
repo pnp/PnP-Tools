@@ -524,6 +524,7 @@ Column | Description
 **ContentTypeId** | ID of the used content type
 **PageLayout** | Name of the used page layout
 **PageLayoutFile** | Filename of the used page layout
+**PageLayoutWasCustomized** | Was this page layout customized (changed an OOB one or just a newly added one)
 **GlobalAudiences** | Delimited list of global audiences defined on this page
 **SecurityGroupAudiences** | Delimited list of security group audiences defined on this page
 **SharePointGroupAudiences** | Delimited list of SharePoint group audiences defined on this page
