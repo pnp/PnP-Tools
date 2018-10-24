@@ -545,7 +545,7 @@ namespace SharePoint.Modernization.Scanner
 
                 // Export the web publishing data
                 outputfile = string.Format("{0}\\ModernizationPublishingWebScanResults.csv", this.OutputFolder);
-                outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", 
+                outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "SiteCollectionComplexity",
                                                "WebTemplate", "Level", "PageCount", "Language", "VariationLabels", "VariationSourceLabel",
                                                "SiteMasterPage", "SystemMasterPage", "AlternateCSS",
                                                "AllowedPageLayouts", "PageLayoutsConfiguration", "DefaultPageLayout",
@@ -563,7 +563,7 @@ namespace SharePoint.Modernization.Scanner
                     outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
                     foreach (var item in this.PublishingWebScanResults)
                     {
-                        outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.WebRelativeUrl),
+                        outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.WebRelativeUrl), ToCsv(item.Value.SiteClassification),
                                                                                            ToCsv(item.Value.WebTemplate), item.Value.Level.ToString(), item.Value.PageCount.ToString(), item.Value.Language.ToString(), ToCsv(item.Value.VariationLabels), ToCsv(item.Value.VariationSourceLabel),
                                                                                            ToCsv(item.Value.SiteMasterPage), ToCsv(item.Value.SystemMasterPage), ToCsv(item.Value.AlternateCSS),
                                                                                            ToCsv(item.Value.AllowedPageLayouts), ToCsv(item.Value.PageLayoutsConfiguration), ToCsv(item.Value.DefaultPageLayout),

@@ -495,6 +495,7 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                     {
                         SiteColUrl = item.Value.SiteColUrl,
                         SiteURL = item.Value.SiteURL,
+                        Classification = SiteComplexity.Simple
                     };
                     siteScanResults.Add(item.Value.SiteColUrl, siteResult);
                 }
@@ -515,6 +516,24 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                 if (item.Value.SystemMasterPage != null && !siteResult.UsedSystemMasterPages.Contains(item.Value.SystemMasterPage))
                 {
                     siteResult.UsedSystemMasterPages.Add(item.Value.SystemMasterPage);
+                }
+
+                // If in a single site collection multiple languages are used then mark the publishing portal as complex
+                if (!siteResult.UsedLanguages.Contains(item.Value.Language))
+                {
+                    siteResult.UsedLanguages.Add(item.Value.Language);
+                }
+
+                if (siteResult.UsedLanguages.Count > 1)
+                {
+                    siteResult.Classification = SiteComplexity.Complex;
+                }
+                
+                // Check the classification based upon the web level data
+                var webClassification = item.Value.WebClassification;
+                if (webClassification > siteResult.Classification)
+                {
+                    siteResult.Classification = webClassification;
                 }
             }
 
@@ -546,6 +565,26 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                             siteResult.LastPageUpdateDate = item.Value.ModifiedAt;
                         }
                     }
+
+                    // Update complexity based upon data for the page
+                    var pageClassification = SiteComplexity.Simple;
+                    if (item.Value.PageLayoutWasCustomized)
+                    {
+                        pageClassification = SiteComplexity.Medium;
+                    }
+                    if (pageClassification > siteResult.Classification)
+                    {
+                        siteResult.Classification = pageClassification;
+                    }
+                }
+            }
+
+            // Push back the site collection complexity level as a column of the web rows as that data is exported for the dashboard
+            foreach (var item in webScanResults)
+            {
+                if (siteScanResults.TryGetValue(item.Value.SiteColUrl, out PublishingSiteScanResult site))
+                {
+                    item.Value.SiteClassification = site.Classification.ToString();
                 }
             }
 
