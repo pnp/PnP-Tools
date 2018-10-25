@@ -567,8 +567,21 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                     }
 
                     // Update complexity based upon data for the page
+
+                    // Customized page layouts
                     var pageClassification = SiteComplexity.Simple;
                     if (item.Value.PageLayoutWasCustomized)
+                    {
+                        pageClassification = SiteComplexity.Medium;
+                    }
+                    if (pageClassification > siteResult.Classification)
+                    {
+                        siteResult.Classification = pageClassification;
+                    }
+
+                    // Audiences used
+                    pageClassification = SiteComplexity.Simple;
+                    if (item.Value.GlobalAudiences.Count > 0 || item.Value.SecurityGroupAudiences.Count > 0 || item.Value.SharePointGroupAudiences.Count > 0)
                     {
                         pageClassification = SiteComplexity.Medium;
                     }
