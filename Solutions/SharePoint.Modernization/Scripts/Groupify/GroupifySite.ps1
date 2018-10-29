@@ -1,4 +1,12 @@
-﻿
+﻿<#
+.SYNOPSIS
+"Groupifies" a Classic SharePoint Online team site by attaching it to an Office Group and provisioning the default resources. Also enables the user to add a classification label and alias for the Group and enables Modern User Experience for the site.
+
+Doesn't use parameters, rather asks for the values it needs. Optionally, supports hardcoding the use of Credential Manager (won't ask for credentials) and SharePoint admin site url.
+
+.EXAMPLE
+PS C:\> .\GroupifySite.ps1
+#>
 
 #region Logging and generic functions
 function LogWrite
