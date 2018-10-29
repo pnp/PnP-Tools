@@ -16,8 +16,9 @@
 
 ### Changed
 
-- H4 to H6 elements now retain their formatting when converted to text
-- Combining italic/underline in combination with other type of formatting now works stable
+- H4 to H6 elements now retain their formatting when converted to text when transforming wiki html
+- Combining italic/underline in combination with other type of formatting now works stable when transforming wiki html
+- Strip out the "zero width space characters" when transforming wiki html
 
 ## [October release (prod) - version 1.0.1810.2]
 

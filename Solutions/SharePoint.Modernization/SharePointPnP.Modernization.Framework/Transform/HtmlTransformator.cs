@@ -33,6 +33,10 @@ namespace SharePointPnP.Modernization.Framework.Transform
         /// <returns>Html that can be used and edited via the client side text part</returns>
         public string Transform(string text, bool usePlaceHolder)
         {
+            // Strip out the "zero width space characters"
+            text = text.Replace("\u200B", string.Empty);
+            text = text.Replace("\u200b", string.Empty);
+
             using (var document = this.parser.Parse(text))
             {
                 // Drop all <BR>
@@ -86,10 +90,11 @@ namespace SharePointPnP.Modernization.Framework.Transform
         public bool IsEmptyParagraph(string text)
         {
             // Remove the "Zero width space" chars
-            text = text.Replace("\u200B", "");
+            text = text.Replace("\u200B", string.Empty);
+            text = text.Replace("\u200b", string.Empty);
 
             // Check for empty text or "Zero width space"
-            if (string.IsNullOrEmpty(text) || (text.Length == 1 && text[0] == '\u200B'))
+            if (string.IsNullOrEmpty(text) || (text.Length == 1 && (text[0] == '\u200B' || text[0] == '\u200b')))
             {
                 return true;
             }
