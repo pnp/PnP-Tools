@@ -397,8 +397,12 @@ function GroupifySite
 #######################################################
 # MAIN section                                        #
 #######################################################
+
+# OVERRIDES
+# If you want to automate the run and make the script ask less questions, feel free to hardcode these 2 values below. Otherwise they'll be asked from the user or parsed from the values they input
+
 # Tenant admin url
-$tenantAdminUrl = "https://contoso-admin.sharepoint.com"
+$tenantAdminUrl = "" # e.g. "https://contoso-admin.sharepoint.com"
 # If you use credential manager then specify the used credential manager entry, if left blank you'll be asked for a user/pwd
 $credentialManagerCredentialToUse = ""
 
@@ -420,7 +424,7 @@ if (-not (Get-InstalledModule -Name SharePointPnPPowerShellOnline -MinimumVersio
 Import-Module SharePointPnPPowerShellOnline -DisableNameChecking -MinimumVersion $minimumVersion
 
 # Ensure Azure PowerShell is loaded
-$loadAzurePreview = $false
+$loadAzurePreview = $false # false to use 2.x stable, true to use the preview versions of cmdlets
 if (-not (Get-Module -ListAvailable -Name AzureAD))
 {
     # Maybe the preview AzureAD PowerShell is installed?
@@ -465,6 +469,22 @@ if (-not $siteURLFile.EndsWith(".csv"))
     catch [FormatException]
     {
         $siteIsPublic = $false
+    }
+}
+# If we are using a CSV, we'll need to get the tenant admin url from the user or use the hardcoded one
+else {
+    if ($tenantAdminUrl -eq $null -or $tenantAdminUrl.Length -le 0) {
+        $tenantAdminUrl = Read-Host -Prompt 'Input the tenant admin site URL (like https://contoso-admin.sharepoint.com): '
+    }
+}
+
+# We'll parse the tenantAdminUrl from site url (unless it's set already!)
+if ($tenantAdminUrl -eq $null -or $tenantAdminUrl.Length -le 0) {
+    if ($siteURLFile.IndexOf("/teams") -gt 0) {
+        $tenantAdminUrl = $siteURLFile.Substring(0, $siteURLFile.IndexOf("/teams")).Replace(".sharepoint.", "-admin.sharepoint.")
+    }
+    else {
+        $tenantAdminUrl = $siteURLFile.Substring(0, $siteURLFile.IndexOf("/sites")).Replace(".sharepoint.", "-admin.sharepoint.")
     }
 }
 
