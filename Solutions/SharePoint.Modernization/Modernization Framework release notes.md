@@ -12,6 +12,13 @@
 - From .Net: see https://github.com/SharePoint/PnP/tree/dev/Samples/Modernization.PageTransformation as nice sample to start with
 - From PnP PowerShell: see https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Scripts/PageTransformation/TransformPageSample.ps1 for a sample
 
+## [Unreleased]
+
+### Changed
+
+- H4 to H6 elements now retain their formatting when converted to text
+- Combining italic/underline in combination with other type of formatting now works stable
+
 ## [October release (prod) - version 1.0.1810.2]
 
 ### Changed

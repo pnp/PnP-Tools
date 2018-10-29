@@ -38,8 +38,10 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 // Drop all <BR>
                 // DropBRs(document);
 
-                // Process headings: RTE does h2, h3, h4 while wiki does h1, h2, h3, h4
-                TransformHeadings(document, 4, 5);
+                // Process headings: RTE does h2, h3, h4 while wiki does h1, h2, h3, h4. Wiki h4 to h6 will become (formatted) text
+                TransformHeadings(document, 6, 0);
+                TransformHeadings(document, 5, 0);
+                TransformHeadings(document, 4, 0);
                 TransformHeadings(document, 3, 4);
                 TransformHeadings(document, 2, 3);
                 TransformHeadings(document, 1, 2);
@@ -343,9 +345,12 @@ namespace SharePointPnP.Modernization.Framework.Transform
             {
                 var parent = fromNode.Parent;
 
-                if (to == 5)
+                if (to == 0)
                 {
-                    ReplaceChildElementByText(parent, fromNode, document);
+                    // wrap the content inside a div so that further formatting processing will pick it up
+                    var newElement = document.CreateElement("div");
+                    newElement.InnerHtml = fromNode.InnerHtml;
+                    parent.ReplaceChild(newElement, fromNode);
                 }
                 else
                 {
@@ -498,21 +503,42 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 // <span style="text-decoration&#58;line-through;">striked</span>
                 // <span style="text-decoration&#58;underline;">underline</span>
                 bool replacementDone = false;
+                bool isStrikeThroughOnElementToKeep = false;
+                bool isUnderlineOnElementToKeep = false;
+                string elementToKeep = "";
                 if (IsStrikeThrough(element))
                 {
-                    var newElement = document.CreateElement("s");
-                    newElement.InnerHtml = element.OuterHtml;
+                    // strike through can be on an element that we're replacing as well (like em)...if so don't
+                    // replace em with strike through now, but wait until at the very end 
+                    if (element.TagName.Equals("em", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        elementToKeep = element.TagName;
+                        isStrikeThroughOnElementToKeep = true;
+                    }
+                    else
+                    {
+                        var newElement = document.CreateElement("s");
+                        newElement.InnerHtml = element.OuterHtml;
 
-                    parent.ReplaceChild(newElement, element);
-                    replacementDone = true;
+                        parent.ReplaceChild(newElement, element);
+                        replacementDone = true;
+                    }
                 }
                 else if (IsUnderline(element))
                 {
-                    var newElement = document.CreateElement("u");
-                    newElement.InnerHtml = element.OuterHtml;
+                    if (element.TagName.Equals("em", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        elementToKeep = element.TagName;
+                        isUnderlineOnElementToKeep = true;
+                    }
+                    else
+                    {
+                        var newElement = document.CreateElement("u");
+                        newElement.InnerHtml = element.OuterHtml;
 
-                    parent.ReplaceChild(newElement, element);
-                    replacementDone = true;
+                        parent.ReplaceChild(newElement, element);
+                        replacementDone = true;
+                    }
                 }
 
                 // No need to wrap a span into a new span
@@ -522,6 +548,14 @@ namespace SharePointPnP.Modernization.Framework.Transform
                     if (!replacementDone && element.ClassList.Length == 0)
                     {
                         ReplaceChildElementByText(parent, element, document);
+                    }
+                    else
+                    {
+                        // drop style attribute if still present
+                        if (element.HasAttribute("style"))
+                        {
+                            element.RemoveAttribute("style");
+                        }
                     }
                 }
                 else if (element.TagName.Equals("strong", StringComparison.InvariantCultureIgnoreCase))
@@ -534,7 +568,29 @@ namespace SharePointPnP.Modernization.Framework.Transform
                     var newElement = document.CreateElement("span");
                     newElement.ClassList.Add(element.ClassList.ToArray());
                     element.ClassList.Remove(element.ClassList.ToArray());
-                    newElement.InnerHtml = element.OuterHtml;
+
+                    if (isStrikeThroughOnElementToKeep) 
+                    {
+                        var strikeThroughElement = document.CreateElement("s");
+                        newElement.AppendChild(strikeThroughElement);                        
+                        // Create the element that held the strikethrough style
+                        var emElement = document.CreateElement(elementToKeep.ToLower());
+                        emElement.InnerHtml = element.InnerHtml;
+                        strikeThroughElement.AppendChild(emElement);
+                    }
+                    else if (isUnderlineOnElementToKeep)
+                    {
+                        var underlineElement = document.CreateElement("u");
+                        newElement.AppendChild(underlineElement);
+                        // Create the element that held the underline style
+                        var emElement = document.CreateElement(elementToKeep.ToLower());
+                        emElement.InnerHtml = element.InnerHtml;
+                        underlineElement.AppendChild(emElement);
+                    }
+                    else
+                    {
+                        newElement.InnerHtml = element.OuterHtml;
+                    }
                     parent.ReplaceChild(newElement, element);
                 }
             }
