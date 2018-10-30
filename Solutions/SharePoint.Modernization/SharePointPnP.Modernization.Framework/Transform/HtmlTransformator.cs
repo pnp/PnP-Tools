@@ -582,7 +582,10 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 {
                     // strike through can be on an element that we're replacing as well (like em)...if so don't
                     // replace em with strike through now, but wait until at the very end 
-                    if (element.TagName.Equals("em", StringComparison.InvariantCultureIgnoreCase))
+                    if (element.TagName.Equals("em", StringComparison.InvariantCultureIgnoreCase) ||
+                        element.TagName.Equals("strong", StringComparison.InvariantCultureIgnoreCase) ||
+                        element.TagName.Equals("sup", StringComparison.InvariantCultureIgnoreCase) ||
+                        element.TagName.Equals("sub", StringComparison.InvariantCultureIgnoreCase))
                     {
                         elementToKeep = element.TagName;
                         isStrikeThroughOnElementToKeep = true;
@@ -595,7 +598,10 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 }
                 else if (IsUnderline(element))
                 {
-                    if (element.TagName.Equals("em", StringComparison.InvariantCultureIgnoreCase))
+                    if (element.TagName.Equals("em", StringComparison.InvariantCultureIgnoreCase) ||
+                        element.TagName.Equals("strong", StringComparison.InvariantCultureIgnoreCase) ||
+                        element.TagName.Equals("sup", StringComparison.InvariantCultureIgnoreCase) ||
+                        element.TagName.Equals("sub", StringComparison.InvariantCultureIgnoreCase))
                     {
                         elementToKeep = element.TagName;
                         isUnderlineOnElementToKeep = true;
@@ -629,12 +635,12 @@ namespace SharePointPnP.Modernization.Framework.Transform
                         if (IsUnderline(element))
                         {
                             var newUnderline = document.CreateElement("u");
-                            newUnderline.InnerHtml = innerHtml; //element.InnerHtml;
+                            newUnderline.InnerHtml = innerHtml;
                             newItalic.AppendChild(newUnderline);
                         }
                         else
                         {
-                            newItalic.InnerHtml = innerHtml; //element.InnerHtml;                            
+                            newItalic.InnerHtml = innerHtml;                         
                         }
 
                         newElement.AppendChild(newItalic);
@@ -659,7 +665,6 @@ namespace SharePointPnP.Modernization.Framework.Transform
                             {
                                 element.RemoveAttribute("class");
                             }
-
                         }
                     }
                 }
@@ -696,7 +701,12 @@ namespace SharePointPnP.Modernization.Framework.Transform
                     {
                         newElement.InnerHtml = element.OuterHtml;
                     }
-                    parent.ReplaceChild(newElement, element);
+
+                    // Only replace the element if it's still available...it could have been replaced earlier on
+                    if (parent.Contains(element))
+                    {
+                        parent.ReplaceChild(newElement, element);
+                    }
                 }
             }
         }
