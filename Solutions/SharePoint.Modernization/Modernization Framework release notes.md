@@ -16,9 +16,13 @@
 
 ### Changed
 
-- H4 to H6 elements now retain their formatting when converted to text when transforming wiki html
-- Combining italic/underline in combination with other type of formatting now works stable when transforming wiki html
-- Strip out the "zero width space characters" when transforming wiki html
+- Updates when transforming wiki html:
+  - H4 to H6 elements now retain their formatting when converted to text
+  - Combining italic/underline/bold in combination with other type of formatting now works stable
+  - Strip out the "zero width space characters"
+  - Drop wiki font information
+  - Handle additional styles (ms-rteStyle-Quote,ms-rteStyle-IntenseQuote,ms-rteStyle-Emphasis,ms-rteStyle-IntenseEmphasis,ms-rteStyle-References,ms-rteStyle-IntenseReference,ms-rteStyle-Accent1,ms-rteStyle-Accent2)
+  - Better handling complex nested styles
 
 ## [October release (prod) - version 1.0.1810.2]
 

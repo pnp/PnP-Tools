@@ -39,9 +39,6 @@ namespace SharePointPnP.Modernization.Framework.Transform
 
             using (var document = this.parser.Parse(text))
             {
-                // Drop all <BR>
-                // DropBRs(document);
-
                 // Process headings: RTE does h2, h3, h4 while wiki does h1, h2, h3, h4. Wiki h4 to h6 will become (formatted) text
                 TransformHeadings(document, 6, 0);
                 TransformHeadings(document, 5, 0);
@@ -56,7 +53,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 TransformElements(document.QuerySelectorAll("sub"), document);
                 TransformElements(document.QuerySelectorAll("strong"), document);
                 TransformElements(document.QuerySelectorAll("em"), document);
-
+                
                 // Process blockquotes
                 TransformBlockQuotes(document.QuerySelectorAll("blockquote"), document);
 
@@ -378,12 +375,75 @@ namespace SharePointPnP.Modernization.Framework.Transform
             {
                 var parent = element.Parent;
 
-                // rewrite normal style
+                // ================================
+                // Rewrite font styles outside of the header styles
+                // ================================
                 // <span class="ms-rteStyle-Normal">Norm</span>
+                //ms-rteStyle-Normal
+                //ms-rteStyle-Quote = Italic
+                //ms-rteStyle-IntenseQuote = Italic + Underline
+                //ms-rteStyle-Emphasis = italic + light blue
+                //ms-rteStyle-IntenseEmphasis = italic + light blue + underline
+                //ms-rteStyle-References = light gray
+                //ms-rteStyle-IntenseReferences = light gray + underline
+                //ms-rteStyle-Accent1 = light blue
+                //ms-rteStyle-Accent2 = dark blue
                 var rtestylenormal = element.ClassList.PartialMatch("ms-rtestyle-normal");
                 if (!string.IsNullOrEmpty(rtestylenormal))
                 {
                     element.ClassList.Remove(rtestylenormal);
+                }
+
+                // Replace "rte styles" with their wiki style alternatives which then can be picked up by the default processing
+                var rtestyle = element.ClassList.PartialMatch("ms-rtestyle-");
+                bool addItalic = false;
+                if (!string.IsNullOrEmpty(rtestyle))
+                {
+                    // Remove the wiki style
+                    element.ClassList.Remove(rtestyle);
+
+                    rtestyle = rtestyle.ToLower().Replace("ms-rtestyle-", "");
+                    // Underline style
+                    if (rtestyle.Equals("IntenseQuote", StringComparison.InvariantCultureIgnoreCase) ||
+                        rtestyle.Equals("IntenseEmphasis", StringComparison.InvariantCultureIgnoreCase) ||
+                        rtestyle.Equals("IntenseReferences", StringComparison.InvariantCultureIgnoreCase) )
+                    {
+                        // Update current element Style which will be picked up later on 
+                        element.Style.TextDecoration = "underline";
+                    }
+
+                    // Light blue
+                    if (rtestyle.Equals("Emphasis", StringComparison.InvariantCultureIgnoreCase) ||
+                        rtestyle.Equals("IntenseEmphasis", StringComparison.InvariantCultureIgnoreCase) ||
+                        rtestyle.Equals("Accent1", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        // Update current element ClassList which will be picked up later on 
+                        element.ClassList.Add("ms-rteforecolor-8");
+                    }
+
+                    // Light gray
+                    if (rtestyle.Equals("References", StringComparison.InvariantCultureIgnoreCase) ||
+                        rtestyle.Equals("IntenseReferences", StringComparison.InvariantCultureIgnoreCase) )
+                    {
+                        // no color to add as default is light gray
+                    }
+
+                    // Dark blue
+                    if (rtestyle.Equals("Accent2", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        // Update current element ClassList which will be picked up later on 
+                        element.ClassList.Add("ms-rteforecolor-9");
+                    }
+
+                    // Italic style
+                    if (rtestyle.Equals("Quote", StringComparison.InvariantCultureIgnoreCase) ||
+                        rtestyle.Equals("IntenseQuote", StringComparison.InvariantCultureIgnoreCase) ||
+                        rtestyle.Equals("Emphasis", StringComparison.InvariantCultureIgnoreCase) ||
+                        rtestyle.Equals("IntenseEmphasis", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        // As we need to insert an EM element we can't do that right now. Let's start with setting an indicator 
+                        addItalic = true;
+                    }
                 }
 
                 // ================================
@@ -482,10 +542,6 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 var rtefontsize = element.ClassList.PartialMatch("ms-rtefontsize-");
                 if (!string.IsNullOrEmpty(rtefontsize))
                 {
-                    // Modern Theme colors
-                    // Dark Red, Red, Orange, Yellow, Light green
-                    // Green, Light Blue, Blue, Dark Blue, Purple
-
                     string newClass = null;
                     if (int.TryParse(rtefontsize.ToLower().Replace("ms-rtefontsize-", ""), out int fontsizeCode))
                     {
@@ -502,6 +558,17 @@ namespace SharePointPnP.Modernization.Framework.Transform
                         // We mapped a color
                         element.ClassList.Add(newClass);
                     }
+                }
+
+                // ================================
+                // rewrite fonts
+                // ================================
+                // <span class="ms-rteFontFace-7">custom font</span>
+                var rtefontface = element.ClassList.PartialMatch("ms-rtefontface-");
+                if (!string.IsNullOrEmpty(rtefontface))
+                {
+                    // There are no themed back colors in modern, so for now drop the color span and the background color
+                    element.ClassList.Remove(rtefontface);
                 }
 
                 // rewrite striked and underline
@@ -522,10 +589,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                     }
                     else
                     {
-                        var newElement = document.CreateElement("s");
-                        newElement.InnerHtml = element.OuterHtml;
-
-                        parent.ReplaceChild(newElement, element);
+                        ReplaceByRelevantTag(document, element, parent, "s");
                         replacementDone = true;
                     }
                 }
@@ -538,41 +602,77 @@ namespace SharePointPnP.Modernization.Framework.Transform
                     }
                     else
                     {
-                        var newElement = document.CreateElement("u");
-                        newElement.InnerHtml = element.OuterHtml;
-
-                        parent.ReplaceChild(newElement, element);
-                        replacementDone = true;
+                        // Don't apply the default logic when we need to insert a EM tag...a node can only be replaced once, so postpone the 
+                        // replacement by an U element when we also need to insert an EM tag
+                        if (!addItalic)
+                        {
+                            ReplaceByRelevantTag(document, element, parent, "u");
+                            replacementDone = true;
+                        }
                     }
                 }
 
                 // No need to wrap a span into a new span
                 if (element is IHtmlSpanElement)
                 {
-                    // if we still did not replace the span element and the span has no classes set anymore then we can replace it by text
-                    if (!replacementDone && element.ClassList.Length == 0)
+                    if (addItalic)
                     {
-                        ReplaceChildElementByText(parent, element, document);
+                        // We needed to insert an EM tag as the provided style uses italic
+                        var newElement = document.CreateElement("span");
+                        newElement.ClassList.Add(element.ClassList.ToArray());
+                        var newItalic = document.CreateElement("em");
+
+                        // Transform the piece of html we add in this span, needed to handle spans nested in here as these otherwise would not be found anymore
+                        string innerHtml = TransformInnerHtml(element.InnerHtml);
+
+                        // If the implemented style also used underline then add the U node as well
+                        if (IsUnderline(element))
+                        {
+                            var newUnderline = document.CreateElement("u");
+                            newUnderline.InnerHtml = innerHtml; //element.InnerHtml;
+                            newItalic.AppendChild(newUnderline);
+                        }
+                        else
+                        {
+                            newItalic.InnerHtml = innerHtml; //element.InnerHtml;                            
+                        }
+
+                        newElement.AppendChild(newItalic);
+                        parent.ReplaceChild(newElement, element);
                     }
                     else
                     {
-                        // drop style attribute if still present
-                        if (element.HasAttribute("style"))
+                        // if we still did not replace the span element, the span has no classes set anymore and the span does not have child elements then we can replace it by text
+                        if (!replacementDone && element.ClassList.Length == 0 && element.FirstElementChild == null)
                         {
-                            element.RemoveAttribute("style");
+                            ReplaceChildElementByText(parent, element, document);
+                        }
+                        else
+                        {
+                            // drop style attribute if still present
+                            if (element.HasAttribute("style"))
+                            {
+                                element.RemoveAttribute("style");
+                            }
+                            // if the element has no classes anymore then let's drop the class attribute
+                            if (element.ClassList.Count() == 0 && element.HasAttribute("class"))
+                            {
+                                element.RemoveAttribute("class");
+                            }
+
                         }
                     }
-                }
-                else if (element.TagName.Equals("strong", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    // do nothing special here
                 }
                 else
                 {
                     // Non span element with styling that was transformed will be wrapped in a span containing the styling which wraps a "clean" element
                     var newElement = document.CreateElement("span");
                     newElement.ClassList.Add(element.ClassList.ToArray());
-                    element.ClassList.Remove(element.ClassList.ToArray());
+                    // no point in having an empty class attribute
+                    if (element.HasAttribute("class"))
+                    {
+                        element.RemoveAttribute("class");
+                    }
 
                     if (isStrikeThroughOnElementToKeep) 
                     {
@@ -849,6 +949,50 @@ namespace SharePointPnP.Modernization.Framework.Transform
         }
 
         #region Helper methods
+        private string TransformInnerHtml(string innerHtml)
+        {
+            // Let's inspect if there's still span's in the html we take over...these spans are not in our current list of spans 
+            // and as such will be ignored if we don't handle them.
+            using (var documentTemp = this.parser.Parse(innerHtml))
+            {
+                TransformElements(documentTemp.QuerySelectorAll("span"), documentTemp);
+                //TransformElements(documentTemp.QuerySelectorAll("sup"), documentTemp);
+                //TransformElements(documentTemp.QuerySelectorAll("sub"), documentTemp);
+                //TransformElements(documentTemp.QuerySelectorAll("strong"), documentTemp);
+                //TransformElements(documentTemp.QuerySelectorAll("em"), documentTemp);
+
+                if (documentTemp.DocumentElement.Children.Count() > 1)
+                {
+                    innerHtml = documentTemp.DocumentElement.Children[1].InnerHtml;
+                }
+            }
+
+            return innerHtml;
+        }
+
+        private void ReplaceByRelevantTag(IHtmlDocument document, IElement element, INode parent, string tag)
+        {
+            var newElement = document.CreateElement(tag);
+
+            // Transform the piece of html we add in this span, needed to handle spans nested in here as these otherwise would not be found anymore
+            string innerHtml = TransformInnerHtml(element.InnerHtml);
+
+            // If the element has a class defined then wrap inside a span
+            if (element.ClassList.Count() > 0)
+            {
+                var newSpan = document.CreateElement("span");
+                newSpan.ClassList.Add(element.ClassList.ToArray());
+                newSpan.InnerHtml = innerHtml;
+                newElement.AppendChild(newSpan);
+            }
+            else
+            {
+                newElement.InnerHtml = innerHtml;
+            }
+
+            parent.ReplaceChild(newElement, element);
+        }
+
         private void ReplaceChildElementByText(INode parent, IElement child, IHtmlDocument document)
         {
             if (!string.IsNullOrEmpty(child.TextContent))
