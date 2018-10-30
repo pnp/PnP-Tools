@@ -189,6 +189,7 @@
     <Compile Include="TestCommon.cs" />
     <Compile Include="AdHocTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Transform\Bullets\BulletTests.cs" />
     <Compile Include="Transform\Headers\HeaderTests.cs" />
     <Compile Include="Transform\RichText\RichTextTests.cs" />
     <Compile Include="Transform\Tests.cs" />
