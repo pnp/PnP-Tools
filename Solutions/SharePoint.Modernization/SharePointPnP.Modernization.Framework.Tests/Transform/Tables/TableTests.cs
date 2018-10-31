@@ -44,7 +44,7 @@ namespace SharePointPnP.Modernization.Framework.Tests.Transform.Tables
             {
                 var pageTransformator = new PageTransformator(cc);
 
-                var pages = cc.Web.GetPages("table_2");
+                var pages = cc.Web.GetPages("table_");
                 //var pages = cc.Web.GetPages("temp2");
 
                 foreach (var page in pages)

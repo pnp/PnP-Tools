@@ -13,6 +13,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
     /// </summary>
     public class HtmlTransformator : IHtmlTransformator
     {
+        private const int DefaultTableWidth = 800;
         private HtmlParser parser;
 
         #region Construction
@@ -166,12 +167,17 @@ namespace SharePointPnP.Modernization.Framework.Transform
                         var tableHeaders = row.Children.Where(p => p.TagName.Equals("th", StringComparison.InvariantCultureIgnoreCase));
                         if (tableHeaders != null && tableHeaders.Count() > 0)
                         {
+                            var headerWidth = GetDefaultCellTableCellWidths(tableHeaders.Count());
+                            int headerCounter = 0;
+
                             foreach(var tableHeader in tableHeaders)
                             {
                                 var tableHeaderValue = document.CreateElement("strong");
                                 tableHeaderValue.TextContent = tableHeader.TextContent;
 
                                 var tableHeaderCell = document.CreateElement("td");
+                                tableHeaderCell.Style.Width = $"{headerWidth[headerCounter]}px";
+                                headerCounter++;
                                 tableHeaderCell.AppendChild(tableHeaderValue);
 
                                 // take over row and col spans
@@ -194,27 +200,17 @@ namespace SharePointPnP.Modernization.Framework.Transform
                         var tableCells = row.Children.Where(p => p.TagName.Equals("td", StringComparison.InvariantCultureIgnoreCase));
                         if (tableCells != null && tableCells.Count() > 0)
                         {
+                            var cellWidth = GetDefaultCellTableCellWidths(tableCells.Count());
+                            int cellCounter = 0;
+
                             foreach (var tableCell in tableCells)
                             {
                                 var newTableCell = document.CreateElement("td");
-
-                                // Rewrite the current cell content where needed
-                                if (IsStrikeThrough(tableCell))
-                                {
-
-                                    var newElement = document.CreateElement("s");
-                                    newElement.InnerHtml = tableCell.InnerHtml;
-                                    tableCell.InnerHtml = newElement.OuterHtml;
-                                }
-                                else if (IsUnderline(tableCell))
-                                {
-                                    var newElement = document.CreateElement("u");
-                                    newElement.InnerHtml = tableCell.InnerHtml;
-                                    tableCell.InnerHtml = newElement.OuterHtml;
-                                }
+                                newTableCell.Style.Width = $"{cellWidth[cellCounter]}px";
+                                cellCounter++;
 
                                 // Copy over the content, take over html content as cell can have formatting inside
-                                //newTableCell.TextContent = tableCell.TextContent;
+                                // Formatting of the table cell content was already done in previous steps, so we simply copy what we have
                                 newTableCell.InnerHtml = tableCell.InnerHtml;
 
                                 // take over row and col spans
@@ -864,7 +860,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                     }
             }
 
-            return "simpleTableStyleNeutral";
+            return "borderHeaderTableStyleNeutral";
         }
 
         /// <summary>
@@ -1220,6 +1216,28 @@ namespace SharePointPnP.Modernization.Framework.Transform
             }
 
             return false;
+        }
+
+        private List<int> GetDefaultCellTableCellWidths(int columns)
+        {
+            List<int> widths = new List<int>(columns);
+
+            int width = DefaultTableWidth / columns;
+            int lastWidth = DefaultTableWidth - ((columns - 1) * width);
+
+            for (int i = 0; i < columns; i++)
+            {
+                if (i < columns - 1)
+                {
+                    widths.Add(width);
+                }
+                else
+                {
+                    widths.Add(lastWidth);
+                }
+            }
+
+            return widths;
         }
 
         private bool IsStrikeThrough(IElement element)
