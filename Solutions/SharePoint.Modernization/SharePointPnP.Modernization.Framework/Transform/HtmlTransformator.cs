@@ -128,12 +128,12 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 // <table class="bandedRowTableStyleNeutral" title="Table">
                 var tableElement = document.CreateElement("table");
                 //ms-rteTable-default: basic grid lines
-                string tableClassName = "simpleTableStyleNeutral";
+                string tableClassName = "borderHeaderTableStyleNeutral";
                 if (!string.IsNullOrEmpty(table.ClassName))
                 {
                     if (table.ClassName.Equals("ms-rteTable-default", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        tableClassName = "simpleTableStyleNeutral";
+                        tableClassName = "borderHeaderTableStyleNeutral";
                     }
                     else
                     {

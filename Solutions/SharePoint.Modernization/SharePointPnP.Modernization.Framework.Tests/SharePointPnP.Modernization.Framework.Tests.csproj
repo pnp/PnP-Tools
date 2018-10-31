@@ -192,6 +192,7 @@
     <Compile Include="Transform\Bullets\BulletTests.cs" />
     <Compile Include="Transform\Headers\HeaderTests.cs" />
     <Compile Include="Transform\RichText\RichTextTests.cs" />
+    <Compile Include="Transform\Tables\TableTests.cs" />
     <Compile Include="Transform\Tests.cs" />
     <Compile Include="Transform\Text.cs" />
   </ItemGroup>
