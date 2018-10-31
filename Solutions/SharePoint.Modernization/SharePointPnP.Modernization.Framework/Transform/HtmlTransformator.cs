@@ -3,6 +3,7 @@ using AngleSharp.Dom;
 using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SharePointPnP.Modernization.Framework.Transform
@@ -47,15 +48,17 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 TransformHeadings(document, 2, 3);
                 TransformHeadings(document, 1, 2);
 
+                // Process blockquotes
+                TransformBlockQuotes(document.QuerySelectorAll("blockquote"), document);
+
                 // Process elements that can hold forecolor, backcolor, fontsize, underline and strikethrough information
                 TransformElements(document.QuerySelectorAll("span"), document);
                 TransformElements(document.QuerySelectorAll("sup"), document);
                 TransformElements(document.QuerySelectorAll("sub"), document);
                 TransformElements(document.QuerySelectorAll("strong"), document);
                 TransformElements(document.QuerySelectorAll("em"), document);
-                
-                // Process blockquotes
-                TransformBlockQuotes(document.QuerySelectorAll("blockquote"), document);
+                TransformElements(document.QuerySelectorAll("p"), document);
+
 
                 // Process image and iframes ==> put a place holder text as these will be dropped by RTE on edit mode
                 if (usePlaceHolder)
@@ -279,52 +282,150 @@ namespace SharePointPnP.Modernization.Framework.Transform
         protected virtual void TransformBlockQuotes(IHtmlCollection<IElement> blockQuotes, IHtmlDocument document)
         {
             int level = 1;
-            INode blockParent = null;
+            // Dictionary that holds the nodes that will be replaced. Replacement node is a span that groups the elements at the given level.
+            // We can't immediately replace the nodes as that will break the model where we walk the tree to find the level and top node
+            Dictionary<IElement, IElement> replacementList = new Dictionary<IElement, IElement>();
 
+            // Iterate over all blockquote nodes in the html
             foreach (var blockQuote in blockQuotes)
             {
-                var parent = blockQuote.Parent;                
+                // Only process block quotes that are used for indentation
                 if (blockQuote.OuterHtml.ToLower().Contains("margin:0px 0px 0px 40px"))
                 {
-                    if (blockQuote.ChildElementCount > 0 && blockQuote.Children[0].TagName.ToLower() == "blockquote")
+                    if ((blockQuote.ChildElementCount > 0 && blockQuote.Children[0].TagName.ToLower() == "blockquote"))
                     {
-                        blockParent = blockQuote;
-                        level++;
+                        // do nothing if we still see a blockquote as child element
                     }
                     else
                     {
-                        var newElement = document.CreateElement($"p");
-                        // Drop P as nested P is not allowed in clean html
-                        // TODO: do this in a better way
-                        newElement.InnerHtml = blockQuote.InnerHtml.Replace("<p>", "").Replace("</p>", "").Replace("<P>", "").Replace("</P>", "");
-                        newElement.Style.MarginLeft = $"{level * 40}px";
+                        // We're at the bottom level, the children of this blockquote node do contain regular content. This is always wrapped inside either P or Div tags
+                        bool replacementDone = false;
+                        IElement insertionContainer = null;
+                        IElement topLevelBlockQuote = null;
 
-                        switch (level)
+                        // Calculate the level this blockquote is at, it's top level blockquote node, the insertion container for that level (if it exists), whether strike-through was used and whether underline was used
+                        bool strikeThroughWasUsed = false;
+                        bool underLineWasUsed = false;
+                        DetectBlockQuoteLevelParentContainer(replacementList, blockQuote, ref level, ref topLevelBlockQuote, ref insertionContainer, ref strikeThroughWasUsed, ref underLineWasUsed);
+
+                        // For the first level we get null as top level blockquote, so assign the current blockquote 
+                        if (topLevelBlockQuote == null)
                         {
-                            case 1:
-                                {
-                                    parent.ReplaceChild(newElement, blockQuote);
-                                    break;
-                                }
-                            case 2:
-                                {
-                                    blockParent.Parent.ReplaceChild(newElement, blockParent);
-                                    break;
-                                }
-                            case 3:
-                                {
-                                    blockParent.Parent.Parent.ReplaceChild(newElement, blockParent.Parent);
-                                    break;
-                                }
-                            case 4:
-                                {
-                                    blockParent.Parent.Parent.Parent.ReplaceChild(newElement, blockParent.Parent.Parent);
-                                    break;
-                                }
+                            topLevelBlockQuote = blockQuote;
                         }
-                        
+
+                        // If we found an insertion container then we'll append converted nodes to that container
+                        if (insertionContainer != null)
+                        {
+                            replacementDone = true;
+                        }
+
+                        // Important to do a ToList() to get a copy as the Children list might be affected by the code in the loop!
+                        foreach (var nodeToProcess in blockQuote.Children.ToList())
+                        {
+                            // Indention in realized via P element with the needed pixels as margin-left
+                            IElement newElement;
+
+                            // Block elements get their indentation style on the element, others will we wrapped inside a P
+                            bool isBlockElement = IsBlockElement(nodeToProcess);
+                            string innerHtml = "";
+                            if (isBlockElement)
+                            {
+                                newElement = nodeToProcess;
+                                newElement.Style.MarginLeft = $"{level * 40}px";
+                                // Store the block element html for later adding
+                                innerHtml = nodeToProcess.InnerHtml;
+                                // since we're injecting the block element content again we first remove all nodes from it
+                                foreach (var child in newElement.ChildNodes.ToList())
+                                {
+                                    newElement.RemoveChild(child);
+                                }
+                            }
+                            else
+                            {
+                                newElement = document.CreateElement($"p");
+                                newElement.Style.MarginLeft = $"{level * 40}px";
+                            }
+
+                            if (strikeThroughWasUsed)
+                            {
+                                // Since strikethrough was used wrap the contents in an s element
+                                var newLineThroughElement = document.CreateElement("s");
+                                if (isBlockElement)
+                                {
+                                    newLineThroughElement.InnerHtml = innerHtml; 
+                                }
+                                else
+                                {
+                                    newLineThroughElement.InnerHtml = nodeToProcess.OuterHtml;
+                                }
+                                newElement.AppendChild(newLineThroughElement);
+                            }
+                            else if (underLineWasUsed)
+                            {
+                                // Since underline was used wrap the contents in an u element
+                                var newUnderlineElement = document.CreateElement("u");
+                                if (isBlockElement)
+                                {
+                                    newUnderlineElement.InnerHtml = innerHtml;
+                                }
+                                else
+                                {
+                                    newUnderlineElement.InnerHtml = nodeToProcess.OuterHtml;
+                                }
+                                newElement.AppendChild(newUnderlineElement);
+                            }
+                            else
+                            {
+                                if (isBlockElement)
+                                {
+                                    newElement.InnerHtml = innerHtml;
+                                }
+                                else
+                                {
+                                    newElement.InnerHtml = nodeToProcess.OuterHtml;
+                                }
+                            }
+
+                            // if no insertion container was created then create it as span and add the new element
+                            if (insertionContainer == null)
+                            {
+                                insertionContainer = document.CreateElement("span");
+                                insertionContainer.AppendChild(newElement);
+                            }
+
+                            if (!replacementDone)
+                            {
+                                // Since we can't simply replace the node (as that would break future blockquote tree traversals) we're storing the "new" node in a list. 
+                                // Replacement will happen at the very end of this flow
+                                if (!replacementList.ContainsKey(topLevelBlockQuote))
+                                {
+                                    replacementList.Add(topLevelBlockQuote, insertionContainer);
+                                }
+                            }
+                            else
+                            {
+                                // There's already an insertion container, so we can simply append our element
+                                insertionContainer.AppendChild(newElement);
+                            }
+
+                            replacementDone = true;
+                        }
+
+                        // reset variables since we're starting a new blockquote
                         level = 1;
+                        insertionContainer = null;
                     }
+                }
+            }
+
+            // Perform the actual replacements 
+            foreach (var node in replacementList)
+            {
+                var parent = node.Key.Parent;
+                if (parent.Contains(node.Key))
+                {
+                    parent.ReplaceChild(node.Value, node.Key);
                 }
             }
         }
@@ -584,6 +685,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                     // replace em with strike through now, but wait until at the very end 
                     if (element.TagName.Equals("em", StringComparison.InvariantCultureIgnoreCase) ||
                         element.TagName.Equals("strong", StringComparison.InvariantCultureIgnoreCase) ||
+                        //element.TagName.Equals("blockquote", StringComparison.InvariantCultureIgnoreCase) ||
                         element.TagName.Equals("sup", StringComparison.InvariantCultureIgnoreCase) ||
                         element.TagName.Equals("sub", StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -600,6 +702,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 {
                     if (element.TagName.Equals("em", StringComparison.InvariantCultureIgnoreCase) ||
                         element.TagName.Equals("strong", StringComparison.InvariantCultureIgnoreCase) ||
+                        //element.TagName.Equals("blockquote", StringComparison.InvariantCultureIgnoreCase) ||
                         element.TagName.Equals("sup", StringComparison.InvariantCultureIgnoreCase) ||
                         element.TagName.Equals("sub", StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -959,6 +1062,60 @@ namespace SharePointPnP.Modernization.Framework.Transform
         }
 
         #region Helper methods
+        /// <summary>
+        /// Recursively loop the blockquote elements until we're at the top level, returns needed information to process:
+        /// - Level: how many indents where used
+        /// - TopLevelBlockQuote: what is the top level blockquote that we'll be using as "replacement node"
+        /// - If there already was a container created to store content at this level then let's return that one
+        /// - If by walking the blockquote tree we see strike through being used then indicate that
+        /// - If by walking the blockquote tree we see underline being used then indicate that
+        /// </summary>
+        /// <param name="replacementList"></param>
+        /// <param name="blockQuote"></param>
+        /// <param name="level"></param>
+        /// <param name="topLevelBlockQuote"></param>
+        /// <param name="insertionContainer"></param>
+        /// <param name="strikeThroughWasUsed"></param>
+        /// <param name="underLineWasUsed"></param>
+        private void DetectBlockQuoteLevelParentContainer(Dictionary<IElement, IElement> replacementList, IElement blockQuote, ref int level, ref IElement topLevelBlockQuote, ref IElement insertionContainer, ref bool strikeThroughWasUsed, ref bool underLineWasUsed)
+        {
+            if (IsStrikeThrough(blockQuote))
+            {
+                strikeThroughWasUsed = true;
+            }
+            if (IsUnderline(blockQuote))
+            {
+                underLineWasUsed = true;
+            }
+
+            if (blockQuote.Parent is IElement)
+            {
+                if (blockQuote.ParentElement.TagName.ToLower() == "blockquote")
+                {
+                    topLevelBlockQuote = blockQuote.ParentElement;
+                    level++;
+
+                    if (IsStrikeThrough(blockQuote.ParentElement))
+                    {
+                        strikeThroughWasUsed = true;
+                    }
+                    if (IsUnderline(blockQuote.ParentElement))
+                    {
+                        underLineWasUsed = true;
+                    }
+
+                    DetectBlockQuoteLevelParentContainer(replacementList, blockQuote.ParentElement, ref level, ref topLevelBlockQuote, ref insertionContainer, ref strikeThroughWasUsed, ref underLineWasUsed);
+                }
+                else
+                {
+                    if (insertionContainer == null && topLevelBlockQuote != null && replacementList.ContainsKey(topLevelBlockQuote))
+                    {
+                        insertionContainer = replacementList[topLevelBlockQuote];
+                    }
+                }
+            }
+        }
+
         private string TransformInnerHtml(string innerHtml)
         {
             // Let's inspect if there's still span's in the html we take over...these spans are not in our current list of spans 
@@ -1016,6 +1173,53 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 // If no content then drop the element
                 parent.RemoveChild(child);
             }
+        }
+
+        private bool IsBlockElement(IElement element)
+        {
+            var tag = element.TagName.ToLower();
+            if (tag == "article" ||
+                tag == "div" ||
+                tag == "p" ||
+                tag == "h1" ||
+                tag == "h2" ||
+                tag == "h3" ||
+                tag == "h3" ||
+                tag == "h4" ||
+                tag == "h5" ||
+                tag == "h6" ||
+                tag == "li" ||
+                tag == "ol" ||
+                tag == "ul" ||
+                tag == "address" ||
+                tag == "aside" ||
+                tag == "canvas" ||
+                tag == "dd" ||
+                tag == "dl" ||
+                tag == "dt" ||
+                tag == "fieldset" ||
+                tag == "figcaption" ||
+                tag == "figure" ||
+                tag == "footer" ||
+                tag == "form" ||
+                tag == "header" ||
+                tag == "hr" ||
+                tag == "main" ||
+                tag == "nav" ||
+                tag == "noscript" ||
+                tag == "output" ||
+                tag == "pre" ||
+                tag == "section" ||
+                tag == "table" ||
+                tag == "tfoot" ||
+                tag == "video" ||
+                tag == "aside" ||
+                tag == "blockquote" )
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private bool IsStrikeThrough(IElement element)

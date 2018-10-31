@@ -23,6 +23,7 @@
   - Drop wiki font information
   - Handle additional styles (ms-rteStyle-Quote,ms-rteStyle-IntenseQuote,ms-rteStyle-Emphasis,ms-rteStyle-IntenseEmphasis,ms-rteStyle-References,ms-rteStyle-IntenseReference,ms-rteStyle-Accent1,ms-rteStyle-Accent2)
   - Better handling complex nested styles
+  - Full rewrite of indent handling: now supports complex formatting inside indents, indenting of blocks and unlimited indent depth
 
 ## [October release (prod) - version 1.0.1810.2]
 

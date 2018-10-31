@@ -207,6 +207,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Transform\Bullets\Bullets_1.html" />
     <Content Include="Transform\Headers\header_1.html" />
     <Content Include="Transform\RichText\richtext_1.html" />
   </ItemGroup>
