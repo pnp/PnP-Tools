@@ -84,6 +84,10 @@ namespace SharePointPnP.Modernization.Framework.Pages
                     if (contentHost != null)
                     {
                         var content = contentHost.FirstElementChild;
+
+                        // Drop elements which we anyhow can't transform and/or which are stripped out from RTE
+                        CleanHtml(content, htmlDoc);
+
                         StringBuilder textContent = new StringBuilder();
                         int order = 0;
                         foreach (var node in content.ChildNodes)
@@ -276,6 +280,59 @@ namespace SharePointPnP.Modernization.Framework.Pages
 
             return new Tuple<PageLayout, List<WebPartEntity>>(layout, webparts);
         }
+
+
+        private void CleanHtml(IElement element, IHtmlDocument document)
+        {
+            foreach(var node in element.QuerySelectorAll("*").ToList())
+            {
+                if (node.ParentElement != null && IsUntransformableBlockElement(node))
+                {
+                    // create new div node and add all current children to it
+                    var div = document.CreateElement("div");
+                    foreach (var child in node.ChildNodes.ToList())
+                    {
+                        div.AppendChild(child);
+                    }
+                    // replace the unsupported node with the new div
+                    node.ParentElement.ReplaceChild(div, node);
+                }
+            }
+        }
+
+        private bool IsUntransformableBlockElement(IElement element)
+        {
+            var tag = element.TagName.ToLower();
+            if (tag == "article" ||
+                tag == "address" ||
+                tag == "aside" ||
+                tag == "canvas" ||
+                tag == "dd" ||
+                tag == "dl" ||
+                tag == "dt" ||
+                tag == "fieldset" ||
+                tag == "figcaption" ||
+                tag == "figure" ||
+                tag == "footer" ||
+                tag == "form" ||
+                tag == "header" ||
+                //tag == "hr" || // will be replaced at in the html transformator
+                tag == "main" ||
+                tag == "nav" ||
+                tag == "noscript" ||
+                tag == "output" ||
+                tag == "pre" ||
+                tag == "section" ||
+                tag == "tfoot" ||
+                tag == "video" ||
+                tag == "aside")
+            {
+                return true;
+            }
+
+            return false;
+        }
+
 
         /// <summary>
         /// Does the tree of nodes somewhere contain a web part?

@@ -70,6 +70,12 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 // Process tables
                 TransformTables(document.QuerySelectorAll("table"), document);
 
+                // Finalize the transformation by cleaning the html
+                // - styling information: RTE does only support a limited set of styles
+                // - html nodes that are not supported in RTE (clean/replace nodes but avoid dropping relevant content)
+                CleanStyles(document);
+                CleanHtmlNodes(document);
+
                 // Return the transformed html
                 if (document.DocumentElement.Children.Count() > 1)
                 {
@@ -105,10 +111,73 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 if (document.Body.InnerHtml.ToLower() == "<p></p>")
                 {
                     return true;
-                }                
+                }
             }
 
             return false;
+        }
+        protected virtual void CleanHtmlNodes(IHtmlDocument document)
+        {
+            // HR tag --> replace by BR
+            foreach (var element in document.All.Where(p => p.TagName.Equals("hr", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                if (element.ParentElement != null)
+                {
+                    var container = document.CreateElement("span");
+                    container.AppendChild(document.CreateElement("br"));
+                    container.AppendChild(document.CreateElement("br"));
+                    element.ParentElement.ReplaceChild(container, element);
+                }
+            }
+        }
+
+        protected virtual void CleanStyles(IHtmlDocument document)
+        {
+            foreach(var element in document.All.Where(p => p.HasAttribute("style")))
+            {
+
+                if (string.IsNullOrEmpty(element.GetAttribute("style")))
+                {
+                    // If the style attribute was empty then drop it
+                    element.RemoveAttribute("style");
+                }
+                else
+                {
+                    if (IsBlockElement(element))
+                    {
+                        // Save the styles we want to maintain
+                        string marginLeft = element.Style.MarginLeft;
+                        string textAlign = element.Style.TextAlign;
+
+                        // Delete all styling information from the element
+                        element.RemoveAttribute("style");
+
+                        // Add the "styles to keep" again
+                        if (!string.IsNullOrEmpty(marginLeft))
+                        {
+                            element.Style.MarginLeft = marginLeft;
+                        }
+                        if (!string.IsNullOrEmpty(textAlign))
+                        {
+                            element.Style.TextAlign = textAlign;
+                        }
+                    }
+                    else
+                    {
+                        // Save the styles we want to maintain
+                        string width = element.Style.Width;
+
+                        // Delete all styling information from the element
+                        element.RemoveAttribute("style");
+
+                        // Add the "styles to keep" again
+                        if (!string.IsNullOrEmpty(width))
+                        {
+                            element.Style.Width = width;
+                        }
+                    }
+                }
+            }
         }
 
         protected virtual void TransformTables(IHtmlCollection<IElement> tables, IHtmlDocument document)

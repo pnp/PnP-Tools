@@ -85,7 +85,7 @@ namespace SharePointPnP.Modernization.Framework.Tests.Transform
                 //webparts.aspx
                 //contentbyquery1.aspx
                 //how to use this library.aspx
-                var pages = cc.Web.GetPages("under");
+                var pages = cc.Web.GetPages("webparts.aspx");
 
                 foreach (var page in pages)
                 {

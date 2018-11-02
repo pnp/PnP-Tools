@@ -27,6 +27,7 @@
   - Switch default table style to borderHeaderTableStyleNeutral - this allows highlighted text to show as highlighted, plain table style suppresses this
   - Assume a table width of 800px and spread evenly across available columns
   - Improved reliability in detecting images/videos inside wiki text fragments
+  - Clean wiki html before/after processing to drop nodes which are not support in RTE
 
 ## [October release (prod) - version 1.0.1810.2]
 
