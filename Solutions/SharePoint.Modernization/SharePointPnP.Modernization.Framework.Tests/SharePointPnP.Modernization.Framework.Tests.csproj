@@ -195,9 +195,12 @@
     <Compile Include="Transform\Tables\TableTests.cs" />
     <Compile Include="Transform\Tests.cs" />
     <Compile Include="Transform\Text.cs" />
+    <Compile Include="Transform\Wp\WpTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="App.config.sample" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -211,6 +214,7 @@
     <Content Include="Transform\Bullets\Bullets_1.html" />
     <Content Include="Transform\Headers\header_1.html" />
     <Content Include="Transform\RichText\richtext_1.html" />
+    <Content Include="Transform\Wp\wp_1.html" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -166,6 +166,13 @@ namespace SharePointPnP.Modernization.Framework.Pages
                                             {
                                                 textContent.AppendLine("<BR>");
                                             }
+                                            // given that wiki html can contain embedded images and videos while not having child nodes we need include these.
+                                            // case: img/iframe tag as "only" element to evaluate (e.g. first element in the contenthost)
+                                            else if (node.NodeName.Equals("img", StringComparison.InvariantCultureIgnoreCase) ||
+                                                     node.NodeName.Equals("iframe", StringComparison.InvariantCultureIgnoreCase))
+                                            {
+                                                textContent.AppendLine((node as IHtmlElement).OuterHtml);
+                                            }
                                         }
                                     }
                                 }

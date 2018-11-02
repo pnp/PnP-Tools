@@ -335,7 +335,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
             {
                 // Insert as first as we want to walk this from top to bottom
                 elementsToAdd.Insert(0, e);
-                if (!(e.ParentElement is IHtmlBodyElement))
+                if (e.ParentElement != null && !(e.ParentElement is IHtmlBodyElement))
                 {
                     e = e.ParentElement;
                 }
@@ -517,14 +517,11 @@ namespace SharePointPnP.Modernization.Framework.Transform
             {
                 foreach (var node in parent.ChildNodes)
                 {
-                    //if (!(node is IHtmlBreakRowElement))
-                    //{
-                        nodes.Add(node);
-                        if ((node is IElement) && node.ChildNodes.Count() > 0)
-                        {
-                            RecurseNodes((node as IElement), ref nodes);
-                        }
-                    //}
+                    nodes.Add(node);
+                    if ((node is IElement) && node.ChildNodes.Count() > 0)
+                    {
+                        RecurseNodes((node as IElement), ref nodes);
+                    }
                 }
             }
         }

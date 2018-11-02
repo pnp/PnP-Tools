@@ -26,6 +26,7 @@
   - Full rewrite of indent handling: now supports complex formatting inside indents, indenting of blocks and unlimited indent depth
   - Switch default table style to borderHeaderTableStyleNeutral - this allows highlighted text to show as highlighted, plain table style suppresses this
   - Assume a table width of 800px and spread evenly across available columns
+  - Improved reliability in detecting images/videos inside wiki text fragments
 
 ## [October release (prod) - version 1.0.1810.2]
 
