@@ -28,6 +28,7 @@
   - Assume a table width of 800px and spread evenly across available columns
   - Improved reliability in detecting images/videos inside wiki text fragments
   - Clean wiki html before/after processing to drop nodes which are not support in RTE
+  - Full rewrite of wiki splitting...better reliability, better results and better performance
 
 ## [October release (prod) - version 1.0.1810.2]
 
