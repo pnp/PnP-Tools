@@ -1,4 +1,5 @@
-﻿using AngleSharp.Dom;
+﻿/*
+using AngleSharp.Dom;
 using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
 using SharePointPnP.Modernization.Framework.Entities;
@@ -113,13 +114,13 @@ namespace SharePointPnP.Modernization.Framework.Transform
                             if (element is IHtmlImageElement)
                             {
                                 bool split = true;
-                                
+
                                 // Only split if the image was not living in a table or list
                                 if (!InUnSplitableElement(element))
                                 {
                                     // Remove empty DIV's as that's a net result of the splitting
                                     StripEmptyDivAndPfromHtmlTree(newWikiTextHtmlFragment);
-
+                                                                       
                                     // Get the current html tree from this element up and add as text part
                                     props.Add("Title", "Wiki text");
                                     props.Add("Text", newWikiTextHtmlFragment.InnerHtml);
@@ -152,6 +153,16 @@ namespace SharePointPnP.Modernization.Framework.Transform
                                     lastElementAdded = AddNodeToHtmlTree(newWikiTextHtmlFragment, lastElementAdded, element);
                                 }
 
+                                // Check if this image tag is wrapped inside an Anchor
+                                string anchorTag = null;
+                                if (element.ParentElement != null && element.ParentElement.TagName.Equals("A", StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    if (element.ParentElement.HasAttribute("href"))
+                                    {
+                                        anchorTag = element.ParentElement.GetAttribute("href");
+                                    }
+                                }
+
                                 // Fill properties of the image web part
                                 props = new Dictionary<string, string>();
                                 if ((element as IHtmlImageElement).Source != null)
@@ -161,6 +172,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                                     props.Add("ImageUrl", (element as IHtmlImageElement).Source.Replace("about://", ""));
                                     props.Add("Width", (element as IHtmlImageElement).DisplayWidth.ToString());
                                     props.Add("Height", (element as IHtmlImageElement).DisplayHeight.ToString());
+                                    props.Add("Anchor", anchorTag ?? "");
                                 }
 
                                 var alt = (element as IElement).Attributes.Where(p => p.Name.Equals("alt", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
@@ -179,6 +191,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                                     Order = split ? extraWebPartCounter : extraWebPartCounter2,
                                     Properties = props
                                 });
+
                                 if (split)
                                 {
                                     extraWebPartCounter++;
@@ -335,7 +348,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
             {
                 // Insert as first as we want to walk this from top to bottom
                 elementsToAdd.Insert(0, e);
-                if (!(e.ParentElement is IHtmlBodyElement))
+                if (e.ParentElement != null && !(e.ParentElement is IHtmlBodyElement))
                 {
                     e = e.ParentElement;
                 }
@@ -439,7 +452,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
         private IElement SetParentElement(INode sourceElement, INode targetParentElement)
         {
             string sourceElementParentTagName = "";
-                        
+            
             if (sourceElement.ParentElement != null)
             {
                 sourceElementParentTagName = sourceElement.ParentElement.TagName;
@@ -517,17 +530,15 @@ namespace SharePointPnP.Modernization.Framework.Transform
             {
                 foreach (var node in parent.ChildNodes)
                 {
-                    //if (!(node is IHtmlBreakRowElement))
-                    //{
-                        nodes.Add(node);
-                        if ((node is IElement) && node.ChildNodes.Count() > 0)
-                        {
-                            RecurseNodes((node as IElement), ref nodes);
-                        }
-                    //}
+                    nodes.Add(node);
+                    if ((node is IElement) && node.ChildNodes.Count() > 0)
+                    {
+                        RecurseNodes((node as IElement), ref nodes);
+                    }
                 }
             }
         }
         #endregion
     }
 }
+*/

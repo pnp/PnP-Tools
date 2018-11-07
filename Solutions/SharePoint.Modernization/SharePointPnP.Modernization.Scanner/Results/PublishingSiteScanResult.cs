@@ -16,7 +16,13 @@ namespace SharePoint.Modernization.Scanner.Results
             this.UsedSystemMasterPages = new List<string>();
             this.UsedSiteMasterPages = new List<string>();
             this.UsedPageLayouts = new List<string>();
+            this.UsedLanguages = new List<uint>();
         }
+
+        /// <summary>
+        /// Complexity classification of this publishing portal
+        /// </summary>
+        public SiteComplexity Classification { get; set; }
 
         /// <summary>
         /// Number of webs in this publishing portal
@@ -47,5 +53,10 @@ namespace SharePoint.Modernization.Scanner.Results
         /// Most recent page update date. Will be empty if page analysis was not selected in the scanner
         /// </summary>
         public DateTime? LastPageUpdateDate { get; set; }
+
+        /// <summary>
+        /// The languages used in this publishing portal
+        /// </summary>
+        public List<uint> UsedLanguages { get; set; }
     }
 }

@@ -183,10 +183,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
                     pageData = new WikiPage(pageTransformationInformation.SourcePage, pageTransformation).Analyze();
 
                     // Wiki pages can contain embedded images and videos, which is not supported by the target RTE...split wiki text blocks so the transformator can handle the images and videos as separate web parts
-                    if (pageTransformationInformation.HandleWikiImagesAndVideos)
-                    {
-                        pageData = new Tuple<PageLayout, List<WebPartEntity>>(pageData.Item1, new WikiTransformator().TransformPlusSplit(pageData.Item2));
-                    }
+                    pageData = new Tuple<PageLayout, List<WebPartEntity>>(pageData.Item1, new WikiTransformatorSimple().TransformPlusSplit(pageData.Item2, pageTransformationInformation.HandleWikiImagesAndVideos));
                 }
                 else if (pageType.Equals("WebPartPage", StringComparison.InvariantCultureIgnoreCase))
                 {

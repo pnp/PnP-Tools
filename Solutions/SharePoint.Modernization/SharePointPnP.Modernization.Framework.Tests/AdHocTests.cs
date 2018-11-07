@@ -2,6 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.SharePoint.Client;
 using SharePointPnP.Modernization.Framework.Transform;
+using AngleSharp.Parser.Html;
+using System.Linq;
 
 namespace SharePointPnP.Modernization.Framework.Tests
 {
@@ -76,6 +78,27 @@ namespace SharePointPnP.Modernization.Framework.Tests
                 
             }
         }
+
+        [TestMethod]
+        public void WikiSplitTest()
+        {
+            string text = System.IO.File.ReadAllText(@"C:\temp\htmlsplittest.html");
+
+            string[] split = text.Split(new string[] { "<span class=\"split\"></span>" }, StringSplitOptions.RemoveEmptyEntries);
+            HtmlParser parser = new HtmlParser(new HtmlParserOptions() { IsEmbedded = true });
+
+            foreach(var part in split)
+            {
+                using (var document = parser.Parse(part))
+                {
+                    if (document.DocumentElement.Children.Count() > 1)
+                    {
+                        string updatedText = document.DocumentElement.Children[1].InnerHtml;
+                    }
+                }
+            }
+        }
+
 
     }
 }

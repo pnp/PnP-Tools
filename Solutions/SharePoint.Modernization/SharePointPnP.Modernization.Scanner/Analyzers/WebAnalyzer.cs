@@ -23,6 +23,8 @@ namespace SharePoint.Modernization.Scanner.Analyzers
         public static readonly string SitePageContentTypeId = "0x0101009D1CB255DA76424F860D91F20E6C4118";
         // Column indicating the clientside application id feature
         public static readonly string ClientSideApplicationId = "ClientSideApplicationId";
+        // Stores page customization information
+        public Dictionary<string, CustomizedPageStatus> MasterPageGalleryCustomization = null;
         // OOB master pages
         private static List<string> excludeMasterPage = new List<string>
                                                         {
@@ -345,7 +347,14 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                     {
                         publishingAnalyzer = new PublishingAnalyzer(this.SiteUrl, this.SiteCollectionUrl, this.ScanJob, scanResult, null);
                     }
+
+                    // Assign the current masterpage gallery results
+                    publishingAnalyzer.MasterPageGalleryCustomization = this.MasterPageGalleryCustomization;
+                    // Run the publishing analyzer
                     publishingAnalyzer.Analyze(cc);
+
+                    // Store the masterpage gallery results
+                    this.MasterPageGalleryCustomization = publishingAnalyzer.MasterPageGalleryCustomization;
                 }
 
             }

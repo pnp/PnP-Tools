@@ -45,8 +45,11 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                   </ViewFields>  
                 </View>";
 
-        WebScanResult webScanResult;
-        SiteScanResult siteScanResult;
+        // Stores page customization information
+        public Dictionary<string, CustomizedPageStatus> MasterPageGalleryCustomization = null;
+
+        private WebScanResult webScanResult;
+        private SiteScanResult siteScanResult;
 
         #region Construction
         /// <summary>
@@ -296,6 +299,50 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                                         pageScanResult.PageLayout = page.PageLayout();
                                         pageScanResult.PageLayoutFile = page.PageLayoutFile().Replace(pageScanResult.SiteColUrl, "").Replace("/_catalogs/masterpage/", "");
 
+                                        // Customization status                                        
+                                        if (this.MasterPageGalleryCustomization == null)
+                                        {
+                                            this.MasterPageGalleryCustomization = new Dictionary<string, CustomizedPageStatus>();
+                                        }
+
+                                        // Load the file to check the customization status, only do this if the file was not loaded before for this site collection
+                                        Uri uri = new Uri(page.PageLayoutFile());
+                                        var url = page.PageLayoutFile().Replace($"{uri.Scheme}://{uri.DnsSafeHost}".ToLower(), "");
+                                        if (!this.MasterPageGalleryCustomization.ContainsKey(url))
+                                        {
+                                            try
+                                            {
+                                                var publishingPageLayout = cc.Site.RootWeb.GetFileByServerRelativeUrl(url);
+                                                cc.Load(publishingPageLayout);
+                                                cc.ExecuteQueryRetry();
+
+                                                this.MasterPageGalleryCustomization.Add(url, publishingPageLayout.CustomizedPageStatus);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                // eat potential exceptions
+                                            }
+                                        }
+
+                                        // store the page layout customization status 
+                                        if (this.MasterPageGalleryCustomization.TryGetValue(url, out CustomizedPageStatus pageStatus))
+                                        {
+                                            if (pageStatus == CustomizedPageStatus.Uncustomized)
+                                            {
+                                                pageScanResult.PageLayoutWasCustomized = false;
+                                            }
+                                            else
+                                            {
+                                                pageScanResult.PageLayoutWasCustomized = true;
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            // If the file was not loaded for some reason then assume it was customized
+                                            pageScanResult.PageLayoutWasCustomized = true;
+                                        }
+
                                         // Page audiences
                                         var audiences = page.Audiences();
                                         if (audiences != null)
@@ -448,6 +495,7 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                     {
                         SiteColUrl = item.Value.SiteColUrl,
                         SiteURL = item.Value.SiteURL,
+                        Classification = SiteComplexity.Simple
                     };
                     siteScanResults.Add(item.Value.SiteColUrl, siteResult);
                 }
@@ -468,6 +516,24 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                 if (item.Value.SystemMasterPage != null && !siteResult.UsedSystemMasterPages.Contains(item.Value.SystemMasterPage))
                 {
                     siteResult.UsedSystemMasterPages.Add(item.Value.SystemMasterPage);
+                }
+
+                // If in a single site collection multiple languages are used then mark the publishing portal as complex
+                if (!siteResult.UsedLanguages.Contains(item.Value.Language))
+                {
+                    siteResult.UsedLanguages.Add(item.Value.Language);
+                }
+
+                if (siteResult.UsedLanguages.Count > 1)
+                {
+                    siteResult.Classification = SiteComplexity.Complex;
+                }
+                
+                // Check the classification based upon the web level data
+                var webClassification = item.Value.WebClassification;
+                if (webClassification > siteResult.Classification)
+                {
+                    siteResult.Classification = webClassification;
                 }
             }
 
@@ -499,6 +565,39 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                             siteResult.LastPageUpdateDate = item.Value.ModifiedAt;
                         }
                     }
+
+                    // Update complexity based upon data for the page
+
+                    // Customized page layouts
+                    var pageClassification = SiteComplexity.Simple;
+                    if (item.Value.PageLayoutWasCustomized)
+                    {
+                        pageClassification = SiteComplexity.Medium;
+                    }
+                    if (pageClassification > siteResult.Classification)
+                    {
+                        siteResult.Classification = pageClassification;
+                    }
+
+                    // Audiences used
+                    pageClassification = SiteComplexity.Simple;
+                    if (item.Value.GlobalAudiences.Count > 0 || item.Value.SecurityGroupAudiences.Count > 0 || item.Value.SharePointGroupAudiences.Count > 0)
+                    {
+                        pageClassification = SiteComplexity.Medium;
+                    }
+                    if (pageClassification > siteResult.Classification)
+                    {
+                        siteResult.Classification = pageClassification;
+                    }
+                }
+            }
+
+            // Push back the site collection complexity level as a column of the web rows as that data is exported for the dashboard
+            foreach (var item in webScanResults)
+            {
+                if (siteScanResults.TryGetValue(item.Value.SiteColUrl, out PublishingSiteScanResult site))
+                {
+                    item.Value.SiteClassification = site.Classification.ToString();
                 }
             }
 
