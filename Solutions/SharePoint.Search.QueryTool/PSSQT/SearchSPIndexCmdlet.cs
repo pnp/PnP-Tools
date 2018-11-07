@@ -1,15 +1,12 @@
-﻿using System;
-using System.Management.Automation;
-using SearchQueryTool.Model;
+﻿using PSSQT.Helpers;
 using SearchQueryTool.Helpers;
-using System.Security.Principal;
-using System.Net;
+using SearchQueryTool.Model;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Specialized;
-using System.Collections.Generic;
-using PSSQT.Helpers;
-using PSSQT.Helpers.Authentication;
+using System.Management.Automation;
+using System.Net;
 using System.Threading;
 
 

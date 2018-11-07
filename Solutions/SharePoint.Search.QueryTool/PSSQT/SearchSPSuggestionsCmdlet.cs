@@ -56,7 +56,7 @@ namespace PSSQT
             ValueFromPipeline = false,
             HelpMessage = "Enable hit highlithing of search term in query."
         )]
-        public SwitchParameter EnableHitHighlighting { get; set; }
+        public SwitchParameter EnableHitHighlighting { get; set; } = true;
 
         [Parameter(
              Mandatory = false,
@@ -72,7 +72,7 @@ namespace PSSQT
             ValueFromPipeline = false,
             HelpMessage = "Enable Capitalize First Letters."
         )]
-        public SwitchParameter EnableCapitalizeFirstLetters { get; set; }
+        public SwitchParameter EnableCapitalizeFirstLetters { get; set; } = true;
 
         [Parameter(
             Mandatory = false,
@@ -88,7 +88,7 @@ namespace PSSQT
              ValueFromPipeline = false,
              HelpMessage = "Enable Show People Name Suggestions."
          )]
-        public SwitchParameter EnableShowPeopleNameSuggestions { get; set; }
+        public SwitchParameter EnableShowPeopleNameSuggestions { get; set; } = true;
 
         [Parameter(
             Mandatory = false,
@@ -104,7 +104,7 @@ namespace PSSQT
               ValueFromPipeline = false,
               HelpMessage = "Enable Pre Query Suggestions."
           )]
-        public SwitchParameter EnablePreQuerySuggestions { get; set; }
+        public SwitchParameter EnablePreQuerySuggestions { get; set; } = true;
 
         [Parameter(
             Mandatory = false,

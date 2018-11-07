@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -72,7 +73,9 @@ namespace PSSQT.Helpers
                     var hhsummary = psPropertyInfo.Value as string;
 
                     hhsummary = hhsummary.Replace("<ddd/>", "\u2026");
-                    hhsummary = hhsummary.Replace("&amp;", "&");
+
+                    hhsummary = WebUtility.HtmlDecode(hhsummary);
+
                     hhsummary = Regex.Replace(hhsummary, wspattern, " ");
 
                     presentMask |= hhsummaryPresent;

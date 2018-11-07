@@ -232,17 +232,17 @@ namespace PSSQT
 
         protected virtual void ProcessTriggeredRules(List<string> triggeredRules)
         {
-            WriteInfo(String.Format("Number of triggered rules: {0}", triggeredRules != null ? triggeredRules.Count : 0));
+            WriteVerbose(String.Format("Number of triggered rules: {0}", triggeredRules != null ? triggeredRules.Count : 0));
         }
 
 
 
         protected virtual void ProcessSearchQueryResultInfo(SearchQueryResult queryResults)
         {
-            WriteInfo(String.Format("HTTP status code: {0}", queryResults.StatusCode));
-            WriteInfo(String.Format("Status description: {0}", queryResults.StatusDescription));
-            WriteInfo(String.Format("HTTP protocol version: {0}", queryResults.HttpProtocolVersion));
-            WriteInfo(String.Format("Response content type: {0}", queryResults.ContentType));
+            WriteVerbose(String.Format("HTTP status code: {0}", queryResults.StatusCode));
+            WriteVerbose(String.Format("Status description: {0}", queryResults.StatusDescription));
+            WriteVerbose(String.Format("HTTP protocol version: {0}", queryResults.HttpProtocolVersion));
+            WriteVerbose(String.Format("Response content type: {0}", queryResults.ContentType));
 
             Cmdlet.WriteDebug(String.Format("Response headers: {0}", String.Join(",", queryResults.ResponseHeaders.AllKeys)));
         }
@@ -250,11 +250,11 @@ namespace PSSQT
 
         protected virtual void ProcessPrimaryQueryResultsInfo(QueryResult primaryQueryResult)
         {
-            WriteInfo(String.Format("Total rows: {0}", primaryQueryResult.TotalRows));
-            WriteInfo(String.Format("Total rows incl. duplicates: {0}", primaryQueryResult.TotalRowsIncludingDuplicates));
-            WriteInfo(String.Format("Query id: {0}", primaryQueryResult.QueryId));
-            WriteInfo(String.Format("Query modification: {0}", primaryQueryResult.QueryModification));
-            WriteInfo(String.Format("Query rule id: {0}", primaryQueryResult.QueryRuleId));
+            WriteVerbose(String.Format("Total rows: {0}", primaryQueryResult.TotalRows));
+            WriteVerbose(String.Format("Total rows incl. duplicates: {0}", primaryQueryResult.TotalRowsIncludingDuplicates));
+            WriteVerbose(String.Format("Query id: {0}", primaryQueryResult.QueryId));
+            WriteVerbose(String.Format("Query modification: {0}", primaryQueryResult.QueryModification));
+            WriteVerbose(String.Format("Query rule id: {0}", primaryQueryResult.QueryRuleId));
         }
 
         protected virtual void ProcessPrimaryRefinerResults(List<RefinerResult> refinerResults)
@@ -264,26 +264,36 @@ namespace PSSQT
 
         protected virtual void ProcessPrimaryRelevantResults(List<ResultItem> relevantResults)
         {
-            WriteInfo(String.Format("Number of relevant primary results: {0}", relevantResults != null ? relevantResults.Count : 0));
+            WriteVerbose(String.Format("Number of relevant primary results: {0}", relevantResults != null ? relevantResults.Count : 0));
         }
 
         protected virtual void ProcessSecondaryQueryResultsListInfo(List<QueryResult> secondaryQueryResults)
         {
-            WriteInfo(String.Format("Number of secondary result groups: {0}", secondaryQueryResults != null ? secondaryQueryResults.Count : 0));
+            WriteVerbose(String.Format("Number of secondary result groups: {0}", secondaryQueryResults != null ? secondaryQueryResults.Count : 0));
         }
 
         protected virtual void ProcessSecondaryQueryResultsInfo(int resultGroup, QueryResult queryResult)
         {
-            WriteInfo(String.Format("Total rows in group {1}: {0}", queryResult.TotalRows, resultGroup));
-            WriteInfo(String.Format("Total rows incl. duplicates in group {1}: {0}", queryResult.TotalRowsIncludingDuplicates, resultGroup));
-            WriteInfo(String.Format("Query id group {1}: {0}", queryResult.QueryId, resultGroup));
-            WriteInfo(String.Format("Query modification in group {1}: {0}", queryResult.QueryModification, resultGroup));
-            WriteInfo(String.Format("Query rule id in group {1}: {0}", queryResult.QueryRuleId, resultGroup));
+            WriteVerbose(String.Format("Total rows in group {1}: {0}", queryResult.TotalRows, resultGroup));
+            WriteVerbose(String.Format("Total rows incl. duplicates in group {1}: {0}", queryResult.TotalRowsIncludingDuplicates, resultGroup));
+            WriteVerbose(String.Format("Query id group {1}: {0}", queryResult.QueryId, resultGroup));
+            WriteVerbose(String.Format("Query modification in group {1}: {0}", queryResult.QueryModification, resultGroup));
+            WriteVerbose(String.Format("Query rule id in group {1}: {0}", queryResult.QueryRuleId, resultGroup));
+
+            if (! String.IsNullOrWhiteSpace(queryResult.ResultTitle))
+            {
+                WriteVerbose(String.Format("Result title in group {1}: {0}", queryResult.ResultTitle, resultGroup));
+            }
+
+            if (! String.IsNullOrWhiteSpace(queryResult.ResultTitleUrl))
+            {
+                WriteVerbose(String.Format("Result title url in group {1}: {0}", queryResult.ResultTitleUrl, resultGroup));
+            }
         }
 
         protected virtual void ProcessSecondaryRelevantResults(int resultGroup, List<ResultItem> relevantResults)
         {
-            WriteInfo(String.Format("Number of relevant secondary results in group {1}: {0}", relevantResults != null ? relevantResults.Count : 0, resultGroup));
+            WriteVerbose(String.Format("Number of relevant secondary results in group {1}: {0}", relevantResults != null ? relevantResults.Count : 0, resultGroup));
         }
 
         protected virtual void ProcessSecondryRefinerResults(int resultGroup, List<RefinerResult> refinerResults)
@@ -291,7 +301,7 @@ namespace PSSQT
             //throw new NotImplementedException();
         }
 
-        protected virtual void WriteInfo(string text)
+        protected virtual void WriteVerbose(string text)
         {
             Cmdlet.WriteVerbose(text);
         }

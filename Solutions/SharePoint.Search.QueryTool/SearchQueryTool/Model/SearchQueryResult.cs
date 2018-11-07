@@ -60,6 +60,8 @@ namespace SearchQueryTool.Model
         public int TotalRowsIncludingDuplicates { get; set; }
         public List<ResultItem> RelevantResults { get; set; }
         public List<RefinerResult> RefinerResults { get; set; }
+        public string ResultTitle { get; internal set; }
+        public string ResultTitleUrl { get; internal set; }
     }
 
     /// <summary>
@@ -530,6 +532,16 @@ namespace SearchQueryTool.Model
                             var relevantResults = resultItem.Element("RelevantResults");
                             if (relevantResults != null)
                             {
+                                if (relevantResults.Element("ResultTitle") != null)
+                                {
+                                    secondaryQueryResult.ResultTitle = (string)relevantResults.Element("ResultTitle");
+                                }
+
+                                if (relevantResults.Element("ResultTitleUrl") != null)
+                                {
+                                    secondaryQueryResult.ResultTitleUrl = (string)relevantResults.Element("ResultTitleUrl");
+                                }
+
                                 if (relevantResults.Element("TotalRows") != null)
                                 {
                                     secondaryQueryResult.TotalRows = (int)relevantResults.Element("TotalRows");
