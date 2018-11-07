@@ -18,6 +18,7 @@ namespace SharePoint.Modernization.Scanner
     {
         #region Variables
         private Int32 SitesToScan = 0;
+
         public Mode Mode;
         public bool ExportWebPartProperties;
         public bool SkipUsageInformation;
@@ -97,6 +98,7 @@ namespace SharePoint.Modernization.Scanner
                 bool isFirstSiteInList = true;
                 string siteCollectionUrl = "";
                 List<Dictionary<string, string>> pageSearchResults = null;
+                Dictionary<string, CustomizedPageStatus> masterPageGalleryCustomization = null;
 
                 foreach (string site in expandedSites)
                 {
@@ -160,11 +162,16 @@ namespace SharePoint.Modernization.Scanner
                                 SiteAnalyzer siteAnalyzer = new SiteAnalyzer(site, siteCollectionUrl, this);
                                 var siteScanDuration = siteAnalyzer.Analyze(ccWeb);
                                 pageSearchResults = siteAnalyzer.PageSearchResults;
+
+                                masterPageGalleryCustomization = new Dictionary<string, CustomizedPageStatus>();
                             }
 
                             // Web scan
                             WebAnalyzer webAnalyzer = new WebAnalyzer(site, siteCollectionUrl, this, pageSearchResults);
+                            webAnalyzer.MasterPageGalleryCustomization = masterPageGalleryCustomization;
                             var webScanDuration = webAnalyzer.Analyze(ccWeb);
+                            masterPageGalleryCustomization = webAnalyzer.MasterPageGalleryCustomization;
+                            
                         }
                     }
                     catch(Exception ex)
@@ -538,7 +545,7 @@ namespace SharePoint.Modernization.Scanner
 
                 // Export the web publishing data
                 outputfile = string.Format("{0}\\ModernizationPublishingWebScanResults.csv", this.OutputFolder);
-                outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", 
+                outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "SiteCollectionComplexity",
                                                "WebTemplate", "Level", "PageCount", "Language", "VariationLabels", "VariationSourceLabel",
                                                "SiteMasterPage", "SystemMasterPage", "AlternateCSS",
                                                "AllowedPageLayouts", "PageLayoutsConfiguration", "DefaultPageLayout",
@@ -556,7 +563,7 @@ namespace SharePoint.Modernization.Scanner
                     outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, outputHeaders)));
                     foreach (var item in this.PublishingWebScanResults)
                     {
-                        outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.WebRelativeUrl),
+                        outfile.Write(string.Format("{0}\r\n", string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.WebRelativeUrl), ToCsv(item.Value.SiteClassification),
                                                                                            ToCsv(item.Value.WebTemplate), item.Value.Level.ToString(), item.Value.PageCount.ToString(), item.Value.Language.ToString(), ToCsv(item.Value.VariationLabels), ToCsv(item.Value.VariationSourceLabel),
                                                                                            ToCsv(item.Value.SiteMasterPage), ToCsv(item.Value.SystemMasterPage), ToCsv(item.Value.AlternateCSS),
                                                                                            ToCsv(item.Value.AllowedPageLayouts), ToCsv(item.Value.PageLayoutsConfiguration), ToCsv(item.Value.DefaultPageLayout),
@@ -576,7 +583,7 @@ namespace SharePoint.Modernization.Scanner
                     // Export the page publishing data
                     outputfile = string.Format("{0}\\ModernizationPublishingPageScanResults.csv", this.OutputFolder);
                     outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "PageRelativeUrl", "PageName",
-                                                   "ContentType", "ContentTypeId", "PageLayout", "PageLayoutFile",
+                                                   "ContentType", "ContentTypeId", "PageLayout", "PageLayoutFile", "PageLayoutWasCustomized",
                                                    "GlobalAudiences", "SecurityGroupAudiences", "SharePointGroupAudiences",
                                                    "ModifiedAt", "ModifiedBy", "Mapping %"
                                                  };
@@ -602,7 +609,7 @@ namespace SharePoint.Modernization.Scanner
                         foreach (var item in this.PublishingPageScanResults)
                         {
                             var part1 = string.Join(this.Separator, ToCsv(item.Value.SiteColUrl), ToCsv(item.Value.SiteURL), ToCsv(item.Value.WebRelativeUrl), ToCsv(item.Value.PageRelativeUrl), ToCsv(item.Value.PageName),
-                                                                    ToCsv(item.Value.ContentType), ToCsv(item.Value.ContentTypeId), ToCsv(item.Value.PageLayout), ToCsv(item.Value.PageLayoutFile),
+                                                                    ToCsv(item.Value.ContentType), ToCsv(item.Value.ContentTypeId), ToCsv(item.Value.PageLayout), ToCsv(item.Value.PageLayoutFile), item.Value.PageLayoutWasCustomized,
                                                                     ToCsv(PublishingPageScanResult.FormatList(item.Value.GlobalAudiences)), ToCsv(PublishingPageScanResult.FormatList(item.Value.SecurityGroupAudiences, "|")), ToCsv(PublishingPageScanResult.FormatList(item.Value.SharePointGroupAudiences)),
                                                                     item.Value.ModifiedAt, ToCsv(item.Value.ModifiedBy), "{MappingPercentage}"
                                 );

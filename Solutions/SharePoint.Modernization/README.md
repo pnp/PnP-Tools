@@ -21,6 +21,7 @@ SharePoint.Modernization.Scanner | Bert Jansen (**Microsoft**)
 
 Version  | Date | Comments
 ---------| -----| --------
+2.1 | October 24th 2018 | Publishing portal analysis improvements: detect custom page layouts, classify publishing portals in simple/medium/complex
 2.0 | October 15th 2018 | Built-in wizard will help you configure the scan parameters...you can forget about these long complex command lines!
 1.7 | October 14th 2018 | Integrated SharePoint UI Experience scanner results + bug fixes
 1.6 | September 25th 2018 | Added support for scanning classic Publishing Portals, simplified Group Connection dashboard, Compiled as X64 to avoid memory constraints during large scans
@@ -58,7 +59,7 @@ The main purpose of this tool is to give you a set of reports that you can use t
 
 You can download the tool from here:
 
-- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v2.0.zip?raw=true)
+- [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v2.1.zip?raw=true)
 
 Once you've downloaded the tool you have a folder containing the tool **SharePoint.Modernization.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
@@ -465,6 +466,7 @@ Column | Description
 **Site Collection Url** | Url of the scanned site collection.
 **SiteUrl** | Url of the scanned web
 **WebRelativeUrl** | Relative url of the web
+**SiteCollectionComplexity** | Complexity level of all the sites in this publishing portal site collection
 **WebTemplate** | Template used to create this web
 **Level** | Level of depth of the web, 0 is top level
 **PageCount** | Number of publishing pages that exist in this web
@@ -524,6 +526,7 @@ Column | Description
 **ContentTypeId** | ID of the used content type
 **PageLayout** | Name of the used page layout
 **PageLayoutFile** | Filename of the used page layout
+**PageLayoutWasCustomized** | Was this page layout customized (changed an OOB one or just a newly added one)
 **GlobalAudiences** | Delimited list of global audiences defined on this page
 **SecurityGroupAudiences** | Delimited list of security group audiences defined on this page
 **SharePointGroupAudiences** | Delimited list of SharePoint group audiences defined on this page

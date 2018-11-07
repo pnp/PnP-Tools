@@ -89,7 +89,8 @@ namespace SharePointPnP.Modernization.Framework.Transform
 
         #region Webpart replacement configuration
         /// <summary>
-        /// If true images and videos embedded in wiki text will get a placeholder + a configured image/video client side web part at the end of the page
+        /// If true images and videos embedded in wiki text will be transformed to actual image/video web parts, 
+        /// else they'll get a placeholder and will be added as separate web parts at the end of the page
         /// </summary>
         public bool HandleWikiImagesAndVideos { get; set; }
 

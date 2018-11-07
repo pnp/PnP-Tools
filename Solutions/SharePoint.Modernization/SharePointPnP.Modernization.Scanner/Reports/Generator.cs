@@ -243,7 +243,7 @@ namespace SharePoint.Modernization.Scanner.Reports
 
                     var pubWebsTable1 = pubWebsBaseTable.Copy();
                     // clean table
-                    string[] columnsToKeep = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "WebTemplate", "Level", "PageCount", "Language", "VariationLabels", "VariationSourceLabel", "SiteMasterPage", "SystemMasterPage", "AlternateCSS", "AllowedPageLayouts", "PageLayoutsConfiguration", "DefaultPageLayout", "GlobalNavigationType", "GlobalStructuralNavigationShowSubSites", "GlobalStructuralNavigationShowPages", "GlobalStructuralNavigationShowSiblings", "GlobalStructuralNavigationMaxCount", "GlobalManagedNavigationTermSetId", "CurrentNavigationType", "CurrentStructuralNavigationShowSubSites", "CurrentStructuralNavigationShowPages", "CurrentStructuralNavigationShowSiblings", "CurrentStructuralNavigationMaxCount", "CurrentManagedNavigationTermSetId", "ManagedNavigationAddNewPages", "ManagedNavigationCreateFriendlyUrls", "LibraryItemScheduling", "LibraryEnableModeration", "LibraryEnableVersioning", "LibraryEnableMinorVersions", "LibraryApprovalWorkflowDefined", "BrokenPermissionInheritance" };
+                    string[] columnsToKeep = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "SiteCollectionComplexity", "WebTemplate", "Level", "PageCount", "Language", "VariationLabels", "VariationSourceLabel", "SiteMasterPage", "SystemMasterPage", "AlternateCSS", "AllowedPageLayouts", "PageLayoutsConfiguration", "DefaultPageLayout", "GlobalNavigationType", "GlobalStructuralNavigationShowSubSites", "GlobalStructuralNavigationShowPages", "GlobalStructuralNavigationShowSiblings", "GlobalStructuralNavigationMaxCount", "GlobalManagedNavigationTermSetId", "CurrentNavigationType", "CurrentStructuralNavigationShowSubSites", "CurrentStructuralNavigationShowPages", "CurrentStructuralNavigationShowSiblings", "CurrentStructuralNavigationMaxCount", "CurrentManagedNavigationTermSetId", "ManagedNavigationAddNewPages", "ManagedNavigationCreateFriendlyUrls", "LibraryItemScheduling", "LibraryEnableModeration", "LibraryEnableVersioning", "LibraryEnableMinorVersions", "LibraryApprovalWorkflowDefined", "BrokenPermissionInheritance" };
                     pubWebsTable1 = DropTableColumns(pubWebsTable1, columnsToKeep);
 
                     if (pubWebsTable == null)
@@ -301,7 +301,7 @@ namespace SharePoint.Modernization.Scanner.Reports
 
                         var pubPagesTable1 = pubPagesBaseTable.Copy();
                         // clean table
-                        string[] columnsToKeep = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "PageRelativeUrl", "PageName", "ContentType", "ContentTypeId", "PageLayout", "PageLayoutFile", "GlobalAudiences", "SecurityGroupAudiences", "SharePointGroupAudiences", "ModifiedAt", "Mapping %" };
+                        string[] columnsToKeep = new string[] { "SiteCollectionUrl", "SiteUrl", "WebRelativeUrl", "PageRelativeUrl", "PageName", "ContentType", "ContentTypeId", "PageLayout", "PageLayoutFile", "PageLayoutWasCustomized", "GlobalAudiences", "SecurityGroupAudiences", "SharePointGroupAudiences", "ModifiedAt", "Mapping %" };
                         pubPagesTable1 = DropTableColumns(pubPagesTable1, columnsToKeep);
 
                         if (pubPagesTable == null)

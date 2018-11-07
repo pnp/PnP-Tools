@@ -5,6 +5,14 @@ using System.Linq;
 
 namespace SharePoint.Modernization.Scanner.Results
 {
+
+    public enum SiteComplexity
+    {
+        Simple = 0,
+        Medium = 1,
+        Complex = 2
+    }
+
     /// <summary>
     /// Publishing web results
     /// </summary>
@@ -28,6 +36,67 @@ namespace SharePoint.Modernization.Scanner.Results
             get
             {
                 return WebRelativeUrl.Count(f => f == '/');
+            }
+        }
+
+        /// <summary>
+        /// Complexity classification of the publishing portal that holds this web
+        /// </summary>
+        public string SiteClassification { get; set; }
+
+        /// <summary>
+        /// Complexity classification of this publishing web
+        /// </summary>
+        public SiteComplexity WebClassification
+        {
+            get
+            {
+                SiteComplexity classification = SiteComplexity.Simple;
+
+                // Check Level
+                if (this.Level > 3)
+                {
+                    classification = SiteComplexity.Complex;
+                }
+                else if (this.Level > 1)
+                {
+                    classification = SiteComplexity.Medium;
+                }
+
+                // Check Navigation
+                var navigationClassification = SiteComplexity.Simple;
+                if (!(this.CurrentNavigationType == "Structural" && this.GlobalNavigationType == "Structural"))
+                {
+                    navigationClassification = SiteComplexity.Medium;
+                }
+                if (navigationClassification > classification)
+                {
+                    classification = navigationClassification;
+                }
+
+                // Check Publishing features
+                var publishingFeatureClassification = SiteComplexity.Simple;
+                if (this.LibraryItemScheduling || this.LibraryApprovalWorkflowDefined)
+                {
+                    publishingFeatureClassification = SiteComplexity.Medium;
+                }
+                if (publishingFeatureClassification > classification)
+                {
+                    classification = publishingFeatureClassification;
+                }
+
+                // Check variations
+                var variationsClassification = SiteComplexity.Simple;
+                if (!string.IsNullOrEmpty(this.VariationSourceLabel))
+                {
+                    variationsClassification = SiteComplexity.Complex;
+                }
+                if (variationsClassification > classification)
+                {
+                    classification = variationsClassification;
+                }
+
+                return classification;
             }
         }
 

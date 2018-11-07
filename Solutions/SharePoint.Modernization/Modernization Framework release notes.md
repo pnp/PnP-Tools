@@ -12,6 +12,24 @@
 - From .Net: see https://github.com/SharePoint/PnP/tree/dev/Samples/Modernization.PageTransformation as nice sample to start with
 - From PnP PowerShell: see https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Scripts/PageTransformation/TransformPageSample.ps1 for a sample
 
+## [November release (prod) - version 1.0.1811.0]
+
+### Changed
+
+- Updates when transforming wiki html:
+  - H4 to H6 elements now retain their formatting when converted to text
+  - Combining italic/underline/bold in combination with other type of formatting now works stable
+  - Strip out the "zero width space characters"
+  - Drop wiki font information
+  - Handle additional styles (ms-rteStyle-Quote,ms-rteStyle-IntenseQuote,ms-rteStyle-Emphasis,ms-rteStyle-IntenseEmphasis,ms-rteStyle-References,ms-rteStyle-IntenseReference,ms-rteStyle-Accent1,ms-rteStyle-Accent2)
+  - Better handling complex nested styles
+  - Full rewrite of indent handling: now supports complex formatting inside indents, indenting of blocks and unlimited indent depth
+  - Switch default table style to borderHeaderTableStyleNeutral - this allows highlighted text to show as highlighted, plain table style suppresses this
+  - Assume a table width of 800px and spread evenly across available columns
+  - Improved reliability in detecting images/videos inside wiki text fragments
+  - Clean wiki html before/after processing to drop nodes which are not support in RTE
+  - Full rewrite of wiki splitting...better reliability, better results and better performance
+
 ## [October release (prod) - version 1.0.1810.2]
 
 ### Changed

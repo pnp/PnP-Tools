@@ -85,7 +85,7 @@ namespace SharePointPnP.Modernization.Framework.Tests.Transform
                 //webparts.aspx
                 //contentbyquery1.aspx
                 //how to use this library.aspx
-                var pages = cc.Web.GetPages("under");
+                var pages = cc.Web.GetPages("previous_underthesea.aspx");
 
                 foreach (var page in pages)
                 {
@@ -95,10 +95,10 @@ namespace SharePointPnP.Modernization.Framework.Tests.Transform
                         Overwrite = true,
 
                         // ModernizationCenter options
-                        ModernizationCenterInformation = new ModernizationCenterInformation()
-                        {
-                            AddPageAcceptBanner = true
-                        },
+                        //ModernizationCenterInformation = new ModernizationCenterInformation()
+                        //{
+                        //    AddPageAcceptBanner = true
+                        //},
 
                         // Migrated page gets the name of the original page
                         //TargetPageTakesSourcePageName = true,
@@ -113,7 +113,7 @@ namespace SharePointPnP.Modernization.Framework.Tests.Transform
                         //ReplaceHomePageWithDefaultHomePage = true,
                         
                         // Replace embedded images and iframes with a placeholder and add respective images and video web parts at the bottom of the page
-                        //HandleWikiImagesAndVideos = false,
+                        HandleWikiImagesAndVideos = false,
                         
                         // Callout to your custom code to allow for title overriding
                         //PageTitleOverride = titleOverride,
