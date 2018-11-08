@@ -89,7 +89,18 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                             AlternateCSS = this.webScanResult.AlternateCSS,
                             Admins = this.siteScanResult.Admins,
                             Owners = this.webScanResult.Owners,
+                            UserCustomActions = new List<UserCustomActionResult>()
                         };
+
+                        // User custom actions will play a role in complexity calculation
+                        if (this.siteScanResult.SiteUserCustomActions != null && this.siteScanResult.SiteUserCustomActions.Count > 0)
+                        {
+                            scanResult.UserCustomActions.AddRange(this.siteScanResult.SiteUserCustomActions);
+                        }
+                        if (this.webScanResult.WebUserCustomActions != null && this.webScanResult.WebUserCustomActions.Count > 0)
+                        {
+                            scanResult.UserCustomActions.AddRange(this.webScanResult.WebUserCustomActions);
+                        }
 
                         Web web = cc.Web;
 
@@ -581,7 +592,9 @@ namespace SharePoint.Modernization.Scanner.Analyzers
 
                     // Audiences used
                     pageClassification = SiteComplexity.Simple;
-                    if (item.Value.GlobalAudiences.Count > 0 || item.Value.SecurityGroupAudiences.Count > 0 || item.Value.SharePointGroupAudiences.Count > 0)
+                    if ((item.Value.GlobalAudiences != null && item.Value.GlobalAudiences.Count > 0) || 
+                        (item.Value.SecurityGroupAudiences != null && item.Value.SecurityGroupAudiences.Count > 0) || 
+                        (item.Value.SharePointGroupAudiences != null && item.Value.SharePointGroupAudiences.Count > 0))
                     {
                         pageClassification = SiteComplexity.Medium;
                     }
