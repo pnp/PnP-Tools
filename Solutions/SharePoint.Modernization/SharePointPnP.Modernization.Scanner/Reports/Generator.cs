@@ -7,6 +7,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SharePoint.Modernization.Scanner.Reports
 {
@@ -190,6 +191,7 @@ namespace SharePoint.Modernization.Scanner.Reports
             // Clean the template file
             if (File.Exists($"{outputfolder}\\{ListMasterFile}"))
             {
+                Task.Delay(2000).Wait();
                 File.Delete($"{outputfolder}\\{ListMasterFile}");
             }
         }
@@ -380,6 +382,7 @@ namespace SharePoint.Modernization.Scanner.Reports
                 // Clean the template file
                 if (File.Exists($"{outputfolder}\\{PublishingMasterFile}"))
                 {
+                    Task.Delay(2000).Wait();
                     File.Delete($"{outputfolder}\\{PublishingMasterFile}");
                 }
             }
@@ -561,6 +564,7 @@ namespace SharePoint.Modernization.Scanner.Reports
             // Clean the template file
             if (File.Exists($"{outputfolder}\\{PageMasterFile}"))
             {
+                Task.Delay(2000).Wait();
                 File.Delete($"{outputfolder}\\{PageMasterFile}");
             }
         }
@@ -785,6 +789,7 @@ namespace SharePoint.Modernization.Scanner.Reports
             // Clean the template file
             if (File.Exists($"{outputfolder}\\{GroupifyMasterFile}"))
             {
+                Task.Delay(2000).Wait();
                 File.Delete($"{outputfolder}\\{GroupifyMasterFile}");
             }
 

@@ -47,6 +47,9 @@ namespace SharePoint.Modernization.Scanner
         [OptionList('g', "exportpaths", HelpText = "List of paths (e.g. c:\\temp\\636529695601669598,c:\\temp\\636529695601656430) containing scan results you want to add to the report", Separator = ',')]
         public virtual IList<string> ExportPaths { get; set; }
 
+        [Option('n', "disabletelemetry", HelpText = "We use telemetry to make this a better tool...but you're free to disable that", DefaultValue = false, Required = false)]
+        public bool DisableTelemetry { get; set; }
+
         /// <summary>
         /// Validate the provided commandline options, will exit the program when not valid
         /// </summary>

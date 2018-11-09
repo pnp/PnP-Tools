@@ -41,6 +41,8 @@ namespace SharePoint.Modernization.Scanner.Analyzers
 
                 foreach (var list in lists)
                 {
+                    this.ScanJob.IncreaseScannedLists();
+
                     ListScanResult listScanData;
                     if (list.DefaultViewUrl.ToLower().Contains(".aspx"))
                     {

@@ -11,6 +11,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Linq;
 using SharePointPnP.Modernization.Framework;
+using SharePoint.Modernization.Scanner.Telemetry;
 
 namespace SharePoint.Modernization.Scanner
 {
@@ -35,6 +36,7 @@ namespace SharePoint.Modernization.Scanner
         public ConcurrentDictionary<string, PublishingPageScanResult> PublishingPageScanResults;
         public Tenant SPOTenant;
         public PageTransformation PageTransformation;
+        public ScannerTelemetry ScannerTelemetry;
         #endregion
 
         #region Construction
@@ -61,6 +63,18 @@ namespace SharePoint.Modernization.Scanner
             this.PublishingSiteScanResults = new Dictionary<string, PublishingSiteScanResult>(500);
             this.PublishingWebScanResults = new ConcurrentDictionary<string, PublishingWebScanResult>(options.Threads, 1000);
             this.PublishingPageScanResults = new ConcurrentDictionary<string, PublishingPageScanResult>(options.Threads, 10000);
+
+            // Setup telemetry client
+            if (!options.DisableTelemetry)
+            {
+                this.ScannerTelemetry = new ScannerTelemetry();
+                
+                // Log scan start event
+                if (this.ScannerTelemetry != null)
+                {
+                    this.ScannerTelemetry.LogScanStart(options);
+                }
+            }
 
             this.TimerJobRun += ModernizationScanJob_TimerJobRun;
         }
@@ -90,7 +104,7 @@ namespace SharePoint.Modernization.Scanner
 
             try
             {
-                // Set the first site collection done flag + perform telemetry
+                // Set the first site collection done flag + perform base bones telemetry
                 SetFirstSiteCollectionDone(e.WebClientContext, this.Name);
 
                 // Manually iterate over the content
@@ -290,6 +304,12 @@ namespace SharePoint.Modernization.Scanner
             // Triggers the run of the scanning...will result in ModernizationScanJob_TimerJobRun being called per site collection
             var start = base.Execute();
 
+            // Telemetry
+            if (this.ScannerTelemetry != null)
+            {
+                this.ScannerTelemetry.LogGroupConnectScan(this.SiteScanResults, this.WebScanResults, this.EveryoneClaim, this.EveryoneExceptExternalUsersClaim);
+            }
+
             // Handle the export of the job specific scanning data
             string outputfile = string.Format("{0}\\ModernizationSiteScanResults.csv", this.OutputFolder);
             string[] outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl",
@@ -398,6 +418,12 @@ namespace SharePoint.Modernization.Scanner
 
             if (Options.IncludeLists(this.Mode))
             {
+                // Telemetry
+                if (this.ScannerTelemetry != null)
+                {
+                    this.ScannerTelemetry.LogListScan(this.ScannedSites, this.ScannedWebs, this.ListScanResults, this.ScannedLists);
+                }
+
                 outputfile = string.Format("{0}\\ModernizationListScanResults.csv", this.OutputFolder);
                 outputHeaders = new string[] { "Url", "Site Url", "Site Collection Url", "List Title", "Only blocked by OOB reasons",
                                                "Blocked at site level", "Blocked at web level", "Blocked at list level", "List page render type", "List experience", "Blocked by not being able to load Page", "Blocked by not being able to load page exception",
@@ -426,6 +452,12 @@ namespace SharePoint.Modernization.Scanner
 
             if (Options.IncludePage(this.Mode))
             {
+                // Telemetry
+                if (this.ScannerTelemetry != null)
+                {
+                    this.ScannerTelemetry.LogPageScan(this.ScannedSites, this.ScannedWebs, this.PageScanResults, this.PageTransformation);
+                }
+
                 outputfile = string.Format("{0}\\PageScanResults.csv", this.OutputFolder);
                 outputHeaders = new string[] { "SiteCollectionUrl", "SiteUrl", "PageUrl", "Library", "HomePage",
                                            "Type", "Layout", "Mapping %", "Unmapped web parts", "ModifiedBy", "ModifiedAt",
@@ -520,6 +552,12 @@ namespace SharePoint.Modernization.Scanner
             {
                 // "Calculate" publishing site results based upon the web/page level data we retrieved
                 this.PublishingSiteScanResults = PublishingAnalyzer.GeneratePublishingSiteResults(this.Mode, this.PublishingWebScanResults, this.PublishingPageScanResults);
+
+                // Telemetry
+                if (this.ScannerTelemetry != null)
+                {
+                    this.ScannerTelemetry.LogPublishingScan(this.PublishingSiteScanResults, this.PublishingWebScanResults, this.PublishingPageScanResults);
+                }
 
                 // Export the site publishing data
                 outputfile = string.Format("{0}\\ModernizationPublishingSiteScanResults.csv", this.OutputFolder);
