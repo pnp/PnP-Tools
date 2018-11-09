@@ -43,6 +43,7 @@ namespace SharePoint.Modernization.Scanner.Telemetry
             }
             catch (Exception ex)
             {
+                this.telemetryClient = null;
                 Console.WriteLine($"Telemetry setup failed: {ex.Message}. Continuing without telemetry");
             }
         }
