@@ -185,7 +185,6 @@ namespace SharePoint.Modernization.Scanner
                             webAnalyzer.MasterPageGalleryCustomization = masterPageGalleryCustomization;
                             var webScanDuration = webAnalyzer.Analyze(ccWeb);
                             masterPageGalleryCustomization = webAnalyzer.MasterPageGalleryCustomization;
-                            
                         }
                     }
                     catch(Exception ex)
@@ -198,6 +197,13 @@ namespace SharePoint.Modernization.Scanner
                             Field1 = "MainWebLoop",
                             Field2 = ex.StackTrace,
                         };
+
+                        // Send error to telemetry to make scanner better
+                        if (this.ScannerTelemetry != null)
+                        {
+                            this.ScannerTelemetry.LogScanError(ex, error);
+                        }
+
                         this.ScanErrors.Push(error);
                         Console.WriteLine("Error for site {1}: {0}", ex.Message, site);
                     }
@@ -213,6 +219,13 @@ namespace SharePoint.Modernization.Scanner
                     Field1 = "MainSiteLoop",
                     Field2 = ex.StackTrace,
                 };
+
+                // Send error to telemetry to make scanner better
+                if (this.ScannerTelemetry != null)
+                {
+                    this.ScannerTelemetry.LogScanError(ex, error);
+                }
+
                 this.ScanErrors.Push(error);
                 Console.WriteLine("Error for site {1}: {0}", ex.Message, e.Url);
             }

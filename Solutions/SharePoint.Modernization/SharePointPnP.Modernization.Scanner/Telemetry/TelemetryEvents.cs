@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SharePoint.Modernization.Scanner.Telemetry
+﻿namespace SharePoint.Modernization.Scanner.Telemetry
 {
+    /// <summary>
+    /// Main telemetry events
+    /// </summary>
     public enum TelemetryEvents
     {
         ScanStart,
@@ -17,6 +14,9 @@ namespace SharePoint.Modernization.Scanner.Telemetry
         PublishingPortals
     }
 
+    /// <summary>
+    /// Properties that we collect for the start event
+    /// </summary>
     public enum ScanStart
     {
         Mode,
@@ -24,17 +24,26 @@ namespace SharePoint.Modernization.Scanner.Telemetry
         SiteSelectionModel
     }
 
+    /// <summary>
+    /// Properties that we collect for the crash event
+    /// </summary>
     public enum ScanCrash
     {
         ExceptionMessage,
         StackTrace
     }
 
+    /// <summary>
+    /// Properties that we collect for the done event
+    /// </summary>
     public enum ScanDone
     {
         Duration
     }
 
+    /// <summary>
+    /// Measures we collect for group connect
+    /// </summary>
     public enum GroupConnectResults
     {
         Sites,
@@ -47,6 +56,9 @@ namespace SharePoint.Modernization.Scanner.Telemetry
         PermissionWarning
     }
 
+    /// <summary>
+    /// Measures we collect for page transformation
+    /// </summary>
     public enum PagesResults
     {
         Sites,
@@ -59,6 +71,9 @@ namespace SharePoint.Modernization.Scanner.Telemetry
         UnMappedWebParts
     }
 
+    /// <summary>
+    /// Measures we collect for modern list and libraries
+    /// </summary>
     public enum ListResults
     {
         Sites,
@@ -81,6 +96,9 @@ namespace SharePoint.Modernization.Scanner.Telemetry
         ListBlocking
     }
 
+    /// <summary>
+    /// Measures we collect for publishing portals
+    /// </summary>
     public enum PublishingResults
     {
         Sites,

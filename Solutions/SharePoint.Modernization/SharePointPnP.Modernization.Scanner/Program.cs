@@ -100,7 +100,10 @@ namespace SharePoint.Modernization.Scanner
                     }
 
                     TimeSpan duration = DateTime.Now.Subtract(scanStartDateTime);
-                    scannerTelemetry.LogScanDone(duration);
+                    if (scannerTelemetry != null)
+                    {
+                        scannerTelemetry.LogScanDone(duration);
+                    }
                 }
                 finally
                 {

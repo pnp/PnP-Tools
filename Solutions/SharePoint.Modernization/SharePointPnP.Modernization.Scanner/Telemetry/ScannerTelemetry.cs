@@ -1,30 +1,35 @@
 ﻿using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using SharePoint.Modernization.Scanner.Results;
+using SharePoint.Scanning.Framework;
 using SharePointPnP.Modernization.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SharePoint.Modernization.Scanner.Telemetry
 {
+    /// <summary>
+    /// Class that's responsible for handling telemetry
+    /// </summary>
     public class ScannerTelemetry
     {
         private readonly TelemetryClient telemetryClient;
 
+        #region Construction
+        /// <summary>
+        /// Instantiates the telemetry client
+        /// </summary>
         public ScannerTelemetry()
         {
             try
             {
                 this.telemetryClient = new TelemetryClient
                 {
-                    // Test key
-                    InstrumentationKey = "0dfb6e0c-0baf-42f2-828c-e851c5e1e9a1"
+                    InstrumentationKey = "70f0a42a-e1ae-4dc5-ad9a-380ce98dc30a"
                 };
                 
                 // Setting this is needed to make metric tracking work
@@ -41,7 +46,12 @@ namespace SharePoint.Modernization.Scanner.Telemetry
                 Console.WriteLine($"Telemetry setup failed: {ex.Message}. Continuing without telemetry");
             }
         }
+        #endregion
 
+        /// <summary>
+        /// Scan start logging
+        /// </summary>
+        /// <param name="options">Scanner options</param>
         public void LogScanStart(Options options)
         {
             if (this.telemetryClient == null)
@@ -98,6 +108,13 @@ namespace SharePoint.Modernization.Scanner.Telemetry
 
         }
 
+        /// <summary>
+        /// Page scan results log
+        /// </summary>
+        /// <param name="scannedSites">Scanned sites</param>
+        /// <param name="scannedWebs">Scanned webs</param>
+        /// <param name="pageScanResults">Scanned page results</param>
+        /// <param name="pageTransformation">Page transformation data</param>
         public void LogPageScan(int scannedSites, int scannedWebs, ConcurrentDictionary<string, PageScanResult> pageScanResults, PageTransformation pageTransformation)
         {
             if (this.telemetryClient == null)
@@ -172,7 +189,13 @@ namespace SharePoint.Modernization.Scanner.Telemetry
             }
         }
 
-
+        /// <summary>
+        /// Log list scanning results
+        /// </summary>
+        /// <param name="scannedSites">Scanned sites</param>
+        /// <param name="scannedWebs">Scannned webs</param>
+        /// <param name="listScanResults">List scan results</param>
+        /// <param name="scannedLists">Scanned lists</param>
         public void LogListScan(int scannedSites, int scannedWebs, ConcurrentDictionary<string, ListScanResult> listScanResults, int scannedLists)
         {
             if (this.telemetryClient == null)
@@ -241,7 +264,13 @@ namespace SharePoint.Modernization.Scanner.Telemetry
             }
         }
 
-
+        /// <summary>
+        /// Log group connnect results
+        /// </summary>
+        /// <param name="siteScanResults">Scanned sites results</param>
+        /// <param name="webScanResults">Scanned web results</param>
+        /// <param name="everyoneClaim">Eveyone claim value</param>
+        /// <param name="everyoneExceptExternalUsersClaim">EveryoneExceptExternalUsers claim value</param>
         public void LogGroupConnectScan(ConcurrentDictionary<string, SiteScanResult> siteScanResults, ConcurrentDictionary<string, WebScanResult> webScanResults, string everyoneClaim,string everyoneExceptExternalUsersClaim)
         {
             if (this.telemetryClient == null)
@@ -313,7 +342,12 @@ namespace SharePoint.Modernization.Scanner.Telemetry
             }
         }
 
-
+        /// <summary>
+        /// Log publishing portal scan
+        /// </summary>
+        /// <param name="publishingSiteScanResults">Scanned publishing portals</param>
+        /// <param name="publishingWebScanResults">Scanned publishing webs</param>
+        /// <param name="publishingPageScanResults">Scanned publishing pages</param>
         public void LogPublishingScan(Dictionary<string, PublishingSiteScanResult> publishingSiteScanResults, 
                                       ConcurrentDictionary<string, PublishingWebScanResult> publishingWebScanResults,
                                       ConcurrentDictionary<string, PublishingPageScanResult> publishingPageScanResults)
@@ -396,6 +430,10 @@ namespace SharePoint.Modernization.Scanner.Telemetry
             }
         }
 
+        /// <summary>
+        /// Log the scan done event
+        /// </summary>
+        /// <param name="duration">Scan duration</param>
         public void LogScanDone(TimeSpan duration)
         {
             if (this.telemetryClient == null)
@@ -422,6 +460,41 @@ namespace SharePoint.Modernization.Scanner.Telemetry
             }
         }
 
+        public void LogScanError(Exception ex, ScanError error)
+        {
+            if (this.telemetryClient == null || ex == null)
+            {
+                return;
+            }
+
+            try
+            {
+                // Prepare event data
+                Dictionary<string, string> properties = new Dictionary<string, string>();
+                Dictionary<string, double> metrics = new Dictionary<string, double>();
+
+                if (error != null)
+                {
+                    // Field 1 never contain PII data
+                    if (!string.IsNullOrEmpty(error.Field1))
+                    {
+                        properties.Add(ScanCrash.StackTrace.ToString(), error.Field1);
+                    }
+                }
+
+                this.telemetryClient.TrackException(ex, properties, metrics);
+            }
+            catch(Exception ex2)
+            {
+                // Eat all exceptions 
+            }
+        }
+
+
+        /// <summary>
+        /// Log an unexpected scanner crash
+        /// </summary>
+        /// <param name="crash">Object holdingu unexpected error</param>
         public void LogScanCrash(Object crash)
         {
             if (this.telemetryClient == null)
@@ -439,8 +512,14 @@ namespace SharePoint.Modernization.Scanner.Telemetry
                 {
                     if (crash is Exception)
                     {
-                        properties.Add(ScanCrash.ExceptionMessage.ToString(), (crash as Exception).Message);
-                        properties.Add(ScanCrash.StackTrace.ToString(), (crash as Exception).StackTrace);
+                        if (!string.IsNullOrEmpty((crash as Exception).Message))
+                        {
+                            properties.Add(ScanCrash.ExceptionMessage.ToString(), (crash as Exception).Message);
+                        }
+                        if (!string.IsNullOrEmpty((crash as Exception).StackTrace))
+                        {
+                            properties.Add(ScanCrash.StackTrace.ToString(), (crash as Exception).StackTrace);
+                        }
                     }
                 }
 
@@ -456,6 +535,9 @@ namespace SharePoint.Modernization.Scanner.Telemetry
             }
         }
 
+        /// <summary>
+        /// Ensure telemetry data is send to server
+        /// </summary>
         public void Flush()
         {
             try
