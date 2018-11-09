@@ -5,12 +5,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [November 2018 - Unreleased]
+## [November 2018]
 
 ### Added
 
 ### Changed
-
+- SharePoint Modernization Framework production release (1.0.1811.0):
+	- H4 to H6 elements now retain their formatting when converted to text
+	- Combining italic/underline/bold in combination with other type of formatting now works stable
+	- Strip out the "zero width space characters"
+	- Drop wiki font information
+	- Handle additional styles (ms-rteStyle-Quote,ms-rteStyle-IntenseQuote,ms-rteStyle-Emphasis,ms-rteStyle-IntenseEmphasis,ms-rteStyle-References,ms-rteStyle-IntenseReference,ms-rteStyle-Accent1,ms-rteStyle-Accent2)
+	- Better handling complex nested styles
+	- Full rewrite of indent handling: now supports complex formatting inside indents, indenting of blocks and unlimited indent depth
+	- Switch default table style to borderHeaderTableStyleNeutral - this allows highlighted text to show as highlighted, plain table style suppresses this
+	- Assume a table width of 800px and spread evenly across available columns
+	- Improved reliability in detecting images/videos inside wiki text fragments
+	- Clean wiki html before/after processing to drop nodes which are not support in RTE
+	- Full rewrite of wiki splitting...better reliability, better results and better performance
+- SharePoint.Modernization.Scanner v2.2: massive improvements over the 1.x series
 - SharePoint.PermissiveFile.Scanner v1.8: x64 build
 
 ## [October 2018]
