@@ -62,7 +62,7 @@ You can download the tool from here:
 
 - [Modernization scanner for SharePoint Online](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Releases/SharePoint.Modernization.Scanner%20v2.2.zip?raw=true)
 
-Once you've downloaded the tool you have a folder containing the tool **SharePoint.Modernization.Scanner.exe**. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
+Once you've downloaded the tool, unzip it to a local folder which will contain the **SharePoint.Modernization.Scanner.exe** and **webpartmapping.xml** files. Start a (PowerShell) command prompt and navigate to that folder so that you can use the tool.
 
 > Note:
 > If you want to compile the tool yourself you'll also need to have the SharePoint.Scanning solution available as this tools depends on the SharePoint Scanner framework to compile.
