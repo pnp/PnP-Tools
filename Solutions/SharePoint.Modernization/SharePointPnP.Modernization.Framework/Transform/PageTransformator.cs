@@ -2,6 +2,7 @@
 using OfficeDevPnP.Core.Pages;
 using SharePointPnP.Modernization.Framework.Entities;
 using SharePointPnP.Modernization.Framework.Pages;
+using SharePointPnP.Modernization.Framework.Telemetry;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,6 +21,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
         private ClientContext clientContext;
         private PageTransformation pageTransformation;
         private string version = "undefined";
+        private PageTelemetry pageTelemetry;
 
         #region Construction
         /// <summary>
@@ -39,6 +41,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
         {
             this.clientContext = clientContext;
             this.version = PageTransformator.GetVersion();
+            this.pageTelemetry = new PageTelemetry(version);
 
             // Load xml mapping data
             XmlSerializer xmlMapping = new XmlSerializer(typeof(PageTransformation));
@@ -57,6 +60,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
         {
             this.clientContext = clientContext;
             this.version = PageTransformator.GetVersion();
+            this.pageTelemetry = new PageTelemetry(version);
 
             this.pageTransformation = pageTransformationModel;
         }
@@ -99,6 +103,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
             #endregion
 
             #region Telemetry
+            DateTime transformationStartDateTime = DateTime.Now;
             clientContext.ClientTag = $"SPDev:PageTransformator";
             clientContext.Load(clientContext.Web, p => p.Description, p => p.Id);
             clientContext.ExecuteQuery();
@@ -384,6 +389,16 @@ namespace SharePointPnP.Modernization.Framework.Transform
                 SwapPages(pageTransformationInformation);
             }
             #endregion
+
+            #region Telemetry
+            if (!pageTransformationInformation.SkipTelemetry && this.pageTelemetry != null)
+            {
+                TimeSpan duration = DateTime.Now.Subtract(transformationStartDateTime);
+                this.pageTelemetry.LogTransformationDone(duration);
+                this.pageTelemetry.Flush();
+            }
+            #endregion
+
             #endregion
         }
 
