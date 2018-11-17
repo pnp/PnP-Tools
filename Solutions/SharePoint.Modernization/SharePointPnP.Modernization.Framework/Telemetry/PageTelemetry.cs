@@ -19,7 +19,6 @@ namespace SharePointPnP.Modernization.Framework.Telemetry
             {
                 this.telemetryClient = new TelemetryClient
                 {
-                    // TEST key
                     InstrumentationKey = "373400f5-a9cc-48f3-8298-3fd7f4c063d6"
                 };
 
