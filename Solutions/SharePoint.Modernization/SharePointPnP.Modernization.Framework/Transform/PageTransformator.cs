@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Serialization;
 
 namespace SharePointPnP.Modernization.Framework.Transform
@@ -18,6 +19,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
     {
         private ClientContext clientContext;
         private PageTransformation pageTransformation;
+        private string version = "undefined";
 
         #region Construction
         /// <summary>
@@ -36,6 +38,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
         public PageTransformator(ClientContext clientContext, string pageTransformationFile)
         {
             this.clientContext = clientContext;
+            this.version = PageTransformator.GetVersion();
 
             // Load xml mapping data
             XmlSerializer xmlMapping = new XmlSerializer(typeof(PageTransformation));
@@ -53,6 +56,8 @@ namespace SharePointPnP.Modernization.Framework.Transform
         public PageTransformator(ClientContext clientContext, PageTransformation pageTransformationModel)
         {
             this.clientContext = clientContext;
+            this.version = PageTransformator.GetVersion();
+
             this.pageTransformation = pageTransformationModel;
         }
         #endregion
@@ -79,12 +84,12 @@ namespace SharePointPnP.Modernization.Framework.Transform
 
             if (pageType.Equals("ClientSidePage", StringComparison.InvariantCultureIgnoreCase))
             {
-                throw new ArgumentException("Page is a client side page...guess you don't want to transform it...");
+                throw new ArgumentException("Page already is a modern client side page...no need to transform it.");
             }
 
             if (pageType.Equals("AspxPage", StringComparison.InvariantCultureIgnoreCase))
             {
-                throw new ArgumentException("Page is an basic aspx page...can't transform that one, sorry!");
+                throw new ArgumentException("Page is an basic aspx page...can't currently transform that one, sorry!");
             }
 
             if (pageType.Equals("PublishingPage", StringComparison.InvariantCultureIgnoreCase))
@@ -305,6 +310,25 @@ namespace SharePointPnP.Modernization.Framework.Transform
             #region Save the page
             // Persist the client side page
             targetPage.Save(pageTransformationInformation.TargetPageName);
+
+            // Tag the file with a page modernization version stamp
+            try
+            {
+                string path = pageTransformationInformation.SourcePage[Constants.FileRefField].ToString().Replace(pageTransformationInformation.SourcePage[Constants.FileLeafRefField].ToString(), "");
+                var targetPageUrl = $"{path}{pageTransformationInformation.TargetPageName}";
+                var targetPageFile = this.clientContext.Web.GetFileByServerRelativeUrl(targetPageUrl);
+                this.clientContext.Load(targetPageFile, p => p.Properties);
+                this.clientContext.ExecuteQueryRetry();
+                targetPageFile.Properties["sharepointpnp_pagemodernization"] = this.version;
+                targetPageFile.Update();
+                this.clientContext.ExecuteQueryRetry();
+            }
+            catch (Exception ex)
+            {
+                // Eat exceptions as this is not critical for the generated page
+            }
+            
+            // finally publish the created/updated page
             targetPage.Publish();
             #endregion
 
@@ -493,6 +517,21 @@ namespace SharePointPnP.Modernization.Framework.Transform
                     targetPage.PageTitle = pageTitle;
                 }
             }
+        }
+
+        private static string GetVersion()
+        {
+            try
+            {
+                var coreAssembly = Assembly.GetExecutingAssembly();
+                return ((AssemblyFileVersionAttribute)coreAssembly.GetCustomAttribute(typeof(AssemblyFileVersionAttribute))).Version.ToString();
+            }
+            catch
+            {
+
+            }
+
+            return "undefined";
         }
         #endregion
 
