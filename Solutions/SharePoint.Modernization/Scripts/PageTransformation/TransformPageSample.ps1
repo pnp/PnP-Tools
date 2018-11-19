@@ -27,6 +27,7 @@ function Invoke-PnPModernizationPageTransformation
         [string] $WebPartMappingFile = $null,
         $Page,
         [bool] $Overwrite = $false,
+        [bool] $UsePageAcceptBanner = $false,
         [bool] $HandleWikiImagesAndVideos = $true,
         [bool] $ReplaceHomePageWithDefaultHomePage = $false,
         [bool] $TargetPageTakesSourcePageName = $false
@@ -48,6 +49,15 @@ function Invoke-PnPModernizationPageTransformation
             $pageTransformationInformation.HandleWikiImagesAndVideos = $HandleWikiImagesAndVideos
             $pageTransformationInformation.ReplaceHomePageWithDefaultHomePage = $ReplaceHomePageWithDefaultHomePage
             $pageTransformationInformation.TargetPageTakesSourcePageName = $TargetPageTakesSourcePageName
+
+            # setup pageacceptbanner
+
+            if ($UsePageAcceptBanner)
+            {
+                $modernizationCenterInformation = New-Object -TypeName SharePointPnP.Modernization.Framework.Transform.ModernizationCenterInformation
+                $modernizationCenterInformation.AddPageAcceptBanner = $true;
+                $pageTransformationInformation.ModernizationCenterInformation = $modernizationCenterInformation;
+            }
 
             # Instantiate the page transformator
             $pageTransformator = $null
@@ -93,13 +103,13 @@ $binaryFolder = "C:\github\BertPnPTools\Solutions\SharePoint.Modernization\Share
 Use-PnPModernizationFramework -PathToModernizationBinaries $binaryFolder
 
 # Connect to site
-Connect-PnPOnline -Url https://bertonline.sharepoint.com/sites/espctest2 -Verbose
+Connect-PnPOnline -Url https://bertonline.sharepoint.com/sites/modernizationtest -Verbose
 
 # Get all pages
 # [string] $query = $CAMLQueryByExtension
 
 # Get specific aspx page(s)
-[string] $query = [string]::Format($CAMLQueryByExtensionAndName, "contentbyquery.aspx")
+[string] $query = [string]::Format($CAMLQueryByExtensionAndName, "wiki1.aspx")
 
 # Load the pages
 $pages = Get-PnPListItem -List SitePages -Query $query 
@@ -108,7 +118,7 @@ $pages = Get-PnPListItem -List SitePages -Query $query
 foreach($page in $pages)
 {
     Write-Host "Modernizing " $page.FieldValues["FileLeafRef"] "..."    
-    if (Invoke-PnPModernizationPageTransformation -Page $page -WebPartMappingFile "$binaryFolder\webpartmapping.xml" -Overwrite $true)
+    if (Invoke-PnPModernizationPageTransformation -Page $page -WebPartMappingFile "$binaryFolder\webpartmapping.xml" -Overwrite $true -UsePageAcceptBanner $false)
     {
         Write-Host "Done!" -ForegroundColor Green
     }
