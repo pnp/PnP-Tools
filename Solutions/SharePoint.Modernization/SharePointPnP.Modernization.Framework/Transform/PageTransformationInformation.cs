@@ -41,6 +41,7 @@ namespace SharePointPnP.Modernization.Framework.Transform
             HandleWikiImagesAndVideos = true;
             TargetPageTakesSourcePageName = false;
             KeepPageSpecificPermissions = true;
+            SkipTelemetry = false;
             SetDefaultTargetPagePrefix();
             SetDefaultSourcePagePrefix();
         }
@@ -113,6 +114,13 @@ namespace SharePointPnP.Modernization.Framework.Transform
         /// Custom content transformator to be used for this page
         /// </summary>
         public Func<ClientSidePage, PageTransformation, IContentTransformator> ContentTransformatorOverride { get; set; }
+        #endregion
+
+        #region General properties
+        /// <summary>
+        /// Disable telemetry: we use telemetry to make this tool better by sending anonymous data, but you're free to disable this
+        /// </summary>
+        public bool SkipTelemetry { get; set; }
         #endregion
 
         #region Functionality
