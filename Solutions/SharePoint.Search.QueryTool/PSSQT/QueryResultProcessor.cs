@@ -161,7 +161,8 @@ namespace PSSQT
         {
             return Cmdlet.MyInvocation.PipelinePosition == Cmdlet.MyInvocation.PipelineLength;
         }
-     }
+
+    }
 
     public class BaseQueryResultProcessor : AbstractQueryResultProcessor
     {
