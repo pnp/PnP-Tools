@@ -110,6 +110,7 @@
             this.tgModeGroupConnect = new System.Windows.Forms.CheckBox();
             this.cmbScanMode = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.tgDisableTelemetry = new System.Windows.Forms.CheckBox();
             this.headerPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.headerImage)).BeginInit();
             this.commandPanel.SuspendLayout();
@@ -260,6 +261,7 @@
             // 
             // optionsPage
             // 
+            this.optionsPage.Controls.Add(this.tgDisableTelemetry);
             this.optionsPage.Controls.Add(this.cmbSeparator);
             this.optionsPage.Controls.Add(this.label11);
             this.optionsPage.Controls.Add(this.tgSkipExcelReports);
@@ -282,7 +284,7 @@
             this.cmbSeparator.Items.AddRange(new object[] {
             ",",
             ";"});
-            this.cmbSeparator.Location = new System.Drawing.Point(209, 188);
+            this.cmbSeparator.Location = new System.Drawing.Point(209, 198);
             this.cmbSeparator.Name = "cmbSeparator";
             this.cmbSeparator.Size = new System.Drawing.Size(32, 21);
             this.cmbSeparator.TabIndex = 8;
@@ -290,7 +292,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(42, 191);
+            this.label11.Location = new System.Drawing.Point(42, 201);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(161, 13);
             this.label11.TabIndex = 7;
@@ -996,6 +998,16 @@
             this.label5.TabIndex = 0;
             this.label5.Text = "Select the scan mode to use:";
             // 
+            // tgDisableTelemetry
+            // 
+            this.tgDisableTelemetry.AutoSize = true;
+            this.tgDisableTelemetry.Location = new System.Drawing.Point(42, 174);
+            this.tgDisableTelemetry.Name = "tgDisableTelemetry";
+            this.tgDisableTelemetry.Size = new System.Drawing.Size(268, 17);
+            this.tgDisableTelemetry.TabIndex = 7;
+            this.tgDisableTelemetry.Text = "Disable in product feedback to Microsoft (telemetry)";
+            this.tgDisableTelemetry.UseVisualStyleBackColor = true;
+            // 
             // Wizard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1126,5 +1138,6 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.ComboBox cmbSeparator;
+        private System.Windows.Forms.CheckBox tgDisableTelemetry;
     }
 }

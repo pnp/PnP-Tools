@@ -12,6 +12,19 @@
 - From .Net: see https://github.com/SharePoint/PnP/tree/dev/Samples/Modernization.PageTransformation as nice sample to start with
 - From PnP PowerShell: see https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Modernization/Scripts/PageTransformation/TransformPageSample.ps1 for a sample
 
+## [November release (prod) - version 1.0.1811.2]
+
+### Changed
+
+- Support for putting a banner web part on the created pages. See https://github.com/SharePoint/sp-dev-modernization/tree/dev/Solutions/PageTransformationUI for more details
+
+## [November release (prod) - version 1.0.1811.1]
+
+### Changed
+
+- Added Page Propertybag entry with version stamp of modernization framework used to generate the page
+- Added Azure AppInsights based telemetry, only anonymous data is sent
+
 ## [November release (prod) - version 1.0.1811.0]
 
 ### Changed

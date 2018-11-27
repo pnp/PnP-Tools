@@ -1,4 +1,5 @@
 ﻿using SharePoint.Modernization.Scanner.Reports;
+using SharePoint.Modernization.Scanner.Telemetry;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -11,11 +12,12 @@ namespace SharePoint.Modernization.Scanner
     /// </summary>
     class Program
     {
+        private static ScannerTelemetry scannerTelemetry;
+
         /// <summary>
         /// Main method to execute the program
         /// </summary>
         /// <param name="args">Command line arguments</param>
-
         [STAThread]
         static void Main(string[] args)
         {
@@ -49,45 +51,76 @@ namespace SharePoint.Modernization.Scanner
             }
             else
             {
-                //Instantiate scan job
-                ModernizationScanJob job = new ModernizationScanJob(options)
+                try
                 {
+                    DateTime scanStartDateTime = DateTime.Now;
 
-                    // I'm debugging
-                    //UseThreading = false
-                };
+                    // let's catch unhandled exceptions 
+                    AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-                job.Execute();
-
-                // Create reports
-                if (!options.SkipReport)
-                {
-                    string workingFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-                    List<string> paths = new List<string>
+                    //Instantiate scan job
+                    ModernizationScanJob job = new ModernizationScanJob(options)
                     {
-                        Path.Combine(workingFolder, job.OutputFolder)
+
+                        // I'm debugging
+                        //UseThreading = false
                     };
 
-                    var generator = new Generator();
+                    scannerTelemetry = job.ScannerTelemetry;
 
-                    generator.CreateGroupifyReport(paths);
+                    job.Execute();
 
-                    if (Options.IncludeLists(options.Mode))
+                    // Create reports
+                    if (!options.SkipReport)
                     {
-                        generator.CreateListReport(paths);
+                        string workingFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                        List<string> paths = new List<string>
+                        {
+                            Path.Combine(workingFolder, job.OutputFolder)
+                        };
+
+                        var generator = new Generator();
+
+                        generator.CreateGroupifyReport(paths);
+
+                        if (Options.IncludeLists(options.Mode))
+                        {
+                            generator.CreateListReport(paths);
+                        }
+
+                        if (Options.IncludePage(options.Mode))
+                        {
+                            generator.CreatePageReport(paths);
+                        }
+
+                        if (Options.IncludePublishing(options.Mode))
+                        {
+                            generator.CreatePublishingReport(paths);
+                        }
                     }
 
-                    if (Options.IncludePage(options.Mode))
+                    TimeSpan duration = DateTime.Now.Subtract(scanStartDateTime);
+                    if (scannerTelemetry != null)
                     {
-                        generator.CreatePageReport(paths);
+                        scannerTelemetry.LogScanDone(duration);
                     }
-
-                    if (Options.IncludePublishing(options.Mode))
+                }
+                finally
+                {
+                    if (scannerTelemetry != null)
                     {
-                        generator.CreatePublishingReport(paths);
+                        scannerTelemetry.Flush();
                     }
                 }
             }            
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (scannerTelemetry != null)
+            {
+                scannerTelemetry.LogScanCrash(e.ExceptionObject);
+            }
         }
     }
 }

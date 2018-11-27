@@ -41,44 +41,70 @@ namespace SharePoint.Modernization.Scanner.Analyzers
 
                 foreach (var list in lists)
                 {
-                    ListScanResult listScanData;
-                    if (list.DefaultViewUrl.ToLower().Contains(".aspx"))
+                    try
                     {
-                        File file = cc.Web.GetFileByServerRelativeUrl(list.DefaultViewUrl);
-                        listScanData = file.ModernCompatability(list, ref this.ScanJob.ScanErrors);
-                    }
-                    else
-                    {
-                        listScanData = new ListScanResult()
-                        {
-                            BlockedByNotBeingAbleToLoadPage = true
-                        };
-                    }
+                        this.ScanJob.IncreaseScannedLists();
 
-                    if (listScanData != null && !listScanData.WorksInModern)
-                    {
-                        if (this.ScanJob.ExcludeListsOnlyBlockedByOobReasons && listScanData.OnlyBlockedByOOBReasons)
+                        ListScanResult listScanData;
+                        if (list.DefaultViewUrl.ToLower().Contains(".aspx"))
                         {
-                            continue;
+                            File file = cc.Web.GetFileByServerRelativeUrl(list.DefaultViewUrl);
+                            listScanData = file.ModernCompatability(list, ref this.ScanJob.ScanErrors);
                         }
-
-                        listScanData.SiteURL = this.SiteUrl;
-                        listScanData.ListUrl = $"{webAppUrl}{list.DefaultViewUrl}";
-                        listScanData.SiteColUrl = this.SiteCollectionUrl;
-                        listScanData.ListTitle = list.Title;
-
-                        if (!this.ScanJob.ListScanResults.TryAdd($"{Guid.NewGuid().ToString()}{webAppUrl}{list.DefaultViewUrl}", listScanData))
+                        else
                         {
-                            ScanError error = new ScanError()
+                            listScanData = new ListScanResult()
                             {
-                                Error = $"Could not add list scan result for {webAppUrl}{list.DefaultViewUrl} from web scan of {this.SiteUrl}",
-                                SiteColUrl = this.SiteCollectionUrl,
-                                SiteURL = this.SiteUrl,
-                                Field1 = "ListAnalyzer",
-                                Field2 = $"{webAppUrl}{list.DefaultViewUrl}"
+                                BlockedByNotBeingAbleToLoadPage = true
                             };
-                            this.ScanJob.ScanErrors.Push(error);
                         }
+
+                        if (listScanData != null && !listScanData.WorksInModern)
+                        {
+                            if (this.ScanJob.ExcludeListsOnlyBlockedByOobReasons && listScanData.OnlyBlockedByOOBReasons)
+                            {
+                                continue;
+                            }
+
+                            listScanData.SiteURL = this.SiteUrl;
+                            listScanData.ListUrl = $"{webAppUrl}{list.DefaultViewUrl}";
+                            listScanData.SiteColUrl = this.SiteCollectionUrl;
+                            listScanData.ListTitle = list.Title;
+
+                            if (!this.ScanJob.ListScanResults.TryAdd($"{Guid.NewGuid().ToString()}{webAppUrl}{list.DefaultViewUrl}", listScanData))
+                            {
+                                ScanError error = new ScanError()
+                                {
+                                    Error = $"Could not add list scan result for {webAppUrl}{list.DefaultViewUrl} from web scan of {this.SiteUrl}",
+                                    SiteColUrl = this.SiteCollectionUrl,
+                                    SiteURL = this.SiteUrl,
+                                    Field1 = "ListAnalyzer",
+                                    Field2 = $"{webAppUrl}{list.DefaultViewUrl}"
+                                };
+                                this.ScanJob.ScanErrors.Push(error);
+                            }
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        ScanError error = new ScanError()
+                        {
+                            Error = ex.Message,
+                            SiteColUrl = this.SiteCollectionUrl,
+                            SiteURL = this.SiteUrl,
+                            Field1 = "MainListAnalyzerLoop",
+                            Field2 = ex.StackTrace,
+                            Field3 = $"{webAppUrl}{list.DefaultViewUrl}"
+                        };
+
+                        // Send error to telemetry to make scanner better
+                        if (this.ScanJob.ScannerTelemetry != null)
+                        {
+                            this.ScanJob.ScannerTelemetry.LogScanError(ex, error);
+                        }
+
+                        this.ScanJob.ScanErrors.Push(error);
+                        Console.WriteLine("Error for page {1}: {0}", ex.Message, $"{webAppUrl}{list.DefaultViewUrl}");
                     }
                 }
 

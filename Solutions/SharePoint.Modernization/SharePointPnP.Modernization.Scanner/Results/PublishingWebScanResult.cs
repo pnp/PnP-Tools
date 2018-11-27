@@ -96,6 +96,18 @@ namespace SharePoint.Modernization.Scanner.Results
                     classification = variationsClassification;
                 }
 
+                // Check user custom actions
+                var userCustomActionClassification = SiteComplexity.Simple;
+                if (this.UserCustomActions != null && this.UserCustomActions.Count > 0)
+                {
+                    userCustomActionClassification = SiteComplexity.Medium;
+                }
+                if (userCustomActionClassification > classification)
+                {
+                    classification = userCustomActionClassification;
+                }
+
+
                 return classification;
             }
         }
@@ -258,6 +270,11 @@ namespace SharePoint.Modernization.Scanner.Results
         /// The source variation label for this web
         /// </summary>
         public string VariationSourceLabel { get; set; }
+
+        /// <summary>
+        /// Site/Web user custom actions which are ignored on modern UI
+        /// </summary>
+        public List<UserCustomActionResult> UserCustomActions { get; set; }
 
     }
 }

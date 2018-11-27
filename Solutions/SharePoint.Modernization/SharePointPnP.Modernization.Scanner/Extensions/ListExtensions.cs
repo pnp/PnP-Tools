@@ -22,6 +22,8 @@ namespace Microsoft.SharePoint.Client
                 list.BaseTemplate == (int)ListTemplateType.IssueTracking ||
                 list.BaseTemplate == (int)ListTemplateType.Contacts ||
                 list.BaseTemplate == 851 || // Assets
+                list.BaseTemplate == (int)ListTemplateType.CustomGrid ||
+                list.BaseTemplate == 850 || // Publishing pages library
                 list.BaseTemplate == 170 || // Promoted Links
                 list.BaseTemplate == (int)ListTemplateType.XMLForm ||
                 list.BaseTemplate == (int)ListTemplateType.GenericList)

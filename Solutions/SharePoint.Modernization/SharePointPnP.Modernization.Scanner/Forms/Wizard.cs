@@ -104,6 +104,7 @@ namespace SharePoint.Modernization.Scanner.Forms
             options.SkipReport = tgSkipExcelReports.Checked;
             options.ExcludeListsOnlyBlockedByOobReasons = tgListBlockedDueToOOB.Checked;
             options.Separator = cmbSeparator.Text;
+            options.DisableTelemetry = tgDisableTelemetry.Checked;
 
             Close();
         }

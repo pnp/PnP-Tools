@@ -165,6 +165,13 @@ namespace SharePoint.Modernization.Scanner.Analyzers
                                         Field2 = ex.StackTrace,
                                         Field3 = pageUrl
                                     };
+
+                                    // Send error to telemetry to make scanner better
+                                    if (this.ScanJob.ScannerTelemetry != null)
+                                    {
+                                        this.ScanJob.ScannerTelemetry.LogScanError(ex, error);
+                                    }
+
                                     this.ScanJob.ScanErrors.Push(error);
                                     Console.WriteLine("Error for page {1}: {0}", ex.Message, pageUrl);
                                 }
