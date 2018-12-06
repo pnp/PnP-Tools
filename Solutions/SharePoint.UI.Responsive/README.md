@@ -26,7 +26,7 @@ If you simply want to have an overview of this solution, you can read the
  
 ![](http://i.imgur.com/I2VYM3a.png)
  
->**Note**: This is an **Open Source** project, and any contribution from the community
+> **Note**: This is an **Open Source** project, and any contribution from the community
 is more than welcome. Thus, feel free to review the code and submit any 
 <a href="https://github.com/SharePoint/PnP-Tools/issues?q=is%3Aissue+is%3Aopen+label%3A%22Responsive+Package%22">Issues</a> or
 <a href="https://github.com/SharePoint/PnP-Tools/pulls">Pull Requests</a>, using GitHub.
@@ -38,7 +38,7 @@ Site Collection, you simply need to:
 2. [Setup software requirements](#requirements)
 3. [Execute the *Enable-SPResponsiveUI* script](#execute)
 
->**Note**: If you are using SharePoint 2013 environment, setup scripts are assuming that you are running at least the April 2015 CU.
+> **Note**: If you are using SharePoint 2013 environment, setup scripts are assuming that you are running at least the April 2015 CU.
  
 <a name="download"></a>
 ## Download the files
@@ -59,7 +59,7 @@ instructions</a> for further details):
 * <a href="https://github.com/SharePoint/PnP-PowerShell/releases">SharePointPnP.PowerShell  package for SharePoint 2016</a>
 * <a href="https://github.com/SharePoint/PnP-PowerShell/releases">SharePointPnP.PowerShell  package for SharePoint Online</a>
 
->**Note**: Depending on your target platform (SharePoint 2013/2016 on-premises, or SharePoint Online) you should refer to
+> **Note**: Depending on your target platform (SharePoint 2013/2016 on-premises, or SharePoint Online) you should refer to
 the right build of the SharePointPnP.PowerShell commands. Nevertheless, even the SharePointPnPPowerShellOnline version, which
 targets SharePoint Online, is viable to setup this solution on-premises. If you are running SharePoint 2013 environment, 
 PowerShell CmdLets used by the automation scripts have dependency on April 2015 CU to be installed on server side. 
@@ -79,6 +79,7 @@ The *Enable-SPResponsiveUI* script accepts the following parameters:
 |-----------|------|----------|-------------|
 | TargetSiteurl|  String | True | URL of the Site Collection where the Responsive UI will be enabled. It has to be provided as a full URL, like for example: https://intranet.mydomain.com/sites/targetSite or https://tenant.sharepoint.com/sites/siteCollection |
 | InfrastructureSiteUrl | String | False | URL of an infrastructural Site Collection, where will be uploaded/updated the JavaScript and CSS files backing the Responsive UI solution. If you don't provide a value for this parameter, the cmdlet will use the target Site Collection to host these files. It has to be provided as a full URL, like for example: https://intranet.mydomain.com/sites/infrastructureSite or https://tenant.sharepoint.com/sites/infrastructureSite |
+| Prod | Switch | False | Allow to use minified files used mainly for production environment |
 | Credentials | CredentialPipeBind | False | User credentials that will be used to authenticate against both the target Site Collection. Should be the credentials of a user, who is Site Collection Administrator for the target Site Collections. If you don't provide this parameter, the script will directly prompt you for credentials. |
 
 Here you can see a couple of examples about how to invoke the *Enable-SPResponsiveUI* script:
@@ -93,13 +94,20 @@ The user's credentials are not provided, so the cmdlet will directly prompt the 
 
 ### EXAMPLE 2
 ```PowerShell
+PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteurl "https://intranet.mydomain.com/sites/targetSite" -Prod
+```
+
+In this example, the minified files will be used instead of original files (this is mostly for production environment; by decreasing the files size the loading page is increased)
+
+### EXAMPLE 3
+```PowerShell
 PS C:\> $creds = Get-Credential
 PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteurl "https://intranet.mydomain.com/sites/targetSite" -Credentials $creds
 ```
  
 The example above enables the Responsive UI on the target Site Collection with the user's credentials provided through the *$creds* variable.
 
-### EXAMPLE 3
+### EXAMPLE 4
 ```PowerShell
 PS C:\> $creds = Get-Credential
 PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteUrl "https://intranet.mydomain.com/sites/targetSite" -InfrastructureSiteUrl "https://intranet.mydomain.com/sites/infrastructureSite" -Credentials $creds
@@ -107,7 +115,7 @@ PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteUrl "https://intranet.mydomain.co
  
 The example above enables the Responsive UI on the target Site Collection with URL https://intranet.mydomain.com/sites/targetSite and uses the Site Collection with URL https://intranet.mydomain.com/sites/infrastructureSite for hosting the JavaScript and CSS files. The user's credentials are  provided through the *$creds* variable.
 
->**Important**: The Responsive UI can be experienced from a mobile device (tablet or smartphone)
+> **Important**: The Responsive UI can be experienced from a mobile device (tablet or smartphone)
 only by disabling the "Mobile Browser View" native feature of SharePoint.
 Thus, when you execute the *Enable-SPResponsiveUI* cmdlet,
 that feature will be disabled on the root Site of the target Site Collection.
@@ -190,7 +198,7 @@ The Responsive UI is applied to the following pages of the root site of a Site C
 * Site Contents
 * Site Settings
 
->**Note**: We tried to do our best to properly behave with any out of the box Web Part, and we tested most of the common page definitions/layouts. However, 
+> **Note**: We tried to do our best to properly behave with any out of the box Web Part, and we tested most of the common page definitions/layouts. However, 
 there could be cases in which the Responsive UI could be better. In that case, please feel free to contribute to this Open Source project either by suggesting 
 a Pull Request, or by submitting an Issue.
 
