@@ -296,7 +296,16 @@ namespace Microsoft.SharePoint.Client
                         }
                         else if ((flags & ViewFlag_Grid) != 0)
                         {
-                            result.XsltViewWebPartCompatibility.ViewType = "Grid";
+                            if (list.BaseTemplate == (int)ListTemplateType.GenericList ||
+                                list.BaseTemplate == (int)ListTemplateType.DocumentLibrary )
+                            {
+                                // unblock...we've added support for datasheet rendering for custom lists in July 2018 (see https://techcommunity.microsoft.com/t5/Microsoft-SharePoint-Blog/Updates-to-metadata-handling-and-list-templates/ba-p/202113)
+                                result.XsltViewWebPartCompatibility.BlockedByViewType = false;
+                            }
+                            else
+                            {
+                                result.XsltViewWebPartCompatibility.ViewType = "Grid";
+                            }
                         }
                     }
                 }
