@@ -588,10 +588,6 @@ div#s4-bodyContainer {
     #contentRow > #contentBox {
         margin-left: 220px;
     }
-    /* When fullscreen mode is enbale, there are no left menu so remove negative margin-left to hide menu */
-    body.ms-fullscreenmode #contentRow {
-        margin-left: 0;
-    }
     .ms-dialog #contentRow {
         /* Make sure this is not applied to dialog windows */
         margin-left: 0;
@@ -690,6 +686,10 @@ div#s4-bodyContainer {
 @media screen and (max-width: 639px) {
     #suiteBarTop .o365cs-nav-brandingText {
         font-size: 17px;
+    }
+    /* Fix spacing in fullscreen mode */
+    .ms-fullscreenmode #contentBox {
+        margin-left: 20px;
     }
     div#s4-bodyContainer {
         width: auto !important;
