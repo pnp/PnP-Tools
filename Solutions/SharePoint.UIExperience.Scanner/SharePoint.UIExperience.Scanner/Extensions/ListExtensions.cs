@@ -19,7 +19,8 @@ namespace Microsoft.SharePoint.Client
                 list.BaseTemplate == (int)ListTemplateType.PictureLibrary ||
                 list.BaseTemplate == (int)ListTemplateType.WebPageLibrary ||
                 list.BaseTemplate == (int)ListTemplateType.Announcements ||
-                list.BaseTemplate == (int)ListTemplateType.Links ||
+                list.BaseTemplate == (int)ListTemplateType.IssueTracking ||
+                list.BaseTemplate == (int)ListTemplateType.Contacts ||
                 list.BaseTemplate == 851 || // Assets
                 list.BaseTemplate == 170 || // Promoted Links
                 list.BaseTemplate == (int)ListTemplateType.XMLForm ||

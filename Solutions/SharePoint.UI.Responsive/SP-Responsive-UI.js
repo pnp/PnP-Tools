@@ -624,6 +624,8 @@ PnPResponsiveApp.Main = (function () {
                     pnpContentNavPanel.appendChild(spHQLNav);
                 }
 
+            /* No Top Nav */
+            if (topNav == undefined) { return; }
                 /* Add bottom space to compensate for lack of height  */
                 var panelBottom = document.createElement('div');
                 panelBottom.className = 'PnPPanelBottom';
