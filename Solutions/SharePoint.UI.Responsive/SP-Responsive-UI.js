@@ -200,7 +200,7 @@ PnPResponsiveApp.Main = (function () {
             topNavClone.className = topNavClone.className + ' mobile-only';
             topNavClone = cloneSPIdNodes(topNavClone);
             /* Sub nodes accordion */
-            var childs = topNavClone.querySelectorAll('a.dynamic-children');
+            var childs = topNavClone.querySelectorAll('.dynamic-children.menu-item');
             for (var c = 0; c < childs.length; c++) {
                 /* Add button to preserve html link */
                 var expandBtn = document.createElement('button');
