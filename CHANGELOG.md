@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [December 2018]
+
+### Added
+
+### Changed
+
+- All modernization content now lives in it's own repository https://github.com/sharepoint/sp-dev-modernization
+- Update nav querySelector to target dynamic-children that re NOT links #167 [nickaranz]
+
 ## [November 2018]
 
 ### Added
