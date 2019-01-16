@@ -1,6 +1,10 @@
-# SharePoint 2013/2016/Online Responsive UI #
-This solution demonstrates how to enable the PnP Responsive UI in Microsoft SharePoint 2013/2016 on-premises or SharePoint Online using the 
-PowerShell cmdlet *Enable-PnPResponsiveUI*, and also
+# SharePoint Responsive UI
+This solution demonstrates how to enable the PnP Responsive UI on the following Microsoft SharePoint environments :
+* SharePoint 2013 On-Premises
+* SharePoint 2016 On-Premises
+* SharePoint Online
+
+by using the PowerShell cmdlet *Enable-PnPResponsiveUI*, and also
 provides you the capability to enable a custom Responsive UI for a Site Collection.
 If you just want to enable the responsive UI with the default PnP responsive template you
 can simply use the PowerShell cmdlet directly.
@@ -10,6 +14,8 @@ to use the PnP provisioning engine to deploy custom versions of the CSS and Java
 which are used to create the responsive site, 
 in order to make a custom responsive version of the out of the box UI of a classic Team Site (STS#0).
 
+> **Note**: This solution is not compatible with the new experience available only with SharePoint Online.
+
 The Responsive UI Package is described in an Office Dev Center [blog article](https://blogs.msdn.microsoft.com/vesku/2016/03/03/announcing-responsive-ui-package-for-sharepoint-on-premises-2013-and-2016/),
 although this article and its associated video tutorial were written before the PowerShell cmdlet was created,
 so it uses script injection to enable the responsive UI.
@@ -17,29 +23,29 @@ Moving forward we recommend using the PowerShell cmdlet which makes use of the P
 
 If you simply want to have an overview of this solution, you can read the
 <a href="#overview">following section</a>. 
-
+ 
 ![](http://i.imgur.com/I2VYM3a.png)
  
->**Note**: This is an **Open Source** project, and any contribution from the community
+> **Note**: This is an **Open Source** project, and any contribution from the community
 is more than welcome. Thus, feel free to review the code and submit any 
 <a href="https://github.com/SharePoint/PnP-Tools/issues?q=is%3Aissue+is%3Aopen+label%3A%22Responsive+Package%22">Issues</a> or
 <a href="https://github.com/SharePoint/PnP-Tools/pulls">Pull Requests</a>, using GitHub.
  
-# Setup Instructions #
+# Setup Instructions
 In order to setup the solution and to enable the Responsive UI on a target
 Site Collection, you simply need to:
-* [Download the files included in this solution](#download)
-* [Setup software requirements](#requirements)
-* [Execute the *Enable-SPResponsiveUI* script](#execute)
+1. [Download the files included in this solution](#download)
+2. [Setup software requirements](#requirements)
+3. [Execute the *Enable-SPResponsiveUI* script](#execute)
 
->**Note**: If you are using SharePoint 2013 environment, setup scripts are assuming that you are running at least the April 2015 CU.
+> **Note**: If you are using SharePoint 2013 environment, setup scripts are assuming that you are running at least the April 2015 CU.
  
 <a name="download"></a>
 ## Download the files
 You can download the files manually, one by one, or you can download
 a ZIP file with all the PnP-Tools, simply following
 <a href="https://github.com/SharePoint/PnP-Tools/archive/master.zip">this link</a>. 
-Within the ZIP file, under the /Solutions/SharePoint.UI.Responsive folder, you will
+Within the ZIP file, under the `/Solutions/SharePoint.UI.Responsive` folder, you will
 find all the required files.
 
 <a name="requirements"></a>
@@ -53,7 +59,7 @@ instructions</a> for further details):
 * <a href="https://github.com/SharePoint/PnP-PowerShell/releases">SharePointPnP.PowerShell  package for SharePoint 2016</a>
 * <a href="https://github.com/SharePoint/PnP-PowerShell/releases">SharePointPnP.PowerShell  package for SharePoint Online</a>
 
->**Note**: Depending on your target platform (SharePoint 2013/2016 on-premises, or SharePoint Online) you should refer to
+> **Note**: Depending on your target platform (SharePoint 2013/2016 on-premises, or SharePoint Online) you should refer to
 the right build of the SharePointPnP.PowerShell commands. Nevertheless, even the SharePointPnPPowerShellOnline version, which
 targets SharePoint Online, is viable to setup this solution on-premises. If you are running SharePoint 2013 environment, 
 PowerShell CmdLets used by the automation scripts have dependency on April 2015 CU to be installed on server side. 
@@ -73,6 +79,7 @@ The *Enable-SPResponsiveUI* script accepts the following parameters:
 |-----------|------|----------|-------------|
 | TargetSiteurl|  String | True | URL of the Site Collection where the Responsive UI will be enabled. It has to be provided as a full URL, like for example: https://intranet.mydomain.com/sites/targetSite or https://tenant.sharepoint.com/sites/siteCollection |
 | InfrastructureSiteUrl | String | False | URL of an infrastructural Site Collection, where will be uploaded/updated the JavaScript and CSS files backing the Responsive UI solution. If you don't provide a value for this parameter, the cmdlet will use the target Site Collection to host these files. It has to be provided as a full URL, like for example: https://intranet.mydomain.com/sites/infrastructureSite or https://tenant.sharepoint.com/sites/infrastructureSite |
+| Prod | Switch | False | Allow to use minified files used mainly for production environment |
 | Credentials | CredentialPipeBind | False | User credentials that will be used to authenticate against both the target Site Collection. Should be the credentials of a user, who is Site Collection Administrator for the target Site Collections. If you don't provide this parameter, the script will directly prompt you for credentials. |
 
 Here you can see a couple of examples about how to invoke the *Enable-SPResponsiveUI* script:
@@ -87,13 +94,20 @@ The user's credentials are not provided, so the cmdlet will directly prompt the 
 
 ### EXAMPLE 2
 ```PowerShell
+PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteurl "https://intranet.mydomain.com/sites/targetSite" -Prod
+```
+
+In this example, the minified files will be used instead of original files (this is mostly for production environment; by decreasing the files size the loading page is increased)
+
+### EXAMPLE 3
+```PowerShell
 PS C:\> $creds = Get-Credential
 PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteurl "https://intranet.mydomain.com/sites/targetSite" -Credentials $creds
 ```
  
 The example above enables the Responsive UI on the target Site Collection with the user's credentials provided through the *$creds* variable.
 
-### EXAMPLE 3
+### EXAMPLE 4
 ```PowerShell
 PS C:\> $creds = Get-Credential
 PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteUrl "https://intranet.mydomain.com/sites/targetSite" -InfrastructureSiteUrl "https://intranet.mydomain.com/sites/infrastructureSite" -Credentials $creds
@@ -101,7 +115,7 @@ PS C:\> .\Enable-SPResponsiveUI.ps1 -TargetSiteUrl "https://intranet.mydomain.co
  
 The example above enables the Responsive UI on the target Site Collection with URL https://intranet.mydomain.com/sites/targetSite and uses the Site Collection with URL https://intranet.mydomain.com/sites/infrastructureSite for hosting the JavaScript and CSS files. The user's credentials are  provided through the *$creds* variable.
 
->**Important**: The Responsive UI can be experienced from a mobile device (tablet or smartphone)
+> **Important**: The Responsive UI can be experienced from a mobile device (tablet or smartphone)
 only by disabling the "Mobile Browser View" native feature of SharePoint.
 Thus, when you execute the *Enable-SPResponsiveUI* cmdlet,
 that feature will be disabled on the root Site of the target Site Collection.
@@ -147,45 +161,50 @@ If you want to remove your custom CSS and JavaScript you can remove the files fr
 
 
 <a name="overview"></a>
-# Solution Overview #
-The solution leverages the PnP PowerShell *Enable-PnPResponsiveUI* cmdlet to enable
-JavaScript embedding and CSS overriding to convert the out of 
-the box UI of any SharePoint 2013/2016/Online Team Site (STS#0) into a Responsive UI.
+# Solution Overview
+
+The solution leverages the PnP PowerShell *Enable-PnPResponsiveUI* cmdlet to enable JavaScript embedding and CSS overriding to convert the out of the box UI of any SharePoint 2013/2016/Online Team Site (STS#0) into a Responsive UI.
 The PnP default Responsive UI supports three rendering models:
-* **Desktop**: screen width above 768px
-* **Tablet**: screen width between 481px and 768px
-* **SmartPhone**: screen width lower than or equal to 480px
+* **Desktop**: screen width above 1024px
+* **Tablet**: screen width between 640px and 1023px
+* **SmartPhone**: screen width lower than or equal to 640px
 
-In the following screenshots you can see a sample rendering of the Home Page of a 
-Team Site, for the three supported rendering models.
+> **Note**: There are the rendering models used by SharePoint Online.
 
-![SharePoint 2016 - Desktop Mode](https://cloud.githubusercontent.com/assets/15279205/24545062/0259110c-1606-11e7-95a3-fb10ea976c48.PNG)
+In the following screenshots you can see a sample rendering of the Home Page of a Team Site, for the three supported rendering models.
 
-![SharePoint 2016 - Tablet Mode Collapse](https://cloud.githubusercontent.com/assets/15279205/24545065/0262f92e-1606-11e7-9339-241c27b4b8d3.PNG)
+## SharePoint Online
 
-![SharePoint 2016 - Tablet Mode Expend](https://cloud.githubusercontent.com/assets/15279205/24545064/0259d6dc-1606-11e7-9798-3db17ce9961a.PNG)
+![SharePoint Online](./assets/SP.Responsive.UI-v2-Online.png)
 
-![SharePoint 2016 - SmartPhone Mode Collapse](https://cloud.githubusercontent.com/assets/15279205/24545063/02596cf6-1606-11e7-8e06-ea8447a9be67.PNG)
+## SharePoint 2016
 
-![SharePoint 2016 - SmartPhone Mode Expand](https://cloud.githubusercontent.com/assets/15279205/24545061/02591350-1606-11e7-9379-2b10c690d3da.PNG)
+![SharePoint Online](./assets/SP.Responsive.UI-v2-SP2016.png)
+
+## SharePoint 2013
+
+![SharePoint Online](./assets/SP.Responsive.UI-v2-SP2013.png)
 
 The Responsive UI is applied to the following pages of the root site of a Site Collection, as well as of any sub-site (as long as you disable the "Mobile Browser View" feature in any specific sub-site):
-* Home Page
+* Default Master Pages
+    * Seattle
+    * Oslo
+    * MySite
 * Web Part Pages
 * Wiki Pages
 * Document Libraries
 * Lists
+* Default Forms
 * Site Contents
 * Site Settings
 
->**Note**: We tried to do our best to properly behave with any out of the box Web Part, and we tested most of the common page definitions/layouts. However, 
+> **Note**: We tried to do our best to properly behave with any out of the box Web Part, and we tested most of the common page definitions/layouts. However, 
 there could be cases in which the Responsive UI could be better. In that case, please feel free to contribute to this Open Source project either by suggesting 
 a Pull Request, or by submitting an Issue.
 
 ## Implementation details
 When you enable the Responsive UI the solution embeds a custom JavaScript file 
-(<a href="./SP-Responsive-UI.js">SP-Responsive-UI.js</a>), which takes care of
-loading jQuery, and embedding a custom CSS file (<a href="./SP-Responsive-UI.css">SP-Responsive-UI.css</a>) that overrides 
+(<a href="./SP-Responsive-UI.js">SP-Responsive-UI.js</a>) and embedding a custom CSS file (<a href="./SP-Responsive-UI.css">SP-Responsive-UI.css</a>) that overrides 
 most of the native CSS styles of SharePoint 2013/2016/Online, 
 in order to make it responsive. 
 Moreover, the embedded JS file also handles some inner logic, for example to replace TABLE/TR/TD with DIV elements in the Site Settings page, 
@@ -201,7 +220,7 @@ but the files will be provisioned at the site (web) level,
 so you will not be able to navigate to /Style Library/SP.Responsive.UI to see the provisioned files using the SharePoint UI.
 
 It is interesting to notice that the deployment phase of the solution leverages the PnP Remote Provisioning Engine. If you are interested in digging into the PnP Remote Provisioning Engine
-you can read the document <a href="https://github.com/SharePoint/PnP-Guidance/blob/master/articles/Introducing-the-PnP-Provisioning-Engine.md">"Introducing the PnP Provisioning Engine"</a> 
+you can read the document <a href="https://docs.microsoft.com/en-us/sharepoint/dev/solution-guidance/introducing-the-pnp-provisioning-engine">"Introducing the PnP Provisioning Engine"</a> 
 on GitHub, or you can watch the video
 <a href="https://channel9.msdn.com/blogs/OfficeDevPnP/Getting-Started-with-PnP-Provisioning-Engine">"Getting Started with PnP Provisioning Engine"</a> on Channel 9.
 
