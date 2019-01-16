@@ -178,6 +178,10 @@ namespace SearchQueryTool.Model
                     customPropertyParts.Add($"MultiGeoSearchConfiguration:{MultiGeoSearchConfiguration}");
                 }
             }
+            else if (this.EnableMultiGeoSearch == false)
+            {
+                customPropertyParts.Add("EnableMultiGeoSearch:false");
+            }
 
 
             if (!String.IsNullOrEmpty(this.HiddenConstraints))

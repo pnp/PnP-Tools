@@ -305,10 +305,19 @@ namespace PSSQT
             Mandatory = false,
             ValueFromPipelineByPropertyName = false,
             ValueFromPipeline = false,
-            HelpMessage = "Enable multi geo search. Default is false."
+            HelpMessage = "Enable multi geo search."
         )]
 
         public SwitchParameter EnableMultiGeoSearch { get; set; }
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
+            HelpMessage = "Disable multi geo search."
+        )]
+
+        public SwitchParameter DisableMultiGeoSearch { get; set; }
 
         [Parameter(
             Mandatory = false,
@@ -467,13 +476,21 @@ namespace PSSQT
             switchValue = GetThreeWaySwitchValue(EnableNickNames, DisableNickNames);
             if (switchValue.HasValue) searchQueryRequest.EnableNicknames = switchValue;
 
-            if (EnableMultiGeoSearch || MultiGeoSearchConfiguration != null)
+            if (EnableMultiGeoSearch || MultiGeoSearchConfiguration != null || DisableMultiGeoSearch)
             {
-                searchQueryRequest.EnableMultiGeoSearch = true;
+                if (EnableMultiGeoSearch || MultiGeoSearchConfiguration != null)
+                {
+                    searchQueryRequest.EnableMultiGeoSearch = true;
+                }
 
                 if (MultiGeoSearchConfiguration != null)
                 {
                     searchQueryRequest.MultiGeoSearchConfiguration = PSSQT.MultiGeoSearchConfiguration.Format(MultiGeoSearchConfiguration);
+                }
+
+                if (DisableMultiGeoSearch)
+                {
+                    searchQueryRequest.EnableMultiGeoSearch = false;
                 }
             }
 
