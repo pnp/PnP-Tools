@@ -263,7 +263,7 @@ namespace PSSQT
             SetRequestAutheticationType(searchRequest);
         }
 
-        private void SetRequestAutheticationType(SearchRequest searchRequest)
+        protected virtual void SetRequestAutheticationType(SearchRequest searchRequest)
         {
             if (Credential != null || searchRequest.AuthenticationType == AuthenticationType.Windows)
             {
