@@ -117,9 +117,10 @@ namespace PSSQT
         )]
 
 
-        public PSAuthenticationMethod AuthenticationMethod { get; set; } = PSAuthenticationMethod.Windows;
+        public PSAuthenticationMethod AuthenticationMethod { get; set; } = PSAuthenticationMethodFactory.DefaultAutenticationMethod();  // Environment variable can be used to set default
 
-        [Parameter(
+
+       [Parameter(
             ValueFromPipelineByPropertyName = false,
             ValueFromPipeline = false,
             HelpMessage = "Force a login prompt when you are using -AuthenticationMode SPOManagement."
@@ -166,6 +167,9 @@ namespace PSSQT
                     PresetLoaded(ref searchRequest, preset);
                 }
 
+                // additional command line argument validation. Throw an error if not valid
+                ValidateCommandlineArguments();
+
                 // Set Script Parameters from Command Line. Override in deriving classes
 
                 SetRequestParameters(searchRequest);
@@ -193,6 +197,11 @@ namespace PSSQT
 
                 WriteDebug(ex.StackTrace);
             }
+        }
+
+        protected virtual void ValidateCommandlineArguments()
+        {
+             return;       // override if necessary
         }
 
         public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

@@ -26,6 +26,7 @@ namespace PSSQT
         EUR, // Europe datacenters
         FRA, // Europe datacenters
         GBR, // Europe datacenters
+        IND, // India
         KOR, // Southeast or East Asia datacenters
         JPN, // Southeast or East Asia datacenters
         NAM  // US datacenters
