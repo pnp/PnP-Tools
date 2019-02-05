@@ -184,10 +184,15 @@
     <Compile Include="AllPropertiesResultProcessor.cs" />
     <Compile Include="AuthenticationMethod.cs" />
     <Compile Include="ExplainRankResultProcessor.cs" />
+    <Compile Include="FormatResultsCmdlet.cs" />
+    <Compile Include="FormatSuggestionsCmdlet.cs" />
     <Compile Include="Helpers\Authentication\AdalAuthentication.cs" />
+    <Compile Include="Helpers\ConsoleFormatter.cs" />
+    <Compile Include="Helpers\ExceptionHandler.cs" />
     <Compile Include="Helpers\HttpRequestResponsePairExtensions.cs" />
     <Compile Include="Helpers\PSWebAuthentication.cs" />
     <Compile Include="Helpers\ResultItemExtensions.cs" />
+    <Compile Include="NewMultiGeoSearchConfiguration.cs" />
     <Compile Include="QueryResultProcessor.cs" />
     <Compile Include="RankDetailTooManyResults.cs" />
     <Compile Include="RankingFeatureHelper.cs" />
@@ -217,7 +222,11 @@
     <Compile Include="RankLogParser\RankLogStageStaticFeature.cs" />
     <Compile Include="RankModelNames.cs" />
     <Compile Include="ResultSourceNames.cs" />
+    <Compile Include="SearchConnectionExtensions.cs" />
+    <Compile Include="SearchSuggestionsRequestExtensions.cs" />
     <Compile Include="SearchQueryRequestExtensions.cs" />
+    <Compile Include="AbstractSearchSPCmdlet.cs" />
+    <Compile Include="SearchSPSuggestionsCmdlet.cs" />
     <Compile Include="SearchSPIndexCmdlet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectPropertiesListArgumentParser.cs" />
@@ -247,7 +256,9 @@
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>rem %25SystemRoot%25\system32\WindowsPowerShell\v1.0\powershell.exe -File "$(SolutionDir)PSSQT\Scripts\Update-AssemblyFileVersion.ps1"  -assemblyInfoFilePath "$(SolutionDir)PSSQT\Properties\AssemblyInfo.cs"</PreBuildEvent>

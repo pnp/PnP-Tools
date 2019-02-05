@@ -13,9 +13,9 @@ namespace PSSQT.Helpers
 {
     public static class HttpRequestResponsePairExtensions
     {
-        public static SearchQueryResult GetResultItem(this HttpRequestResponsePair requestResponsePair)
+        public static TSearchResult GetResultItem<TSearchResult>(this HttpRequestResponsePair requestResponsePair) where TSearchResult : SearchResult, new()
         {
-            SearchQueryResult searchResults;
+            TSearchResult searchResult;
             var request = requestResponsePair.Item1;
 
             using (var response = requestResponsePair.Item2)
@@ -47,8 +47,9 @@ namespace PSSQT.Helpers
                         requestContent = requestResponsePair.Item3;
                     }
 
-                    searchResults = new SearchQueryResult
-                    {
+
+                    searchResult = new TSearchResult {
+
                         RequestUri = request.RequestUri,
                         RequestMethod = request.Method,
                         RequestContent = requestContent,
@@ -61,10 +62,11 @@ namespace PSSQT.Helpers
                         HttpProtocolVersion = response.ProtocolVersion.ToString()
                     };
 
-                    searchResults.Process();
+                    searchResult.Process();
                 }
             }
-            return searchResults;
+
+            return searchResult;
         }
 
     }

@@ -43,6 +43,8 @@ namespace SearchQueryTool.Model
         public long? TrimDuplicatesIncludeId { get; set; }
         public string ClientType { get; set; }
         public string PersonalizationData { get; set; }
+        public bool? EnableMultiGeoSearch { get; set; }
+        public string MultiGeoSearchConfiguration { get; set; }
 
         public SearchQueryRequest Clone()
         {
@@ -166,6 +168,21 @@ namespace SearchQueryTool.Model
                     uriBuilder.AppendFormat("&sourceid='{0}'", UrlEncode(this.SourceId));
                 }
             }
+
+            if (this.EnableMultiGeoSearch == true)
+            {
+                customPropertyParts.Add("EnableMultiGeoSearch:true");
+
+                if (! String.IsNullOrWhiteSpace(MultiGeoSearchConfiguration))
+                {
+                    customPropertyParts.Add($"MultiGeoSearchConfiguration:{MultiGeoSearchConfiguration}");
+                }
+            }
+            else if (this.EnableMultiGeoSearch == false)
+            {
+                customPropertyParts.Add("EnableMultiGeoSearch:false");
+            }
+
 
             if (!String.IsNullOrEmpty(this.HiddenConstraints))
                 uriBuilder.AppendFormat("&hiddenconstraints='{0}'", UrlEncode(this.HiddenConstraints));
@@ -393,6 +410,11 @@ namespace SearchQueryTool.Model
                 {
                     searchRequestBuilder.AppendFormat(", 'SourceId':'{0}'", this.SourceId);    
                 }
+            }
+
+            if (this.EnableMultiGeoSearch == true)
+            {
+                customPropertyParts.Add("EnableMultiGeoSearch:true");
             }
 
             if (!String.IsNullOrEmpty(this.HiddenConstraints))

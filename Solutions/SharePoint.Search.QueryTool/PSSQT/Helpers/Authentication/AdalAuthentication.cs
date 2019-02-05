@@ -9,7 +9,7 @@ namespace PSSQT.Helpers.Authentication
     class AdalAuthentication
     {
         private static readonly ConcurrentDictionary<Guid, ADAL.TokenCache> Tokens = new ConcurrentDictionary<Guid, ADAL.TokenCache>();   // SPO Auth tokens
-        
+
         private static readonly string AuthorityUri = "https://login.windows.net/common/oauth2/authorize";
         private static readonly string clientId = "9bc3ab49-b65d-410a-85ad-de819febfddc";
         private static readonly string redirectUri = "https://oauth.spops.microsoft.com/";
@@ -17,6 +17,11 @@ namespace PSSQT.Helpers.Authentication
         private ADAL.AuthenticationContext AuthContext = null; //  new ADAL.AuthenticationContext(AuthorityUri);    // use default static cache - not thread safe?;
 
         public AdalAuthentication()
+        {
+            CreateTokenCache();
+        }
+
+        private void CreateTokenCache(bool forceRecreate = false)
         {
             Guid runspaceId = Guid.Empty;
 
@@ -28,7 +33,7 @@ namespace PSSQT.Helpers.Authentication
 
                 bool found = Tokens.TryGetValue(runspaceId, out tc);
 
-                if (!found)
+                if (!found || forceRecreate)
                 {
                     tc = new ADAL.TokenCache();
 
@@ -39,7 +44,6 @@ namespace PSSQT.Helpers.Authentication
             }
         }
 
- 
         public async Task<string> Login(string sharePointSiteUrl, bool forceLogin = false)
         {
             var spUri = new Uri(sharePointSiteUrl);
@@ -47,33 +51,43 @@ namespace PSSQT.Helpers.Authentication
             string resourceUri = spUri.Scheme + "://" + spUri.Authority;
 
             ADAL.AuthenticationResult authenticationResult;
- 
-            try
-            {
-                authenticationResult = await AuthContext.AcquireTokenSilentAsync(resourceUri, clientId);
-            }
-            catch (ADAL.AdalSilentTokenAcquisitionException)
-            {
-                //Console.WriteLine("Silent Async failed. Use prompt instead.");
 
+            if (forceLogin)
+            {
+                CreateTokenCache(true);
+
+                var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Always);
+                authenticationResult = await AuthContext.AcquireTokenAsync(resourceUri, clientId, new Uri(redirectUri), authParam);
+            }
+            else
+            {
                 try
                 {
-                    // prevent flashing of login window when credentials are valid
-                    var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Never);
-                    authenticationResult = await AuthContext.AcquireTokenAsync(resourceUri, clientId, new Uri(redirectUri), authParam);
+                    authenticationResult = await AuthContext.AcquireTokenSilentAsync(resourceUri, clientId);
                 }
-                catch (ADAL.AdalException /* e */)
+                catch (ADAL.AdalSilentTokenAcquisitionException)
                 {
-                    //Console.WriteLine(e);
 
-                    var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Auto);
-                    authenticationResult = await AuthContext.AcquireTokenAsync(resourceUri, clientId, new Uri(redirectUri), authParam);
+                    try
+                    {
+                        // prevent flashing of login window when credentials are valid
+                        var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Never);
+                        authenticationResult = await AuthContext.AcquireTokenAsync(resourceUri, clientId, new Uri(redirectUri), authParam);
+                    }
+                    catch (ADAL.AdalException /* e */)
+                    {
+                        //Console.WriteLine(e);
 
+                        var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Auto);
+                        authenticationResult = await AuthContext.AcquireTokenAsync(resourceUri, clientId, new Uri(redirectUri), authParam);
+
+                    }
                 }
+
             }
 
 
-            return authenticationResult.CreateAuthorizationHeader();
+           return authenticationResult.CreateAuthorizationHeader();
         }
     }
 }

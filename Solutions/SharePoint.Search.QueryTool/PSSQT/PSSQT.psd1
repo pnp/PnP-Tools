@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.8.1'
+ModuleVersion = '2.8.2'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -27,7 +27,7 @@ Author = 'frode.sivertsen@outlook.com. Search Query Tool code developed by: http
 CompanyName = 'Unknown'
 
 # Copyright statement for this module
-Copyright = '(c) 2017 frodes. All rights reserved.'
+Copyright = '(c) 2019 frodes. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'Search SharePoint index (on-prem or online) using PowerShell. Part of the Search Query Tool (https://github.com/SharePoint/PnP-Tools/tree/master/Solutions/SharePoint.Search.QueryTool).'
@@ -72,7 +72,7 @@ NestedModules = @('PSSQT.dll')
 FunctionsToExport = @()
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = 'Search-SPIndex'
+CmdletsToExport = @('Search-SPIndex', 'Search-SPSuggestions', 'Format-SPSuggestions', 'Format-SPResults', 'New-MultiGeoSearchConfiguration')
 
 # Variables to export from this module
 # VariablesToExport = @()
@@ -108,7 +108,17 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
-		Updates in this release:
+		2.8.2:
+
+		* Added -AuthenticationMethod SPO back again
+		* You can specify default authentication method in an environment variable PSSQT_DefaultAuthenticationMethod. E.g: PSSQT_DefaultAuthenticationMethod=SPOManagement
+		* New ResultProcessors ManagedProperties and CrawledProperties. (Shows you which managed and crawled properties have been set for a given query)
+		* Added multi-geo search. Use New-MultiGeoSearchConfiguration to create a specification and use -MultiGeoSearchConfiguration to search specific geos. Use -EnableMultiGeoSearch to search all geos.
+		* New Cmdlet Search-SPSuggestions
+		
+		pluss various other minor changes
+
+		2.8.1:
 		
 		* Changed the module version numbering to align better with the SearchQueryTool. 
 		* Updated with latest ADAL authentication code. 
