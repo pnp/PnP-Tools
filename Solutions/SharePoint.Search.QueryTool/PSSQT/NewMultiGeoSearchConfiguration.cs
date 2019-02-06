@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
 using System.Text;
-using System.Threading.Tasks;
 
 //APC Southeast or East Asia datacenters
 //AUS Southeast or East Asia datacenters
@@ -60,18 +57,43 @@ namespace PSSQT
             }
         }
 
-        public static string Format(MultiGeoSearchConfiguration[] configurations)
+        // Format for POST request
+        public string FormattedPost
+        {
+            get
+            {
+                string formatted;
+
+                var EndpointEscaped = Endpoint.ToString();
+
+                // "[{\"DataLocation\":\"NAM\",\"Endpoint\":\"https://contoso.sharepoint.com\",\"SourceId\":\"B81EAB55-3140-4312-B0F4-9459D1B4FFEE\"},{\"DataLocation\":\"CAN\",\"Endpoint\":\"https://contosoCAN.sharepoint.com\"}]"
+
+                if (SourceId == Guid.Empty)
+                {
+                    formatted = $"{{\\\"DataLocation\\\":\\\"{DataLocation}\\\",\\\"Endpoint\\\":\\\"{EndpointEscaped}\\\"}}";
+                }
+                else
+                {
+                    formatted = $"{{\\\"DataLocation\\\":\\\"{DataLocation}\\\",\\\"Endpoint\\\":\\\"{EndpointEscaped}\\\",\\\"SourceId\\\":\\\"{SourceId}\\\"}}";
+                }
+
+                return formatted;
+            }
+        }
+
+        public static string Format(MultiGeoSearchConfiguration[] configurations, bool isPost = false)
         {
             var result = new StringBuilder();
 
             result.Append("[");
 
-            result.Append(string.Join("\\,", Array.ConvertAll(configurations, c => c.Formatted)));
+            result.Append(string.Join("\\,", Array.ConvertAll(configurations, c => (isPost ? c.FormattedPost : c.Formatted))));
 
             result.Append("]");
 
             return result.ToString();
         }
+
     }
 
     [Cmdlet(VerbsCommon.New, "MultiGeoSearchConfiguration", DefaultParameterSetName = "DataLocationEnum")]

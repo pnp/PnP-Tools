@@ -485,7 +485,7 @@ namespace PSSQT
 
                 if (MultiGeoSearchConfiguration != null)
                 {
-                    searchQueryRequest.MultiGeoSearchConfiguration = PSSQT.MultiGeoSearchConfiguration.Format(MultiGeoSearchConfiguration);
+                    searchQueryRequest.MultiGeoSearchConfiguration = PSSQT.MultiGeoSearchConfiguration.Format(MultiGeoSearchConfiguration, MethodType == HttpMethodType.Post);
                 }
 
                 if (DisableMultiGeoSearch)
