@@ -44,7 +44,7 @@ namespace SearchQueryTool.Model
         public string ClientType { get; set; }
         public string PersonalizationData { get; set; }
         public bool? EnableMultiGeoSearch { get; set; }
-        public string MultiGeoSearchConfiguration { get; set; }
+        public string MultiGeoSearchConfiguration { get; set; }   // Make sure it is formatted according to method type. See MultiGeoSearchConfiguration
 
         public SearchQueryRequest Clone()
         {
@@ -412,10 +412,21 @@ namespace SearchQueryTool.Model
                 }
             }
 
+      
             if (this.EnableMultiGeoSearch == true)
             {
-                customPropertyParts.Add("EnableMultiGeoSearch:true");
+                customPropertyParts.Add(GetPropertiesJSON("EnableMultiGeoSearch:true"));
+
+                if (!String.IsNullOrWhiteSpace(MultiGeoSearchConfiguration))
+                {
+                    customPropertyParts.Add(GetPropertiesJSON($"MultiGeoSearchConfiguration:{MultiGeoSearchConfiguration}"));
+                }
             }
+            else if (this.EnableMultiGeoSearch == false)
+            {
+                customPropertyParts.Add(GetPropertiesJSON("EnableMultiGeoSearch:false"));
+            }
+
 
             if (!String.IsNullOrEmpty(this.HiddenConstraints))
                 searchRequestBuilder.AppendFormat(", 'HiddenConstraints':'{0}'", this.HiddenConstraints);
