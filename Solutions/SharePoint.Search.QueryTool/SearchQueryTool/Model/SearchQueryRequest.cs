@@ -44,7 +44,7 @@ namespace SearchQueryTool.Model
         public string ClientType { get; set; }
         public string PersonalizationData { get; set; }
         public bool? EnableMultiGeoSearch { get; set; }
-        public string MultiGeoSearchConfiguration { get; set; }
+        public string MultiGeoSearchConfiguration { get; set; }   // Make sure it is formatted according to method type. See MultiGeoSearchConfiguration
 
         public SearchQueryRequest Clone()
         {
