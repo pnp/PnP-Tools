@@ -6,7 +6,8 @@ namespace PSSQT
     {
         Windows,
         SPO,
-        SPOManagement
+        SPOManagement,
+        SPOnlineCredentials
     }
 
     public class PSAuthenticationMethodFactory

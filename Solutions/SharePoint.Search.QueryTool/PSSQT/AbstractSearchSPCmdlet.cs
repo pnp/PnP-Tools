@@ -13,6 +13,7 @@ using PSSQT.Helpers.Authentication;
 using System.Threading;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 /**
  * <ParameterSetName	P1	P2
@@ -265,7 +266,7 @@ namespace PSSQT
 
         protected virtual void SetRequestAutheticationType(SearchRequest searchRequest)
         {
-            if (Credential != null || searchRequest.AuthenticationType == AuthenticationType.Windows)
+            if (AuthenticationMethod == PSAuthenticationMethod.Windows || searchRequest.AuthenticationType == AuthenticationType.Windows)
             {
                 if (Credential == null)
                 {
@@ -285,6 +286,19 @@ namespace PSSQT
             else if (AuthenticationMethod == PSAuthenticationMethod.SPOManagement || searchRequest.AuthenticationType == AuthenticationType.SPOManagement)
             {
                 AdalLogin(searchRequest, ForceLoginPrompt.IsPresent);
+                //searchSuggestionsRequest.Token = token;
+            }
+            else if (AuthenticationMethod == PSAuthenticationMethod.SPOnlineCredentials)
+            {
+                if (Credential == null)
+                {
+                    var userName = searchRequest.UserName;
+
+                    Credential = this.Host.UI.PromptForCredential("Enter username/password", "", userName, "");
+                }
+
+
+                AdalLogin(new AdalUserCredentialAuthentication(new UserPasswordCredential(Credential.UserName, Credential.Password)), searchRequest, ForceLoginPrompt.IsPresent);
                 //searchSuggestionsRequest.Token = token;
             }
             else
@@ -328,8 +342,11 @@ namespace PSSQT
 
         internal static void AdalLogin(SearchRequest searchRequest, bool forceLogin)
         {
-            AdalAuthentication adalAuth = new AdalAuthentication();
+            AdalLogin(new AdalAuthentication(), searchRequest, forceLogin);
+        }
 
+        internal static void AdalLogin(AdalAuthentication adalAuth, SearchRequest searchRequest, bool forceLogin)
+        {
             var task = adalAuth.Login(searchRequest.SharePointSiteUrl, forceLogin);
 
             if (!task.Wait(300000))
@@ -342,7 +359,6 @@ namespace PSSQT
             searchRequest.AuthenticationType = AuthenticationType.SPOManagement;
             searchRequest.Token = token;
         }
-
 
         private string GetQuery()
         {
