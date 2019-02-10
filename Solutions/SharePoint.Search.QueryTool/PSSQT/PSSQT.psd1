@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.8.2'
+ModuleVersion = '2.8.2.2'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -108,47 +108,52 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
-		2.8.2:
 
-		* Added -AuthenticationMethod SPO back again
-		* You can specify default authentication method in an environment variable PSSQT_DefaultAuthenticationMethod. E.g: PSSQT_DefaultAuthenticationMethod=SPOManagement
-		* New ResultProcessors ManagedProperties and CrawledProperties. (Shows you which managed and crawled properties have been set for a given query)
-		* Added multi-geo search. Use New-MultiGeoSearchConfiguration to create a specification and use -MultiGeoSearchConfiguration to search specific geos. Use -EnableMultiGeoSearch to search all geos.
-		* New Cmdlet Search-SPSuggestions
+			2.8.2.1: 
+
+			* This is a fix for a broken multi-geo post query in 2.8.2. Unfortunately I cannot re-release 2.8.2, so I decided to bump it to 2.8.2.1 
+			
+			2.8.2:
+
+			* Added -AuthenticationMethod SPO back again
+			* You can specify default authentication method in an environment variable PSSQT_DefaultAuthenticationMethod. E.g: PSSQT_DefaultAuthenticationMethod=SPOManagement
+			* New ResultProcessors ManagedProperties and CrawledProperties. (Shows you which managed and crawled properties have been set for a given query)
+			* Added multi-geo search. Use New-MultiGeoSearchConfiguration to create a specification and use -MultiGeoSearchConfiguration to search specific geos. Use -EnableMultiGeoSearch to search all geos.
+			* New Cmdlet Search-SPSuggestions
 		
-		pluss various other minor changes
+			pluss various other minor changes
 
-		2.8.1:
+			2.8.1:
 		
-		* Changed the module version numbering to align better with the SearchQueryTool. 
-		* Updated with latest ADAL authentication code. 
-		* -AuthenticationMethod SPO has been removed. You should use -AuthenticationMethod SPOManagement instead.
-		* -SPO switch has been removed. You should use -AuthenticationMethod SPOManagement instead.
+			* Changed the module version numbering to align better with the SearchQueryTool. 
+			* Updated with latest ADAL authentication code. 
+			* -AuthenticationMethod SPO has been removed. You should use -AuthenticationMethod SPOManagement instead.
+			* -SPO switch has been removed. You should use -AuthenticationMethod SPOManagement instead.
 
-		You can use Connect-Msolservice to login before executing a query. You must still use -AuthenticationMethod SPOManagement, 
-		but you will not be prompted to login again.
+			You can use Connect-Msolservice to login before executing a query. You must still use -AuthenticationMethod SPOManagement, 
+			but you will not be prompted to login again.
 		
-		New features in this release:
+			New features in this release:
 
-		* New ResultProcessor AllProperties. 
-		It will do a secondary search for each result retrieving all properties for that item. They are returned as a dictionary
-		in the AllProperties property
+			* New ResultProcessor AllProperties. 
+			It will do a secondary search for each result retrieving all properties for that item. They are returned as a dictionary
+			in the AllProperties property
 
-		* New ResultProcessor AllPropertiesInline.
-		Same as above, but will only retrieve all properties for the first result and return them "inline" in a custom object. Try it, and you will see the difference.
-		You would typically use this with a query like 'workid:12345'
+			* New ResultProcessor AllPropertiesInline.
+			Same as above, but will only retrieve all properties for the first result and return them "inline" in a custom object. Try it, and you will see the difference.
+			You would typically use this with a query like 'workid:12345'
 
-		* Specify -Properties :default: 
-		It will return what SharePoint decides is the default set of properties from SharePoint. Keep in mind that if you don't specify -Properties, PSSQT defaults to title, path, workid.
+			* Specify -Properties :default: 
+			It will return what SharePoint decides is the default set of properties from SharePoint. Keep in mind that if you don't specify -Properties, PSSQT defaults to title, path, workid.
 
-		* Specify default properties by defining the environment variable PSSQT_DefaultSelectProperties
-		E.g. PSSQT_DefaultSElectProperties = title, author
-		This is what PSSQT will use if you don't specify -Properties.
-		Please note that specifying -Properties :default: is different. In that case PSSQT will not specify which properties to retrieve and you get what SharePoint gives you.
+			* Specify default properties by defining the environment variable PSSQT_DefaultSelectProperties
+			E.g. PSSQT_DefaultSElectProperties = title, author
+			This is what PSSQT will use if you don't specify -Properties.
+			Please note that specifying -Properties :default: is different. In that case PSSQT will not specify which properties to retrieve and you get what SharePoint gives you.
 
-		* Specify where to look for preset files by specifying the path in the environment variable PSSQT_PresetsPath. You can specify multiple directories separated by ;
-		E.g. PSSQT_PresetsPath = C:\SearchQueryTool2.8\Presets
-		You can do this from any folder: Search-SPIndex -Preset mypreset 
+			* Specify where to look for preset files by specifying the path in the environment variable PSSQT_PresetsPath. You can specify multiple directories separated by ;
+			E.g. PSSQT_PresetsPath = C:\SearchQueryTool2.8\Presets
+			You can do this from any folder: Search-SPIndex -Preset mypreset 
 '@
 
         # External dependent modules of this module
