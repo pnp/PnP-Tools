@@ -473,7 +473,7 @@ PnPResponsiveApp.Main = (function () {
                 }
 
                 if (currentScriptUrl == undefined) {
-                    var responsiveScripts = document.querySelectorAll("script[src$='sp-responsive-ui.js']");
+                    var responsiveScripts = document.querySelectorAll("script[src*='sp-responsive-ui.js']");
                     if (responsiveScripts.length > 0) {
                         currentScriptUrl = responsiveScripts[0].src;
                     }
