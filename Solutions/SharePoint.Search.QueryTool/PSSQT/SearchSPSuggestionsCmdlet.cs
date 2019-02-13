@@ -171,6 +171,9 @@ namespace PSSQT
             searchRequest.CopyFrom(preset.Request);
         }
 
+
+                
+
         protected override void ExecuteRequest(SearchSuggestionsRequest searchRequest)
         {
             GetResults(searchRequest);

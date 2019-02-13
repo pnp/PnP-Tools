@@ -4,15 +4,15 @@ namespace PSSQT
 {
     public enum PSAuthenticationMethod
     {
+        CurrentUser,
         Windows,
         SPO,
-        SPOManagement,
-        SPOnlineCredentials
-    }
+        SPOManagement   
+     }
 
     public class PSAuthenticationMethodFactory
     {
-        public static PSAuthenticationMethod DefaultAutenticationMethod()
+        public static PSAuthenticationMethod? DefaultAutenticationMethod()
         {
             string defaultAuthMethod = Environment.GetEnvironmentVariable("PSSQT_DefaultAuthenticationMethod");
 
@@ -24,7 +24,7 @@ namespace PSSQT
             }
 
 
-            return PSAuthenticationMethod.Windows;
+            return null;
         }
     }
 }

@@ -118,14 +118,14 @@ namespace PSSQT
         )]
 
 
-        public PSAuthenticationMethod AuthenticationMethod { get; set; } = PSAuthenticationMethodFactory.DefaultAutenticationMethod();  // Environment variable can be used to set default
+        public PSAuthenticationMethod? AuthenticationMethod { get; set; }  // Environment variable can be used to set default
 
 
-       [Parameter(
-            ValueFromPipelineByPropertyName = false,
-            ValueFromPipeline = false,
-            HelpMessage = "Force a login prompt when you are using -AuthenticationMode SPOManagement."
-        )]
+        [Parameter(
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             HelpMessage = "Force a login prompt when you are using -AuthenticationMode SPOManagement."
+         )]
         public SwitchParameter ForceLoginPrompt { get; set; }
 
         [Parameter(
@@ -143,6 +143,14 @@ namespace PSSQT
         {
             ServicePointManager.ServerCertificateValidationCallback +=
                 new RemoteCertificateValidationCallback(ValidateServerCertificate);
+        }
+
+        protected bool UsingPreset
+        {
+            get
+            {
+                return ParameterSetName == "P2" && !String.IsNullOrWhiteSpace(LoadPreset);
+            }
         }
 
         protected override void ProcessRecord()
@@ -202,7 +210,7 @@ namespace PSSQT
 
         protected virtual void ValidateCommandlineArguments()
         {
-             return;       // override if necessary
+            return;       // override if necessary
         }
 
         public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
@@ -266,50 +274,102 @@ namespace PSSQT
 
         protected virtual void SetRequestAutheticationType(SearchRequest searchRequest)
         {
-            if (AuthenticationMethod == PSAuthenticationMethod.Windows || searchRequest.AuthenticationType == AuthenticationType.Windows)
+            if (AuthenticationMethod != null)       // User specified AuthenticationMethod on command line. Always use that. Overrides preset
             {
-                if (Credential == null)
-                {
-                    var userName = searchRequest.UserName;
+                SwitchAuthenticationMethod(searchRequest);
 
-                    Credential = this.Host.UI.PromptForCredential("Enter username/password", "", userName, "");
+            }
+            else if (UsingPreset)                   // AuthenticationMethod == null, use value from preset file 
+            {
+                switch (searchRequest.AuthenticationType)
+                {
+                    case AuthenticationType.CurrentUser:
+                        CurrentUserLogin(searchRequest);
+                        break;
+                    case AuthenticationType.Windows:
+                        WindowsLogin(searchRequest);
+                        break;
+                    case AuthenticationType.SPO:
+                        SPOLegacyLogin(searchRequest);
+                        break;
+                    case AuthenticationType.SPOManagement:
+                        SPOManagementLogin(searchRequest);
+                        break;
+
+                    case AuthenticationType.Anonymous:
+                    case AuthenticationType.Forefront:
+                    case AuthenticationType.Forms:
+                    default:
+                        throw new NotImplementedException($"PSSQT does not support AuthenticationType {Enum.GetName(typeof(AuthenticationType), searchRequest.AuthenticationType)}. You can override on the command line.");
                 }
 
-                searchRequest.AuthenticationType = AuthenticationType.Windows;
-                searchRequest.UserName = Credential.UserName;
-                searchRequest.SecurePassword = Credential.Password;
             }
-            else if (searchRequest.AuthenticationType == AuthenticationType.SPO)
+            else // No AthenticationMethod specified and no preset used
             {
-                SPOLegacyLogin(searchRequest);
-            }
-            else if (AuthenticationMethod == PSAuthenticationMethod.SPOManagement || searchRequest.AuthenticationType == AuthenticationType.SPOManagement)
-            {
-                AdalLogin(searchRequest, ForceLoginPrompt.IsPresent);
-                //searchSuggestionsRequest.Token = token;
-            }
-            else if (AuthenticationMethod == PSAuthenticationMethod.SPOnlineCredentials)
-            {
-                if (Credential == null)
-                {
-                    var userName = searchRequest.UserName;
+                // Use default method set in environment or if not set, let's try to guess based on the site URL. Does hostname end with sharepoint.com? Yes, then assume SPOManagement
+                AuthenticationMethod =  PSAuthenticationMethodFactory.DefaultAutenticationMethod() ?? GuessAuthenticationMethod(searchRequest) ?? PSAuthenticationMethod.CurrentUser;
 
-                    Credential = this.Host.UI.PromptForCredential("Enter username/password", "", userName, "");
-                }
+                WriteVerbose($"Using authentication method {Enum.GetName(typeof(PSAuthenticationMethod), AuthenticationMethod)}");
 
-
-                AdalLogin(new AdalUserCredentialAuthentication(new UserPasswordCredential(Credential.UserName, Credential.Password)), searchRequest, ForceLoginPrompt.IsPresent);
-                //searchSuggestionsRequest.Token = token;
-            }
-            else
-            {
-                searchRequest.AuthenticationType = AuthenticationType.CurrentUser;
-                WindowsIdentity currentWindowsIdentity = WindowsIdentity.GetCurrent();
-                searchRequest.UserName = currentWindowsIdentity.Name;
+                SwitchAuthenticationMethod(searchRequest);
             }
         }
 
-        internal void SPOLegacyLogin(SearchRequest searchRequest)
+        private void SwitchAuthenticationMethod(SearchRequest searchRequest)
+        {
+            switch (AuthenticationMethod)
+            {
+                case PSAuthenticationMethod.CurrentUser:
+                    CurrentUserLogin(searchRequest);
+                    break;
+                case PSAuthenticationMethod.Windows:
+                    WindowsLogin(searchRequest);
+                    break;
+                case PSAuthenticationMethod.SPO:
+                    SPOLegacyLogin(searchRequest);
+                    break;
+                case PSAuthenticationMethod.SPOManagement:
+                    SPOManagementLogin(searchRequest);
+                    break;
+                default:
+                    throw new NotImplementedException($"Unsupported PSAuthenticationMethod {Enum.GetName(typeof(PSAuthenticationMethod), AuthenticationMethod)}");
+            }
+        }
+
+        protected virtual void SPOManagementLogin(SearchRequest searchRequest)
+        {
+            if (Credential != null)
+            {
+                AdalLogin(new AdalUserCredentialAuthentication(new UserPasswordCredential(Credential.UserName, Credential.Password)), searchRequest, ForceLoginPrompt.IsPresent);
+            }
+            else
+            {
+                AdalLogin(searchRequest, ForceLoginPrompt.IsPresent);
+            }
+        }
+
+        protected virtual void CurrentUserLogin(SearchRequest searchRequest)
+        {
+            searchRequest.AuthenticationType = AuthenticationType.CurrentUser;
+            WindowsIdentity currentWindowsIdentity = WindowsIdentity.GetCurrent();
+            searchRequest.UserName = currentWindowsIdentity.Name;
+        }
+
+        protected virtual void WindowsLogin(SearchRequest searchRequest)
+        {
+            if (Credential == null)
+            {
+                var userName = searchRequest.UserName;
+
+                Credential = this.Host.UI.PromptForCredential("Enter username/password", "", userName, "");
+            }
+
+            searchRequest.AuthenticationType = AuthenticationType.Windows;
+            searchRequest.UserName = Credential.UserName;
+            searchRequest.SecurePassword = Credential.Password;
+        }
+
+        internal virtual void SPOLegacyLogin(SearchRequest searchRequest)
         {
             Guid runspaceId = Guid.Empty;
             using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
@@ -338,6 +398,49 @@ namespace PSSQT
                 searchRequest.Cookies = cc;
                 //searchSuggestionsRequest.Cookies = cc;
             }
+        }
+
+        protected virtual PSAuthenticationMethod? GuessAuthenticationMethod(SearchRequest searchRequest)
+        {
+            // AuthenticationMethod == null; User did not specify one
+
+            PSAuthenticationMethod? result = null;
+
+
+            if (Credential != null)    // SPOManagemnt or Windows
+            {
+                result = GuessAuthenticationMethodFromHostname(searchRequest, PSAuthenticationMethod.Windows);
+            }
+            else
+            {                           // SPOManagement or CurrentUser
+                result = GuessAuthenticationMethodFromHostname(searchRequest, PSAuthenticationMethod.CurrentUser);
+            }
+
+            return result;
+        }
+
+        private static PSAuthenticationMethod? GuessAuthenticationMethodFromHostname(SearchRequest searchRequest, PSAuthenticationMethod alternateMethod)
+        {
+            PSAuthenticationMethod? result = null;
+
+            var siteUrl = searchRequest.SharePointSiteUrl;
+
+            if (!String.IsNullOrWhiteSpace(siteUrl))
+            {
+                if (Uri.TryCreate(siteUrl, UriKind.Absolute, out Uri uri))
+                {
+                    if (uri.Host.ToLower().EndsWith("sharepoint.com"))
+                    {
+                        result = PSAuthenticationMethod.SPOManagement;
+                    }
+                    else
+                    {
+                        result = alternateMethod;
+                    }
+                }
+            }
+
+            return result;
         }
 
         internal static void AdalLogin(SearchRequest searchRequest, bool forceLogin)
@@ -440,7 +543,7 @@ namespace PSSQT
 
             var fileName = GetPresetFilename(Site);
 
-            if (! File.Exists(fileName))
+            if (!File.Exists(fileName))
             {
                 throw new RuntimeException($"File not found: \"{fileName}\"");
             }
@@ -457,7 +560,7 @@ namespace PSSQT
             return sc.SpSiteUrl;
         }
 
- 
+
 
         #endregion
     }
