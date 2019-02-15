@@ -244,10 +244,36 @@ namespace PSSQT
             WriteVerbose(String.Format("Status description: {0}", queryResults.StatusDescription));
             WriteVerbose(String.Format("HTTP protocol version: {0}", queryResults.HttpProtocolVersion));
             WriteVerbose(String.Format("Response content type: {0}", queryResults.ContentType));
+            WriteVerbose(String.Format("Is Partial Result: {0}", queryResults.IsPartial));
+
+            if (queryResults.IsPartial)
+            {
+                WarnAboutPartialResults();
+            }
+
+            if (!string.IsNullOrWhiteSpace(queryResults.MultiGeoSearchStatus))
+            {
+                WriteVerbose(String.Format("Multi Geo Search Status: {0}", queryResults.MultiGeoSearchStatus));
+
+                if (!queryResults.MultiGeoSearchStatus.Equals("Full", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    WarnAboutPartialGeoResults(queryResults.MultiGeoSearchStatus);
+                }
+            }
+
 
             Cmdlet.WriteDebug(String.Format("Response headers: {0}", String.Join(",", queryResults.ResponseHeaders.AllKeys)));
         }
 
+        protected virtual void WarnAboutPartialResults()
+        {
+            Cmdlet.WriteWarning("Search returned partial results!");
+        }
+
+        protected virtual void WarnAboutPartialGeoResults(string multiGeoSearchStatus)
+        {
+            Cmdlet.WriteWarning($"Multi-Geo results are not complete! Multi-Geo search status: {multiGeoSearchStatus}");
+        }
 
         protected virtual void ProcessPrimaryQueryResultsInfo(QueryResult primaryQueryResult)
         {

@@ -276,32 +276,12 @@ namespace PSSQT
         {
             if (AuthenticationMethod != null)       // User specified AuthenticationMethod on command line. Always use that. Overrides preset
             {
-                SwitchAuthenticationMethod(searchRequest);
+                LoginBasedOnAuthenticationMethod(searchRequest);
 
             }
             else if (UsingPreset)                   // AuthenticationMethod == null, use value from preset file 
             {
-                switch (searchRequest.AuthenticationType)
-                {
-                    case AuthenticationType.CurrentUser:
-                        CurrentUserLogin(searchRequest);
-                        break;
-                    case AuthenticationType.Windows:
-                        WindowsLogin(searchRequest);
-                        break;
-                    case AuthenticationType.SPO:
-                        SPOLegacyLogin(searchRequest);
-                        break;
-                    case AuthenticationType.SPOManagement:
-                        SPOManagementLogin(searchRequest);
-                        break;
-
-                    case AuthenticationType.Anonymous:
-                    case AuthenticationType.Forefront:
-                    case AuthenticationType.Forms:
-                    default:
-                        throw new NotImplementedException($"PSSQT does not support AuthenticationType {Enum.GetName(typeof(AuthenticationType), searchRequest.AuthenticationType)}. You can override on the command line.");
-                }
+                LoginBasedOnSearchRequestAuthenticationType(searchRequest);
 
             }
             else // No AthenticationMethod specified and no preset used
@@ -311,11 +291,36 @@ namespace PSSQT
 
                 WriteVerbose($"Using authentication method {Enum.GetName(typeof(PSAuthenticationMethod), AuthenticationMethod)}");
 
-                SwitchAuthenticationMethod(searchRequest);
+                LoginBasedOnAuthenticationMethod(searchRequest);
             }
         }
 
-        private void SwitchAuthenticationMethod(SearchRequest searchRequest)
+        private void LoginBasedOnSearchRequestAuthenticationType(SearchRequest searchRequest)
+        {
+            switch (searchRequest.AuthenticationType)
+            {
+                case AuthenticationType.CurrentUser:
+                    CurrentUserLogin(searchRequest);
+                    break;
+                case AuthenticationType.Windows:
+                    WindowsLogin(searchRequest);
+                    break;
+                case AuthenticationType.SPO:
+                    SPOLegacyLogin(searchRequest);
+                    break;
+                case AuthenticationType.SPOManagement:
+                    SPOManagementLogin(searchRequest);
+                    break;
+
+                case AuthenticationType.Anonymous:
+                case AuthenticationType.Forefront:
+                case AuthenticationType.Forms:
+                default:
+                    throw new NotImplementedException($"PSSQT does not support AuthenticationType {Enum.GetName(typeof(AuthenticationType), searchRequest.AuthenticationType)}. You can override on the command line.");
+            }
+        }
+
+        private void LoginBasedOnAuthenticationMethod(SearchRequest searchRequest)
         {
             switch (AuthenticationMethod)
             {
