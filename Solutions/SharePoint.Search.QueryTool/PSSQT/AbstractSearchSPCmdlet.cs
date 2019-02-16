@@ -193,6 +193,8 @@ namespace PSSQT
                 {
                     EnsureValidQuery(searchRequest);
 
+                    WriteVerboseInformation(searchRequest);
+
                     ExecuteRequest(searchRequest);
                 }
             }
@@ -206,6 +208,11 @@ namespace PSSQT
 
                 WriteDebug(ex.StackTrace);
             }
+        }
+
+        protected virtual void WriteVerboseInformation(TSearchRequest searchRequest)
+        {
+            WriteVerbose($"Using authentication method {Enum.GetName(typeof(AuthenticationType), searchRequest.AuthenticationType)}");
         }
 
         protected virtual void ValidateCommandlineArguments()
@@ -289,7 +296,7 @@ namespace PSSQT
                 // Use default method set in environment or if not set, let's try to guess based on the site URL. Does hostname end with sharepoint.com? Yes, then assume SPOManagement
                 AuthenticationMethod =  PSAuthenticationMethodFactory.DefaultAutenticationMethod() ?? GuessAuthenticationMethod(searchRequest) ?? PSAuthenticationMethod.CurrentUser;
 
-                WriteVerbose($"Using authentication method {Enum.GetName(typeof(PSAuthenticationMethod), AuthenticationMethod)}");
+                //WriteVerbose($"Using authentication method {Enum.GetName(typeof(PSAuthenticationMethod), AuthenticationMethod)}");
 
                 LoginBasedOnAuthenticationMethod(searchRequest);
             }

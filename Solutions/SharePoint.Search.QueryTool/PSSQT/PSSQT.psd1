@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.8.2.2'
+ModuleVersion = '2.8.3'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -108,7 +108,31 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
+			2.8.3:
 
+			New features:
+
+			You can now use a normal Credential object when searching against Sharepoint Online.
+			E.g:
+				$creds = Get-Credential
+				Search-SPIndex -Site https://yourtenant.sharepoint.com test -Credential $creds
+
+				If you're in an environment with SSO enabled, this is your best choice to use other credentials. You can also use -ForceLoginPrompt instead to force the AAD login dialog.
+
+			If you do not specify AuthenticationType and your are not using a preset, AuthenticationType will be guessed based on the Site URL. If the host name ends with 'sharepoint.com',
+			we'll use SPOManagement, otherwise Windows
+
+			Please Note: The logic to select the correct authentication method has changed, so the bahvior might have changed since the previous version.
+
+			Bugs fixed:
+
+			Fixed another multi-geo POST query bug, where if you were searching more than one specific geo, it would produce an invalid query. GET request would work fine.
+			E.g of query that would fail before fix:
+
+			$geo1 = New-MultiGeoSearchConfiguration ...
+			$geo2 = New-MultiGeoSearchConfiguration ...
+			E.g: Search-SPIndex -Site https://mymultigeoenabledtenant.sharepoint.com test -MultiGeoSearchConfiguration $geo1, $geo2 -MethodType Post
+			
 			2.8.2.1: 
 
 			* This is a fix for a broken multi-geo post query in 2.8.2. Unfortunately I cannot re-release 2.8.2, so I decided to bump it to 2.8.2.1 
