@@ -67,7 +67,7 @@ try
     # Rollback original files
     if ($Prod) {
         Move-Item .\SP-Responsive-UI.bck.css .\SP-Responsive-UI.css -Force
-        Move-Item .\SP-Responsive-UI.bck.js .\SP-Responsive-UI.js -Froce
+        Move-Item .\SP-Responsive-UI.bck.js .\SP-Responsive-UI.js -Force
     }
 
     Write-Host -ForegroundColor Green "Responsive UI application succeeded"
