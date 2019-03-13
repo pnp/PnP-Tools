@@ -105,7 +105,7 @@ namespace PSSQT
             ValueFromPipeline = false,
             HelpMessage = "Load parameters from file. Use Search-SPIndex -SavePreset to save a preset. Script parameters on the command line overrides.",
             ParameterSetName = "P2"
-        )]
+        ), ArgumentCompleter(typeof(PresetCompleter))]
         [Alias("Preset")]
         public string LoadPreset { get; set; }
 

@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.8.3'
+ModuleVersion = '2.8.4'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -108,6 +108,11 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
+			2.8.4:
+
+			New fetures:
+
+
 			2.8.3:
 
 			New features:
