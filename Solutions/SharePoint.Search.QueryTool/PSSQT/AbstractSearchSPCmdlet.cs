@@ -1,19 +1,16 @@
-﻿using System;
-using System.Management.Automation;
-using SearchQueryTool.Model;
-using SearchQueryTool.Helpers;
-using System.Security.Principal;
-using System.Net;
-using System.IO;
-using System.Linq;
-using System.Collections.Specialized;
-using System.Collections.Generic;
+﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using PSSQT.Helpers;
 using PSSQT.Helpers.Authentication;
-using System.Threading;
-using System.Security.Cryptography.X509Certificates;
+using SearchQueryTool.Model;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Management.Automation;
+using System.Net;
 using System.Net.Security;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 
 /**
  * <ParameterSetName	P1	P2
@@ -33,6 +30,8 @@ namespace PSSQT
         private static readonly Dictionary<Guid, CookieCollection> Tokens = new Dictionary<Guid, CookieCollection>();   // SPO Auth tokens
 
         private static bool SkipSSLValidation;
+
+        private const string separator = "==================================================================================================================";
 
         #endregion
 
@@ -200,13 +199,177 @@ namespace PSSQT
             }
             catch (Exception ex)
             {
-                WriteError(new ErrorRecord(ex,
-                           GetErrorId(),
-                           ErrorCategory.NotSpecified,
-                           null)
-                          );
+                // always write last error to a file with as much detail as possible.
+                try
+                {
+                    WriteErrorDetailsToFile(ex);
+                }
+                catch (Exception wedEx)
+                {
+                    WriteWarning($"Failed to write error details to file: {wedEx.Message}");
+                    WriteDebug(wedEx.StackTrace);
+                }
+
+                WriteError(CreateErrorRecord(ex));
+                if (ex.InnerException != null)
+                {
+                    WriteError(CreateErrorRecord(ex.InnerException));
+                }
 
                 WriteDebug(ex.StackTrace);
+
+                WriteWarning($"Error details were written to {GetLastErrorFile()}.");
+            }
+        }
+
+        protected virtual ErrorRecord CreateErrorRecord(Exception ex)
+        {
+            return new ErrorRecord(ex, GetErrorId(), GetErrorCategory(ex), null);
+        }
+
+        protected virtual ErrorCategory GetErrorCategory(Exception ex)
+        {
+            if (ex is AdalException)
+            {
+                return ErrorCategory.AuthenticationError;
+            }
+            else if (ex.Message.Contains("HTTP 403: Forbidden"))
+            {
+                return ErrorCategory.PermissionDenied;
+            }
+            else if (ex.Message.Contains("HTTP 401: Unauthorized"))
+            {
+                return ErrorCategory.PermissionDenied;
+            }
+            else if (ex is NotImplementedException)
+            {
+                return ErrorCategory.NotImplemented;
+            }
+
+            return ErrorCategory.NotSpecified;
+        }
+
+        private static string GetLastErrorFile()
+        {
+            return GetLastErrorFile(GetLastErrorDir());
+        }
+
+        private static string GetLastErrorFile(string dir)
+        {
+            return Path.Combine(dir, "LastError.txt");
+        }
+
+        private static string GetLastErrorDir()
+        {
+            var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var dir = Path.Combine(localAppData, "PSSQT");
+
+            return dir;
+        }
+
+        // if overriding, consider overriding WriteErrorDetailsToFile(Excption, StreamWriter) instead
+        protected virtual void WriteErrorDetailsToFile(Exception ex)
+        {
+            string dir = GetLastErrorDir();
+
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            string outErrorFile = GetLastErrorFile(dir);
+
+            if (File.Exists(outErrorFile))
+            {
+                var previousErrorFile = Path.Combine(dir, "PreviousError.txt");
+
+                if (File.Exists(previousErrorFile))
+                {
+                    File.Delete(previousErrorFile);
+                }
+
+                File.Move(outErrorFile, previousErrorFile);
+            }
+
+            using (StreamWriter file = new StreamWriter(outErrorFile))
+            {
+                WriteErrorDetailsToFile(ex, file);
+            }
+
+        }
+
+
+        protected virtual void WriteErrorDetailsToFile(Exception ex, StreamWriter file)
+        {
+            var now = DateTime.Now;
+
+            file.WriteLine($"{GetType().Name} request failed with an exception: {ex.Message}");
+            file.WriteLine();
+            file.WriteLine($"Time: {now}, UTC Time: {now.ToUniversalTime()}");
+            file.WriteLine();
+            file.WriteLine(separator);
+            file.WriteLine();
+
+            file.WriteLine($"Source: {ex.Source}");
+            file.WriteLine($"Target Site: {ex.TargetSite}");
+            file.WriteLine($"HResult: {ex.HResult}");
+            file.WriteLine($"Help Link: {ex.HelpLink}");
+            file.WriteLine();
+
+            if (ex.Data != null)
+            {
+                var keys = ex.Data.Keys;
+
+                if (keys.Count > 0)
+                {
+                    file.WriteLine("Exception Data:");
+                    file.WriteLine(separator);
+                    foreach (var key in keys)
+                    {
+                        file.WriteLine($"Data: {key} => {ex.Data[key]}");
+                    }
+                }
+            }
+
+            file.WriteLine(separator);
+            file.WriteLine("EXCEPTION SUMMARY");
+            file.WriteLine(separator);
+
+            try
+            {
+                WriteExceptionInfo(ex, file);
+            }
+            catch (Exception weiEx)
+            {
+                WriteWarning($"Failed to write exception info to file: {weiEx.Message}");
+            }
+
+            file.WriteLine();
+            file.WriteLine(separator);
+            file.WriteLine("EXCEPTION DETAIL");
+            file.WriteLine(separator);
+            file.WriteLine();
+
+            file.WriteLine($"Exception detail: {ex.ToString()}");
+
+            file.WriteLine();
+            file.WriteLine(separator);
+
+
+        }
+
+        private void WriteExceptionInfo(Exception exception, StreamWriter file, int level = 1)
+        {
+            file.WriteLine();
+            file.WriteLine($"[{level}] Exception: {exception.GetType().Name}: {exception.Message}");
+
+            var stList = exception.StackTrace?.ToString().Split('\\');
+
+            file.WriteLine($"Exception occurred at {stList?.Last() ?? "<unknown>"}");
+
+            if (exception.InnerException != null)
+            {
+                WriteExceptionInfo(exception.InnerException, file, level + 1);
             }
         }
 
@@ -294,7 +457,7 @@ namespace PSSQT
             else // No AthenticationMethod specified and no preset used
             {
                 // Use default method set in environment or if not set, let's try to guess based on the site URL. Does hostname end with sharepoint.com? Yes, then assume SPOManagement
-                AuthenticationMethod =  PSAuthenticationMethodFactory.DefaultAutenticationMethod() ?? GuessAuthenticationMethod(searchRequest) ?? PSAuthenticationMethod.CurrentUser;
+                AuthenticationMethod = PSAuthenticationMethodFactory.DefaultAutenticationMethod() ?? GuessAuthenticationMethod(searchRequest) ?? PSAuthenticationMethod.CurrentUser;
 
                 //WriteVerbose($"Using authentication method {Enum.GetName(typeof(PSAuthenticationMethod), AuthenticationMethod)}");
 

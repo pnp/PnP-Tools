@@ -112,6 +112,13 @@ PrivateData = @{
 
 			New fetures:
 
+			Added a new swith IncludePersonalOneDriveResults which will return personal OneDRive results when searching SPO.
+			https://support.microsoft.com/en-us/help/4469277/sharepoint-online-search-will-not-return-private-onedrive-results
+
+			You can now use TAB completion on your preset files. It will look for xml files in all folders in your PSSQT_PresetsPath and perform tab completion.
+			Please note that the preset is always referenced without the .xml extension. (.xml is automatically added by the cmdlet when loading the preset.)
+
+			Improved error reporting. Error details are always written to %LOCALAPPDATA%\PSSQT\LastError.txt
 
 			2.8.3:
 
