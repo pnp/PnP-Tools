@@ -441,10 +441,18 @@ namespace PSSQT
          )]
         public int SleepBetweenQueryBatches { get; set; } = 0;
 
+        [Parameter(
+             Mandatory = false,
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             HelpMessage = "Include a result block with personal OneDrive results when searching SPO."
+         )]
+        public SwitchParameter IncludePersonalOneDriveResults { get; set; }
+
         #endregion
 
         #region Methods
- 
+
         protected override void SetRequestParameters(SearchQueryRequest searchQueryRequest)
         {
             base.SetRequestParameters(searchQueryRequest);
@@ -542,7 +550,9 @@ namespace PSSQT
             searchQueryRequest.RowLimit = RowLimit.HasValue ? RowLimit : (searchQueryRequest.RowLimit.HasValue ? searchQueryRequest.RowLimit : rowLimitDefault);
             searchQueryRequest.StartRow = StartRow.HasValue ? StartRow : (searchQueryRequest.StartRow.HasValue ? searchQueryRequest.StartRow : startRowDefault);
             searchQueryRequest.Timeout = Timeout.HasValue ? Timeout : (searchQueryRequest.Timeout.HasValue ? searchQueryRequest.Timeout : timeoutDefault);
- 
+
+            searchQueryRequest.IncludePersonalOneDriveResults = IncludePersonalOneDriveResults.IsPresent ? true : (searchQueryRequest.IncludePersonalOneDriveResults.HasValue ? searchQueryRequest.IncludePersonalOneDriveResults : false);
+
             searchQueryRequest.Refiners = new StringListArgumentParser(Refiners).Parse() ?? searchQueryRequest.Refiners;
         }
  

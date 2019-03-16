@@ -45,6 +45,7 @@ namespace SearchQueryTool.Model
         public string PersonalizationData { get; set; }
         public bool? EnableMultiGeoSearch { get; set; }
         public string MultiGeoSearchConfiguration { get; set; }   // Make sure it is formatted according to method type. See MultiGeoSearchConfiguration
+        public bool? IncludePersonalOneDriveResults { get; set; }  // https://support.microsoft.com/en-us/help/4469277/sharepoint-online-search-will-not-return-private-onedrive-results
 
         public SearchQueryRequest Clone()
         {
@@ -183,6 +184,10 @@ namespace SearchQueryTool.Model
                 customPropertyParts.Add("EnableMultiGeoSearch:false");
             }
 
+            if (this.IncludePersonalOneDriveResults.HasValue && this.IncludePersonalOneDriveResults.Value)
+            {
+                customPropertyParts.Add("ContentSetting:3");
+            }
 
             if (!String.IsNullOrEmpty(this.HiddenConstraints))
                 uriBuilder.AppendFormat("&hiddenconstraints='{0}'", UrlEncode(this.HiddenConstraints));
