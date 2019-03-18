@@ -1,4 +1,5 @@
 ﻿using PSSQT.Helpers;
+using PSSQT.ResultProcessor;
 using SearchQueryTool.Helpers;
 using SearchQueryTool.Model;
 using System;
@@ -343,7 +344,7 @@ namespace PSSQT
             ValueFromPipeline = false,
             HelpMessage = "Select the result processor. One of Basic, BasicAll, Primary, All, Raw, RankDetail, RankXML, ExplainRank, Refiners, FormatResults,..."
         )]
-        public ResultProcessor? ResultProcessor { get; set; } //= ResultProcessor.Primary;
+        public ResultProcessor.ResultProcessor? ResultProcessor { get; set; } //= ResultProcessor.Primary;
 
 
         [Parameter(
@@ -663,14 +664,14 @@ namespace PSSQT
             {
                 if (Refiners != null)
                 {
-                    ResultProcessor = PSSQT.ResultProcessor.Refiners;
+                    ResultProcessor = PSSQT.ResultProcessor.ResultProcessor.Refiners;
                 }
                 else
                 {
-                    ResultProcessor = PSSQT.ResultProcessor.Primary;
+                    ResultProcessor = PSSQT.ResultProcessor.ResultProcessor.Primary;
                 }
 
-                WriteVerbose(String.Format("Using ResultProcessor {0}", Enum.GetName(typeof(ResultProcessor), ResultProcessor)));
+                WriteVerbose(String.Format("Using ResultProcessor {0}", Enum.GetName(typeof(ResultProcessor.ResultProcessor), ResultProcessor)));
             }
 
 

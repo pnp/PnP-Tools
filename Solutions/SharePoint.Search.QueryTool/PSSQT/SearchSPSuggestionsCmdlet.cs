@@ -11,8 +11,7 @@ using System.Collections.Generic;
 using PSSQT.Helpers;
 using PSSQT.Helpers.Authentication;
 using System.Threading;
-
-
+using PSSQT.ResultProcessor;
 
 /**
  * <ParameterSetName	P1	P2

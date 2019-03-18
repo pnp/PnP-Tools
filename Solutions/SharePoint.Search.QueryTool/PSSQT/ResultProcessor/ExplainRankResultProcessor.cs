@@ -1,5 +1,5 @@
-﻿using PSSQT.RankLogParser;
-using SearchQueryTool.Helpers;
+﻿
+using PSSQT.RankLogParser;
 using SearchQueryTool.Model;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Xml.Linq;
 
-namespace PSSQT
+namespace PSSQT.ResultProcessor
 {
 
     public class ExplainRankResultProcessor : RankXMLResultProcessor
