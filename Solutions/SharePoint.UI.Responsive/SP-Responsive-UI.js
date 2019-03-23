@@ -516,11 +516,7 @@ PnPResponsiveApp.Main = (function () {
                 var head = document.getElementsByTagName('head')[0];
                 var viewport = document.createElement('meta');
                 viewport.name = 'viewport';
-                if (window.devicePixelRatio == 2) {
-                    viewport.content = 'width=device-width, user-scalable=yes, initial-scale=.5';
-                } else {
-                    viewport.content = 'width=device-width, user-scalable=yes, initial-scale=1.0';
-                }
+                viewport.content = 'width=device-width, user-scalable=yes, initial-scale=1.0';
                 var appleMeta = document.createElement('meta');
                 appleMeta.name = 'apple-mobile-web-app-capable';
                 appleMeta.content = 'yes';
