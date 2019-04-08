@@ -363,6 +363,11 @@ div#s4-bodyContainer {
     /* Overwrite default SP Class in device mode */
     #PnP_MainLink_Hamburger.mobile-only {
         display: inline-block;
+        /* Update in accordance with the new topBar of SharePoint Online */
+        position: relative;
+        background: transparent;
+        border: 0;
+        cursor: pointer;
     }
     #PnPNavPanel.PnPPanelEnabled {
         left: 0;
