@@ -536,7 +536,6 @@ PnPResponsiveApp.Main = (function () {
          * @public
          */
         setUpToggling: function () {
-
             /* If current window is a Modal Dialog */
             var mDialog = document.getElementsByClassName('ms-dialogBody');
             if (mDialog != undefined && mDialog.length > 0) { return; }
@@ -554,6 +553,14 @@ PnPResponsiveApp.Main = (function () {
                 topNavLeft = topNavLeft ? topNavLeft.parentNode : null;
             } else {
                 topNavLeft = topBar.getElementsByClassName('o365cs-nav-leftAlign')[0];
+                /* Support new version of SharePoint Online SuiteBar */
+                if (!topNavLeft) {
+                    var newO365NavHead = topBar.querySelector('#O365_NavHeader');
+                    if (newO365NavHead) {
+                        topNavLeft = newO365NavHead.firstElementChild;
+                    }
+                }
+
                 /* Because SharePoint Online is Async and take more time to be defined */
                 if (!ensureElemCreation(topBar, topNavLeft)) { return; }
             }
