@@ -80,6 +80,9 @@ namespace SearchQueryTool.Model
         public QueryResult PrimaryQueryResult { get; private set; }
         public List<QueryResult> SecondaryQueryResults { get; private set; }
 
+        public bool IsPartial { get; internal set; }
+        public string MultiGeoSearchStatus { get; internal set; }
+
         /// <summary>
         /// Fireoff processing of the search result content.
         /// </summary>
@@ -129,7 +132,18 @@ namespace SearchQueryTool.Model
                             if (elm.Element(d + "Key").Value == "SerializedQuery")
                             {
                                 this.SerializedQuery = elm.Element(d + "Value").Value;
-                                break;
+                                // break; // need to parse through all elements
+                            }
+                            else if (elm.Element(d + "Key").Value == "IsPartial")
+                            {
+                                if (bool.TryParse(elm.Element(d + "Value").Value, out bool isPartial))
+                                {
+                                    IsPartial = isPartial;
+                                }
+                            }
+                            else if (elm.Element(d + "Key").Value == "MultiGeoSearchStatus")
+                            {
+                                this.MultiGeoSearchStatus = elm.Element(d + "Value").Value;
                             }
                         }
                     }
@@ -358,6 +372,17 @@ namespace SearchQueryTool.Model
                                 if (item.Element("Key").Value == "SerializedQuery")
                                 {
                                     this.SerializedQuery = item.Element("Value").Value;
+                                }
+                                else if (item.Element("Key").Value == "IsPartial")
+                                {
+                                    if (bool.TryParse(item.Element("Value").Value, out bool isPartial))
+                                    {
+                                        this.IsPartial = isPartial;
+                                    }
+                                }
+                                else if (item.Element("Key").Value == "MultiGeoSearchStatus")
+                                {
+                                    this.MultiGeoSearchStatus = item.Element("Value").Value;
                                 }
                             }
                         }
@@ -627,6 +652,17 @@ namespace SearchQueryTool.Model
                                 if (item.Element("Key").Value == "SerializedQuery")
                                 {
                                     this.SerializedQuery = item.Element("Value").Value;
+                                }
+                                else if (item.Element("Key").Value == "IsPartial")
+                                {
+                                    if (bool.TryParse(item.Element("Value").Value, out bool isPartial))
+                                    {
+                                        this.IsPartial = isPartial;
+                                    }
+                                }
+                                else if (item.Element("Key").Value == "MultiGeoSearchStatus")
+                                {
+                                    this.MultiGeoSearchStatus = item.Element("Value").Value;
                                 }
                             }
                         }

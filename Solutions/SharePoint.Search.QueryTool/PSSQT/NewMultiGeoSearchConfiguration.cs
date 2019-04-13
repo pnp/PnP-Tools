@@ -87,7 +87,7 @@ namespace PSSQT
 
             result.Append("[");
 
-            result.Append(string.Join("\\,", Array.ConvertAll(configurations, c => (isPost ? c.FormattedPost : c.Formatted))));
+            result.Append(string.Join((isPost ? "," : "\\,"), Array.ConvertAll(configurations, c => (isPost ? c.FormattedPost : c.Formatted))));
 
             result.Append("]");
 

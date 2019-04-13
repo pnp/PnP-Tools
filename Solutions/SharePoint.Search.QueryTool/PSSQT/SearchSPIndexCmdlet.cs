@@ -1,4 +1,5 @@
 ﻿using PSSQT.Helpers;
+using PSSQT.ResultProcessor;
 using SearchQueryTool.Helpers;
 using SearchQueryTool.Model;
 using System;
@@ -343,7 +344,7 @@ namespace PSSQT
             ValueFromPipeline = false,
             HelpMessage = "Select the result processor. One of Basic, BasicAll, Primary, All, Raw, RankDetail, RankXML, ExplainRank, Refiners, FormatResults,..."
         )]
-        public ResultProcessor? ResultProcessor { get; set; } //= ResultProcessor.Primary;
+        public ResultProcessor.ResultProcessor? ResultProcessor { get; set; } //= ResultProcessor.Primary;
 
 
         [Parameter(
@@ -441,10 +442,18 @@ namespace PSSQT
          )]
         public int SleepBetweenQueryBatches { get; set; } = 0;
 
+        [Parameter(
+             Mandatory = false,
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             HelpMessage = "Include a result block with personal OneDrive results when searching SPO."
+         )]
+        public SwitchParameter IncludePersonalOneDriveResults { get; set; }
+
         #endregion
 
         #region Methods
- 
+
         protected override void SetRequestParameters(SearchQueryRequest searchQueryRequest)
         {
             base.SetRequestParameters(searchQueryRequest);
@@ -542,7 +551,9 @@ namespace PSSQT
             searchQueryRequest.RowLimit = RowLimit.HasValue ? RowLimit : (searchQueryRequest.RowLimit.HasValue ? searchQueryRequest.RowLimit : rowLimitDefault);
             searchQueryRequest.StartRow = StartRow.HasValue ? StartRow : (searchQueryRequest.StartRow.HasValue ? searchQueryRequest.StartRow : startRowDefault);
             searchQueryRequest.Timeout = Timeout.HasValue ? Timeout : (searchQueryRequest.Timeout.HasValue ? searchQueryRequest.Timeout : timeoutDefault);
- 
+
+            searchQueryRequest.IncludePersonalOneDriveResults = IncludePersonalOneDriveResults.IsPresent ? true : (searchQueryRequest.IncludePersonalOneDriveResults.HasValue ? searchQueryRequest.IncludePersonalOneDriveResults : false);
+
             searchQueryRequest.Refiners = new StringListArgumentParser(Refiners).Parse() ?? searchQueryRequest.Refiners;
         }
  
@@ -653,14 +664,14 @@ namespace PSSQT
             {
                 if (Refiners != null)
                 {
-                    ResultProcessor = PSSQT.ResultProcessor.Refiners;
+                    ResultProcessor = PSSQT.ResultProcessor.ResultProcessor.Refiners;
                 }
                 else
                 {
-                    ResultProcessor = PSSQT.ResultProcessor.Primary;
+                    ResultProcessor = PSSQT.ResultProcessor.ResultProcessor.Primary;
                 }
 
-                WriteVerbose(String.Format("Using ResultProcessor {0}", Enum.GetName(typeof(ResultProcessor), ResultProcessor)));
+                WriteVerbose(String.Format("Using ResultProcessor {0}", Enum.GetName(typeof(ResultProcessor.ResultProcessor), ResultProcessor)));
             }
 
 

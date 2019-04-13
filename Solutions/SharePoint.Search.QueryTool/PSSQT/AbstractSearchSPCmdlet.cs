@@ -1,18 +1,16 @@
-﻿using System;
-using System.Management.Automation;
-using SearchQueryTool.Model;
-using SearchQueryTool.Helpers;
-using System.Security.Principal;
-using System.Net;
-using System.IO;
-using System.Linq;
-using System.Collections.Specialized;
-using System.Collections.Generic;
+﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using PSSQT.Helpers;
 using PSSQT.Helpers.Authentication;
-using System.Threading;
-using System.Security.Cryptography.X509Certificates;
+using SearchQueryTool.Model;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Management.Automation;
+using System.Net;
 using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 
 /**
  * <ParameterSetName	P1	P2
@@ -32,6 +30,8 @@ namespace PSSQT
         private static readonly Dictionary<Guid, CookieCollection> Tokens = new Dictionary<Guid, CookieCollection>();   // SPO Auth tokens
 
         private static bool SkipSSLValidation;
+
+        private const string separator = "==================================================================================================================";
 
         #endregion
 
@@ -104,7 +104,7 @@ namespace PSSQT
             ValueFromPipeline = false,
             HelpMessage = "Load parameters from file. Use Search-SPIndex -SavePreset to save a preset. Script parameters on the command line overrides.",
             ParameterSetName = "P2"
-        )]
+        ), ArgumentCompleter(typeof(PresetCompleter))]
         [Alias("Preset")]
         public string LoadPreset { get; set; }
 
@@ -117,14 +117,14 @@ namespace PSSQT
         )]
 
 
-        public PSAuthenticationMethod AuthenticationMethod { get; set; } = PSAuthenticationMethodFactory.DefaultAutenticationMethod();  // Environment variable can be used to set default
+        public PSAuthenticationMethod? AuthenticationMethod { get; set; }  // Environment variable can be used to set default
 
 
-       [Parameter(
-            ValueFromPipelineByPropertyName = false,
-            ValueFromPipeline = false,
-            HelpMessage = "Force a login prompt when you are using -AuthenticationMode SPOManagement."
-        )]
+        [Parameter(
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             HelpMessage = "Force a login prompt when you are using -AuthenticationMode SPOManagement."
+         )]
         public SwitchParameter ForceLoginPrompt { get; set; }
 
         [Parameter(
@@ -142,6 +142,14 @@ namespace PSSQT
         {
             ServicePointManager.ServerCertificateValidationCallback +=
                 new RemoteCertificateValidationCallback(ValidateServerCertificate);
+        }
+
+        protected bool UsingPreset
+        {
+            get
+            {
+                return ParameterSetName == "P2" && !String.IsNullOrWhiteSpace(LoadPreset);
+            }
         }
 
         protected override void ProcessRecord()
@@ -184,24 +192,195 @@ namespace PSSQT
                 {
                     EnsureValidQuery(searchRequest);
 
+                    WriteVerboseInformation(searchRequest);
+
                     ExecuteRequest(searchRequest);
                 }
             }
             catch (Exception ex)
             {
-                WriteError(new ErrorRecord(ex,
-                           GetErrorId(),
-                           ErrorCategory.NotSpecified,
-                           null)
-                          );
+                // always write last error to a file with as much detail as possible.
+                try
+                {
+                    WriteErrorDetailsToFile(ex);
+                }
+                catch (Exception wedEx)
+                {
+                    WriteWarning($"Failed to write error details to file: {wedEx.Message}");
+                    WriteDebug(wedEx.StackTrace);
+                }
+
+                WriteError(CreateErrorRecord(ex));
+                if (ex.InnerException != null)
+                {
+                    WriteError(CreateErrorRecord(ex.InnerException));
+                }
 
                 WriteDebug(ex.StackTrace);
+
+                WriteWarning($"Error details were written to {GetLastErrorFile()}.");
             }
+        }
+
+        protected virtual ErrorRecord CreateErrorRecord(Exception ex)
+        {
+            return new ErrorRecord(ex, GetErrorId(), GetErrorCategory(ex), null);
+        }
+
+        protected virtual ErrorCategory GetErrorCategory(Exception ex)
+        {
+            if (ex is AdalException)
+            {
+                return ErrorCategory.AuthenticationError;
+            }
+            else if (ex.Message.Contains("HTTP 403: Forbidden"))
+            {
+                return ErrorCategory.PermissionDenied;
+            }
+            else if (ex.Message.Contains("HTTP 401: Unauthorized"))
+            {
+                return ErrorCategory.PermissionDenied;
+            }
+            else if (ex is NotImplementedException)
+            {
+                return ErrorCategory.NotImplemented;
+            }
+
+            return ErrorCategory.NotSpecified;
+        }
+
+        private static string GetLastErrorFile()
+        {
+            return GetLastErrorFile(GetLastErrorDir());
+        }
+
+        private static string GetLastErrorFile(string dir)
+        {
+            return Path.Combine(dir, "LastError.txt");
+        }
+
+        private static string GetLastErrorDir()
+        {
+            var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var dir = Path.Combine(localAppData, "PSSQT");
+
+            return dir;
+        }
+
+        // if overriding, consider overriding WriteErrorDetailsToFile(Excption, StreamWriter) instead
+        protected virtual void WriteErrorDetailsToFile(Exception ex)
+        {
+            string dir = GetLastErrorDir();
+
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            string outErrorFile = GetLastErrorFile(dir);
+
+            if (File.Exists(outErrorFile))
+            {
+                var previousErrorFile = Path.Combine(dir, "PreviousError.txt");
+
+                if (File.Exists(previousErrorFile))
+                {
+                    File.Delete(previousErrorFile);
+                }
+
+                File.Move(outErrorFile, previousErrorFile);
+            }
+
+            using (StreamWriter file = new StreamWriter(outErrorFile))
+            {
+                WriteErrorDetailsToFile(ex, file);
+            }
+
+        }
+
+
+        protected virtual void WriteErrorDetailsToFile(Exception ex, StreamWriter file)
+        {
+            var now = DateTime.Now;
+
+            file.WriteLine($"{GetType().Name} request failed with an exception: {ex.Message}");
+            file.WriteLine();
+            file.WriteLine($"Time: {now}, UTC Time: {now.ToUniversalTime()}");
+            file.WriteLine();
+            file.WriteLine(separator);
+            file.WriteLine();
+
+            file.WriteLine($"Source: {ex.Source}");
+            file.WriteLine($"Target Site: {ex.TargetSite}");
+            file.WriteLine($"HResult: {ex.HResult}");
+            file.WriteLine($"Help Link: {ex.HelpLink}");
+            file.WriteLine();
+
+            if (ex.Data != null)
+            {
+                var keys = ex.Data.Keys;
+
+                if (keys.Count > 0)
+                {
+                    file.WriteLine("Exception Data:");
+                    file.WriteLine(separator);
+                    foreach (var key in keys)
+                    {
+                        file.WriteLine($"Data: {key} => {ex.Data[key]}");
+                    }
+                }
+            }
+
+            file.WriteLine(separator);
+            file.WriteLine("EXCEPTION SUMMARY");
+            file.WriteLine(separator);
+
+            try
+            {
+                WriteExceptionInfo(ex, file);
+            }
+            catch (Exception weiEx)
+            {
+                WriteWarning($"Failed to write exception info to file: {weiEx.Message}");
+            }
+
+            file.WriteLine();
+            file.WriteLine(separator);
+            file.WriteLine("EXCEPTION DETAIL");
+            file.WriteLine(separator);
+            file.WriteLine();
+
+            file.WriteLine($"Exception detail: {ex.ToString()}");
+
+            file.WriteLine();
+            file.WriteLine(separator);
+
+
+        }
+
+        private void WriteExceptionInfo(Exception exception, StreamWriter file, int level = 1)
+        {
+            file.WriteLine();
+            file.WriteLine($"[{level}] Exception: {exception.GetType().Name}: {exception.Message}");
+
+            var stList = exception.StackTrace?.ToString().Split('\\');
+
+            file.WriteLine($"Exception occurred at {stList?.Last() ?? "<unknown>"}");
+
+            if (exception.InnerException != null)
+            {
+                WriteExceptionInfo(exception.InnerException, file, level + 1);
+            }
+        }
+
+        protected virtual void WriteVerboseInformation(TSearchRequest searchRequest)
+        {
+            WriteVerbose($"Using authentication method {Enum.GetName(typeof(AuthenticationType), searchRequest.AuthenticationType)}");
         }
 
         protected virtual void ValidateCommandlineArguments()
         {
-             return;       // override if necessary
+            return;       // override if necessary
         }
 
         public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
@@ -265,37 +444,107 @@ namespace PSSQT
 
         protected virtual void SetRequestAutheticationType(SearchRequest searchRequest)
         {
-            if (Credential != null || searchRequest.AuthenticationType == AuthenticationType.Windows)
+            if (AuthenticationMethod != null)       // User specified AuthenticationMethod on command line. Always use that. Overrides preset
             {
-                if (Credential == null)
-                {
-                    var userName = searchRequest.UserName;
+                LoginBasedOnAuthenticationMethod(searchRequest);
 
-                    Credential = this.Host.UI.PromptForCredential("Enter username/password", "", userName, "");
-                }
+            }
+            else if (UsingPreset)                   // AuthenticationMethod == null, use value from preset file 
+            {
+                LoginBasedOnSearchRequestAuthenticationType(searchRequest);
 
-                searchRequest.AuthenticationType = AuthenticationType.Windows;
-                searchRequest.UserName = Credential.UserName;
-                searchRequest.SecurePassword = Credential.Password;
             }
-            else if (searchRequest.AuthenticationType == AuthenticationType.SPO)
+            else // No AthenticationMethod specified and no preset used
             {
-                SPOLegacyLogin(searchRequest);
-            }
-            else if (AuthenticationMethod == PSAuthenticationMethod.SPOManagement || searchRequest.AuthenticationType == AuthenticationType.SPOManagement)
-            {
-                AdalLogin(searchRequest, ForceLoginPrompt.IsPresent);
-                //searchSuggestionsRequest.Token = token;
-            }
-            else
-            {
-                searchRequest.AuthenticationType = AuthenticationType.CurrentUser;
-                WindowsIdentity currentWindowsIdentity = WindowsIdentity.GetCurrent();
-                searchRequest.UserName = currentWindowsIdentity.Name;
+                // Use default method set in environment or if not set, let's try to guess based on the site URL. Does hostname end with sharepoint.com? Yes, then assume SPOManagement
+                AuthenticationMethod = PSAuthenticationMethodFactory.DefaultAutenticationMethod() ?? GuessAuthenticationMethod(searchRequest) ?? PSAuthenticationMethod.CurrentUser;
+
+                //WriteVerbose($"Using authentication method {Enum.GetName(typeof(PSAuthenticationMethod), AuthenticationMethod)}");
+
+                LoginBasedOnAuthenticationMethod(searchRequest);
             }
         }
 
-        internal void SPOLegacyLogin(SearchRequest searchRequest)
+        private void LoginBasedOnSearchRequestAuthenticationType(SearchRequest searchRequest)
+        {
+            switch (searchRequest.AuthenticationType)
+            {
+                case AuthenticationType.CurrentUser:
+                    CurrentUserLogin(searchRequest);
+                    break;
+                case AuthenticationType.Windows:
+                    WindowsLogin(searchRequest);
+                    break;
+                case AuthenticationType.SPO:
+                    SPOLegacyLogin(searchRequest);
+                    break;
+                case AuthenticationType.SPOManagement:
+                    SPOManagementLogin(searchRequest);
+                    break;
+
+                case AuthenticationType.Anonymous:
+                case AuthenticationType.Forefront:
+                case AuthenticationType.Forms:
+                default:
+                    throw new NotImplementedException($"PSSQT does not support AuthenticationType {Enum.GetName(typeof(AuthenticationType), searchRequest.AuthenticationType)}. You can override on the command line.");
+            }
+        }
+
+        private void LoginBasedOnAuthenticationMethod(SearchRequest searchRequest)
+        {
+            switch (AuthenticationMethod)
+            {
+                case PSAuthenticationMethod.CurrentUser:
+                    CurrentUserLogin(searchRequest);
+                    break;
+                case PSAuthenticationMethod.Windows:
+                    WindowsLogin(searchRequest);
+                    break;
+                case PSAuthenticationMethod.SPO:
+                    SPOLegacyLogin(searchRequest);
+                    break;
+                case PSAuthenticationMethod.SPOManagement:
+                    SPOManagementLogin(searchRequest);
+                    break;
+                default:
+                    throw new NotImplementedException($"Unsupported PSAuthenticationMethod {Enum.GetName(typeof(PSAuthenticationMethod), AuthenticationMethod)}");
+            }
+        }
+
+        protected virtual void SPOManagementLogin(SearchRequest searchRequest)
+        {
+            if (Credential != null)
+            {
+                AdalLogin(new AdalUserCredentialAuthentication(new UserPasswordCredential(Credential.UserName, Credential.Password)), searchRequest, ForceLoginPrompt.IsPresent);
+            }
+            else
+            {
+                AdalLogin(searchRequest, ForceLoginPrompt.IsPresent);
+            }
+        }
+
+        protected virtual void CurrentUserLogin(SearchRequest searchRequest)
+        {
+            searchRequest.AuthenticationType = AuthenticationType.CurrentUser;
+            WindowsIdentity currentWindowsIdentity = WindowsIdentity.GetCurrent();
+            searchRequest.UserName = currentWindowsIdentity.Name;
+        }
+
+        protected virtual void WindowsLogin(SearchRequest searchRequest)
+        {
+            if (Credential == null)
+            {
+                var userName = searchRequest.UserName;
+
+                Credential = this.Host.UI.PromptForCredential("Enter username/password", "", userName, "");
+            }
+
+            searchRequest.AuthenticationType = AuthenticationType.Windows;
+            searchRequest.UserName = Credential.UserName;
+            searchRequest.SecurePassword = Credential.Password;
+        }
+
+        internal virtual void SPOLegacyLogin(SearchRequest searchRequest)
         {
             Guid runspaceId = Guid.Empty;
             using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
@@ -326,10 +575,56 @@ namespace PSSQT
             }
         }
 
+        protected virtual PSAuthenticationMethod? GuessAuthenticationMethod(SearchRequest searchRequest)
+        {
+            // AuthenticationMethod == null; User did not specify one
+
+            PSAuthenticationMethod? result = null;
+
+
+            if (Credential != null)    // SPOManagemnt or Windows
+            {
+                result = GuessAuthenticationMethodFromHostname(searchRequest, PSAuthenticationMethod.Windows);
+            }
+            else
+            {                           // SPOManagement or CurrentUser
+                result = GuessAuthenticationMethodFromHostname(searchRequest, PSAuthenticationMethod.CurrentUser);
+            }
+
+            return result;
+        }
+
+        private static PSAuthenticationMethod? GuessAuthenticationMethodFromHostname(SearchRequest searchRequest, PSAuthenticationMethod alternateMethod)
+        {
+            PSAuthenticationMethod? result = null;
+
+            var siteUrl = searchRequest.SharePointSiteUrl;
+
+            if (!String.IsNullOrWhiteSpace(siteUrl))
+            {
+                if (Uri.TryCreate(siteUrl, UriKind.Absolute, out Uri uri))
+                {
+                    if (uri.Host.ToLower().EndsWith("sharepoint.com"))
+                    {
+                        result = PSAuthenticationMethod.SPOManagement;
+                    }
+                    else
+                    {
+                        result = alternateMethod;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         internal static void AdalLogin(SearchRequest searchRequest, bool forceLogin)
         {
-            AdalAuthentication adalAuth = new AdalAuthentication();
+            AdalLogin(new AdalAuthentication(), searchRequest, forceLogin);
+        }
 
+        internal static void AdalLogin(AdalAuthentication adalAuth, SearchRequest searchRequest, bool forceLogin)
+        {
             var task = adalAuth.Login(searchRequest.SharePointSiteUrl, forceLogin);
 
             if (!task.Wait(300000))
@@ -342,7 +637,6 @@ namespace PSSQT
             searchRequest.AuthenticationType = AuthenticationType.SPOManagement;
             searchRequest.Token = token;
         }
-
 
         private string GetQuery()
         {
@@ -424,7 +718,7 @@ namespace PSSQT
 
             var fileName = GetPresetFilename(Site);
 
-            if (! File.Exists(fileName))
+            if (!File.Exists(fileName))
             {
                 throw new RuntimeException($"File not found: \"{fileName}\"");
             }
@@ -441,7 +735,7 @@ namespace PSSQT
             return sc.SpSiteUrl;
         }
 
- 
+
 
         #endregion
     }
