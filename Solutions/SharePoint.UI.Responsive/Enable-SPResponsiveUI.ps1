@@ -20,6 +20,9 @@ param
     [String]
     $InfrastructureSiteUrl,
 
+    [Parameter(Mandatory=$false, HelpMessage="Deploy on production")]
+    [switch]$Prod,
+
     [Parameter(Mandatory = $false, HelpMessage="Optional administration credentials")]
     [PSCredential]
     $Credentials
@@ -37,6 +40,13 @@ Write-Host
 
 try
 {
+    # Rename minified files by removing .min from file names
+    if ($Prod) {
+        Copy-Item .\SP-Responsive-UI.css .\SP-Responsive-UI.bck.css
+        Copy-Item .\SP-Responsive-UI.js .\SP-Responsive-UI.bck.js
+        Copy-Item .\SP-Responsive-UI.min.css .\SP-Responsive-UI.css -Force
+        Copy-Item .\SP-Responsive-UI.min.js .\SP-Responsive-UI.js -Force
+    }
     Write-Host -ForegroundColor Yellow "Connecting to target site URL: $TargetSiteUrl"
     Connect-PnPOnline $TargetSiteUrl -Credentials $Credentials
     Write-Host -ForegroundColor Yellow "Enabling responsive UI on target site"
@@ -53,6 +63,11 @@ try
 
         Write-Host -ForegroundColor Yellow "Uploading custom responsive UI assets to target site"
         Apply-PnPProvisioningTemplate -Path .\Responsive.UI.Infrastructure.xml -Handlers Files
+    }
+    # Rollback original files
+    if ($Prod) {
+        Move-Item .\SP-Responsive-UI.bck.css .\SP-Responsive-UI.css -Force
+        Move-Item .\SP-Responsive-UI.bck.js .\SP-Responsive-UI.js -Force
     }
 
     Write-Host -ForegroundColor Green "Responsive UI application succeeded"

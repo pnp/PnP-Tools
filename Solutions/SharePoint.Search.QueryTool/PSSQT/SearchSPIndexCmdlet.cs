@@ -1,15 +1,16 @@
-﻿using System;
-using System.Management.Automation;
-using SearchQueryTool.Model;
+﻿using PSSQT.Helpers;
+using PSSQT.ResultProcessor;
 using SearchQueryTool.Helpers;
-using System.Security.Principal;
-using System.Net;
+using SearchQueryTool.Model;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Specialized;
-using System.Collections.Generic;
-using PSSQT.Helpers;
-using PSSQT.Helpers.Authentication;
+using System.Management.Automation;
+using System.Net;
+using System.Threading;
+
+
 
 /**
  * <ParameterSetName	P1	P2
@@ -20,14 +21,14 @@ using PSSQT.Helpers.Authentication;
 
 namespace PSSQT
 {
-    [Cmdlet(VerbsCommon.Search, "SPIndex",DefaultParameterSetName = "P1")]
+    [Cmdlet(VerbsCommon.Search, "SPIndex", DefaultParameterSetName = "P1")]
     public class SearchSPIndexCmdlet
-        : PSCmdlet
+        : AbstractSearchSPCmdlet<SearchQueryRequest>
     {
         #region PrivateMembers
         private static readonly int SearchResultBatchSize = 500;
         private static readonly char[] trimChars = { ' ', '\t', '\n', '\r' };
- 
+
 
         // default values for script parameters
         private static readonly int startRowDefault = 0;
@@ -35,6 +36,7 @@ namespace PSSQT
         private static readonly int timeoutDefault = 60;
 
         private static readonly Dictionary<Guid, CookieCollection> Tokens = new Dictionary<Guid, CookieCollection>();   // SPO Auth tokens
+
 
         public enum QueryLogClientType
         {
@@ -69,32 +71,7 @@ namespace PSSQT
         #endregion
 
         #region ScriptParameters
-        [Parameter(
-            Mandatory = true,
-            ValueFromPipelineByPropertyName = false,
-            ValueFromPipeline = false,
-            Position = 0,
-            HelpMessage = "Query terms.",
-            ParameterSetName = "P1"
-        )]
-        [Parameter(
-            Mandatory = false,
-            ValueFromPipelineByPropertyName = false,
-            ValueFromPipeline = false,
-            Position = 0,
-            HelpMessage = "Query terms.",
-            ParameterSetName = "P2"
-        )]
-        public string[] Query { get; set; }
-
-        [Parameter(
-            Mandatory = false,
-            ValueFromPipelineByPropertyName = false,
-            ValueFromPipeline = false,
-            HelpMessage = "Credentials."
-        )]
-        public PSCredential Credential { get; set; }
-
+ 
 
         [Parameter(
             Mandatory = false,
@@ -140,21 +117,6 @@ namespace PSSQT
         )]
         public int? Timeout { get; set; }
 
-        [Parameter(
-            Mandatory = false,
-            ValueFromPipelineByPropertyName = false,
-            ValueFromPipeline = false,
-            HelpMessage = "Accept Type. Accept XML or JSON."
-        )]
-        public AcceptType? AcceptType { get; set; }
-
-        [Parameter(
-            Mandatory = false,
-            ValueFromPipelineByPropertyName = false,
-            ValueFromPipeline = false,
-            HelpMessage = "Method Type. Use GET or POST."
-        )]
-        public HttpMethodType? MethodType { get; set; }
 
         [Parameter(
             Mandatory = false,
@@ -164,30 +126,6 @@ namespace PSSQT
         )]
         public QueryLogClientType? ClientType { get; set; }
 
-        [Parameter(
-            Mandatory = true,
-            ValueFromPipelineByPropertyName = false,
-            ValueFromPipeline = false,
-            HelpMessage = "SharePoint site to connect to. If it starts with http(s)//, use directly, otherwise load from connection file. See -SaveSite",
-            ParameterSetName = "P1"
-        )]
-        [Parameter(
-            Mandatory = false,
-            ValueFromPipelineByPropertyName = false,
-            ValueFromPipeline = false,
-            HelpMessage = "SharePoint site to connect to. If it starts with http(s)//, use directly, otherwise load from connection file. See -SaveSite",
-            ParameterSetName = "P2"
-        )]
-        public string Site { get; set; }
-
-
-        [Parameter(
-            Mandatory = false,
-            ValueFromPipelineByPropertyName = false,
-            ValueFromPipeline = false,
-            HelpMessage = "Save connection properties to file. E.g. Search-SPindex -Site https://host1/path -SaveSite host1"
-        )]
-        public string SaveSite { get; set; }
 
         [Parameter(
             Mandatory = false,
@@ -195,7 +133,7 @@ namespace PSSQT
             ValueFromPipeline = false,
             HelpMessage = "Try to retrieve ALL results. USE WITH CAUTION!!"
         )]
-
+        [Alias("RowLimitAll")]
         public SwitchParameter LimitAll { get; set; }
 
         [Parameter(
@@ -244,6 +182,7 @@ namespace PSSQT
         )]
 
         public SwitchParameter EnableNickNames { get; set; }
+
 
         [Parameter(
             Mandatory = false,
@@ -367,6 +306,33 @@ namespace PSSQT
             Mandatory = false,
             ValueFromPipelineByPropertyName = false,
             ValueFromPipeline = false,
+            HelpMessage = "Enable multi geo search."
+        )]
+
+        public SwitchParameter EnableMultiGeoSearch { get; set; }
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
+            HelpMessage = "Disable multi geo search."
+        )]
+
+        public SwitchParameter DisableMultiGeoSearch { get; set; }
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
+            HelpMessage = "Array of MultiGeoSearchConfigurations. The use of this implies EnableMultiGeoSearch:true."
+        )]
+
+        public MultiGeoSearchConfiguration[] MultiGeoSearchConfiguration { get; set; }
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = false,
+            ValueFromPipeline = false,
             HelpMessage = "Specify refiners."
         )]
         public List<string> Refiners { get; set; }
@@ -376,9 +342,9 @@ namespace PSSQT
             Mandatory = false,
             ValueFromPipelineByPropertyName = false,
             ValueFromPipeline = false,
-            HelpMessage = "Select the result processor. One of Basic, Primary, All, Raw, RankDetail, RankXML, ExplainRank, Refiners."
+            HelpMessage = "Select the result processor. One of Basic, BasicAll, Primary, All, Raw, RankDetail, RankXML, ExplainRank, Refiners, FormatResults,..."
         )]
-        public ResultProcessor? ResultProcessor { get; set; } //= ResultProcessor.Primary;
+        public ResultProcessor.ResultProcessor? ResultProcessor { get; set; } //= ResultProcessor.Primary;
 
 
         [Parameter(
@@ -458,227 +424,44 @@ namespace PSSQT
         public string SavePreset { get; set; }
 
 
-        [Parameter(
-            Mandatory = true,
-            ValueFromPipelineByPropertyName = false,
-            ValueFromPipeline = false,
-            HelpMessage = "Load parameters from file. Use SavePreset to save a preset. Script parameters on the command line overrides.",
-            ParameterSetName = "P2"
-        )]
-        [Alias("Preset")]
-        public string LoadPreset { get; set; }
-
 
         [Parameter(
-            Mandatory = false,
-            ValueFromPipelineByPropertyName = false,
-            ValueFromPipeline = false,
-            HelpMessage = "Specify authentication mode."
-        )]
+             Mandatory = false,
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             HelpMessage = "Collapse Specification."
+         )]
+        public string CollapseSpecification { get; set; }
 
 
-        public PSAuthenticationMethod AuthenticationMethod { get; set; } = PSAuthenticationMethod.Windows;
+        [Parameter(
+             Mandatory = false,
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             HelpMessage = "Specify number of milliseconds to sleep between each query batch (500 results) when using RowLimit > 500."
+         )]
+        public int SleepBetweenQueryBatches { get; set; } = 0;
 
+        [Parameter(
+             Mandatory = false,
+             ValueFromPipelineByPropertyName = false,
+             ValueFromPipeline = false,
+             HelpMessage = "Include a result block with personal OneDrive results when searching SPO."
+         )]
+        public SwitchParameter IncludePersonalOneDriveResults { get; set; }
 
         #endregion
 
         #region Methods
 
-        //public string SelectPropertiesAsString
-        //{
-        //    get
-        //    {
-        //        return SelectProperties == null ?  null : string.Join(",", SelectProperties);
-        //    }
-
-        //    private set
-        //    {
-        //        AddSelectProperty(value);
-        //    }
-        //}
-
-        protected override void ProcessRecord()
+        protected override void SetRequestParameters(SearchQueryRequest searchQueryRequest)
         {
-            try
-            {
-                base.ProcessRecord();
-
-                WriteDebug("Enter ProcessRecord");
-
-                SearchConnection searchConnection = new SearchConnection();
-                SearchQueryRequest searchQueryRequest = new SearchQueryRequest();
-
-                // Load Preset
-                if (ParameterSetName == "P2")
-                {
-                    string path = GetPresetFilename(LoadPreset, true);
-
-                    WriteVerbose("Loading preset " + path);
-
-                    SearchPreset preset = new SearchPreset(path, true);
-
-                    searchConnection = preset.Connection;
-                    searchQueryRequest = preset.Request;
-                }
-
-                // Set Script Parameters from Command Line
-
-                SetRequestParameters(searchConnection, searchQueryRequest);
-
-                // Save Site/Preset
-
-                if (!(String.IsNullOrWhiteSpace(SaveSite) && String.IsNullOrWhiteSpace(SavePreset)))
-                {
-                    if (!String.IsNullOrWhiteSpace(SaveSite))
-                    {
-                        SaveSiteToFile(searchConnection);
-                    }
-
-                    if (!String.IsNullOrWhiteSpace(SavePreset))
-                    {
-                        SavePresetToFile(searchConnection, searchQueryRequest);
-                    }
-                }
-                else // Perform the Search
-                {
-                    EnsureValidQuery(searchQueryRequest);
-
-                    // split select properties
-                    //splitSelectProperties(searchQueryRequest);
-
-                    if (LimitAll || RowLimit > SearchResultBatchSize)
-                    {
-                        // Try to loop through all results in increments of 500
-                        searchQueryRequest.RowLimit = SearchResultBatchSize;
-
-                        int totalRows = (StartRow.HasValue ? StartRow.Value : 0) + 1;
-                        int remaining = 0;
-
-                        while (searchQueryRequest.StartRow < totalRows)
-                        {
-                            ShowProgress(searchQueryRequest.StartRow.Value, totalRows, remaining);
-
-                            totalRows = GetResults(searchQueryRequest);
-
-                            if (!LimitAll)
-                            {
-                                totalRows = (RowLimit.HasValue ? RowLimit.Value : rowLimitDefault);
-                            }
-                            searchQueryRequest.StartRow += SearchResultBatchSize;
-                            remaining = totalRows - searchQueryRequest.StartRow.Value;
-                            //Console.WriteLine(remaining);
-                            searchQueryRequest.RowLimit = remaining < SearchResultBatchSize ? remaining : SearchResultBatchSize;
-                        }
-                    }
-                    else
-                    {
-                        GetResults(searchQueryRequest);
-                    }
-
-                }
-
-            }
-            catch (Exception ex)
-            {
-                WriteError(new ErrorRecord(ex,
-                           "SearchSPIndexError",
-                           ErrorCategory.NotSpecified,
-                           null)
-                          );
-
-                WriteDebug(ex.StackTrace);
-            }
-        }
-
-        private void ShowProgress(int startRow, int totalRows, int remaining)
-        {
-            if (remaining == 0)
-            {
-                WriteProgress(new ProgressRecord(1, "Processing results...", "..."));
-            }
-            else
-            {
-                WriteProgress(new ProgressRecord(1, "Processing results...", String.Format(" {0} out of {1}", startRow, totalRows)));
-            }
-        }
-
-        private void EnsureValidQuery(SearchQueryRequest searchQueryRequest)
-        {
-            if (String.IsNullOrWhiteSpace(searchQueryRequest.QueryText))
-            {
-                throw new Exception("Query text cannot be null.");
-            }
-        }
-
-        private SearchQueryRequest SetSelectProperties(SearchQueryRequest searchQueryRequest)
-        {
-            searchQueryRequest.SelectProperties = new SelectPropertiesListArgumentParser(SelectProperties, searchQueryRequest).Parse();
-
-            // Cmdlet.SelectProperties is used by ResultProcessors
-            SelectProperties = searchQueryRequest.SelectProperties != null ? searchQueryRequest.SelectProperties.Split(',').ToList() : null;   
-
-            WriteVerbose(searchQueryRequest.PrintVerbose());
-            WriteDebug(searchQueryRequest.PrintDebug());
-
-            return searchQueryRequest;
-        }
-
-        private void SavePresetToFile(SearchConnection searchConnection, SearchQueryRequest searchQueryRequest)
-        {
-            if (!String.IsNullOrWhiteSpace(SavePreset))
-            {
-                SearchPreset newPreset = new SearchPreset();
-                var path = GetPresetFilename(SavePreset);
-
-                newPreset.Name = Path.GetFileNameWithoutExtension(path);
-                newPreset.Path = path;
-
-                if (!Path.IsPathRooted(SavePreset))
-                {
-                    newPreset.Path = Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, newPreset.Path);
-                }
-
-                newPreset.Connection = searchConnection;
-                newPreset.Request = SetSelectProperties(searchQueryRequest);
-
-                newPreset.Save();
-
-                WriteVerbose("Configuration saved to " + newPreset.Path);
-            }
-        }
-
-        private void SaveSiteToFile(SearchConnection searchConnection)
-        {
-            if (!(Site.StartsWith("http://") || Site.StartsWith("https://")))
-            {
-                throw new Exception("-Site should be a valid http(s):// URL when you use -SaveSite.");
-            }
-
-            var fileName = GetPresetFilename(SaveSite);
-
-            WriteDebug(String.Format("Save Site: {0}", searchConnection.SpSiteUrl));
-
-            searchConnection.SaveXml(fileName);
-
-            WriteVerbose("Connection properties saved to " + fileName);
-        }
-
-        private void SetRequestParameters(SearchConnection searchConnection, SearchQueryRequest searchQueryRequest)
-        {
-            searchQueryRequest.SharePointSiteUrl = GetSPSite() ?? searchQueryRequest.SharePointSiteUrl;
-            searchConnection.SpSiteUrl = searchQueryRequest.SharePointSiteUrl;
-
-            searchQueryRequest.QueryText = GetQuery() ?? searchQueryRequest.QueryText;
-
-            searchQueryRequest.HttpMethodType = MethodType.HasValue ? MethodType.Value : searchQueryRequest.HttpMethodType;
-            searchConnection.HttpMethod = searchQueryRequest.HttpMethodType.ToString();
-
-            searchQueryRequest.AcceptType = AcceptType.HasValue ? AcceptType.Value : searchQueryRequest.AcceptType;
+            base.SetRequestParameters(searchQueryRequest);
 
             searchQueryRequest.ClientType = GetClientTypeName(searchQueryRequest);
 
             // This cmdlet keeps select properties as a list of strings, and SearchQueryRequest uses a string.
-  
+
             // searchQueryRequest.SelectProperties is set very last thing before we execute the query in SetSelectProperties() 
 
 
@@ -686,6 +469,9 @@ namespace PSSQT
 
 
             searchQueryRequest.SortList = new SortListArgumentParser(Sort).Parse() ?? searchQueryRequest.SortList;
+
+            searchQueryRequest.CollapseSpecifiation = CollapseSpecification ?? searchQueryRequest.CollapseSpecifiation;
+
 
             // set based on switches
             bool? switchValue;
@@ -698,6 +484,24 @@ namespace PSSQT
 
             switchValue = GetThreeWaySwitchValue(EnableNickNames, DisableNickNames);
             if (switchValue.HasValue) searchQueryRequest.EnableNicknames = switchValue;
+
+            if (EnableMultiGeoSearch || MultiGeoSearchConfiguration != null || DisableMultiGeoSearch)
+            {
+                if (EnableMultiGeoSearch || MultiGeoSearchConfiguration != null)
+                {
+                    searchQueryRequest.EnableMultiGeoSearch = true;
+                }
+
+                if (MultiGeoSearchConfiguration != null)
+                {
+                    searchQueryRequest.MultiGeoSearchConfiguration = PSSQT.MultiGeoSearchConfiguration.Format(MultiGeoSearchConfiguration, MethodType == HttpMethodType.Post);
+                }
+
+                if (DisableMultiGeoSearch)
+                {
+                    searchQueryRequest.EnableMultiGeoSearch = false;
+                }
+            }
 
             switchValue = GetThreeWaySwitchValue(EnableTrimDuplicates, DisableTrimDuplicates);
             if (switchValue.HasValue) searchQueryRequest.TrimDuplicates = switchValue;
@@ -748,121 +552,133 @@ namespace PSSQT
             searchQueryRequest.StartRow = StartRow.HasValue ? StartRow : (searchQueryRequest.StartRow.HasValue ? searchQueryRequest.StartRow : startRowDefault);
             searchQueryRequest.Timeout = Timeout.HasValue ? Timeout : (searchQueryRequest.Timeout.HasValue ? searchQueryRequest.Timeout : timeoutDefault);
 
+            searchQueryRequest.IncludePersonalOneDriveResults = IncludePersonalOneDriveResults.IsPresent ? true : (searchQueryRequest.IncludePersonalOneDriveResults.HasValue ? searchQueryRequest.IncludePersonalOneDriveResults : false);
+
             searchQueryRequest.Refiners = new StringListArgumentParser(Refiners).Parse() ?? searchQueryRequest.Refiners;
-
-
-            if (Credential != null || searchQueryRequest.AuthenticationType == AuthenticationType.Windows)
-            {
-                if (Credential == null)
-                {
-                    var userName = searchQueryRequest.UserName;
-
-                    Credential = this.Host.UI.PromptForCredential("Enter username/password", "", userName, "");
-                }
-
-                searchQueryRequest.AuthenticationType = AuthenticationType.Windows;
-                searchQueryRequest.UserName = Credential.UserName;
-                searchQueryRequest.SecurePassword = Credential.Password;
-            }
-            else if (searchQueryRequest.AuthenticationType == AuthenticationType.SPO)
-            {
-                Guid runspaceId = Guid.Empty;
-                using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
-                {
-                    runspaceId = ps.Runspace.InstanceId;
-
-                    CookieCollection cc;
-                    
-                    bool found = Tokens.TryGetValue(runspaceId, out cc);
-
-                    if (! found)
-                    {
-                        cc = PSWebAuthentication.GetAuthenticatedCookies(this, searchQueryRequest.SharePointSiteUrl, AuthenticationType.SPO);
+        }
  
-                        if (cc == null)
-                        {
-                            throw new RuntimeException("Authentication cookie returned is null! Authentication failed. Please try again.");  // TODO find another exception
-                        }
-                        else
-                        {
-                            Tokens.Add(runspaceId, cc);
-                        }
+        protected override void PresetLoaded(ref SearchQueryRequest searchRequest, SearchPreset preset)
+        {
+            searchRequest = preset.Request;
+        }
+
+        protected override void ExecuteRequest(SearchQueryRequest searchRequest)
+        {
+            if (LimitAll || RowLimit > SearchResultBatchSize)
+            {
+                // Try to loop through all results in increments of 500
+                searchRequest.RowLimit = SearchResultBatchSize;
+
+                int totalRows = (StartRow.HasValue ? StartRow.Value : 0) + 1;
+                int remaining = 0;
+
+                while (searchRequest.StartRow < totalRows)
+                {
+                    ShowProgress(searchRequest.StartRow.Value, totalRows, remaining);
+
+                    totalRows = GetResults(searchRequest);
+
+                    if (!LimitAll)
+                    {
+                        totalRows = (RowLimit.HasValue ? RowLimit.Value : rowLimitDefault);
+                    }
+                    searchRequest.StartRow += SearchResultBatchSize;
+                    remaining = totalRows - searchRequest.StartRow.Value;
+                    //Console.WriteLine(remaining);
+                    searchRequest.RowLimit = remaining < SearchResultBatchSize ? remaining : SearchResultBatchSize;
+
+                    if (SleepBetweenQueryBatches > 0)
+                    {
+                        Thread.Sleep(SleepBetweenQueryBatches);
                     }
 
-                    searchQueryRequest.AuthenticationType = AuthenticationType.SPO;
-                    searchQueryRequest.Cookies = cc;
-                    //searchSuggestionsRequest.Cookies = cc;
                 }
             }
-            else if (AuthenticationMethod == PSAuthenticationMethod.SPOManagement || searchQueryRequest.AuthenticationType == AuthenticationType.SPOManagement)
-            {
-                AdalAuthentication adalAuth = new AdalAuthentication();
-
-                var task = adalAuth.Login(searchQueryRequest.SharePointSiteUrl);
-
-                if (! task.Wait(300000))
-                {
-                    throw new TimeoutException("Prompt for user credentials timed out after 5 minutes.");
-                }
-
-                var token = task.Result;
-
-                searchQueryRequest.AuthenticationType = AuthenticationType.SPOManagement;
-                searchQueryRequest.Token = token;
-                //searchSuggestionsRequest.Token = token;
-        }
             else
             {
-                searchQueryRequest.AuthenticationType = AuthenticationType.CurrentUser;
-                WindowsIdentity currentWindowsIdentity = WindowsIdentity.GetCurrent();
-                searchQueryRequest.UserName = currentWindowsIdentity.Name;
+                GetResults(searchRequest);
             }
         }
 
- 
-        private string DefaultClientTypeName()
+        protected override void SaveRequestPreset(SearchConnection searchConnection, SearchQueryRequest searchRequest)
         {
-            // ContentSearchRegular prevents cluttering the page impression table and seems appropriate as default when scripting
-            // http://www.techmikael.com/2015/05/always-set-client-type-on-sharepoint.html
+            if (IsSavePreset())
+            {
+                SearchPreset newPreset = new SearchPreset();
+                var path = GetPresetFilename(SavePreset);
 
-            return Enum.GetName(typeof(QueryLogClientType), QueryLogClientType.ContentSearchRegular);
+                newPreset.Name = Path.GetFileNameWithoutExtension(path);
+                newPreset.Path = path;
+
+                if (!Path.IsPathRooted(SavePreset))
+                {
+                    newPreset.Path = Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, newPreset.Path);
+                }
+
+                searchConnection.CopyFrom(searchRequest);
+
+                newPreset.Connection = searchConnection;
+                newPreset.Request = SetSelectProperties(searchRequest);
+
+                newPreset.Save();
+
+                WriteInformation(new HostInformationMessage
+                {
+                    Message = $"Preset saved to {newPreset.Path}",
+                    ForegroundColor = Host.UI.RawUI.BackgroundColor,        // invert
+                    BackgroundColor = Host.UI.RawUI.ForegroundColor,
+                    NoNewLine = false
+                }, new[] { "PSHOST" });
+            }
         }
 
-        private string GetClientTypeName(SearchQueryRequest searchQueryRequest)
+        protected override bool IsSavePreset()
         {
-            return ClientType.HasValue ? Enum.GetName(typeof(QueryLogClientType), ClientType) :
-                (string.IsNullOrWhiteSpace(searchQueryRequest.ClientType) ? DefaultClientTypeName() : searchQueryRequest.ClientType);
+            return !String.IsNullOrWhiteSpace(SavePreset);
         }
 
-        private string GetQuery()
+        protected internal void AddSelectProperty(string property)
         {
-            return Query == null ? null : String.Join(" ", Query);
-        }
+            string trimmedProperty = property.Trim();
 
+            if (SelectProperties == null)
+            {
+                SelectProperties = new List<string>();
+            }
+
+            if (!SelectProperties.Contains(trimmedProperty, StringComparer.InvariantCultureIgnoreCase))
+            {
+                SelectProperties.Add(trimmedProperty);
+            }
+
+        }
 
         private int GetResults(SearchQueryRequest searchQueryRequest)
         {
             int totalRows = 0;
             bool keepTrying = true;
 
+
             // Pick default result processor
-            if (! ResultProcessor.HasValue)     // user has not specified one
+            if (!ResultProcessor.HasValue)     // user has not specified one
             {
                 if (Refiners != null)
                 {
-                    ResultProcessor = PSSQT.ResultProcessor.Refiners;
+                    ResultProcessor = PSSQT.ResultProcessor.ResultProcessor.Refiners;
                 }
                 else
                 {
-                    ResultProcessor = PSSQT.ResultProcessor.Primary;
+                    ResultProcessor = PSSQT.ResultProcessor.ResultProcessor.Primary;
                 }
 
-                WriteVerbose(String.Format("Using ResultProcessor {0}", Enum.GetName(typeof(ResultProcessor), ResultProcessor)));
+                WriteVerbose(String.Format("Using ResultProcessor {0}", Enum.GetName(typeof(ResultProcessor.ResultProcessor), ResultProcessor)));
             }
+
+
 
             IQueryResultProcessor queryResultProcessor = QueryResultProcessorFactory.SelectQueryResultProcessor(ResultProcessor.Value, this, searchQueryRequest);
 
-            queryResultProcessor.Configure();    // May add required properties to retrieve (e.g. rankdetail etc.)
+            queryResultProcessor.Configure();    // May add required properties to retrieve, modify the searchQueryRequest (e.g. rankdetail etc.)
 
             while (keepTrying)
             {
@@ -872,7 +688,7 @@ namespace PSSQT
                 {
                     var requestResponsePair = HttpRequestRunner.RunWebRequest(SetSelectProperties(searchQueryRequest));
 
-                    var queryResults = requestResponsePair.GetResultItem();
+                    var queryResults = requestResponsePair.GetResultItem<SearchQueryResult>();
 
                     totalRows = queryResults.PrimaryQueryResult.TotalRows;
 
@@ -887,10 +703,13 @@ namespace PSSQT
                 }
                 catch (Exception ex)
                 {
-                    if (! queryResultProcessor.HandleException(ex))
+                    if (!queryResultProcessor.HandleException(ex, searchQueryRequest))
                     {
                         throw;
                     }
+
+                    // if exception was handled, we will try again
+                    keepTrying = true;
                 }
 
             }
@@ -898,101 +717,45 @@ namespace PSSQT
             return totalRows;
         }
 
-        public void AddSelectProperty(string property)
+        private SearchQueryRequest SetSelectProperties(SearchQueryRequest searchQueryRequest)
         {
-            string trimmedProperty = property.Trim();
+            searchQueryRequest.SelectProperties = new SelectPropertiesListArgumentParser(SelectProperties, searchQueryRequest).Parse();
 
-            if (SelectProperties == null)
-            {
-                SelectProperties = new List<string>();
-            }
+            // Cmdlet.SelectProperties is used by ResultProcessors
+            SelectProperties = searchQueryRequest.SelectProperties != null ? searchQueryRequest.SelectProperties.Split(',').ToList() : null;
 
-            if (! SelectProperties.Contains(trimmedProperty, StringComparer.InvariantCultureIgnoreCase))
-            {
-                SelectProperties.Add(trimmedProperty);
-            }
+            WriteVerbose(searchQueryRequest.PrintVerbose());
+            WriteDebug(searchQueryRequest.PrintDebug());
 
+            return searchQueryRequest;
         }
 
-
-        private static bool? GetThreeWaySwitchValue(SwitchParameter enable, SwitchParameter disable)
+        private void ShowProgress(int startRow, int totalRows, int remaining)
         {
-            bool? result = null;
-
-            if (enable) result = true;
-            if (disable) result = false;    // disable overrides enable
-                                            // else  result = null which means use default value
-            return result;
+            if (remaining == 0)
+            {
+                WriteProgress(new ProgressRecord(1, "Processing results...", "..."));
+            }
+            else
+            {
+                WriteProgress(new ProgressRecord(1, "Processing results...", String.Format(" {0} out of {1}", startRow, totalRows)));
+            }
         }
 
-        private string GetPresetFilename(string presetName, bool searchPath = false)
+        private string DefaultClientTypeName()
         {
-            string path = presetName;
+            // ContentSearchRegular prevents cluttering the page impression table and seems appropriate as default when scripting
+            // http://www.techmikael.com/2015/05/always-set-client-type-on-sharepoint.html
 
-            if (!path.EndsWith(".xml"))
-            {
-                path += ".xml";
-            }
-
-            if (searchPath && !Path.IsPathRooted(path))
-            {
-                // always check current directory first
-                var rootedPath = GetRootedPath(path);
-
-                if (! File.Exists(rootedPath))
-                {
-                    var environmentVariable = Environment.GetEnvironmentVariable("PSSQT_PresetsPath");
-
-                    if (environmentVariable != null)
-                    {
-                        var result = environmentVariable 
-                            .Split(';')
-                            .Where(s => File.Exists(Path.Combine(s, path)))
-                            .FirstOrDefault();
-
-                        if (result == null)
-                        {
-                            throw new ArgumentException(String.Format("File \"{0}\" not found in current directory or PSSQT_PresetsPath", path));
-                        }
-
-                        return Path.Combine(result, path);
-                    }
-                }
-
-                return rootedPath;
-            }
-
-
-            return GetRootedPath(path);
+            return Enum.GetName(typeof(QueryLogClientType), QueryLogClientType.ContentSearchRegular);
         }
 
-        internal string GetRootedPath(string path)
+        private string GetClientTypeName(SearchQueryRequest searchQueryRequest)
         {
-            if (!Path.IsPathRooted(path))
-            {
-                path = Path.Combine(SessionState.Path.CurrentFileSystemLocation.Path, path);
-            }
-
-            return path;
+            return ClientType.HasValue ? Enum.GetName(typeof(QueryLogClientType), ClientType) :
+                (string.IsNullOrWhiteSpace(searchQueryRequest.ClientType) ? DefaultClientTypeName() : searchQueryRequest.ClientType);
         }
 
-
-        private string GetSPSite()
-        {
-            if (String.IsNullOrWhiteSpace(Site) || Site.StartsWith("http://") || Site.StartsWith("https://"))
-            {
-                return Site;
-            }
-
-
-            var fileName = GetPresetFilename(Site);
-
-            SearchConnection sc = new SearchConnection();
-
-            sc.Load(fileName);
-
-            return sc.SpSiteUrl;
-        }
         #endregion
     }
 }

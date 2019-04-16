@@ -1537,12 +1537,19 @@ namespace SearchQueryTool
                         else if (key.Equals("RankDetail", StringComparison.InvariantCultureIgnoreCase)
                             /* &&!string.IsNullOrWhiteSpace(val)*/)
                         {
+                            string langKey =
+                                resultItem.Keys.FirstOrDefault(
+                                    k => k.Equals("language", StringComparison.InvariantCultureIgnoreCase));
+                            string titleKey =
+                                resultItem.Keys.FirstOrDefault(
+                                    k => k.Equals("title", StringComparison.InvariantCultureIgnoreCase));
+
                             Helpers.RankDetail.ResultItem item = new Helpers.RankDetail.ResultItem
                             {
                                 Xml = val,
-                                Title = resultItem["title"],
+                                Title = resultItem[langKey],
                                 Path = path,
-                                Language = resultItem["language"],
+                                Language = resultItem[titleKey],
                             };
                             string workIdKey =
                                 resultItem.Keys.FirstOrDefault(
@@ -1813,7 +1820,10 @@ namespace SearchQueryTool
                             //Query again with the select properties set
                             sqr.Refiners = "";
                             sqr.SelectProperties = String.Join(",", refiners.Select(x => x.Name).ToArray());
-                            sqr.SelectProperties = sqr.SelectProperties.Replace(",ClassificationLastScan", ""); // this mp messes up the call
+                            sqr.SelectProperties = sqr.SelectProperties
+                                .Replace(",ClassificationLastScan", "") // this mp messes up the call
+                                .Replace(",ClassificationConfidence", "") // this mp messes up the call
+                                .Replace(",ClassificationCount", ""); // this mp messes up the call
                             sqr.HttpMethodType = HttpMethodType.Post;
 
                             Task.Factory.StartNew(() => HttpRequestRunner.RunWebRequest(sqr), ct,
@@ -2966,6 +2976,12 @@ namespace SearchQueryTool
 
         private void CopyClipboardButton_OnClickButton_OnClick(object sender, RoutedEventArgs e)
         {
+            if (_searchResults == null)
+            {
+                StateBarTextBlock.Text = "No search result to copy";
+                return;
+            }
+
             string content;
             if (AcceptJsonRadioButton.IsChecked.HasValue && AcceptJsonRadioButton.IsChecked.Value)
             {
@@ -2977,7 +2993,6 @@ namespace SearchQueryTool
                 content = XmlHelper.PrintXml(_searchResults.ResponseContent);
             }
             Clipboard.SetText(content);
-
         }
     }
 }

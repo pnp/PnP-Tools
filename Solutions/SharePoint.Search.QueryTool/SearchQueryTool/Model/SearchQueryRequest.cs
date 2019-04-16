@@ -43,6 +43,9 @@ namespace SearchQueryTool.Model
         public long? TrimDuplicatesIncludeId { get; set; }
         public string ClientType { get; set; }
         public string PersonalizationData { get; set; }
+        public bool? EnableMultiGeoSearch { get; set; }
+        public string MultiGeoSearchConfiguration { get; set; }   // Make sure it is formatted according to method type. See MultiGeoSearchConfiguration
+        public bool? IncludePersonalOneDriveResults { get; set; }  // https://support.microsoft.com/en-us/help/4469277/sharepoint-online-search-will-not-return-private-onedrive-results
 
         public SearchQueryRequest Clone()
         {
@@ -165,6 +168,25 @@ namespace SearchQueryTool.Model
                 {
                     uriBuilder.AppendFormat("&sourceid='{0}'", UrlEncode(this.SourceId));
                 }
+            }
+
+            if (this.EnableMultiGeoSearch == true)
+            {
+                customPropertyParts.Add("EnableMultiGeoSearch:true");
+
+                if (! String.IsNullOrWhiteSpace(MultiGeoSearchConfiguration))
+                {
+                    customPropertyParts.Add($"MultiGeoSearchConfiguration:{MultiGeoSearchConfiguration}");
+                }
+            }
+            else if (this.EnableMultiGeoSearch == false)
+            {
+                customPropertyParts.Add("EnableMultiGeoSearch:false");
+            }
+
+            if (this.IncludePersonalOneDriveResults.HasValue && this.IncludePersonalOneDriveResults.Value)
+            {
+                customPropertyParts.Add("ContentSetting:3");
             }
 
             if (!String.IsNullOrEmpty(this.HiddenConstraints))
@@ -394,6 +416,22 @@ namespace SearchQueryTool.Model
                     searchRequestBuilder.AppendFormat(", 'SourceId':'{0}'", this.SourceId);    
                 }
             }
+
+      
+            if (this.EnableMultiGeoSearch == true)
+            {
+                customPropertyParts.Add(GetPropertiesJSON("EnableMultiGeoSearch:true"));
+
+                if (!String.IsNullOrWhiteSpace(MultiGeoSearchConfiguration))
+                {
+                    customPropertyParts.Add(GetPropertiesJSON($"MultiGeoSearchConfiguration:{MultiGeoSearchConfiguration}"));
+                }
+            }
+            else if (this.EnableMultiGeoSearch == false)
+            {
+                customPropertyParts.Add(GetPropertiesJSON("EnableMultiGeoSearch:false"));
+            }
+
 
             if (!String.IsNullOrEmpty(this.HiddenConstraints))
                 searchRequestBuilder.AppendFormat(", 'HiddenConstraints':'{0}'", this.HiddenConstraints);

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Classic" x:Class="SearchQueryTool.MainWindow"
         Icon="Images/sp_site.png"
-        Title="SharePoint Search Query Tool v2.8.1" Height="820" Width="1100" MinWidth="800" MinHeight="600">
+        Title="SharePoint Search Query Tool v2.8.3" Height="820" Width="1100" MinWidth="800" MinHeight="600">
     <Window.Resources>
         <DrawingImage x:Key="Overlay">
             <DrawingImage.Drawing>
@@ -1143,8 +1143,8 @@
 										SelectionChanged="AuthenticationMethodComboBox_SelectionChanged"
 										x:Name="AuthenticationMethodComboBox">
                                             <ComboBoxItem DataContext="WinAuth" Content="Windows" IsSelected="True" />
-                                            <!--<ComboBoxItem DataContext="SPOAuth" Content="SharePoint Online" />-->
-                                            <ComboBoxItem DataContext="SPOAuth2" Content="SharePoint Online Management" />
+                                            <ComboBoxItem DataContext="SPOAuth2" Content="SharePoint Online (App Id)" />
+                                            <ComboBoxItem DataContext="SPOAuth" Content="SharePoint Online (Web login)" />
                                             <ComboBoxItem DataContext="FormsAuth" Content="Forms-based" />
                                             <ComboBoxItem DataContext="ForefrontAuth" Content="Forefront Gateway (TMG/UAG)" />
                                         </ComboBox>

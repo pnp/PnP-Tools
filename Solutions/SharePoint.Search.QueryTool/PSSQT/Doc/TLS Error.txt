@@ -1,0 +1,3 @@
+ # if you get an error saying cannot establish a secure connection
+ 
+ [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"

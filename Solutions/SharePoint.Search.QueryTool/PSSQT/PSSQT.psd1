@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.8.1'
+ModuleVersion = '2.8.4'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -27,7 +27,7 @@ Author = 'frode.sivertsen@outlook.com. Search Query Tool code developed by: http
 CompanyName = 'Unknown'
 
 # Copyright statement for this module
-Copyright = '(c) 2017 frodes. All rights reserved.'
+Copyright = '(c) 2019 frodes. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'Search SharePoint index (on-prem or online) using PowerShell. Part of the Search Query Tool (https://github.com/SharePoint/PnP-Tools/tree/master/Solutions/SharePoint.Search.QueryTool).'
@@ -72,7 +72,7 @@ NestedModules = @('PSSQT.dll')
 FunctionsToExport = @()
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = 'Search-SPIndex'
+CmdletsToExport = @('Search-SPIndex', 'Search-SPSuggestions', 'Format-SPSuggestions', 'Format-SPResults', 'New-MultiGeoSearchConfiguration')
 
 # Variables to export from this module
 # VariablesToExport = @()
@@ -108,37 +108,88 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = @'
-		Updates in this release:
+			2.8.4:
+
+			New fetures:
+
+			Added a new swith IncludePersonalOneDriveResults which will return personal OneDrive results when searching SPO.
+			https://support.microsoft.com/en-us/help/4469277/sharepoint-online-search-will-not-return-private-onedrive-results
+
+			You can now use TAB completion on your preset files. It will look for xml files in all folders in your PSSQT_PresetsPath and perform tab completion.
+			Please note that the preset is always referenced without the .xml extension. (.xml is automatically added by the cmdlet when loading the preset.)
+
+			Improved error reporting. Error details are always written to %LOCALAPPDATA%\PSSQT\LastError.txt
+
+			2.8.3:
+
+			New features:
+
+			You can now use a normal Credential object when searching against Sharepoint Online.
+			E.g:
+				$creds = Get-Credential
+				Search-SPIndex -Site https://yourtenant.sharepoint.com test -Credential $creds
+
+				If you're in an environment with SSO enabled, this is your best choice to use other credentials. You can also use -ForceLoginPrompt instead to force the AAD login dialog.
+
+			If you do not specify AuthenticationType and your are not using a preset, AuthenticationType will be guessed based on the Site URL. If the host name ends with 'sharepoint.com',
+			we'll use SPOManagement, otherwise Windows
+
+			Please Note: The logic to select the correct authentication method has changed, so the bahvior might have changed since the previous version.
+
+			Bugs fixed:
+
+			Fixed another multi-geo POST query bug, where if you were searching more than one specific geo, it would produce an invalid query. GET request would work fine.
+			E.g of query that would fail before fix:
+
+			$geo1 = New-MultiGeoSearchConfiguration ...
+			$geo2 = New-MultiGeoSearchConfiguration ...
+			E.g: Search-SPIndex -Site https://mymultigeoenabledtenant.sharepoint.com test -MultiGeoSearchConfiguration $geo1, $geo2 -MethodType Post
+			
+			2.8.2.1: 
+
+			* This is a fix for a broken multi-geo post query in 2.8.2. Unfortunately I cannot re-release 2.8.2, so I decided to bump it to 2.8.2.1 
+			
+			2.8.2:
+
+			* Added -AuthenticationMethod SPO back again
+			* You can specify default authentication method in an environment variable PSSQT_DefaultAuthenticationMethod. E.g: PSSQT_DefaultAuthenticationMethod=SPOManagement
+			* New ResultProcessors ManagedProperties and CrawledProperties. (Shows you which managed and crawled properties have been set for a given query)
+			* Added multi-geo search. Use New-MultiGeoSearchConfiguration to create a specification and use -MultiGeoSearchConfiguration to search specific geos. Use -EnableMultiGeoSearch to search all geos.
+			* New Cmdlet Search-SPSuggestions
 		
-		* Changed the module version numbering to align better with the SearchQueryTool. 
-		* Updated with latest ADAL authentication code. 
-		* -AuthenticationMethod SPO has been removed. You should use -AuthenticationMethod SPOManagement instead.
-		* -SPO switch has been removed. You should use -AuthenticationMethod SPOManagement instead.
+			pluss various other minor changes
 
-		You can use Connect-Msolservice to login before executing a query. You must still use -AuthenticationMethod SPOManagement, 
-		but you will not be prompted to login again.
+			2.8.1:
 		
-		New features in this release:
+			* Changed the module version numbering to align better with the SearchQueryTool. 
+			* Updated with latest ADAL authentication code. 
+			* -AuthenticationMethod SPO has been removed. You should use -AuthenticationMethod SPOManagement instead.
+			* -SPO switch has been removed. You should use -AuthenticationMethod SPOManagement instead.
 
-		* New ResultProcessor AllProperties. 
-		It will do a secondary search for each result retrieving all properties for that item. They are returned as a dictionary
-		in the AllProperties property
+			You can use Connect-Msolservice to login before executing a query. You must still use -AuthenticationMethod SPOManagement, 
+			but you will not be prompted to login again.
+		
+			New features in this release:
 
-		* New ResultProcessor AllPropertiesInline.
-		Same as above, but will only retrieve all properties for the first result and return them "inline" in a custom object. Try it, and you will see the difference.
-		You would typically use this with a query like 'workid:12345'
+			* New ResultProcessor AllProperties. 
+			It will do a secondary search for each result retrieving all properties for that item. They are returned as a dictionary
+			in the AllProperties property
 
-		* Specify -Properties :default: 
-		It will return what SharePoint decides is the default set of properties from SharePoint. Keep in mind that if you don't specify -Properties, PSSQT defaults to title, path, workid.
+			* New ResultProcessor AllPropertiesInline.
+			Same as above, but will only retrieve all properties for the first result and return them "inline" in a custom object. Try it, and you will see the difference.
+			You would typically use this with a query like 'workid:12345'
 
-		* Specify default properties by defining the environment variable PSSQT_DefaultSelectProperties
-		E.g. PSSQT_DefaultSElectProperties = title, author
-		This is what PSSQT will use if you don't specify -Properties.
-		Please note that specifying -Properties :default: is different. In that case PSSQT will not specify which properties to retrieve and you get what SharePoint gives you.
+			* Specify -Properties :default: 
+			It will return what SharePoint decides is the default set of properties from SharePoint. Keep in mind that if you don't specify -Properties, PSSQT defaults to title, path, workid.
 
-		* Specify where to look for preset files by specifying the path in the environment variable PSSQT_PresetsPath. You can specify multiple directories separated by ;
-		E.g. PSSQT_PresetsPath = C:\SearchQueryTool2.8\Presets
-		You can do this from any folder: Search-SPIndex -Preset mypreset 
+			* Specify default properties by defining the environment variable PSSQT_DefaultSelectProperties
+			E.g. PSSQT_DefaultSElectProperties = title, author
+			This is what PSSQT will use if you don't specify -Properties.
+			Please note that specifying -Properties :default: is different. In that case PSSQT will not specify which properties to retrieve and you get what SharePoint gives you.
+
+			* Specify where to look for preset files by specifying the path in the environment variable PSSQT_PresetsPath. You can specify multiple directories separated by ;
+			E.g. PSSQT_PresetsPath = C:\SearchQueryTool2.8\Presets
+			You can do this from any folder: Search-SPIndex -Preset mypreset 
 '@
 
         # External dependent modules of this module

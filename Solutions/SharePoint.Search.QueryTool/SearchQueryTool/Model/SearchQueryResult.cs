@@ -60,6 +60,8 @@ namespace SearchQueryTool.Model
         public int TotalRowsIncludingDuplicates { get; set; }
         public List<ResultItem> RelevantResults { get; set; }
         public List<RefinerResult> RefinerResults { get; set; }
+        public string ResultTitle { get; internal set; }
+        public string ResultTitleUrl { get; internal set; }
     }
 
     /// <summary>
@@ -77,6 +79,9 @@ namespace SearchQueryTool.Model
         public List<string> TriggeredRules { get; private set; }
         public QueryResult PrimaryQueryResult { get; private set; }
         public List<QueryResult> SecondaryQueryResults { get; private set; }
+
+        public bool IsPartial { get; internal set; }
+        public string MultiGeoSearchStatus { get; internal set; }
 
         /// <summary>
         /// Fireoff processing of the search result content.
@@ -127,7 +132,18 @@ namespace SearchQueryTool.Model
                             if (elm.Element(d + "Key").Value == "SerializedQuery")
                             {
                                 this.SerializedQuery = elm.Element(d + "Value").Value;
-                                break;
+                                // break; // need to parse through all elements
+                            }
+                            else if (elm.Element(d + "Key").Value == "IsPartial")
+                            {
+                                if (bool.TryParse(elm.Element(d + "Value").Value, out bool isPartial))
+                                {
+                                    IsPartial = isPartial;
+                                }
+                            }
+                            else if (elm.Element(d + "Key").Value == "MultiGeoSearchStatus")
+                            {
+                                this.MultiGeoSearchStatus = elm.Element(d + "Value").Value;
                             }
                         }
                     }
@@ -357,6 +373,17 @@ namespace SearchQueryTool.Model
                                 {
                                     this.SerializedQuery = item.Element("Value").Value;
                                 }
+                                else if (item.Element("Key").Value == "IsPartial")
+                                {
+                                    if (bool.TryParse(item.Element("Value").Value, out bool isPartial))
+                                    {
+                                        this.IsPartial = isPartial;
+                                    }
+                                }
+                                else if (item.Element("Key").Value == "MultiGeoSearchStatus")
+                                {
+                                    this.MultiGeoSearchStatus = item.Element("Value").Value;
+                                }
                             }
                         }
                     }
@@ -530,6 +557,16 @@ namespace SearchQueryTool.Model
                             var relevantResults = resultItem.Element("RelevantResults");
                             if (relevantResults != null)
                             {
+                                if (relevantResults.Element("ResultTitle") != null)
+                                {
+                                    secondaryQueryResult.ResultTitle = (string)relevantResults.Element("ResultTitle");
+                                }
+
+                                if (relevantResults.Element("ResultTitleUrl") != null)
+                                {
+                                    secondaryQueryResult.ResultTitleUrl = (string)relevantResults.Element("ResultTitleUrl");
+                                }
+
                                 if (relevantResults.Element("TotalRows") != null)
                                 {
                                     secondaryQueryResult.TotalRows = (int)relevantResults.Element("TotalRows");
@@ -615,6 +652,17 @@ namespace SearchQueryTool.Model
                                 if (item.Element("Key").Value == "SerializedQuery")
                                 {
                                     this.SerializedQuery = item.Element("Value").Value;
+                                }
+                                else if (item.Element("Key").Value == "IsPartial")
+                                {
+                                    if (bool.TryParse(item.Element("Value").Value, out bool isPartial))
+                                    {
+                                        this.IsPartial = isPartial;
+                                    }
+                                }
+                                else if (item.Element("Key").Value == "MultiGeoSearchStatus")
+                                {
+                                    this.MultiGeoSearchStatus = item.Element("Value").Value;
                                 }
                             }
                         }

@@ -27,6 +27,8 @@ Version  | Date | Comments
 2.6 | May 31st 2017 | Moved to github
 2.7 | Aug 24th 2017 | Added new SPO login, removed GQL support
 2.8 | Mar 26th 2018 | Removed old SPO login as it fails too often. Fixed ADAL login for viewing all properties.
+2.8.2 | Oct 10th 2018 | Re-added web based SPO login for some people. Updated to .Net 4.6.2 to support TLS 1.2
+2.8.3 | Oct 18th 2018 | Fix for view all properties
 
 ### Disclaimer ###
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
@@ -40,7 +42,7 @@ This tool will help you test search against SharePoint as well as craft GET and 
 # Quick start guide #
 ## Download the tool ##
 You can download the tool from here:
- - [SharePoint Search Query Tool](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Search.QueryTool/Releases/SearchQueryToolv2.8.zip?raw=true)
+ - [SharePoint Search Query Tool](https://github.com/SharePoint/PnP-Tools/blob/master/Solutions/SharePoint.Search.QueryTool/Releases/SearchQueryToolv2.8.3.zip?raw=true)
 
 Once you've downloaded the tool (or alternatively you can also compile it yourself using Visual Studio) you have a folder containing the tool **SearchQueryTool.exe**. Double click the file to start it.
 
