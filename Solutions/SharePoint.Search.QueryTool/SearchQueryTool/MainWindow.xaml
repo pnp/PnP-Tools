@@ -38,10 +38,10 @@
                                     </MultiBinding>
                                 </Themes:ClassicBorderDecorator.OpacityMask>
                             </Themes:ClassicBorderDecorator>
-                            <Border x:Name="Header" Grid.Column="1" Padding="3,0,3,0" Grid.Row="0" Grid.RowSpan="2">
+                            <Border x:Name="Header" Grid.Column="2" Padding="3,0,3,0" Grid.Row="0" Grid.RowSpan="2">
                                 <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                             </Border>
-                            <ContentPresenter Grid.ColumnSpan="2" Grid.Column="1" Margin="{TemplateBinding Padding}" Grid.Row="2" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            <ContentPresenter Grid.ColumnSpan="3" Grid.Column="2" Margin="{TemplateBinding Padding}" Grid.Row="2" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -55,7 +55,8 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1.4*" MaxWidth="430"/>
+            <ColumnDefinition Width="1.2*"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -66,7 +67,12 @@
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.ColumnSpan="2">
+        <GridSplitter HorizontalAlignment="Right" 
+                  VerticalAlignment="Stretch" 
+                  Grid.Column="1" ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" Foreground="Green"
+                  Width="5" Background="Red"/>
+
+        <Menu Grid.ColumnSpan="3">
             <MenuItem Header="File">
                 <MenuItem Header="Save Connection Properties" Click="MenuSaveConnectionProperties_Click" />
                 <MenuItem Header="Exit" Click="MenuFileExit_Click" />
@@ -81,7 +87,7 @@
 
 
 
-        <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="10,10,10,0" MaxHeight="50">
+        <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="10,10,10,0" MaxHeight="50">
             <Button Padding="8" 
 				IsDefault="{Binding IsKeyboardFocused, ElementName=QueryTextBox}"
 				x:Name="RunButton"
@@ -92,7 +98,7 @@
             <TextBox x:Name="RequestUriStringTextBox" TextWrapping="Wrap" IsReadOnly="True" IsReadOnlyCaretVisible="True" Margin="10,0,10,0" Padding="8" Foreground="#FF0009C3" />
         </DockPanel>
 
-        <DockPanel  Grid.Row="2" Name="BreadCrumbDockPanel" Grid.ColumnSpan="2" Margin="10,10,0,0" HorizontalAlignment="Left" Visibility="Collapsed">
+        <DockPanel  Grid.Row="2" Name="BreadCrumbDockPanel" Grid.ColumnSpan="3" Margin="10,10,0,0" HorizontalAlignment="Left" Visibility="Collapsed">
             <DockPanel>
                 <!--<Expander Name="ExpanderHiddenConstraints" Header="Hidden Constraints" IsExpanded="false" Foreground="Black" Content="{WrapPanel Name=HiddenConstraintWrapPanel, Orientation=Horizontal}" />-->
                 <Expander Name="ExpanderHiddenConstraints" Header="Hidden Constraints" IsExpanded="false" Foreground="Black">
@@ -132,7 +138,9 @@
                                         <TextBox x:Name="QueryTextBox"
                                                  Margin="5,0,5,0" 
 											AcceptsReturn="False"
-											Height="60"
+											FontFamily="Courier New"
+                                            Height="Auto"
+                                            MinHeight="60"
 											Padding="4" 
 											TextWrapping="Wrap" 
 											DataContext="Query" MouseDoubleClick="QueryDoubleClick"
@@ -390,11 +398,11 @@
 														IsChecked="False"
 														ToolTip="Include Rank Detail - Requires admin access! Make sure less than 100 results are returned, otherwise the rank detail wont show!"
 														Unchecked="SearchQueryCheckBox_CheckChanged"
-														Checked="SearchQueryCheckBox_CheckChanged" Grid.ColumnSpan="2" Content="Include Rank Detail"/>
+														Checked="SearchQueryCheckBox_CheckChanged" Grid.ColumnSpan="3" Content="Include Rank Detail"/>
                                                 </Grid>
                                             </StackPanel>
 
-                                            <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,10,0,5">
+                                            <DockPanel Grid.Row="1" Grid.ColumnSpan="4" Margin="0,10,0,5">
                                                 <Button Content="Reset All Checkboxes" x:Name="ResetCheckboxesButton" HorizontalAlignment="Left" Click="ResetCheckboxesButton_Click" VerticalAlignment="Center" Margin="0,0,5,0" />
                                                 <Button Content="Save As New Preset..." Name="SaveAsNewPresetButton" HorizontalAlignment="Left" Click="SaveAsNewPresetButton_OnClick" VerticalAlignment="Center" Margin="0,0,5,0" />
                                                 <Button Content="Copy to clipboard" ToolTip="Copy the JSON/XML result to the clip board" Name="CopyClipboardButton" HorizontalAlignment="Left" Click="CopyClipboardButton_OnClickButton_OnClick" VerticalAlignment="Center" Margin="0,0,5,0" />
@@ -402,7 +410,7 @@
                                         </Grid>
 
                                         <StackPanel Margin="5,5,5,0">
-                                            <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,0,0,5">
+                                            <DockPanel Grid.Row="1" Grid.ColumnSpan="4" Margin="0,0,0,5">
                                                 <Label Content="Presets:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                                                 <ComboBox Name="PresetComboBox" Margin="5" SelectionChanged="PresetComboBox_OnSelectionChanged" Width="281" Height="22">
                                                     <ComboBox.ItemTemplate>
@@ -415,8 +423,8 @@
                                                 </ComboBox>
                                                 <Button Content="Save" Name="SavePresetButton" HorizontalAlignment="Left" Click="SavePresetButton_OnClick" VerticalAlignment="Center" Margin="0,0,5,0" />
                                             </DockPanel>
-                                        </StackPanel>                                        
-                                        
+                                        </StackPanel>
+
                                         <DockPanel Margin="5,5,5,0">
                                             <Label Content="Query Template:" 
 												HorizontalAlignment="Left" 
@@ -682,7 +690,7 @@
                                                 <ComboBoxItem Tag="53" Content="Zulu [zu | 53]"/>
                                             </ComboBox>
                                         </DockPanel>
-                                        
+
                                         <DockPanel Margin="5,5,5,0">
                                             <Label Content="Result Source Id:" 
 												HorizontalAlignment="Left" 
@@ -1061,7 +1069,7 @@
                 </GroupBox>
 
                 <GroupBox Grid.Column="0" Grid.Row="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,0,-12,0" Style="{DynamicResource GroupBoxStyleNoHeader}">
-                    
+
 
                     <Expander Name="ConnectionExpanderBox" Padding="5" Header="Connection" Foreground="Black" IsExpanded="True">
                         <Expander.Content>
@@ -1123,7 +1131,7 @@
                                         </Grid.RowDefinitions>
 
                                         <Label Content="Authentication:"/>
-                                        <ComboBox Grid.Column="1" 
+                                        <ComboBox Grid.Column="2" 
 										SelectedValuePath="Content"
 										Padding="4" 
 										SelectionChanged="AuthenticationTypeComboBox_SelectionChanged"
@@ -1133,10 +1141,10 @@
                                             <ComboBoxItem Content="Anonymous" />
                                         </ComboBox>
 
-                                        <Rectangle Height="5" Grid.ColumnSpan="2" Grid.Row="1"/>
+                                        <Rectangle Height="5" Grid.ColumnSpan="3" Grid.Row="1"/>
 
                                         <Label Grid.Row="2" Content="Authentication Method:"/>
-                                        <ComboBox Grid.Row="2" Grid.Column="1"
+                                        <ComboBox Grid.Row="2" Grid.Column="2"
 										SelectedValuePath="Content"
 										IsEnabled="False"
 										Padding="4" 
@@ -1149,9 +1157,9 @@
                                             <ComboBoxItem DataContext="ForefrontAuth" Content="Forefront Gateway (TMG/UAG)" />
                                         </ComboBox>
 
-                                        <Rectangle Height="5" Grid.ColumnSpan="2" Grid.Row="3"/>
+                                        <Rectangle Height="5" Grid.ColumnSpan="3" Grid.Row="3"/>
 
-                                        <Grid Grid.Row="4" Grid.Column="1">
+                                        <Grid Grid.Row="4" Grid.Column="2">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition/>
                                                 <RowDefinition/>
@@ -1232,7 +1240,7 @@
             </Grid>
         </DockPanel>
 
-        <GroupBox Grid.Row="3" Grid.Column="1" Header="Results" Margin="20,10,10,10" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+        <GroupBox Grid.Row="3" Grid.Column="2" Header="Results" Margin="20,10,10,10" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
             <DockPanel>
                 <TextBlock x:Name="ResultsTextBlock"/>
                 <TabControl>
@@ -1280,9 +1288,9 @@
                                                 </Grid.RowDefinitions>
 
                                                 <Label VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Content="Query:"/>
-                                                <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1" Margin="3,0,3,7" Text="{Binding Query}"/>
+                                                <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="2" Margin="3,0,3,7" Text="{Binding Query}"/>
 
-                                                <Expander Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="View" HorizontalAlignment="Left">
+                                                <Expander Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Header="View" HorizontalAlignment="Left">
                                                     <Grid HorizontalAlignment="Left">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="110"/>
@@ -1304,16 +1312,16 @@
                                                         </Grid.RowDefinitions>
 
                                                         <Label VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Content="Template:"/>
-                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Margin="3,0,3,7" Text="{Binding Template}"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="0" Grid.Column="2" Margin="3,0,3,7" Text="{Binding Template}"/>
 
                                                         <Label VerticalAlignment="Top" Grid.Row="1" Grid.Column="0" Content="Hidden Constraint:"/>
-                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Margin="3,0,3,7" Text="{Binding HiddenConstraint}"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="1" Grid.Column="2" Margin="3,0,3,7" Text="{Binding HiddenConstraint}"/>
 
                                                         <Label VerticalAlignment="Top" Grid.Row="2" Grid.Column="0" Content="SiteSubscriptionId:"/>
-                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Margin="3,0,3,7" Text="{Binding SiteSubscriptionId}"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="2" Grid.Column="2" Margin="3,0,3,7" Text="{Binding SiteSubscriptionId}"/>
 
                                                         <Label VerticalAlignment="Top" Grid.Row="3" Grid.Column="0" Margin="0,-7,0,7" Content="Bound Variables:"/>
-                                                        <ListBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding BoundVariables, Mode=OneWay}">
+                                                        <ListBox Grid.Row="3" Grid.Column="2" ItemsSource="{Binding BoundVariables, Mode=OneWay}">
                                                             <ListBox.ItemTemplate>
                                                                 <DataTemplate>
                                                                     <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,-7,7" Width="450" Text="{Binding Mode=OneWay}"/>
@@ -1322,7 +1330,7 @@
                                                         </ListBox>
 
                                                         <Label VerticalAlignment="Top" Grid.Row="4" Grid.Column="0" Margin="0,-7,0,7" Content="Template Helper:"/>
-                                                        <ListBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding QueryTemplateHelper, Mode=OneWay}">
+                                                        <ListBox Grid.Row="4" Grid.Column="2" ItemsSource="{Binding QueryTemplateHelper, Mode=OneWay}">
                                                             <ListBox.ItemTemplate>
                                                                 <DataTemplate>
                                                                     <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,-7,7" Width="450" Text="{Binding Mode=OneWay}"/>
@@ -1332,22 +1340,22 @@
 
 
                                                         <Label VerticalAlignment="Top" Grid.Row="5" Grid.Column="0" Content="Relevant Results:"/>
-                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="5" Grid.Column="1" Margin="3,0,3,7" Text="{Binding RelevantResults}"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="5" Grid.Column="2" Margin="3,0,3,7" Text="{Binding RelevantResults}"/>
 
                                                         <Label VerticalAlignment="Top" Grid.Row="6" Grid.Column="0" Content="Personal Results:"/>
-                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="6" Grid.Column="1" Margin="3,0,3,7" Text="{Binding PersonalResults}"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="6" Grid.Column="2" Margin="3,0,3,7" Text="{Binding PersonalResults}"/>
 
                                                         <Label VerticalAlignment="Top" Grid.Row="7" Grid.Column="0" Content="Refiner Results:"/>
-                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="7" Grid.Column="1" Margin="3,0,3,7" Text="{Binding RefinerResults}"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="7" Grid.Column="2" Margin="3,0,3,7" Text="{Binding RefinerResults}"/>
 
                                                         <Label VerticalAlignment="Top" Grid.Row="8" Grid.Column="0" Content="Query Suggestion:"/>
-                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="8" Grid.Column="1" Margin="3,0,3,7" Text="{Binding QuerySuggestion}"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="8" Grid.Column="2" Margin="3,0,3,7" Text="{Binding QuerySuggestion}"/>
 
                                                         <Label VerticalAlignment="Top" Grid.Row="9" Grid.Column="0" Content="QueryExpanded1:"/>
-                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="9" Grid.Column="1" Margin="3,0,3,7" HorizontalAlignment="Left" Width="450" TextWrapping="Wrap" Text="{Binding QueryExpanded1}"/>
+                                                        <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Center" Grid.Row="9" Grid.Column="2" Margin="3,0,3,7" HorizontalAlignment="Left" Width="450" TextWrapping="Wrap" Text="{Binding QueryExpanded1}"/>
 
                                                         <Label VerticalAlignment="Top" Grid.Row="10" Grid.Column="0" Content="QueryExpanded2:"/>
-                                                        <TextBox Margin="3,0,3,7" Grid.Row="10"  Grid.Column="1" IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Top" HorizontalAlignment="Left"  Width="450" TextWrapping="Wrap" Text="{Binding QueryExpanded2And3}"/>
+                                                        <TextBox Margin="3,0,3,7" Grid.Row="10"  Grid.Column="2" IsReadOnly="True" IsReadOnlyCaretVisible="False" VerticalAlignment="Top" HorizontalAlignment="Left"  Width="450" TextWrapping="Wrap" Text="{Binding QueryExpanded2And3}"/>
                                                     </Grid>
                                                 </Expander>
                                             </Grid>
@@ -1363,7 +1371,7 @@
 
         </GroupBox>
 
-        <StackPanel Grid.Row="5" Grid.ColumnSpan="2">
+        <StackPanel Grid.Row="5" Grid.ColumnSpan="3">
             <StatusBar Margin="10,0,10,0" Background="{x:Null}" BorderBrush="Gray">
                 <StatusBar.ItemsPanel>
                     <ItemsPanelTemplate>
