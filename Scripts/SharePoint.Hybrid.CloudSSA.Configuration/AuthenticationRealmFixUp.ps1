@@ -1,57 +1,55 @@
- # SUMMARY
+<#
+.Synopsis
+Script fixes the scenario where a hybrid workload has been onboarded to a farm and the result is broken PHAs.
+.Description
+This scripts will fix the PHAs and need to be ran with a farm admin account
+.EXAMPLE
+.\AuthenticationRealmFixUp.ps1
+Reports the PHAs that need to be fixed an the location where they are fixe
+#>
  
- # Script fixes the scenario where a hybrid workload has been onboarded to a farm and the result is broken PHAs.
- 
- # USAGE
- 
- # Execute the script as a farm admin account
- 
- # OUTPUT
- 
- # Reports PHAs that need to be fixed and the location where they are fixed.
- 
- 
- if ((Get-PSSnapin -Name "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue) -eq $null) {            
- Add-PSSnapin -Name "Microsoft.SharePoint.PowerShell"        } 
+if ((Get-PSSnapin -Name "Microsoft.SharePoint.PowerShell" -ErrorAction SilentlyContinue) -eq $null)
+{            
+    Add-PSSnapin -Name "Microsoft.SharePoint.PowerShell"
+}
 cls
 　
 function Find-AppInstances{
 
-#SUMMARY Get all app instances in each of the web applications
+    #SUMMARY Get all app instances in each of the web applications
+    $AppsforRemediation = @()
+    $webApplications = Get-SPWebApplication
 
-$AppsforRemediation = @()
-$webApplications = Get-SPWebApplication
-
-foreach($webapp in $webapplications)
-{
-    foreach($site in $webApp.Sites)
+    foreach($webapp in $webapplications)
     {
-    try{
-        foreach($web in $site.AllWebs)
+        foreach($site in $webApp.Sites)
         {
-        $appInstance = Get-SPAppInstance -Web $web.Url | ? {$_.LaunchUrl -notlike "~appWebUrl*"} | select Title, AppPrincipalId
-            if($appInstance -ne $null)
+            try
             {
-                foreach ($instance in $appInstance)
+                foreach($web in $site.AllWebs)
                 {
-                  $tmp = $instance.AppPrincipalId.Split('|@',[System.StringSplitOptions]::RemoveEmptyEntries)
-                  $appInfo = $instance.Title + " - " + $tmp[$tmp.Count - 2] + " - " + $web.Url 
+                    $appInstance = Get-SPAppInstance -Web $web.Url | ? {$_.LaunchUrl -notlike "~appWebUrl*"} | select Title, AppPrincipalId
+                    if($appInstance -ne $null)
+                    {
+                        foreach ($instance in $appInstance)
+                        {
+                            $tmp = $instance.AppPrincipalId.Split('|@',[System.StringSplitOptions]::RemoveEmptyEntries)
+                            $appInfo = $instance.Title + " - " + $tmp[$tmp.Count - 2] + " - " + $web.Url 
 
-                  $AppsforRemediation+=(,($instance.Title, $tmp[$tmp.Count - 2], $web.Url))
-                          
+                            $AppsforRemediation+=(,($instance.Title, $tmp[$tmp.Count - 2], $web.Url))
+                        }
+                    }
                 }
             }
-        }
-       }
-    catch{
-
-    # Typically this scenario would only arise when the Admin executing the script is not a farm admin, or the site is a Fast Site creation Master template site which is inaccessible by default.
-    Write-Output  ""
-    write-warning "Unable to enumerate webs at Site: $site.url : If this is expected then ignore this message"
-    Write-Output  ""
+            catch
+            {
+                # Typically this scenario would only arise when the Admin executing the script is not a farm admin, or the site is a Fast Site creation Master template site which is inaccessible by default.
+                Write-Output  ""
+                write-warning "Unable to enumerate webs at Site: $site.url : If this is expected then ignore this message"
+                Write-Output  ""
+            }
+        } 
     }
-    } 
-}
 }
 
 　

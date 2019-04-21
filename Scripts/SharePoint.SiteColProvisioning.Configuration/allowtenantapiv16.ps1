@@ -1,6 +1,6 @@
 ﻿param
 (
-[Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()]
+    [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()]
     [String]$WebApplicationUrl
 )
 #
@@ -25,4 +25,4 @@ Write-Host "Successfully added TenantAdmin ServerStub to ClientCallableProxyLibr
 # Reset the memory of the web application
 Write-Host "IISReset..."    
 Restart-Service W3SVC,WAS -force
-Write-Host "IISReset complete on this server, remember other servers in farm as well." 
+Write-Host "IISReset complete on this server, remember other servers in farm as well."
