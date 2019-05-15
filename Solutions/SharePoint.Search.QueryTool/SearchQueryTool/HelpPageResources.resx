@@ -122,6 +122,9 @@
   </data>
   <data name="selectproperties_ex" xml:space="preserve">
     <value>Path,Url,Title,Author,Write,ServerRedirectedEmbedURL,WorkId</value>
+  </data> 
+  <data name="hiddenconstraints_ex" xml:space="preserve">
+    <value>-ContentClass=urn:content-class:SPSPeople</value>
   </data>
   <data name="refinementfilters_ex" xml:space="preserve">
     <value>filetype:equals("pptx")</value>

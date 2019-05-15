@@ -61,6 +61,15 @@ namespace SearchQueryTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -ContentClass=urn:content-class:SPSPeople.
+        /// </summary>
+        internal static string hiddenconstraints_ex {
+            get {
+                return ResourceManager.GetString("hiddenconstraints_ex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 9399df62-f089-4033-bdc5-a7ea22936e8e.
         /// </summary>
         internal static string rankingmodelid_ex {

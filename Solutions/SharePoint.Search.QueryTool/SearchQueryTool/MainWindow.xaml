@@ -455,6 +455,7 @@
                                             <StackPanel>
                                                 <Label Content="Select Properties:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                                             </StackPanel>
+                                            
                                             <Grid>
                                                 <TextBox Height="Auto" MinHeight="60" MaxHeight="90" Width="Auto" Margin="5,0,0,0" Text="" Padding="4" 
                                                     DataContext="SelectProperties" x:Name="SelectPropertiesTextBox" 
@@ -744,26 +745,32 @@
                                             </ComboBox>
                                         </DockPanel>
 
-                                        <DockPanel Margin="5,5,5,0">
-                                            <Label Content="Hidden Constraints:" 
-												HorizontalAlignment="Left" 
-												VerticalAlignment="Top"/>
+                                        <StackPanel Margin="5,5,5,5">
+                                            <StackPanel>
+                                                <Label Content="Hidden Constraints:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                            </StackPanel>
 
-                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+                                            <Grid>
+                                                <TextBox Height="Auto" MinHeight="60" MaxHeight="90" Width="Auto" Margin="5,0,0,0" Text="" Padding="4" 
+                                                     x:Name="HiddenConstraintsTextBox" 
+                                                     DataContext="HiddenConstraints"
+                                                     TextWrapping="Wrap" 
+                                                     LostFocus="SearchQueryTextBox_LostFocus_Handler" 
+                                                     TextAlignment="Left">
+                                                    <TextBox.ToolTip>
+                                                        <TextBlock><Run Text="Specifies additional query terms that will be appended to the query."/><LineBreak /></TextBlock>
+                                                    </TextBox.ToolTip>
+                                                </TextBox>
+                                            </Grid>
 
-                                            <TextBox Height="26" 
-												Margin="5,0,0,0" 
-												Text="" 
-												Padding="4"
-												x:Name="HiddenConstraintsTextBox"
-												DataContext="HiddenConstraints"
-												LostFocus="SearchQueryTextBox_LostFocus_Handler"
-												TextAlignment="Left">
-                                                <TextBox.ToolTip>
-                                                    <TextBlock><Run Text="Specifies additional query terms that will be appended to the query."/></TextBlock>
-                                                </TextBox.ToolTip>
-                                            </TextBox>
-                                        </DockPanel>
+                                            <StackPanel Margin="5,5,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button Padding="0" DataContext="HiddenConstraints" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                    <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                                </Button>
+                                            </StackPanel>
+
+                                        </StackPanel>
+
                                         <DockPanel Margin="5,5,5,0">
                                             <Label Content="Personalization Data:" 
 		HorizontalAlignment="Left" 

@@ -835,10 +835,15 @@ namespace SearchQueryTool
                                     RankingModelIdTextBox.Text = exampleString;
                                     RankingModelIdTextBox.Focus();
                                     break;
+                                case "hiddenconstraints":
+                                    HiddenConstraintsTextBox.Text = exampleString;
+                                    HiddenConstraintsTextBox.Focus();
+                                    break;
                                 case "selectproperties":
                                     SelectPropertiesTextBox.Text = exampleString;
                                     SelectPropertiesTextBox.Focus();
                                     break;
+
                                 case "refiners":
                                     RefinersTextBox.Text = exampleString;
                                     RefinersTextBox.Focus();
