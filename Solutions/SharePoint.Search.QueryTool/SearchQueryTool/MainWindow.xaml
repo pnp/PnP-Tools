@@ -742,6 +742,19 @@
                                         </DockPanel>
 
                                         <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Collapse Spec:" ToolTip="Collapse Specification" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+                                            <TextBox Height="26" Margin="5,0,0,0" Text="" Padding="4" DataContext="CollapseSpecification"
+                                                     x:Name="CollapseSpecTextBox" LostFocus="SearchQueryTextBox_LostFocus_Handler" TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="A set of collapse specifications containing managed properties that are used to determine how to collapse individual search results."/><LineBreak /><Run Text="Results are collapsed into one or a specified number of results if they match any of the individual collapse specifications. Within a single"/><LineBreak /><Run Text="collapse specification, results will be collapsed if their properties match all of the individual properties in the collapse specification."/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
+
+                                        <Separator Margin="10,10,30,10" AutomationProperties.HelpText="Advanced options" />
+
+                                        <DockPanel Margin="5,5,5,0">
                                             <Label Content="Personalization Data:" 
 		HorizontalAlignment="Left" 
 		VerticalAlignment="Top"/>
@@ -795,28 +808,6 @@
 												TextAlignment="Left">
                                                 <TextBox.ToolTip>
                                                     <TextBlock><Run Text="Specifies the URL for the page where the search results are going to be displayed."/></TextBlock>
-                                                </TextBox.ToolTip>
-                                            </TextBox>
-                                        </DockPanel>
-
-                                        <DockPanel Margin="5,5,5,0">
-                                            <Label Content="Collapse Spec:" 
-												ToolTip="Collapse Specification"
-												HorizontalAlignment="Left" 
-												VerticalAlignment="Top"/>
-
-                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
-
-                                            <TextBox Height="26" 
-												Margin="5,0,0,0" 
-												Text="" 
-												Padding="4"
-												DataContext="CollapseSpecification"
-												x:Name="CollapseSpecTextBox"
-												LostFocus="SearchQueryTextBox_LostFocus_Handler"
-												TextAlignment="Left">
-                                                <TextBox.ToolTip>
-                                                    <TextBlock><Run Text="A set of collapse specifications containing managed properties that are used to determine how to collapse individual search results."/><LineBreak /><Run Text="Results are collapsed into one or a specified number of results if they match any of the individual collapse specifications. Within a single"/><LineBreak /><Run Text="collapse specification, results will be collapsed if their properties match all of the individual properties in the collapse specification."/></TextBlock>
                                                 </TextBox.ToolTip>
                                             </TextBox>
                                         </DockPanel>
