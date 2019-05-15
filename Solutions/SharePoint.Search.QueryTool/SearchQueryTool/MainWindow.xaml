@@ -435,23 +435,7 @@
                                             </StackPanel>
                                         </StackPanel>
                                         
-                                        <DockPanel Margin="5,5,5,0">
-                                            <Label Content="Query Template:" 
-												HorizontalAlignment="Left" 
-												VerticalAlignment="Top"/>
-
-                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
-                                            <TextBox Height="26" 
-												Margin="5,0,0,0" 
-												Text="" 
-												Padding="4"
-												DataContext="QueryTemplate"
-												x:Name="QueryTemplateTextBox"
-												LostFocus="SearchQueryTextBox_LostFocus_Handler"
-												TextAlignment="Left" />
-                                        </DockPanel>
-
-                                        <StackPanel Margin="5,5,5,5">
+                                        <StackPanel Margin="5,0,5,0">
                                             <StackPanel>
                                                 <Label Content="Select Properties:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                                             </StackPanel>
@@ -466,7 +450,7 @@
                                                 </TextBox>
                                             </Grid>
 
-                                            <StackPanel Margin="5,5,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <StackPanel Margin="5,0,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
                                                 <Button Padding="0" DataContext="SelectProperties" Click="CleanSelectProperties_Click"  ToolTip="Clean up properties" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
                                                     <Image Source="Images/clean_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
                                                 </Button>
@@ -475,6 +459,32 @@
                                                 </Button>
                                             </StackPanel>                                            
                                             
+                                        </StackPanel>
+
+                                        <StackPanel Margin="5,0,5,0">
+                                            <StackPanel>
+                                                <Label Content="Hidden Constraints:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                            </StackPanel>
+
+                                            <Grid>
+                                                <TextBox Height="Auto" MinHeight="60" MaxHeight="90" Width="Auto" Margin="5,0,0,0" Text="" Padding="4" 
+                                                     x:Name="HiddenConstraintsTextBox" 
+                                                     DataContext="HiddenConstraints"
+                                                     TextWrapping="Wrap" 
+                                                     LostFocus="SearchQueryTextBox_LostFocus_Handler" 
+                                                     TextAlignment="Left">
+                                                    <TextBox.ToolTip>
+                                                        <TextBlock><Run Text="Specifies additional query terms that will be appended to the query."/><LineBreak /></TextBlock>
+                                                    </TextBox.ToolTip>
+                                                </TextBox>
+                                            </Grid>
+
+                                            <StackPanel Margin="5,0,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button Padding="0" DataContext="HiddenConstraints" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                    <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                                </Button>
+                                            </StackPanel>
+
                                         </StackPanel>
 
                                         <DockPanel Margin="5,5,5,0">
@@ -544,67 +554,6 @@
                                                     <TextBlock><Run Text="Specifies the list of properties to sort the search results by."/></TextBlock>
                                                 </TextBox.ToolTip>
                                             </TextBox>
-                                        </DockPanel>
-
-                                        <DockPanel Margin="5,5,5,0">
-                                            <Label Content="Trim Duplicates Include Id:" 
-												HorizontalAlignment="Left" 
-												VerticalAlignment="Top"/>
-
-                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
-
-                                            <TextBox Height="26" 
-												Margin="5,0,0,0" 
-												Text="" 
-												Padding="4"
-												x:Name="TrimDuplicatesIncludeIdTextBox"
-												DataContext="TrimDuplicatesIncludeId"
-												LostFocus="SearchQueryTextBox_LostFocus_Handler"
-												TextAlignment="Left"
-												ToolTip="Id of the document to include duplicates for."/>
-                                        </DockPanel>
-
-                                        <DockPanel Margin="5,5,5,0">
-                                            <Label Content="Hit Highlighted Properties:" 
-												HorizontalAlignment="Left" 
-												VerticalAlignment="Top"/>
-
-                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
-
-                                            <TextBox Height="26" 
-												Margin="5,0,0,0" 
-												Text="" 
-												Padding="4"
-												x:Name="HitHighlightedPropertiesTextBox"
-												DataContext="HitHighlightedProperties"
-												LostFocus="SearchQueryTextBox_LostFocus_Handler"
-												TextAlignment="Left">
-                                                <TextBox.ToolTip>
-                                                    <TextBlock><Run Text="Specifies the list of properties to include in the HitHighlightedProperties for each result item."/></TextBlock>
-                                                </TextBox.ToolTip>
-                                            </TextBox>
-                                        </DockPanel>
-
-                                        <DockPanel Margin="5,5,5,0">
-                                            <Label Content="Ranking Model Id:" 
-												HorizontalAlignment="Left" 
-												VerticalAlignment="Top"/>
-
-                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="RankingModelId" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
-                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
-                                            </Button>
-
-                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
-
-                                            <TextBox Height="26" 
-												Margin="5,0,0,0" 
-												Text="" 
-												Padding="4"
-												x:Name="RankingModelIdTextBox"
-												DataContext="RankingModelId"
-												LostFocus="SearchQueryTextBox_LostFocus_Handler"
-												ToolTip="The GUID of the ranking model to be used for this search query.&#xA;&#xA;9399df62-f089-4033-bdc5-a7ea22936e8e is the default model used in 2010"
-												TextAlignment="Left" />
                                         </DockPanel>
 
                                         <DockPanel Margin="5,5,5,0">
@@ -745,31 +694,52 @@
                                             </ComboBox>
                                         </DockPanel>
 
-                                        <StackPanel Margin="5,5,5,5">
-                                            <StackPanel>
-                                                <Label Content="Hidden Constraints:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                                            </StackPanel>
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Ranking Model Id:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="RankingModelId" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                            </Button>
 
-                                            <Grid>
-                                                <TextBox Height="Auto" MinHeight="60" MaxHeight="90" Width="Auto" Margin="5,0,0,0" Text="" Padding="4" 
-                                                     x:Name="HiddenConstraintsTextBox" 
-                                                     DataContext="HiddenConstraints"
-                                                     TextWrapping="Wrap" 
-                                                     LostFocus="SearchQueryTextBox_LostFocus_Handler" 
-                                                     TextAlignment="Left">
-                                                    <TextBox.ToolTip>
-                                                        <TextBlock><Run Text="Specifies additional query terms that will be appended to the query."/><LineBreak /></TextBlock>
-                                                    </TextBox.ToolTip>
-                                                </TextBox>
-                                            </Grid>
+                                            <TextBox Height="26" Margin="5,0,0,0" Text="" Padding="4" x:Name="RankingModelIdTextBox" DataContext="RankingModelId"
+                                                     LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                                     ToolTip="The GUID of the ranking model to be used for this search query.&#xA;&#xA;9399df62-f089-4033-bdc5-a7ea22936e8e is the default model used in 2010"
+                                                     TextAlignment="Left" />
+                                        </DockPanel>
 
-                                            <StackPanel Margin="5,5,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
-                                                <Button Padding="0" DataContext="HiddenConstraints" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
-                                                    <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
-                                                </Button>
-                                            </StackPanel>
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Trim Duplicates Include Id:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="TrimDuplicatesIncludeIdTextBox"
+												DataContext="TrimDuplicatesIncludeId"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left"
+												ToolTip="Id of the document to include duplicates for."/>
+                                        </DockPanel>
 
-                                        </StackPanel>
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Hit Highlighted Properties:" 
+												HorizontalAlignment="Left" 
+												VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+
+                                            <TextBox Height="26" 
+												Margin="5,0,0,0" 
+												Text="" 
+												Padding="4"
+												x:Name="HitHighlightedPropertiesTextBox"
+												DataContext="HitHighlightedProperties"
+												LostFocus="SearchQueryTextBox_LostFocus_Handler"
+												TextAlignment="Left">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="Specifies the list of properties to include in the HitHighlightedProperties for each result item."/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+                                        </DockPanel>
 
                                         <DockPanel Margin="5,5,5,0">
                                             <Label Content="Personalization Data:" 
@@ -790,6 +760,22 @@
                                                     <TextBlock><Run Text="The user profile guid of a person. Used for social distance people search"/></TextBlock>
                                                 </TextBox.ToolTip>
                                             </TextBox>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="5,5,5,0">
+                                            <Label Content="Query Template:" 
+                                                   HorizontalAlignment="Left" 
+                                                   VerticalAlignment="Top"/>
+
+                                            <Rectangle DockPanel.Dock="Right" Height="16" Width="16" Margin="10,0,0,0"/>
+                                            <TextBox Height="26" 
+                                                     Margin="5,0,0,0" 
+                                                     Text="" 
+                                                     Padding="4"
+                                                     DataContext="QueryTemplate"
+                                                     x:Name="QueryTemplateTextBox"
+                                                     LostFocus="SearchQueryTextBox_LostFocus_Handler"
+                                                     TextAlignment="Left" />
                                         </DockPanel>
 
                                         <DockPanel Margin="5,5,5,0">
