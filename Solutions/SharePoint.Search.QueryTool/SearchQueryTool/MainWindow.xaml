@@ -408,9 +408,8 @@
                                         </Grid>
 
                                         <StackPanel Margin="5,5,5,0">
-                                            <Label Content="Show presets containing:" Margin="5,0,5,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                                            <TextBox x:Name="PresetFilterTextBox" Margin="5,0,5,0" >
-                                            </TextBox>
+                                            <Label Content="Show presets containing:" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                            <TextBox x:Name="PresetFilterTextBox" Margin="5,0,5,0" Height="26"/>
 
                                             <ComboBox Name="PresetComboBox" Margin="5" SelectionChanged="PresetComboBox_OnSelectionChanged" DropDownOpened="PresetComboBox_OnDropDownOpened" >
                                                 <ComboBox.ItemTemplate>
@@ -422,9 +421,17 @@
                                                 </ComboBox.ItemTemplate>
                                             </ComboBox>
 
-                                            <StackPanel Margin="5,5,0,0" Orientation="Horizontal">
-                                                <Button Content="Save" Name="SavePresetButton" HorizontalAlignment="Left" Click="SavePresetButton_OnClick" VerticalAlignment="Center" Margin="0,0,5,0" />
-                                                <Button Content="Save As New Preset..." Name="SaveAsNewPresetButton" HorizontalAlignment="Left" Click="SaveAsNewPresetButton_OnClick" VerticalAlignment="Center" Margin="0,0,5,0" />
+                                            <StackPanel Margin="5,0,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button Name="SaveAsNewPresetButton" HorizontalAlignment="Left" Click="SaveAsNewPresetButton_OnClick" 
+                                                        VerticalAlignment="Center" Margin="0,0,5,0" ToolTip="Save as new preset">
+                                                    <Image Source="Images/save_as_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                                </Button>
+
+                                                <Button Name="SavePresetButton" HorizontalAlignment="Left" Click="SavePresetButton_OnClick" 
+                                                        VerticalAlignment="Center" Margin="0,0,5,0" ToolTip="Save changes to current preset" >
+                                                    <Image Source="Images/save_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                                </Button>
+
                                             </StackPanel>
                                         </StackPanel>
                                         
