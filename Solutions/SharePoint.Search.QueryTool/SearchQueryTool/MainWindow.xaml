@@ -130,23 +130,22 @@
                                         </StackPanel>
 
                                         <StackPanel Margin="5,5,0,0" Orientation="Horizontal">
-                                            <Label Content="Query Text:" 
-												HorizontalAlignment="Left" 
-												VerticalAlignment="Top"/>
+                                            <Label Content="Query Text:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                                         </StackPanel>
-
+                                        
                                         <TextBox x:Name="QueryTextBox"
-                                                 Margin="5,0,5,0" 
-											AcceptsReturn="False"
-											FontFamily="Courier New"
-                                            Height="Auto"
-                                            MinHeight="60"
-											Padding="4" 
-											TextWrapping="Wrap" 
-											DataContext="Query" MouseDoubleClick="QueryDoubleClick"
-											LostFocus="SearchQueryTextBox_LostFocus_Handler">
+                                                Margin="5,0,5,0" 
+										AcceptsReturn="False"
+										FontFamily="Courier New"
+                                        Height="Auto"
+                                        MinHeight="60"
+										Padding="4" 
+										TextWrapping="Wrap" 
+										DataContext="Query" MouseDoubleClick="QueryDoubleClick"
+										LostFocus="SearchQueryTextBox_LostFocus_Handler">
                                             *
                                         </TextBox>
+                                        
 
                                         <StackPanel Margin="5,15,5,0" Orientation="Horizontal">
                                             <Label Content="Start:" 
@@ -404,27 +403,31 @@
 
                                             <DockPanel Grid.Row="1" Grid.ColumnSpan="4" Margin="0,10,0,5">
                                                 <Button Content="Reset All Checkboxes" x:Name="ResetCheckboxesButton" HorizontalAlignment="Left" Click="ResetCheckboxesButton_Click" VerticalAlignment="Center" Margin="0,0,5,0" />
-                                                <Button Content="Save As New Preset..." Name="SaveAsNewPresetButton" HorizontalAlignment="Left" Click="SaveAsNewPresetButton_OnClick" VerticalAlignment="Center" Margin="0,0,5,0" />
                                                 <Button Content="Copy to clipboard" ToolTip="Copy the JSON/XML result to the clip board" Name="CopyClipboardButton" HorizontalAlignment="Left" Click="CopyClipboardButton_OnClickButton_OnClick" VerticalAlignment="Center" Margin="0,0,5,0" />
                                             </DockPanel>
                                         </Grid>
 
                                         <StackPanel Margin="5,5,5,0">
-                                            <DockPanel Grid.Row="1" Grid.ColumnSpan="4" Margin="0,0,0,5">
+                                            <StackPanel Margin="5,5,0,0" Orientation="Horizontal">
                                                 <Label Content="Presets:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                                                <ComboBox Name="PresetComboBox" Margin="5" SelectionChanged="PresetComboBox_OnSelectionChanged" Width="281" Height="22">
-                                                    <ComboBox.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <StackPanel Orientation="Horizontal">
-                                                                <TextBlock Text="{Binding Name}" />
-                                                            </StackPanel>
-                                                        </DataTemplate>
-                                                    </ComboBox.ItemTemplate>
-                                                </ComboBox>
-                                                <Button Content="Save" Name="SavePresetButton" HorizontalAlignment="Left" Click="SavePresetButton_OnClick" VerticalAlignment="Center" Margin="0,0,5,0" />
-                                            </DockPanel>
-                                        </StackPanel>
+                                            </StackPanel>
 
+                                            <ComboBox Name="PresetComboBox" Margin="5" SelectionChanged="PresetComboBox_OnSelectionChanged" >
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Name}" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+
+                                            <StackPanel Margin="5,5,0,0" Orientation="Horizontal">
+                                                <Button Content="Save" Name="SavePresetButton" HorizontalAlignment="Left" Click="SavePresetButton_OnClick" VerticalAlignment="Center" Margin="0,0,5,0" />
+                                                <Button Content="Save As New Preset..." Name="SaveAsNewPresetButton" HorizontalAlignment="Left" Click="SaveAsNewPresetButton_OnClick" VerticalAlignment="Center" Margin="0,0,5,0" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                        
                                         <DockPanel Margin="5,5,5,0">
                                             <Label Content="Query Template:" 
 												HorizontalAlignment="Left" 
@@ -441,28 +444,27 @@
 												TextAlignment="Left" />
                                         </DockPanel>
 
-                                        <DockPanel Margin="5,5,5,0">
-                                            <Label Content="Select Properties:" 
-												HorizontalAlignment="Left" 
-												VerticalAlignment="Top"/>
+                                        <StackPanel Margin="5,5,5,5">
+                                            <StackPanel>
+                                                <Label Content="Select Properties:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                            </StackPanel>
+                                            <Grid>
+                                                <TextBox Height="Auto" MinHeight="60" MaxHeight="90" Width="Auto" Margin="5,0,0,0" Text="" Padding="4" 
+                                                    DataContext="SelectProperties" x:Name="SelectPropertiesTextBox" 
+                                                    TextWrapping="Wrap" LostFocus="SearchQueryTextBox_LostFocus_Handler" TextAlignment="Left">
+                                                    <TextBox.ToolTip>
+                                                        <TextBlock><Run Text="Specifies the list of managed properties to return for each search result item."/><LineBreak /><Run Text="For a managed property to be returned; the Retrievable flag must be set to &quot;true&quot; in the search schema."/><LineBreak /><LineBreak /><Run Text="Example: Path,Title,Url"/></TextBlock>
+                                                    </TextBox.ToolTip>
+                                                </TextBox>
+                                            </Grid>
 
-                                            <Button Padding="0" DockPanel.Dock="Right" DataContext="SelectProperties" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
-                                                <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
-                                            </Button>
+                                            <StackPanel HorizontalAlignment="Right" Margin="5,5,0,0">
+                                                <Button Padding="0" DockPanel.Dock="Right" DataContext="SelectProperties" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                    <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </StackPanel>
 
-                                            <TextBox Height="26" 
-												Margin="5,0,0,0" 
-												Text="" 
-												Padding="4"
-												DataContext="SelectProperties"
-												x:Name="SelectPropertiesTextBox"
-												LostFocus="SearchQueryTextBox_LostFocus_Handler"
-												TextAlignment="Left">
-                                                <TextBox.ToolTip>
-                                                    <TextBlock><Run Text="Specifies the list of managed properties to return for each search result item."/><LineBreak /><Run Text="For a managed property to be returned; the Retrievable flag must be set to &quot;true&quot; in the search schema."/><LineBreak /><LineBreak /><Run Text="Example: Path,Title,Url"/></TextBlock>
-                                                </TextBox.ToolTip>
-                                            </TextBox>
-                                        </DockPanel>
                                         <DockPanel Margin="5,5,5,0">
                                             <Label Content="Refiners:" 
 												HorizontalAlignment="Left" 
@@ -1071,7 +1073,7 @@
                 <GroupBox Grid.Column="0" Grid.Row="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,0,-12,0" Style="{DynamicResource GroupBoxStyleNoHeader}">
 
 
-                    <Expander Name="ConnectionExpanderBox" Padding="5" Header="Connection" Foreground="Black" IsExpanded="True">
+                    <Expander Name="ConnectionExpanderBox" Padding="5" Header="Connection" Foreground="Black" IsExpanded="False">
                         <Expander.Content>
                             <Grid Margin="5,10,5,0">
                                 <Grid.ColumnDefinitions>
