@@ -815,7 +815,7 @@
 
                                         <DockPanel Margin="5,5,5,0">
                                             <Label Content="Collapse Spec:" 
-												ToolTip="Collapse Specifiation"
+												ToolTip="Collapse Specification"
 												HorizontalAlignment="Left" 
 												VerticalAlignment="Top"/>
 
@@ -825,7 +825,7 @@
 												Margin="5,0,0,0" 
 												Text="" 
 												Padding="4"
-												DataContext="CollapseSpecifiation"
+												DataContext="CollapseSpecification"
 												x:Name="CollapseSpecTextBox"
 												LostFocus="SearchQueryTextBox_LostFocus_Handler"
 												TextAlignment="Left">

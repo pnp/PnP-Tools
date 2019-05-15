@@ -38,7 +38,7 @@ namespace PSSQT
             sb.Append(String.Format("HiddenConstraints: {0}\n", searchQueryRequest.HiddenConstraints));
             //sb.Append(String.Format("ResultsUrl: {0}\n", searchQueryRequest.ResultsUrl));
             //sb.Append(String.Format("QueryTag: {0}\n", searchQueryRequest.QueryTag));
-            //sb.Append(String.Format("CollapseSpecifiation: {0}\n", searchQueryRequest.CollapseSpecifiation));
+            //sb.Append(String.Format("CollapseSpecification: {0}\n", searchQueryRequest.CollapseSpecification));
             sb.Append(String.Format("QueryTemplate: {0}\n", searchQueryRequest.QueryTemplate));
             //sb.Append(String.Format("TrimDuplicatesIncludeId: {0}\n", searchQueryRequest.TrimDuplicatesIncludeId));
             sb.Append(String.Format("ClientType: {0}\n", searchQueryRequest.ClientType));

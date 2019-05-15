@@ -470,7 +470,7 @@ namespace PSSQT
 
             searchQueryRequest.SortList = new SortListArgumentParser(Sort).Parse() ?? searchQueryRequest.SortList;
 
-            searchQueryRequest.CollapseSpecifiation = CollapseSpecification ?? searchQueryRequest.CollapseSpecifiation;
+            searchQueryRequest.CollapseSpecification = CollapseSpecification ?? searchQueryRequest.CollapseSpecification;
 
 
             // set based on switches

@@ -38,7 +38,7 @@ namespace SearchQueryTool.Model
         public string HiddenConstraints { get; set; }
         public string ResultsUrl { get; set; }
         public string QueryTag { get; set; }
-        public string CollapseSpecifiation { get; set; }
+        public string CollapseSpecification { get; set; }
         public string QueryTemplate { get; set; }
         public long? TrimDuplicatesIncludeId { get; set; }
         public string ClientType { get; set; }
@@ -201,8 +201,8 @@ namespace SearchQueryTool.Model
             if (!String.IsNullOrEmpty(this.QueryTag))
                 uriBuilder.AppendFormat("&querytag='{0}'", UrlEncode(this.QueryTag));
 
-            if (!String.IsNullOrEmpty(this.CollapseSpecifiation))
-                uriBuilder.AppendFormat("&collapsespecification='{0}'", UrlEncode(this.CollapseSpecifiation));
+            if (!String.IsNullOrEmpty(this.CollapseSpecification))
+                uriBuilder.AppendFormat("&collapsespecification='{0}'", UrlEncode(this.CollapseSpecification));
 
             if (!String.IsNullOrEmpty(this.ClientType))
                 uriBuilder.AppendFormat("&clienttype='{0}'", this.ClientType);
@@ -445,8 +445,8 @@ namespace SearchQueryTool.Model
             if (!String.IsNullOrEmpty(this.QueryTag))
                 searchRequestBuilder.AppendFormat(", 'QueryTag':'{0}'", this.QueryTag);
 
-            if (!String.IsNullOrEmpty(this.CollapseSpecifiation))
-                searchRequestBuilder.AppendFormat(", 'CollapseSpecification':'{0}'", this.CollapseSpecifiation);
+            if (!String.IsNullOrEmpty(this.CollapseSpecification))
+                searchRequestBuilder.AppendFormat(", 'CollapseSpecification':'{0}'", this.CollapseSpecification);
 
             if (!String.IsNullOrEmpty(this.ClientType))
                 searchRequestBuilder.AppendFormat(", 'ClientType':'{0}'", this.ClientType);

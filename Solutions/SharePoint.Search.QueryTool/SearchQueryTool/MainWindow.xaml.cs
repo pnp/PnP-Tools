@@ -174,7 +174,7 @@ namespace SearchQueryTool
             // NB: Avoid setting this. Buggy?
             //RankingModelIdTextBox.Text = _searchQueryRequest.RankingModelId;
             SourceIdTextBox.Text = searchQueryRequest.SourceId;
-            CollapseSpecTextBox.Text = searchQueryRequest.CollapseSpecifiation;
+            CollapseSpecTextBox.Text = searchQueryRequest.CollapseSpecification;
         }
 
         private SearchMethodType CurrentSearchMethodType
@@ -558,8 +558,8 @@ namespace SearchQueryTool
                     case "querytag":
                         _searchQueryRequest.QueryTag = tb.Text.Trim();
                         break;
-                    case "collapsespecifiation":
-                        _searchQueryRequest.CollapseSpecifiation = tb.Text.Trim();
+                    case "collapsespecification":
+                        _searchQueryRequest.CollapseSpecification = tb.Text.Trim();
                         break;
                     case "startrow":
                         _searchQueryRequest.StartRow = DataConverter.TryConvertToInt(tb.Text.Trim());
