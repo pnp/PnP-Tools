@@ -408,9 +408,9 @@
                                         </Grid>
 
                                         <StackPanel Margin="5,5,5,0">
-                                            <StackPanel Margin="5,5,0,0" Orientation="Horizontal">
-                                                <Label Content="Presets:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                                            </StackPanel>
+                                            <Label Content="Show presets containing:" Margin="5,0,5,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                            <TextBox x:Name="PresetFilterTextBox" KeyUp="TextBox_KeyEnterUpdate" Margin="5,0,5,0" >
+                                            </TextBox>
 
                                             <ComboBox Name="PresetComboBox" Margin="5" SelectionChanged="PresetComboBox_OnSelectionChanged" >
                                                 <ComboBox.ItemTemplate>

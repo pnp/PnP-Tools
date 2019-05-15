@@ -2,52 +2,77 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+using System.Text.RegularExpressions;
 
 namespace SearchQueryTool.Model
 {
-    /// <summary>
-    /// Search preset list. Model for the dropdown with stored presets containing all search settings like
-    /// QueryText, server and all search parameters. 
-    /// </summary>
     public class SearchPresetList
     {
         private string PresetFolderPath { get; set; }
         public List<SearchPreset> Presets;
 
-        public SearchPresetList(string presetFolderPath)
+        public SearchPresetList(string presetFolderPath, string presetFilter)
         {
             PresetFolderPath = presetFolderPath;
             Presets = new List<SearchPreset>();
-            ReadFromFolderPath(PresetFolderPath);
+            ReadFromFolderPath(PresetFolderPath, presetFilter);
         }
 
-        /// <summary>
-        /// Traverse a directory and load all preset XML files stored there into a list of presets.
-        /// </summary>
-        /// <param name="folderPath">Path to load presets from. Default is .\Presets.</param>
-        /// <returns>True if successful, false otherwise</returns>
-        public bool ReadFromFolderPath(string folderPath=@".\Presets")
+        private void ReadFromFolderPath(string folderPath = @".\Presets", string filter = null)
         {
-            bool ret;
             try
             {
                 foreach (var file in Directory.EnumerateFiles(folderPath, "*.xml"))
                 {
-                    var preset = new SearchPreset(file);
-                    Presets.Add(preset);
+                    AddPreset(file, filter);
                 }
-                ret = true;
             }
             catch (Exception)
             {
-                ret = false;
+                // ignored
+            }
+        }
+
+        private void AddPreset(string file, string filter)
+        {
+            if (HasFilter(filter))
+            {
+                var name = Path.GetFileNameWithoutExtension(file);
+                if (!Include(name, filter))
+                    return;
             }
 
-            return ret;
+            var preset = new SearchPreset(file);
+            Presets.Add(preset);
+        }
+
+        private static bool HasFilter(string filter)
+        {
+            return !string.IsNullOrEmpty(filter);
+        }
+
+        private static bool Include(string name, string filter)
+        {
+            filter = NormalizeWhitespace(filter);
+            var nameTokens = GetTokens(name.ToLowerInvariant());
+            var filterTokens = GetTokens(filter.ToLowerInvariant());
+            var result = ContainsAllItems(nameTokens, filterTokens);
+            return result;
+        }
+
+        public static bool ContainsAllItems(List<string> a, List<string> b)
+        {
+            return !b.Except(a).Any();
+        }
+
+        private static List<string> GetTokens(string input)
+        {
+            return input.Split(' ').ToList();
+        }
+
+        private static string NormalizeWhitespace(string presetFilter)
+        {
+            return Regex.Replace(presetFilter, @"\s+", " ");
         }
     }
 }

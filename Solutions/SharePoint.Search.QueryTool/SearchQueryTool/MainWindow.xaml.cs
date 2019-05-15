@@ -57,7 +57,7 @@ namespace SearchQueryTool
 
         public SearchPresetList SearchPresets { get; set; }
         private string PresetFolderPath { get; set; }
-
+        
         public SafeObservable<SearchQueryDebug> ObservableQueryCollection { get; set; }
 
         private readonly object _locker = new object();
@@ -2882,6 +2882,14 @@ namespace SearchQueryTool
 
         }
 
+        private void TextBox_KeyEnterUpdate(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                LoadSearchPresetsFromFolder(PresetFolderPath);
+            }
+        }
+
         /// <summary>
         /// Load search connection setting from file and return as an SearchConnection object.
         /// </summary>
@@ -2959,14 +2967,12 @@ namespace SearchQueryTool
             }
         }
 
-        /// <summary>
-        /// Load preset settings from XML files in the Presets folder.
-        /// </summary>
         private void LoadSearchPresetsFromFolder(string presetFolderPath)
         {
             try
             {
-                SearchPresets = new SearchPresetList(presetFolderPath);
+                var presetFilter = PresetFilterTextBox.Text;
+                SearchPresets = new SearchPresetList(presetFolderPath, presetFilter);
                 PresetComboBox.ItemsSource = SearchPresets.Presets;
             }
             catch (Exception ex)
