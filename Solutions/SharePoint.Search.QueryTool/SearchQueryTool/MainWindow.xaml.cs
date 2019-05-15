@@ -2882,14 +2882,6 @@ namespace SearchQueryTool
 
         }
 
-        private void TextBox_KeyEnterUpdate(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                LoadSearchPresetsFromFolder(PresetFolderPath);
-            }
-        }
-
         /// <summary>
         /// Load search connection setting from file and return as an SearchConnection object.
         /// </summary>
@@ -2972,7 +2964,7 @@ namespace SearchQueryTool
             try
             {
                 var presetFilter = PresetFilterTextBox.Text;
-                SearchPresets = new SearchPresetList(presetFolderPath, presetFilter);
+                SearchPresets = new SearchPresetList(presetFolderPath);
                 PresetComboBox.ItemsSource = SearchPresets.Presets;
             }
             catch (Exception ex)
@@ -3019,5 +3011,18 @@ namespace SearchQueryTool
             Clipboard.SetText(content);
         }
 
+        private void PresetComboBox_OnDropDownOpened(object sender, EventArgs e)
+        {
+            try
+            {
+                var filter = PresetFilterTextBox.Text;
+                var presets = SearchPresets.Presets.Where(p => p.Include(filter));
+                PresetComboBox.ItemsSource = presets;
+            }
+            catch (Exception ex)
+            {
+                ShowMsgBox("Failed to read search presets. Error:" + ex.Message);
+            }
+        }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace SearchQueryTool.Model
 {
@@ -11,20 +9,20 @@ namespace SearchQueryTool.Model
         private string PresetFolderPath { get; set; }
         public List<SearchPreset> Presets;
 
-        public SearchPresetList(string presetFolderPath, string presetFilter)
+        public SearchPresetList(string presetFolderPath)
         {
             PresetFolderPath = presetFolderPath;
             Presets = new List<SearchPreset>();
-            ReadFromFolderPath(PresetFolderPath, presetFilter);
+            ReadFromFolderPath(PresetFolderPath);
         }
 
-        private void ReadFromFolderPath(string folderPath = @".\Presets", string filter = null)
+        private void ReadFromFolderPath(string folderPath = @".\Presets")
         {
             try
             {
                 foreach (var file in Directory.EnumerateFiles(folderPath, "*.xml"))
                 {
-                    AddPreset(file, filter);
+                    AddPreset(file);
                 }
             }
             catch (Exception)
@@ -33,46 +31,11 @@ namespace SearchQueryTool.Model
             }
         }
 
-        private void AddPreset(string file, string filter)
+        private void AddPreset(string file)
         {
-            if (HasFilter(filter))
-            {
-                var name = Path.GetFileNameWithoutExtension(file);
-                if (!Include(name, filter))
-                    return;
-            }
 
             var preset = new SearchPreset(file);
             Presets.Add(preset);
-        }
-
-        private static bool HasFilter(string filter)
-        {
-            return !string.IsNullOrEmpty(filter);
-        }
-
-        private static bool Include(string name, string filter)
-        {
-            filter = NormalizeWhitespace(filter);
-            var nameTokens = GetTokens(name.ToLowerInvariant());
-            var filterTokens = GetTokens(filter.ToLowerInvariant());
-            var result = ContainsAllItems(nameTokens, filterTokens);
-            return result;
-        }
-
-        public static bool ContainsAllItems(List<string> a, List<string> b)
-        {
-            return !b.Except(a).Any();
-        }
-
-        private static List<string> GetTokens(string input)
-        {
-            return input.Split(' ').ToList();
-        }
-
-        private static string NormalizeWhitespace(string presetFilter)
-        {
-            return Regex.Replace(presetFilter, @"\s+", " ");
         }
     }
 }
