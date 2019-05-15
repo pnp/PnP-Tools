@@ -864,6 +864,24 @@ namespace SearchQueryTool
             }
         }
 
+
+        private void CleanSelectProperties_Click(object sender, RoutedEventArgs e)
+        {
+            var dirtyProperties = SelectPropertiesTextBox.Text;
+            if (!string.IsNullOrWhiteSpace(dirtyProperties))
+            {
+                var dirtyPropertyList = dirtyProperties.Split(',');
+                if (dirtyPropertyList != null && dirtyPropertyList.Length > 0)
+                {
+                    var cleanList = dirtyPropertyList.Distinct().ToList();
+                    cleanList.Sort();
+                    var cleanProperties = String.Join(",", cleanList);
+                    SelectPropertiesTextBox.Text = cleanProperties;
+                    SelectPropertiesTextBox.Focus();
+                }
+            }
+        }
+
         private void MenuSaveConnectionProperties_Click(object sender, RoutedEventArgs e)
         {
             // Create a connection object with all data from the user interface
@@ -2994,5 +3012,6 @@ namespace SearchQueryTool
             }
             Clipboard.SetText(content);
         }
+
     }
 }

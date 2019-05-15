@@ -458,11 +458,15 @@
                                                 </TextBox>
                                             </Grid>
 
-                                            <StackPanel HorizontalAlignment="Right" Margin="5,5,0,0">
-                                                <Button Padding="0" DockPanel.Dock="Right" DataContext="SelectProperties" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                            <StackPanel Margin="5,5,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button Padding="0" DataContext="SelectProperties" Click="CleanSelectProperties_Click"  ToolTip="Clean up properties" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                                    <Image Source="Images/clean_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                                </Button>
+                                                <Button Padding="0" DataContext="SelectProperties" Click="PasteExampleButton_Click" ToolTip="Paste Example" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
                                                     <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
                                                 </Button>
-                                            </StackPanel>
+                                            </StackPanel>                                            
+                                            
                                         </StackPanel>
 
                                         <DockPanel Margin="5,5,5,0">
