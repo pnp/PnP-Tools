@@ -21,6 +21,8 @@ namespace SearchQueryTool.Model
         /// </summary>
         public string Name { get; set; }
 
+        public string Annotation { get; set; }
+
         /// <summary>
         /// The path to the XML file on disk that represents this search preset.
         /// </summary>

@@ -51,6 +51,7 @@ namespace SearchQueryTool
         private SearchQueryRequest _searchQueryRequest;
         private readonly SearchSuggestionsRequest _searchSuggestionsRequest;
         private SearchConnection _searchConnection;
+        private string _presetAnnotation;
         private SearchResult _searchResults;
         private bool _enableExperimentalFeatures;
         private bool _firstInit = true;
@@ -162,6 +163,7 @@ namespace SearchQueryTool
             }
 
             //LoadSearchPresetsFromFolder();
+            AnnotatePresetTextBox.Text = _presetAnnotation;
             UpdateRequestUriStringTextBlock();
             UpdateSearchQueryRequestControls(_searchQueryRequest);
             UpdateSearchConnectionControls(_searchConnection);
@@ -2864,13 +2866,20 @@ namespace SearchQueryTool
         {
             try
             {
-
                 var request = GetSearchQueryRequestFromUi();
                 var connection = GetSearchConnectionFromUi();
+                var annotation = AnnotatePresetTextBox.Text;
+
+                var userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+                var timeStamp = DateTime.Now;
+                var versionHistory = $"{timeStamp}: Created by {userName}";
+                var newAnnotation = $"{annotation}\r\n- {versionHistory}";
+
                 var preset = new SearchPreset()
                 {
                     Request = request,
                     Connection = connection,
+                    Annotation = newAnnotation
                 };
 
                 // Bring up Save As dialog to save current settings as new preset to set the Path and Name (derived from path) for the preset
@@ -2889,6 +2898,7 @@ namespace SearchQueryTool
                     preset.Name = Path.GetFileNameWithoutExtension(preset.Path);
 
                     var r = preset.Save();
+                    AnnotatePresetTextBox.Text = newAnnotation;
                     StateBarTextBlock.Text = String.Format("{0} new preset {1}", r ? "Saved" : "Failed to save", preset.Path);
 
                     // Reload saved files to populate combobox again
@@ -2915,15 +2925,24 @@ namespace SearchQueryTool
             var selected = PresetComboBox.SelectedItem as SearchPreset;
             if (selected != null)
             {
+                var annotation = AnnotatePresetTextBox.Text;
+
+                var userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+                var timeStamp = DateTime.Now;
+                var versionHistory = $"{timeStamp}: Version saved by {userName}";
+                var newAnnotation = $"{annotation}\r\n- {versionHistory}";
+
                 var preset = new SearchPreset()
                 {
                     Request = GetSearchQueryRequestFromUi(),
                     Connection = GetSearchConnectionFromUi(),
+                    Annotation = newAnnotation,
                     Path = selected.Path,
                     Name = Path.GetFileNameWithoutExtension(selected.Path)
                 };
 
                 var r = preset.Save();
+                AnnotatePresetTextBox.Text = newAnnotation;
                 StateBarTextBlock.Text = String.Format("{0} preset {1}", r ? "Saved" : "Failed to save", preset.Path);
             }
         }
@@ -2939,12 +2958,13 @@ namespace SearchQueryTool
             {
                 using (var reader = new StreamReader(path))
                 {
-                    var tmp = serializer.Deserialize(reader) as SearchPreset;
-                    if (tmp != null)
+                    var searchPreset = serializer.Deserialize(reader) as SearchPreset;
+                    if (searchPreset != null)
                     {
-                        _searchQueryRequest = tmp.Request;
-                        _searchConnection = tmp.Connection;
-
+                        _searchQueryRequest = searchPreset.Request;
+                        _searchConnection = searchPreset.Connection;
+                        _presetAnnotation = searchPreset.Annotation;
+                        
                         InitializeControls();
                         StateBarTextBlock.Text = String.Format("Successfully read XML preset from {0}", path);
                     }
@@ -3112,6 +3132,11 @@ namespace SearchQueryTool
         private void ForwardButton_OnClick(object sender, RoutedEventArgs e)
         {
             History.ForwardButton_OnClick(sender, e);
+        }
+
+        private void AnnotatePreset_OnClick(object sender, RoutedEventArgs e)
+        {
+            AnnotatePresetTextBox.Visibility = AnnotatePresetTextBox.IsVisible ? Visibility.Collapsed : Visibility.Visible;
         }
     }
 }
