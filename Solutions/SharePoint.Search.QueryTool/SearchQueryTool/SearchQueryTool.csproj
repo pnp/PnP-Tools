@@ -139,6 +139,7 @@
     <Compile Include="Helpers\WebAuthentication.cs" />
     <Compile Include="Helpers\RankDetail\StaticRank.cs" />
     <Compile Include="Helpers\XmlHelper.cs" />
+    <Compile Include="History.cs" />
     <Compile Include="Model\SearchConnection.cs" />
     <Compile Include="Model\SearchHistory.cs" />
     <Compile Include="Model\SearchPreset.cs" />
