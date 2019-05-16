@@ -450,7 +450,7 @@
                                             </StackPanel>
                                             
                                             <Grid>
-                                                <TextBox Height="Auto" MinHeight="60" MaxHeight="90" Width="Auto" Margin="5,0,0,0" Text="" Padding="4" 
+                                                <TextBox Height="Auto" MinHeight="26" MaxHeight="90" Width="Auto" Margin="5,0,0,0" Text="" Padding="4" 
                                                     DataContext="SelectProperties" x:Name="SelectPropertiesTextBox" 
                                                     TextWrapping="Wrap" LostFocus="SearchQueryTextBox_LostFocus_Handler" TextAlignment="Left">
                                                     <TextBox.ToolTip>
@@ -476,7 +476,7 @@
                                             </StackPanel>
 
                                             <Grid>
-                                                <TextBox Height="Auto" MinHeight="60" MaxHeight="90" Width="Auto" Margin="5,0,0,0" Text="" Padding="4" 
+                                                <TextBox Height="Auto" MinHeight="26" MaxHeight="90" Width="Auto" Margin="5,0,0,0" Text="" Padding="4" 
                                                      x:Name="HiddenConstraintsTextBox" 
                                                      DataContext="HiddenConstraints"
                                                      TextWrapping="Wrap" 
