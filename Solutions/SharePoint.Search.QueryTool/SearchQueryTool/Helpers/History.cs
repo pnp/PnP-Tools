@@ -4,11 +4,11 @@ using System.Linq;
 using System.Windows;
 using SearchQueryTool.Model;
 
-namespace SearchQueryTool
+namespace SearchQueryTool.Helpers
 {
     public class History
     {
-        private MainWindow _mainWindow;
+        private readonly MainWindow _mainWindow;
 
         public History(MainWindow mainWindow)
         {
@@ -53,57 +53,64 @@ namespace SearchQueryTool
 
                 if (latestHistory != null)
                 {
-                    // Initialize the user interface 
                     _mainWindow.LoadPreset(latestHistory.FullName);
 
-                    var status = String.Format("Loaded history from {0}", folderPath);
+                    var status = $"Loaded history from {folderPath}";
                     _mainWindow.StateBarTextBlock.Text = status;
                 }
             }
             catch (Exception ex)
             {
-                var status = String.Format("Failed to load history from folder {0}: {1}", folderPath, ex.Message);
+                var status = $"Failed to load history from folder {folderPath}: {ex.Message}";
                 _mainWindow.StateBarTextBlock.Text = status;
             }
         }
 
         internal void PruneHistoryDir(string folderPath, int maxHistoryFiles = 1000)
         {
-            // No pruning if max is 0 or lower (this means we should have infinite history)
-            if (maxHistoryFiles <= 0)
+            if (InfiniteHistoryEnabled(maxHistoryFiles))
                 return;
 
-            // Delete the N oldest files
-            if (!String.IsNullOrEmpty(folderPath))
-            {
-                try
-                {
-                    const string pattern = "*.xml";
-                    var numHistoryFiles = Directory.GetFiles(folderPath, pattern, SearchOption.TopDirectoryOnly).Length;
-                    if (numHistoryFiles > maxHistoryFiles)
-                    {
-                        foreach (
-                            var file in
-                            new DirectoryInfo(folderPath).GetFiles(pattern, SearchOption.TopDirectoryOnly)
-                                .OrderByDescending(x => x.LastWriteTime)
-                                .Skip(maxHistoryFiles))
-                        {
-                            file.Delete();
-                        }
+            DeleteOldest(folderPath, maxHistoryFiles);
+        }
 
-                    }
-                }
-                catch (Exception ex)
+        private void DeleteOldest(string folderPath, int maxHistoryFiles)
+        {
+            if (string.IsNullOrEmpty(folderPath)) return;
+
+            try
+            {
+                const string pattern = "*.xml";
+                var numHistoryFiles = Directory.GetFiles(folderPath, pattern, SearchOption.TopDirectoryOnly).Length;
+                if (!CleanupNecessary(maxHistoryFiles, numHistoryFiles)) return;
+
+                foreach (var file in new DirectoryInfo(folderPath).GetFiles(pattern, SearchOption.TopDirectoryOnly)
+                        .OrderByDescending(x => x.LastWriteTime)
+                        .Skip(maxHistoryFiles))
                 {
-                    var status = String.Format("Failed to clean up history folder {0}: {1}", folderPath, ex.Message);
-                    _mainWindow.StateBarTextBlock.Text = status;
+                    file.Delete();
                 }
             }
+            catch (Exception ex)
+            {
+                var status = $"Failed to clean up history folder {folderPath}: {ex.Message}";
+                _mainWindow.StateBarTextBlock.Text = status;
+            }
+        }
+
+        private static bool CleanupNecessary(int maxHistoryFiles, int numHistoryFiles)
+        {
+            return numHistoryFiles > maxHistoryFiles;
+        }
+
+        private static bool InfiniteHistoryEnabled(int maxHistoryFiles)
+        {
+            return maxHistoryFiles <= 0;
         }
 
         internal void SaveHistoryItem()
         {
-            var filename = string.Format("history-{0:yyyy-MM-dd_HH-mm-ss}.xml", DateTime.Now);
+            var filename = $"history-{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.xml";
             var path = Path.Combine(_mainWindow.HistoryFolderPath, filename);
             var preset = new SearchPreset()
             {
@@ -113,7 +120,7 @@ namespace SearchQueryTool
                 Name = Path.GetFileNameWithoutExtension(filename)
             };
 
-            var r = preset.Save();
+            var unused = preset.Save();
         }
 
         internal void BackButton_OnClick(object sender, RoutedEventArgs e)
