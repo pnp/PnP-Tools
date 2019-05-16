@@ -1095,6 +1095,7 @@ namespace SearchQueryTool
         {
             ConnectionExpanderBox.IsExpanded = false;
             ConnectionExpanderBox.Foreground = Brushes.Green;
+            RequestUriLengthTextBox.Foreground = Brushes.Gray;
             HitStatusTextBlock.Foreground = Brushes.Black;
 
             // Save this successful item to our history
@@ -1111,6 +1112,7 @@ namespace SearchQueryTool
         {
             ConnectionExpanderBox.Foreground = Brushes.Red;
             HitStatusTextBlock.Foreground = Brushes.Red;
+            RequestUriLengthTextBox.Foreground = Brushes.Red;
         }
 
         private Button GetHiddenConstraintsButton(string text)
@@ -2399,9 +2401,25 @@ namespace SearchQueryTool
                 if (searchMethodType == SearchMethodType.Query)
                 {
                     if (httpMethodType == HttpMethodType.Get)
-                        RequestUriStringTextBox.Text = _searchQueryRequest.GenerateHttpGetUri().ToString();
+                    {
+                        var uri = _searchQueryRequest.GenerateHttpGetUri().ToString();
+                        if (RequestUriLengthTextBox != null)
+                        {
+                            RequestUriLengthTextBox.Text = $"HTTP GET {uri.Length.ToString()}";
+                        }
+                        
+                        RequestUriStringTextBox.Text = uri;
+                    }
+                        
                     else if (httpMethodType == HttpMethodType.Post)
+                    {
+                        var uri = _searchQueryRequest.GenerateHttpGetUri().ToString();
+                        if (RequestUriLengthTextBox != null)
+                        {
+                            RequestUriLengthTextBox.Text = $"HTTP POST {uri.Length.ToString()}";
+                        }
                         RequestUriStringTextBox.Text = _searchQueryRequest.GenerateHttpPostUri().ToString();
+                    }
                 }
                 else if (searchMethodType == SearchMethodType.Suggest)
                 {

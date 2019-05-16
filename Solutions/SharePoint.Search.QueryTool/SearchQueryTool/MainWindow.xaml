@@ -1393,9 +1393,16 @@
                 </StatusBar.ItemsPanel>
                 <StatusBarItem>
                     <DockPanel>
-                        <TextBlock x:Name="StateBarTextBlock" Text="Ready"/>
+                        <TextBlock x:Name="StateBarTextBlock" Text="Ready" HorizontalAlignment="Left"/>
                         <ProgressBar x:Name="ProgressBar" Value="0" Width="100" Visibility="Hidden" IsIndeterminate="False" Orientation="Horizontal" Height="18" Margin="15,0,0,0"/>
                     </DockPanel>
+                </StatusBarItem>
+                <StatusBarItem HorizontalAlignment="Right">
+                    <TextBox x:Name="RequestUriLengthTextBox" Foreground="Gray" Text="0000" BorderBrush="{x:Null}" SelectionBrush="{x:Null}" HorizontalAlignment="Right">
+                        <TextBox.ToolTip>
+                            <TextBlock><Run Text="Length of GET or POST request."/></TextBlock>
+                        </TextBox.ToolTip>
+                    </TextBox>
                 </StatusBarItem>
             </StatusBar>
         </StackPanel>
