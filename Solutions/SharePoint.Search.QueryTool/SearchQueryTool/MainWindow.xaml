@@ -147,7 +147,7 @@
 										AcceptsReturn="False"
 										FontFamily="Courier New"
                                         Height="Auto"
-                                        MinHeight="60"
+                                        MinHeight="60" MaxHeight="180"
 										Padding="4" 
 										TextWrapping="Wrap" 
 										DataContext="Query" MouseDoubleClick="QueryDoubleClick"
