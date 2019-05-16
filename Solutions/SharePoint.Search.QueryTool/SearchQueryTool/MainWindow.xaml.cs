@@ -57,7 +57,10 @@ namespace SearchQueryTool
 
         public SearchPresetList SearchPresets { get; set; }
         private string PresetFolderPath { get; set; }
-        
+
+        public SearchHistory SearchHistory { get; set; }
+        private string HistoryFolderPath { get; set; }
+
         public SafeObservable<SearchQueryDebug> ObservableQueryCollection { get; set; }
 
         private readonly object _locker = new object();
@@ -79,6 +82,14 @@ namespace SearchQueryTool
             InitializeComponent();
             InitializeControls();
 
+            HistoryFolderPath = InitDirectoryFromSetting("HistoryFolderPath", @".\History");
+            var historyMaxFiles = ReadSettingInt("HistoryMaxFiles", 1000);
+
+            PruneHistoryDir(HistoryFolderPath, historyMaxFiles);
+            SearchHistory = new SearchHistory(HistoryFolderPath);
+            RefreshHistoryButtonState();
+            LoadLatestHistory(HistoryFolderPath);
+
             // Get setting or use sensible default if not found
             var tmpPath = ReadSetting("PresetsFolderPath");
             if (!Regex.IsMatch(tmpPath, @"^\w", RegexOptions.IgnoreCase) && !tmpPath.StartsWith(@"\"))
@@ -99,6 +110,151 @@ namespace SearchQueryTool
             LoadSearchPresetsFromFolder(PresetFolderPath);
         }
 
+        private string InitDirectoryFromSetting(string settingName, string defaultPath)
+        {
+            var tmpPath = String.Empty;
+            try
+            {
+                tmpPath = ReadSetting(settingName);
+                tmpPath = (!String.IsNullOrEmpty(tmpPath)) ? tmpPath : Path.GetFullPath(defaultPath);
+                if (!Directory.Exists(tmpPath))
+                {
+                    Directory.CreateDirectory(tmpPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                StateBarTextBlock.Text = String.Format("Failed to create folder for setting {0}, defaultPath {1}: {2}", settingName, defaultPath, ex.Message);
+            }
+            return tmpPath;
+        }
+
+        private static int ReadSettingInt(string key, int defaultValue)
+        {
+            int ret;
+            try
+            {
+                ret = Int32.Parse(ConfigurationManager.AppSettings[key]); ;
+            }
+            catch (Exception)
+            {
+                ret = defaultValue;
+            }
+            return ret;
+        }
+
+        private void RefreshHistoryButtonState()
+        {
+            if (SearchHistory.CanNavigateBack())
+            {
+                BackButton.Opacity = 100.0;
+                BackButton.IsEnabled = true;
+            }
+            else
+            {
+                BackButton.Opacity = 10.0;
+                BackButton.IsEnabled = false;
+            }
+
+            if (SearchHistory.CanNavigateForward())
+            {
+                ForwardButton.Opacity = 100.0;
+                ForwardButton.IsEnabled = true;
+            }
+            else
+            {
+                ForwardButton.Opacity = 10.0;
+                ForwardButton.IsEnabled = false;
+            }
+        }
+
+        private void LoadLatestHistory(string folderPath)
+        {
+            try
+            {
+                const string pattern = "*.xml";
+
+                var latestHistory = new DirectoryInfo(folderPath).GetFiles(pattern, SearchOption.TopDirectoryOnly)
+                    .OrderByDescending(x => x.LastWriteTime)
+                    .DefaultIfEmpty(null)
+                    .FirstOrDefault();
+
+                if (latestHistory != null)
+                {
+                    // Initialize the user interface 
+                    LoadPreset(latestHistory.FullName);
+
+                    var status = String.Format("Loaded history from {0}", folderPath);
+                    StateBarTextBlock.Text = status;
+                }
+            }
+            catch (Exception ex)
+            {
+                var status = String.Format("Failed to load history from folder {0}: {1}", folderPath, ex.Message);
+                StateBarTextBlock.Text = status;
+            }
+        }
+
+        private void PruneHistoryDir(string folderPath, int maxHistoryFiles = 1000)
+        {
+            // No pruning if max is 0 or lower (this means we should have infinite history)
+            if (maxHistoryFiles <= 0)
+                return;
+
+            // Delete the N oldest files
+            if (!String.IsNullOrEmpty(folderPath))
+            {
+                try
+                {
+                    const string pattern = "*.xml";
+                    var numHistoryFiles = Directory.GetFiles(folderPath, pattern, SearchOption.TopDirectoryOnly).Length;
+                    if (numHistoryFiles > maxHistoryFiles)
+                    {
+                        foreach (
+                            var file in
+                            new DirectoryInfo(folderPath).GetFiles(pattern, SearchOption.TopDirectoryOnly)
+                                .OrderByDescending(x => x.LastWriteTime)
+                                .Skip(maxHistoryFiles))
+                        {
+                            file.Delete();
+                        }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var status = String.Format("Failed to clean up history folder {0}: {1}", folderPath, ex.Message);
+                    StateBarTextBlock.Text = status;
+                }
+            }
+        }
+        private void SaveHistoryItem()
+        {
+            var filename = string.Format("history-{0:yyyy-MM-dd_HH-mm-ss}.xml", DateTime.Now);
+            var path = Path.Combine(HistoryFolderPath, filename);
+            var preset = new SearchPreset()
+            {
+                Request = GetSearchQueryRequestFromUi(),
+                Connection = GetSearchConnectionFromUi(),
+                Path = path,
+                Name = Path.GetFileNameWithoutExtension(filename)
+            };
+
+            var r = preset.Save();
+        }
+        private void BackButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            SearchHistory.NavigateBack();
+            LoadPreset(SearchHistory.Current);
+            RefreshHistoryButtonState();
+        }
+
+        private void ForwardButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            SearchHistory.NavigateForward();
+            LoadPreset(SearchHistory.Current);
+            RefreshHistoryButtonState();
+        }
         private void InitializeControls()
         {
             // Default to setting identify as current Windows user identify
@@ -1048,6 +1204,14 @@ namespace SearchQueryTool
             ConnectionExpanderBox.IsExpanded = false;
             ConnectionExpanderBox.Foreground = Brushes.Green;
             HitStatusTextBlock.Foreground = Brushes.Black;
+
+            // Save this successful item to our history
+            SaveHistoryItem();
+
+            // Reload entire history list and reset the current point to the latest entry
+            SearchHistory = new SearchHistory(HistoryFolderPath);
+            RefreshHistoryButtonState();
+
             RefreshBreadCrumbs();
         }
 

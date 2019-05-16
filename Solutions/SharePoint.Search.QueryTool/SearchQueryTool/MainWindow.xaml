@@ -88,12 +88,21 @@
 
 
         <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="10,10,10,0" MaxHeight="50">
+            <Button Name="BackButton" Click="BackButton_OnClick" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" ToolTip="Backward">
+                <Image Source="Images/backward_icon.png" DockPanel.Dock="Right"/>
+            </Button>
+
             <Button Padding="8" 
 				IsDefault="{Binding IsKeyboardFocused, ElementName=QueryTextBox}"
 				x:Name="RunButton"
 				Margin="10,0,10,0" 
 				Click="RunButton_Click"
 				Width="100" Content="Run"/>
+
+            <Button Name="ForwardButton" Click="ForwardButton_OnClick" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="{x:Null}" ToolTip="Forward">
+                <Image Source="Images/forward_icon.png" DockPanel.Dock="Right"/>
+            </Button>
+
             <Separator Width="10" />
             <TextBox x:Name="RequestUriStringTextBox" TextWrapping="Wrap" IsReadOnly="True" IsReadOnlyCaretVisible="True" Margin="10,0,10,0" Padding="8" Foreground="#FF0009C3" />
         </DockPanel>
