@@ -180,11 +180,15 @@
     <Compile Include="..\SearchQueryTool\SPAuthenticationClient\AuthenticationClient.cs">
       <Link>SPAuthenticationClient\AuthenticationClient.cs</Link>
     </Compile>
-    <Compile Include="AllPropertiesInlineResultProcessor.cs" />
-    <Compile Include="AllPropertiesResultProcessor.cs" />
+    <Compile Include="ResultProcessor\AllPropertiesInlineResultProcessor.cs" />
+    <Compile Include="ResultProcessor\AllPropertiesResultProcessor.cs" />
+    <Compile Include="ResultProcessor\AllResultsResultProcessor.cs" />
     <Compile Include="AuthenticationMethod.cs" />
-    <Compile Include="ExplainRankResultProcessor.cs" />
+    <Compile Include="ResultProcessor\BaseRankDetailResultProcessor.cs" />
+    <Compile Include="ResultProcessor\CrawledPropertiesResultProcessor.cs" />
+    <Compile Include="ResultProcessor\ExplainRankResultProcessor.cs" />
     <Compile Include="FormatResultsCmdlet.cs" />
+    <Compile Include="ResultProcessor\FormatResultsResultProcessor.cs" />
     <Compile Include="FormatSuggestionsCmdlet.cs" />
     <Compile Include="Helpers\Authentication\AdalAuthentication.cs" />
     <Compile Include="Helpers\ConsoleFormatter.cs" />
@@ -192,8 +196,12 @@
     <Compile Include="Helpers\HttpRequestResponsePairExtensions.cs" />
     <Compile Include="Helpers\PSWebAuthentication.cs" />
     <Compile Include="Helpers\ResultItemExtensions.cs" />
+    <Compile Include="ResultProcessor\ISuggestionsResultProcessor.cs" />
     <Compile Include="NewMultiGeoSearchConfiguration.cs" />
-    <Compile Include="QueryResultProcessor.cs" />
+    <Compile Include="PresetCompleter.cs" />
+    <Compile Include="ResultProcessor\PrimaryResultsResultProcessor.cs" />
+    <Compile Include="ResultProcessor\RankContributionResultProcessor.cs" />
+    <Compile Include="ResultProcessor\RankDetailResultProcessor.cs" />
     <Compile Include="RankDetailTooManyResults.cs" />
     <Compile Include="RankingFeatureHelper.cs" />
     <Compile Include="RankingFeatureFormatter.cs" />
@@ -221,6 +229,17 @@
     <Compile Include="RankLogParser\RankLogStageProximityFeature.cs" />
     <Compile Include="RankLogParser\RankLogStageStaticFeature.cs" />
     <Compile Include="RankModelNames.cs" />
+    <Compile Include="ResultProcessor\RankXMLResultProcessor.cs" />
+    <Compile Include="ResultProcessor\RawResultProcessor.cs" />
+    <Compile Include="ResultProcessor\RawSuggestionsResultProcessor.cs" />
+    <Compile Include="ResultProcessor\AbstractQueryResultProcessor.cs" />
+    <Compile Include="ResultProcessor\BaseQueryResultProcessor.cs" />
+    <Compile Include="ResultProcessor\BasicAllResultProcessor.cs" />
+    <Compile Include="ResultProcessor\BasicResultProcessor.cs" />
+    <Compile Include="ResultProcessor\IQueryResultProcessor.cs" />
+    <Compile Include="ResultProcessor\ManagedPropertiesResultProcessor.cs" />
+    <Compile Include="ResultProcessor\QueryResultProcessorFactory.cs" />
+    <Compile Include="ResultProcessor\RefinerResultProcessor.cs" />
     <Compile Include="ResultSourceNames.cs" />
     <Compile Include="SearchConnectionExtensions.cs" />
     <Compile Include="SearchSuggestionsRequestExtensions.cs" />
@@ -232,6 +251,7 @@
     <Compile Include="SelectPropertiesListArgumentParser.cs" />
     <Compile Include="SortListArgumentParser.cs" />
     <Compile Include="StringListArgumentParser.cs" />
+    <Compile Include="ResultProcessor\SuggestionsResultProcessor.cs" />
     <Compile Include="TransformResults.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -259,6 +279,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>rem %25SystemRoot%25\system32\WindowsPowerShell\v1.0\powershell.exe -File "$(SolutionDir)PSSQT\Scripts\Update-AssemblyFileVersion.ps1"  -assemblyInfoFilePath "$(SolutionDir)PSSQT\Properties\AssemblyInfo.cs"</PreBuildEvent>

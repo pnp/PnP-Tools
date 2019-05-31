@@ -8,7 +8,7 @@ using SearchQueryTool.Model;
 using PSSQT.Helpers;
 using SearchQueryTool.Helpers;
 
-namespace PSSQT
+namespace PSSQT.ResultProcessor
 {
     class AllPropertiesMaxRowsExhausted : Exception
     {
