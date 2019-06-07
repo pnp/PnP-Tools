@@ -139,7 +139,9 @@
     <Compile Include="Helpers\WebAuthentication.cs" />
     <Compile Include="Helpers\RankDetail\StaticRank.cs" />
     <Compile Include="Helpers\XmlHelper.cs" />
+    <Compile Include="Helpers\History.cs" />
     <Compile Include="Model\SearchConnection.cs" />
+    <Compile Include="Model\SearchHistory.cs" />
     <Compile Include="Model\SearchPreset.cs" />
     <Compile Include="Model\SearchPresetList.cs" />
     <Compile Include="Model\SearchQueryDebug.cs" />
@@ -298,6 +300,24 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Presets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\clean_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\save_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\save_as_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\forward_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\backward_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\comment.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

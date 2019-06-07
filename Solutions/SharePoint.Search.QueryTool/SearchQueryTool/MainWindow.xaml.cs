@@ -51,12 +51,17 @@ namespace SearchQueryTool
         private SearchQueryRequest _searchQueryRequest;
         private readonly SearchSuggestionsRequest _searchSuggestionsRequest;
         private SearchConnection _searchConnection;
+        private string _presetAnnotation;
         private SearchResult _searchResults;
         private bool _enableExperimentalFeatures;
         private bool _firstInit = true;
 
         public SearchPresetList SearchPresets { get; set; }
         private string PresetFolderPath { get; set; }
+
+        public SearchHistory SearchHistory { get; set; }
+        internal string HistoryFolderPath { get; set; }
+        public History History { get; }
 
         public SafeObservable<SearchQueryDebug> ObservableQueryCollection { get; set; }
 
@@ -79,6 +84,15 @@ namespace SearchQueryTool
             InitializeComponent();
             InitializeControls();
 
+            HistoryFolderPath = InitDirectoryFromSetting("HistoryFolderPath", @".\History");
+            var historyMaxFiles = ReadSettingInt("HistoryMaxFiles", 1000);
+
+            History = new History(this);
+            History.PruneHistoryDir(HistoryFolderPath, historyMaxFiles);
+            SearchHistory = new SearchHistory(HistoryFolderPath);
+            History.RefreshHistoryButtonState();
+            History.LoadLatestHistory(HistoryFolderPath);
+
             // Get setting or use sensible default if not found
             var tmpPath = ReadSetting("PresetsFolderPath");
             if (!Regex.IsMatch(tmpPath, @"^\w", RegexOptions.IgnoreCase) && !tmpPath.StartsWith(@"\"))
@@ -99,6 +113,39 @@ namespace SearchQueryTool
             LoadSearchPresetsFromFolder(PresetFolderPath);
         }
 
+        private string InitDirectoryFromSetting(string settingName, string defaultPath)
+        {
+            var tmpPath = String.Empty;
+            try
+            {
+                tmpPath = ReadSetting(settingName);
+                tmpPath = (!String.IsNullOrEmpty(tmpPath)) ? tmpPath : Path.GetFullPath(defaultPath);
+                if (!Directory.Exists(tmpPath))
+                {
+                    Directory.CreateDirectory(tmpPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                StateBarTextBlock.Text = String.Format("Failed to create folder for setting {0}, defaultPath {1}: {2}", settingName, defaultPath, ex.Message);
+            }
+            return tmpPath;
+        }
+
+        private static int ReadSettingInt(string key, int defaultValue)
+        {
+            int ret;
+            try
+            {
+                ret = Int32.Parse(ConfigurationManager.AppSettings[key]); ;
+            }
+            catch (Exception)
+            {
+                ret = defaultValue;
+            }
+            return ret;
+        }
+
         private void InitializeControls()
         {
             // Default to setting identify as current Windows user identify
@@ -116,6 +163,7 @@ namespace SearchQueryTool
             }
 
             //LoadSearchPresetsFromFolder();
+            AnnotatePresetTextBox.Text = _presetAnnotation;
             UpdateRequestUriStringTextBlock();
             UpdateSearchQueryRequestControls(_searchQueryRequest);
             UpdateSearchConnectionControls(_searchConnection);
@@ -174,7 +222,7 @@ namespace SearchQueryTool
             // NB: Avoid setting this. Buggy?
             //RankingModelIdTextBox.Text = _searchQueryRequest.RankingModelId;
             SourceIdTextBox.Text = searchQueryRequest.SourceId;
-            CollapseSpecTextBox.Text = searchQueryRequest.CollapseSpecifiation;
+            CollapseSpecTextBox.Text = searchQueryRequest.CollapseSpecification;
         }
 
         private SearchMethodType CurrentSearchMethodType
@@ -201,6 +249,8 @@ namespace SearchQueryTool
                 return (HttpGetMethodRadioButton.IsChecked.Value ? HttpMethodType.Get : HttpMethodType.Post);
             }
         }
+
+        
 
         #region Event Handlers
 
@@ -558,8 +608,8 @@ namespace SearchQueryTool
                     case "querytag":
                         _searchQueryRequest.QueryTag = tb.Text.Trim();
                         break;
-                    case "collapsespecifiation":
-                        _searchQueryRequest.CollapseSpecifiation = tb.Text.Trim();
+                    case "collapsespecification":
+                        _searchQueryRequest.CollapseSpecification = tb.Text.Trim();
                         break;
                     case "startrow":
                         _searchQueryRequest.StartRow = DataConverter.TryConvertToInt(tb.Text.Trim());
@@ -835,10 +885,15 @@ namespace SearchQueryTool
                                     RankingModelIdTextBox.Text = exampleString;
                                     RankingModelIdTextBox.Focus();
                                     break;
+                                case "hiddenconstraints":
+                                    HiddenConstraintsTextBox.Text = exampleString;
+                                    HiddenConstraintsTextBox.Focus();
+                                    break;
                                 case "selectproperties":
                                     SelectPropertiesTextBox.Text = exampleString;
                                     SelectPropertiesTextBox.Focus();
                                     break;
+
                                 case "refiners":
                                     RefinersTextBox.Text = exampleString;
                                     RefinersTextBox.Focus();
@@ -860,6 +915,24 @@ namespace SearchQueryTool
                             }
                         }
                     }
+                }
+            }
+        }
+
+
+        private void CleanSelectProperties_Click(object sender, RoutedEventArgs e)
+        {
+            var dirtyProperties = SelectPropertiesTextBox.Text;
+            if (!string.IsNullOrWhiteSpace(dirtyProperties))
+            {
+                var dirtyPropertyList = dirtyProperties.Split(',');
+                if (dirtyPropertyList != null && dirtyPropertyList.Length > 0)
+                {
+                    var cleanList = dirtyPropertyList.Distinct().ToList();
+                    cleanList.Sort();
+                    var cleanProperties = String.Join(",", cleanList);
+                    SelectPropertiesTextBox.Text = cleanProperties;
+                    SelectPropertiesTextBox.Focus();
                 }
             }
         }
@@ -1024,7 +1097,16 @@ namespace SearchQueryTool
         {
             ConnectionExpanderBox.IsExpanded = false;
             ConnectionExpanderBox.Foreground = Brushes.Green;
+            RequestUriLengthTextBox.Foreground = Brushes.Gray;
             HitStatusTextBlock.Foreground = Brushes.Black;
+
+            // Save this successful item to our history
+            History.SaveHistoryItem();
+
+            // Reload entire history list and reset the current point to the latest entry
+            SearchHistory = new SearchHistory(HistoryFolderPath);
+            History.RefreshHistoryButtonState();
+
             RefreshBreadCrumbs();
         }
 
@@ -1032,6 +1114,7 @@ namespace SearchQueryTool
         {
             ConnectionExpanderBox.Foreground = Brushes.Red;
             HitStatusTextBlock.Foreground = Brushes.Red;
+            RequestUriLengthTextBox.Foreground = Brushes.Red;
         }
 
         private Button GetHiddenConstraintsButton(string text)
@@ -2320,9 +2403,25 @@ namespace SearchQueryTool
                 if (searchMethodType == SearchMethodType.Query)
                 {
                     if (httpMethodType == HttpMethodType.Get)
-                        RequestUriStringTextBox.Text = _searchQueryRequest.GenerateHttpGetUri().ToString();
+                    {
+                        var uri = _searchQueryRequest.GenerateHttpGetUri().ToString();
+                        if (RequestUriLengthTextBox != null)
+                        {
+                            RequestUriLengthTextBox.Text = $"HTTP GET {uri.Length.ToString()}";
+                        }
+                        
+                        RequestUriStringTextBox.Text = uri;
+                    }
+                        
                     else if (httpMethodType == HttpMethodType.Post)
+                    {
+                        var uri = _searchQueryRequest.GenerateHttpGetUri().ToString();
+                        if (RequestUriLengthTextBox != null)
+                        {
+                            RequestUriLengthTextBox.Text = $"HTTP POST {uri.Length.ToString()}";
+                        }
                         RequestUriStringTextBox.Text = _searchQueryRequest.GenerateHttpPostUri().ToString();
+                    }
                 }
                 else if (searchMethodType == SearchMethodType.Suggest)
                 {
@@ -2733,7 +2832,7 @@ namespace SearchQueryTool
         /// Get a SearchConnection object based on the current alues of the relevant input boxes in the user interface.
         /// </summary>
         /// <returns>A SearchConnection object</returns>
-        private SearchConnection GetSearchConnectionFromUi()
+        internal SearchConnection GetSearchConnectionFromUi()
         {
             var connection = new SearchConnection
             {
@@ -2753,7 +2852,7 @@ namespace SearchQueryTool
         /// Get a SearchQueryRequest object based on the current alues of the relevant input boxes in the user interface.
         /// </summary>
         /// <returns>A SearchConnection object</returns>
-        private SearchQueryRequest GetSearchQueryRequestFromUi()
+        internal SearchQueryRequest GetSearchQueryRequestFromUi()
         {
             return _searchQueryRequest;
         }
@@ -2767,13 +2866,20 @@ namespace SearchQueryTool
         {
             try
             {
-
                 var request = GetSearchQueryRequestFromUi();
                 var connection = GetSearchConnectionFromUi();
+                var annotation = AnnotatePresetTextBox.Text;
+
+                var userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+                var timeStamp = DateTime.Now;
+                var versionHistory = $"{timeStamp}: Created by {userName}";
+                var newAnnotation = $"{annotation}\r\n- {versionHistory}";
+
                 var preset = new SearchPreset()
                 {
                     Request = request,
                     Connection = connection,
+                    Annotation = newAnnotation
                 };
 
                 // Bring up Save As dialog to save current settings as new preset to set the Path and Name (derived from path) for the preset
@@ -2792,6 +2898,7 @@ namespace SearchQueryTool
                     preset.Name = Path.GetFileNameWithoutExtension(preset.Path);
 
                     var r = preset.Save();
+                    AnnotatePresetTextBox.Text = newAnnotation;
                     StateBarTextBlock.Text = String.Format("{0} new preset {1}", r ? "Saved" : "Failed to save", preset.Path);
 
                     // Reload saved files to populate combobox again
@@ -2818,15 +2925,24 @@ namespace SearchQueryTool
             var selected = PresetComboBox.SelectedItem as SearchPreset;
             if (selected != null)
             {
+                var annotation = AnnotatePresetTextBox.Text;
+
+                var userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+                var timeStamp = DateTime.Now;
+                var versionHistory = $"{timeStamp}: Version saved by {userName}";
+                var newAnnotation = $"{annotation}\r\n- {versionHistory}";
+
                 var preset = new SearchPreset()
                 {
                     Request = GetSearchQueryRequestFromUi(),
                     Connection = GetSearchConnectionFromUi(),
+                    Annotation = newAnnotation,
                     Path = selected.Path,
                     Name = Path.GetFileNameWithoutExtension(selected.Path)
                 };
 
                 var r = preset.Save();
+                AnnotatePresetTextBox.Text = newAnnotation;
                 StateBarTextBlock.Text = String.Format("{0} preset {1}", r ? "Saved" : "Failed to save", preset.Path);
             }
         }
@@ -2835,19 +2951,20 @@ namespace SearchQueryTool
         /// Load a preset from XML
         /// </summary>
         /// <param name="path">Path to XML file containing the deserialized preset.</param>
-        private void LoadPreset(string path)
+        protected internal void LoadPreset(string path)
         {
             var serializer = new XmlSerializer(typeof(SearchPreset));
             try
             {
                 using (var reader = new StreamReader(path))
                 {
-                    var tmp = serializer.Deserialize(reader) as SearchPreset;
-                    if (tmp != null)
+                    var searchPreset = serializer.Deserialize(reader) as SearchPreset;
+                    if (searchPreset != null)
                     {
-                        _searchQueryRequest = tmp.Request;
-                        _searchConnection = tmp.Connection;
-
+                        _searchQueryRequest = searchPreset.Request;
+                        _searchConnection = searchPreset.Connection;
+                        _presetAnnotation = searchPreset.Annotation;
+                        
                         InitializeControls();
                         StateBarTextBlock.Text = String.Format("Successfully read XML preset from {0}", path);
                     }
@@ -2941,13 +3058,11 @@ namespace SearchQueryTool
             }
         }
 
-        /// <summary>
-        /// Load preset settings from XML files in the Presets folder.
-        /// </summary>
         private void LoadSearchPresetsFromFolder(string presetFolderPath)
         {
             try
             {
+                var presetFilter = PresetFilterTextBox.Text;
                 SearchPresets = new SearchPresetList(presetFolderPath);
                 PresetComboBox.ItemsSource = SearchPresets.Presets;
             }
@@ -2993,6 +3108,35 @@ namespace SearchQueryTool
                 content = XmlHelper.PrintXml(_searchResults.ResponseContent);
             }
             Clipboard.SetText(content);
+        }
+
+        private void PresetComboBox_OnDropDownOpened(object sender, EventArgs e)
+        {
+            try
+            {
+                var filter = PresetFilterTextBox.Text;
+                var presets = SearchPresets.Presets.Where(p => p.Include(filter));
+                PresetComboBox.ItemsSource = presets;
+            }
+            catch (Exception ex)
+            {
+                ShowMsgBox("Failed to read search presets. Error:" + ex.Message);
+            }
+        }
+
+        private void BackButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            History.BackButton_OnClick(sender, e);
+        }
+
+        private void ForwardButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            History.ForwardButton_OnClick(sender, e);
+        }
+
+        private void AnnotatePreset_OnClick(object sender, RoutedEventArgs e)
+        {
+            AnnotatePresetTextBox.Visibility = AnnotatePresetTextBox.IsVisible ? Visibility.Collapsed : Visibility.Visible;
         }
     }
 }

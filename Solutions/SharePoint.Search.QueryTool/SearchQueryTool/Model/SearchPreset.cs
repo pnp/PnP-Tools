@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using SearchQueryTool.Helpers;
 
@@ -16,6 +20,8 @@ namespace SearchQueryTool.Model
         /// The name of the search preset (generated automatically from filename).
         /// </summary>
         public string Name { get; set; }
+
+        public string Annotation { get; set; }
 
         /// <summary>
         /// The path to the XML file on disk that represents this search preset.
@@ -38,19 +44,11 @@ namespace SearchQueryTool.Model
             Name = "New preset";
         }
 
-        /// <summary>
-        /// Constructor. Generate a preset object from a file found in the given relative or absolute path.
-        /// </summary>
-        /// <param name="path"></param>
         public SearchPreset(string path, bool rethrowException = false)
         {
             Load(path, rethrowException);
         }
 
-        /// <summary>
-        /// Save a preset to disk to the Path indicated in the Preset object. 
-        /// </summary>
-        /// <returns>True if successfully saved, false otherwise</returns>
         public bool Save()
         {
             bool r;
@@ -70,6 +68,20 @@ namespace SearchQueryTool.Model
                 r = false;
             }
             return r;
+        }
+
+        public bool Include(string filter)
+        {
+            var result = true;
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                var name = this.Name;
+                filter = NormalizeWhitespace(filter);
+                var nameTokens = GetTokens(name.ToLowerInvariant());
+                var filterTokens = GetTokens(filter.ToLowerInvariant());
+                result = ContainsAllItems(nameTokens, filterTokens);
+            }
+            return result;
         }
 
         private void Load(string path, bool rethrowException = false)
@@ -94,10 +106,6 @@ namespace SearchQueryTool.Model
             }
         }
 
-        /// <summary>
-        /// Load a preset object as human-readable XML from disk.
-        /// </summary>
-        /// <param name="xmlFilePath">Path to load XML from</param>
         private void DeserializeSearchPreset(string xmlFilePath)
         {
             var serializer = new XmlSerializer(typeof(SearchPreset));
@@ -112,6 +120,21 @@ namespace SearchQueryTool.Model
                     Name = preset.Name;
                 }
             }
+        }
+
+        public static bool ContainsAllItems(List<string> a, List<string> b)
+        {
+            return !b.Except(a).Any();
+        }
+
+        private static List<string> GetTokens(string input)
+        {
+            return input.Split(' ').ToList();
+        }
+
+        private static string NormalizeWhitespace(string presetFilter)
+        {
+            return Regex.Replace(presetFilter, @"\s+", " ");
         }
     }
 }

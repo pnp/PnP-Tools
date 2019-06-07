@@ -1,18 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace SearchQueryTool.Model
 {
-    /// <summary>
-    /// Search preset list. Model for the dropdown with stored presets containing all search settings like
-    /// QueryText, server and all search parameters. 
-    /// </summary>
     public class SearchPresetList
     {
         private string PresetFolderPath { get; set; }
@@ -25,29 +16,26 @@ namespace SearchQueryTool.Model
             ReadFromFolderPath(PresetFolderPath);
         }
 
-        /// <summary>
-        /// Traverse a directory and load all preset XML files stored there into a list of presets.
-        /// </summary>
-        /// <param name="folderPath">Path to load presets from. Default is .\Presets.</param>
-        /// <returns>True if successful, false otherwise</returns>
-        public bool ReadFromFolderPath(string folderPath=@".\Presets")
+        private void ReadFromFolderPath(string folderPath = @".\Presets")
         {
-            bool ret;
             try
             {
                 foreach (var file in Directory.EnumerateFiles(folderPath, "*.xml"))
                 {
-                    var preset = new SearchPreset(file);
-                    Presets.Add(preset);
+                    AddPreset(file);
                 }
-                ret = true;
             }
             catch (Exception)
             {
-                ret = false;
+                // ignored
             }
+        }
 
-            return ret;
+        private void AddPreset(string file)
+        {
+
+            var preset = new SearchPreset(file);
+            Presets.Add(preset);
         }
     }
 }
