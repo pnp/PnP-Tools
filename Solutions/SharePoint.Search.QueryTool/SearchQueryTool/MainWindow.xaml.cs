@@ -3112,6 +3112,11 @@ namespace SearchQueryTool
 
         private void PresetComboBox_OnDropDownOpened(object sender, EventArgs e)
         {
+            RefreshPresetList();
+        }
+
+        public void RefreshPresetList()
+        {
             try
             {
                 var filter = PresetFilterTextBox.Text;
@@ -3123,6 +3128,7 @@ namespace SearchQueryTool
                 ShowMsgBox("Failed to read search presets. Error:" + ex.Message);
             }
         }
+
 
         private void BackButton_OnClick(object sender, RoutedEventArgs e)
         {
@@ -3137,6 +3143,21 @@ namespace SearchQueryTool
         private void AnnotatePreset_OnClick(object sender, RoutedEventArgs e)
         {
             AnnotatePresetTextBox.Visibility = AnnotatePresetTextBox.IsVisible ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void PresetFilterTextBox_OnLostFocus(object sender, RoutedEventArgs e)
+        {
+            RefreshPresetList();
+            PresetComboBox.IsDropDownOpen = true;
+        }
+
+        private void PresetFilterTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                RefreshPresetList();
+                PresetComboBox.IsDropDownOpen = true;
+            }
         }
     }
 }
