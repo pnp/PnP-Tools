@@ -1552,6 +1552,11 @@ namespace SearchQueryTool
 
                     resultTitle = counter + ". " + resultTitle;
 
+                    // todo: this can come from the user/preset
+                    const string userFormat = "{counter}. {Title}";
+                    
+                    resultTitle = CustomizeTitle(userFormat, resultItem, resultTitle, counter);
+                    
                     string path = resultItem.Path;
 
 
@@ -1791,6 +1796,29 @@ namespace SearchQueryTool
             }
 
             PrimaryResultsTabItem.Content = sv;
+        }
+
+        private string CustomizeTitle(string userFormat, ResultItem resultItem, string defaultTitle, int counter)
+        {
+            var customizedTitle = defaultTitle;
+            if (string.IsNullOrWhiteSpace(userFormat)) return customizedTitle;
+
+            customizedTitle = userFormat;
+            var properties = _searchQueryRequest.SelectProperties.Split(',').ToList();
+            foreach (var property in properties)
+            {
+                var oldValue = "{" + $"{property}" + "}";
+                var newValue = "";
+                if (resultItem.ContainsKey(property))
+                {
+                    newValue = resultItem[property];
+                }
+
+                customizedTitle = customizedTitle.Replace(oldValue, newValue);
+            }
+
+            customizedTitle = customizedTitle.Replace("{counter}", $"{counter}");
+            return customizedTitle;
         }
 
         /// <summary>
