@@ -34,6 +34,8 @@ namespace SearchQueryTool.Model
         /// </summary>
         public SearchQueryRequest Request { get; set; }
 
+        public SearchResultPresentationSettings PresentationSettings { get; set; }
+
         /// <summary>
         /// All connection related options for a search query. 
         /// </summary>

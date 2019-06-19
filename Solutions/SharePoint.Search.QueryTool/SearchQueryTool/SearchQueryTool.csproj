@@ -145,6 +145,7 @@
     <Compile Include="Model\SearchPreset.cs" />
     <Compile Include="Model\SearchPresetList.cs" />
     <Compile Include="Model\SearchQueryDebug.cs" />
+    <Compile Include="Model\SearchResultPresentationSettings.cs" />
     <Compile Include="PropertiesDetail.xaml.cs">
       <DependentUpon>PropertiesDetail.xaml</DependentUpon>
     </Compile>

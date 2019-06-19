@@ -51,6 +51,7 @@ namespace SearchQueryTool
         private SearchQueryRequest _searchQueryRequest;
         private readonly SearchSuggestionsRequest _searchSuggestionsRequest;
         private SearchConnection _searchConnection;
+        private SearchResultPresentationSettings _searchPresentationSettings;
         private string _presetAnnotation;
         private SearchResult _searchResults;
         private bool _enableExperimentalFeatures;
@@ -1552,9 +1553,7 @@ namespace SearchQueryTool
 
                     resultTitle = counter + ". " + resultTitle;
 
-                    // todo: this can come from the user/preset
-                    const string userFormat = "{counter}. {Title}";
-                    
+                    var userFormat = _searchPresentationSettings.PrimaryResultsTitleFormat;
                     resultTitle = CustomizeTitle(userFormat, resultItem, resultTitle, counter);
                     
                     string path = resultItem.Path;
@@ -2964,6 +2963,7 @@ namespace SearchQueryTool
                 {
                     Request = GetSearchQueryRequestFromUi(),
                     Connection = GetSearchConnectionFromUi(),
+                    PresentationSettings = _searchPresentationSettings,
                     Annotation = newAnnotation,
                     Path = selected.Path,
                     Name = Path.GetFileNameWithoutExtension(selected.Path)
@@ -2991,6 +2991,7 @@ namespace SearchQueryTool
                     {
                         _searchQueryRequest = searchPreset.Request;
                         _searchConnection = searchPreset.Connection;
+                        _searchPresentationSettings = searchPreset.PresentationSettings ?? new SearchResultPresentationSettings();
                         _presetAnnotation = searchPreset.Annotation;
                         
                         InitializeControls();
