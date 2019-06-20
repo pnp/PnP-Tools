@@ -51,7 +51,7 @@ namespace SearchQueryTool
         private SearchQueryRequest _searchQueryRequest;
         private readonly SearchSuggestionsRequest _searchSuggestionsRequest;
         private SearchConnection _searchConnection;
-        private SearchResultPresentationSettings _searchPresentationSettings;
+        public SearchResultPresentationSettings SearchPresentationSettings;
         private string _presetAnnotation;
         private SearchResult _searchResults;
         private bool _enableExperimentalFeatures;
@@ -1553,7 +1553,7 @@ namespace SearchQueryTool
 
                     resultTitle = counter + ". " + resultTitle;
 
-                    var userFormat = _searchPresentationSettings.PrimaryResultsTitleFormat;
+                    var userFormat = SearchPresentationSettings.PrimaryResultsTitleFormat;
                     resultTitle = CustomizeTitle(userFormat, resultItem, resultTitle, counter);
                     
                     string path = resultItem.Path;
@@ -2855,6 +2855,12 @@ namespace SearchQueryTool
             fb.Show();
         }
 
+        private void Options_Click(object sender, RoutedEventArgs e)
+        {
+            var options = new SearchPresentationSettings();
+            options.Show();
+        }
+
         /// <summary>
         /// Get a SearchConnection object based on the current alues of the relevant input boxes in the user interface.
         /// </summary>
@@ -2963,7 +2969,7 @@ namespace SearchQueryTool
                 {
                     Request = GetSearchQueryRequestFromUi(),
                     Connection = GetSearchConnectionFromUi(),
-                    PresentationSettings = _searchPresentationSettings,
+                    PresentationSettings = SearchPresentationSettings,
                     Annotation = newAnnotation,
                     Path = selected.Path,
                     Name = Path.GetFileNameWithoutExtension(selected.Path)
@@ -2991,7 +2997,7 @@ namespace SearchQueryTool
                     {
                         _searchQueryRequest = searchPreset.Request;
                         _searchConnection = searchPreset.Connection;
-                        _searchPresentationSettings = searchPreset.PresentationSettings ?? new SearchResultPresentationSettings();
+                        SearchPresentationSettings = searchPreset.PresentationSettings ?? new SearchResultPresentationSettings();
                         _presetAnnotation = searchPreset.Annotation;
                         
                         InitializeControls();

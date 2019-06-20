@@ -80,7 +80,8 @@
                 <MenuItem Header="Exit" Click="MenuFileExit_Click" />
             </MenuItem>
             <MenuItem Header="Tools">
-                <MenuItem Header="Freshness Boost Generator" Click="FreshnessBoost_Click" />
+                <MenuItem Header="Options..." Click="Options_Click" />
+                <MenuItem Header="Freshness Boost Generator..." Click="FreshnessBoost_Click" />
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About" Click="MenuAbout_Click" />

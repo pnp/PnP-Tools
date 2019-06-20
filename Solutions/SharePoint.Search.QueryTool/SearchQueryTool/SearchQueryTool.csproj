@@ -155,6 +155,9 @@
     <Compile Include="RankDetail.xaml.cs">
       <DependentUpon>RankDetail.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SearchPresentationSettings.xaml.cs">
+      <DependentUpon>SearchPresentationSettings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SPAuthenticationClient\AuthenticationClient.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -188,6 +191,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="RankDetail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SearchPresentationSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

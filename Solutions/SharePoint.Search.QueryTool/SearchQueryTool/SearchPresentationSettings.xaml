@@ -1,0 +1,42 @@
+﻿<Window x:Class="SearchQueryTool.SearchPresentationSettings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SearchQueryTool"
+        mc:Ignorable="d"
+        Title="Options" MinHeight="100" Width="800" Height="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Header="Presentation settings" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="10" Height="Auto">
+            <StackPanel Margin="10,0,0,0" Height="Auto">
+
+                <StackPanel>
+                    <Label Content="Title format" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0"/>
+                </StackPanel>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="54*"/>
+                        <ColumnDefinition Width="331*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox MinHeight="26" Width="Auto" Margin="5" Padding="4,3,4,4"
+                             x:Name="TitleFormatTextBox"  Text="{}{counter}. {Title}" Grid.ColumnSpan="2">
+                    </TextBox>
+                </Grid>
+                <TextBox Foreground="Gray" TextWrapping="WrapWithOverflow" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" BorderThickness="0"
+                         Text="Define format to use in the title when listing search results in Search Query Tool.  Use standard string interpolation syntax to refer to properties. To present the hit count, use {counter}. Settings are stored as part of search presets. Examples: &#xD;&#xA;&#xA;{counter}. {Title}&#xA;Rank:{Rank} || {Title}&#xD;&#xA;{ContentSource}, {IndexDocId}, {Size}, {DetectedLanguage}: {Title}&#xA;&#xA;&#x9;" Margin="5,5,5,2" BorderBrush="{x:Null}" />
+            </StackPanel>
+        </GroupBox>
+
+        <StackPanel Grid.Row="1" Margin="0,0,15,0" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Top">
+            <Button x:Name="Ok" Click="Ok_OnClick" MinWidth="60" Margin="0,0,5,0" Content="Ok"/>
+            <Button x:Name="Cancel" Click="Cancel_OnClick" MinWidth="60" Margin="0,0,5,0" Content="Cancel"/>
+        </StackPanel>
+    </Grid>
+</Window>
