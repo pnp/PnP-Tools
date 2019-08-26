@@ -30,6 +30,7 @@ Version  | Date | Comments
 2.8.2 | Oct 10th 2018 | Re-added web based SPO login for some people. Updated to .Net 4.6.2 to support TLS 1.2
 2.8.3 | Oct 18th 2018 | Fix for view all properties
 2.8.4 | Jun 11th 2019 | UI fixes with a fluid layout, query history
+2.8.5 | tbd | Added clear history button
 
 ### Disclaimer ###
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**

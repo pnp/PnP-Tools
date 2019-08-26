@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Classic" x:Class="SearchQueryTool.MainWindow"
         Icon="Images/sp_site.png"
-        Title="SharePoint Search Query Tool v2.8.4" Height="820" Width="1100" MinWidth="800" MinHeight="600">
+        Title="SharePoint Search Query Tool v2.8.5" Height="820" Width="1100" MinWidth="800" MinHeight="600">
     <Window.Resources>
         <DrawingImage x:Key="Overlay">
             <DrawingImage.Drawing>
@@ -74,6 +74,7 @@
 
         <Menu Grid.ColumnSpan="3">
             <MenuItem Header="File">
+                <MenuItem Header="Reset and clear history" Click="ClearHistory_Click" />
                 <MenuItem Header="Save Connection Properties" Click="MenuSaveConnectionProperties_Click" />
                 <MenuItem Header="Exit" Click="MenuFileExit_Click" />
             </MenuItem>
@@ -88,7 +89,7 @@
 
 
         <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="10,10,10,0" MaxHeight="50">
-            <Button Name="BackButton" Click="BackButton_OnClick" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" ToolTip="Backward">
+            <Button Name="BackButton" Click="BackButton_OnClick" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Foreground="{x:Null}" ToolTip="Backward">
                 <Image Source="Images/backward_icon.png" DockPanel.Dock="Right"/>
             </Button>
 
@@ -99,11 +100,11 @@
 				Click="RunButton_Click"
 				Width="100" Content="Run"/>
 
-            <Button Name="ForwardButton" Click="ForwardButton_OnClick" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="{x:Null}" ToolTip="Forward">
+            <Button Name="ForwardButton" Click="ForwardButton_OnClick" BorderBrush="{x:Null}" BorderThickness="0"  Background="{x:Null}" Foreground="{x:Null}" ToolTip="Forward">
                 <Image Source="Images/forward_icon.png" DockPanel.Dock="Right"/>
             </Button>
 
-            <Separator Width="10" />
+            
             <TextBox x:Name="RequestUriStringTextBox" TextWrapping="Wrap" IsReadOnly="True" IsReadOnlyCaretVisible="True" Margin="10,0,10,0" Padding="8" Foreground="#FF0009C3" />
         </DockPanel>
 

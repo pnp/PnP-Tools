@@ -250,7 +250,7 @@ namespace SearchQueryTool
             }
         }
 
-        
+
 
         #region Event Handlers
 
@@ -2409,10 +2409,10 @@ namespace SearchQueryTool
                         {
                             RequestUriLengthTextBox.Text = $"HTTP GET {uri.Length.ToString()}";
                         }
-                        
+
                         RequestUriStringTextBox.Text = uri;
                     }
-                        
+
                     else if (httpMethodType == HttpMethodType.Post)
                     {
                         var uri = _searchQueryRequest.GenerateHttpGetUri().ToString();
@@ -2964,7 +2964,7 @@ namespace SearchQueryTool
                         _searchQueryRequest = searchPreset.Request;
                         _searchConnection = searchPreset.Connection;
                         _presetAnnotation = searchPreset.Annotation;
-                        
+
                         InitializeControls();
                         StateBarTextBlock.Text = String.Format("Successfully read XML preset from {0}", path);
                     }
@@ -3137,6 +3137,15 @@ namespace SearchQueryTool
         private void AnnotatePreset_OnClick(object sender, RoutedEventArgs e)
         {
             AnnotatePresetTextBox.Visibility = AnnotatePresetTextBox.IsVisible ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void ClearHistory_Click(object sender, RoutedEventArgs e)
+        {
+            History.Clear_OnClick(sender, e);
+            History.PruneHistoryDir(HistoryFolderPath, 0);
+            ResetCheckboxesButton_Click(sender, e);
+            _searchQueryRequest = new SearchQueryRequest();
+            InitializeControls();
         }
     }
 }

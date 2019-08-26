@@ -11,7 +11,7 @@ namespace SearchQueryTool.Model
         /// Path to the folder where we find History items.
         /// </summary>
         public string HistoryFolderPath;
-        
+
         /// <summary>
         /// List of history items loaded from the HistoryFolderPath. These are actually Preset objects that 
         /// can populate the user interface. 
@@ -45,13 +45,13 @@ namespace SearchQueryTool.Model
         public bool CanNavigateBack()
         {
             if (null == Current)
-                return false; 
+                return false;
 
             var currentIdx = Presets.FindIndex(item => (item.Path == Current));
             return (currentIdx != 0);
         }
 
-        
+
         /// <summary>
         /// Navigate backwards in the current search history. 
         /// </summary>
@@ -74,7 +74,7 @@ namespace SearchQueryTool.Model
         {
             if (null == Current)
                 return false;
-            
+
             var currentIdx = Presets.FindIndex(item => (item.Path == Current));
             var lastIdx = (Presets.Count - 1);
             return (currentIdx != lastIdx);
@@ -116,6 +116,22 @@ namespace SearchQueryTool.Model
             }
 
             return ret;
+        }
+
+        public void Clear(string folderPath = @".\History")
+        {
+            Presets.Clear();
+            Current = null;
+            foreach (var file in Directory.EnumerateFiles(folderPath, "*.xml"))
+            {
+                try
+                {
+                    File.Delete(file);
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
     }
 }

@@ -136,5 +136,11 @@ namespace SearchQueryTool.Helpers
             _mainWindow.LoadPreset(_mainWindow.SearchHistory.Current);
             RefreshHistoryButtonState();
         }
+
+        internal void Clear_OnClick(object sender, RoutedEventArgs e)
+        {
+            _mainWindow.SearchHistory.Clear();
+            RefreshHistoryButtonState();
+        }
     }
 }
