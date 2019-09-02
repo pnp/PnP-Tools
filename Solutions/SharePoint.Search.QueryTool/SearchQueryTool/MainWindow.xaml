@@ -770,6 +770,31 @@
 
                                         <Separator Margin="10,10,30,10" AutomationProperties.HelpText="Advanced options" />
 
+
+                                        <StackPanel Margin="5,0,5,0">
+											<StackPanel>
+                                            <Label Content="Appended Query Properties:" 
+		HorizontalAlignment="Left" 
+		VerticalAlignment="Top"/>
+		</StackPanel>
+
+                                            <Grid>
+
+                                            <TextBox Height="26" 
+		Margin="5,0,0,0" 
+		Text="" 
+		Padding="4"
+		x:Name="AppendedQueryPropertiesTextBox"
+		DataContext="AppendedQueryProperties"
+		LostFocus="SearchQueryTextBox_LostFocus_Handler"
+		TextAlignment="Left"  TextWrapping="Wrap">
+                                                <TextBox.ToolTip>
+                                                    <TextBlock><Run Text="Comma separated extra query properties. Eg: EnableMultiGeoSearch:true,ContentSetting:3"/></TextBlock>
+                                                </TextBox.ToolTip>
+                                            </TextBox>
+											</Grid>
+                                        </StackPanel>
+
                                         <DockPanel Margin="5,5,5,0">
                                             <Label Content="Personalization Data:" 
 		HorizontalAlignment="Left" 

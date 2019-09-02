@@ -620,6 +620,9 @@ namespace SearchQueryTool
                     case "rowsperpage":
                         _searchQueryRequest.RowsPerPage = DataConverter.TryConvertToInt(tb.Text.Trim());
                         break;
+                    case "appendedqueryproperties":
+                        _searchQueryRequest.AppendedQueryProperties = tb.Text.Trim();
+                        break;
                 }
 
                 UpdateRequestUriStringTextBlock();
