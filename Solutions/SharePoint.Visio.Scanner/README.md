@@ -1,7 +1,7 @@
 # SharePoint Online Visio Web Access deprecation scanner #
 
 ### Summary ###
-Visio Online replaces Visio Web Access (also called Visio Services) in SharePoint Online. Visio Online is the new way to view, create and share Visio diagrams in SharePoint Online. As part of the Office Online ecosystem, Visio Online includes a modern UI, introduces performance improvements and has richer capabilities that aren’t available in Visio Web Access (see https://blogs.msdn.microsoft.com/visio/2017/09/25/migrate-from-visio-web-access-to-visio-online) for more details on the actual deprecation. To help you find the relevant files and pages that require remediation work a scanner was developed, which is further explained in this article. If you prefer watching a video then checkout our [PnP Shorts - Visio Web Access deprecation video on YouTube](https://youtu.be/i2fKlUkuuHI).
+Visio Online replaces Visio Web Access (also called Visio Services) in SharePoint Online. Visio Online is the new way to view, create and share Visio diagrams in SharePoint Online. As part of the Office Online ecosystem, Visio Online includes a modern UI, introduces performance improvements and has richer capabilities that aren’t available in Visio Web Access (see https://developer.microsoft.com/en-us/visio/blogs/migrate-from-visio-web-access-to-visio-online/) for more details on the actual deprecation. To help you find the relevant files and pages that require remediation work a scanner was developed, which is further explained in this article. If you prefer watching a video then checkout our [PnP Shorts - Visio Web Access deprecation video on YouTube](https://youtu.be/i2fKlUkuuHI).
 
 > Important:
 > This deprecation only applies to SharePoint Online, SharePoint on-premises is not impacted.
