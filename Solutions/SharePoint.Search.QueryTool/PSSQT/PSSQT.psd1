@@ -110,7 +110,7 @@ PrivateData = @{
         ReleaseNotes = @'
 			2.8.4:
 
-			New fetures:
+			New features:
 
 			Added a new swith IncludePersonalOneDriveResults which will return personal OneDrive results when searching SPO.
 			https://support.microsoft.com/en-us/help/4469277/sharepoint-online-search-will-not-return-private-onedrive-results

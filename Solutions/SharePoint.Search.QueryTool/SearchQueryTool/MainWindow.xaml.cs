@@ -251,7 +251,7 @@ namespace SearchQueryTool
             }
         }
 
-        
+
 
         #region Event Handlers
 
@@ -620,6 +620,9 @@ namespace SearchQueryTool
                         break;
                     case "rowsperpage":
                         _searchQueryRequest.RowsPerPage = DataConverter.TryConvertToInt(tb.Text.Trim());
+                        break;
+                    case "appendedqueryproperties":
+                        _searchQueryRequest.AppendedQueryProperties = tb.Text.Trim();
                         break;
                 }
 
@@ -2436,10 +2439,10 @@ namespace SearchQueryTool
                         {
                             RequestUriLengthTextBox.Text = $"HTTP GET {uri.Length.ToString()}";
                         }
-                        
+
                         RequestUriStringTextBox.Text = uri;
                     }
-                        
+
                     else if (httpMethodType == HttpMethodType.Post)
                     {
                         var uri = _searchQueryRequest.GenerateHttpGetUri().ToString();
@@ -3193,6 +3196,15 @@ namespace SearchQueryTool
                 RefreshPresetList();
                 PresetComboBox.IsDropDownOpen = true;
             }
+        }
+
+        private void ClearHistory_Click(object sender, RoutedEventArgs e)
+        {
+            History.Clear_OnClick(sender, e);
+            History.PruneHistoryDir(HistoryFolderPath, 0);
+            ResetCheckboxesButton_Click(sender, e);
+            _searchQueryRequest = new SearchQueryRequest();
+            InitializeControls();
         }
     }
 }

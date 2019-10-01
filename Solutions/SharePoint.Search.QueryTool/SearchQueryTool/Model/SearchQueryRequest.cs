@@ -44,6 +44,8 @@ namespace SearchQueryTool.Model
         public string ClientType { get; set; }
         public string PersonalizationData { get; set; }
         public bool? EnableMultiGeoSearch { get; set; }
+
+        public string AppendedQueryProperties { get; set; }
         public string MultiGeoSearchConfiguration { get; set; }   // Make sure it is formatted according to method type. See MultiGeoSearchConfiguration
         public bool? IncludePersonalOneDriveResults { get; set; }  // https://support.microsoft.com/en-us/help/4469277/sharepoint-online-search-will-not-return-private-onedrive-results
 
@@ -139,7 +141,7 @@ namespace SearchQueryTool.Model
             List<string> customPropertyParts = new List<string>();
 
             if (!String.IsNullOrEmpty(this.Refiners))
-                uriBuilder.AppendFormat("&refiners='{0}'", UrlEncode(this.Refiners.Replace(" ","")));
+                uriBuilder.AppendFormat("&refiners='{0}'", UrlEncode(this.Refiners.Replace(" ", "")));
 
             if (!String.IsNullOrEmpty(this.RefinementFilters))
                 uriBuilder.AppendFormat("&refinementfilters='{0}'", UrlEncode(this.RefinementFilters));
@@ -160,7 +162,7 @@ namespace SearchQueryTool.Model
             {
                 if (this.SourceId.Contains("|") || this.SourceId.Contains(":"))
                 {
-                    string[] sourceParts = this.SourceId.Split('|',':');
+                    string[] sourceParts = this.SourceId.Split('|', ':');
                     customPropertyParts.Add("SourceLevel:" + sourceParts[0]);
                     customPropertyParts.Add("SourceName:" + sourceParts[1]);
                 }
@@ -174,7 +176,7 @@ namespace SearchQueryTool.Model
             {
                 customPropertyParts.Add("EnableMultiGeoSearch:true");
 
-                if (! String.IsNullOrWhiteSpace(MultiGeoSearchConfiguration))
+                if (!String.IsNullOrWhiteSpace(MultiGeoSearchConfiguration))
                 {
                     customPropertyParts.Add($"MultiGeoSearchConfiguration:{MultiGeoSearchConfiguration}");
                 }
@@ -187,6 +189,14 @@ namespace SearchQueryTool.Model
             if (this.IncludePersonalOneDriveResults.HasValue && this.IncludePersonalOneDriveResults.Value)
             {
                 customPropertyParts.Add("ContentSetting:3");
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.AppendedQueryProperties))
+            {
+                foreach (var item in this.AppendedQueryProperties.Split(','))
+                {
+                    customPropertyParts.Add(item.Trim());
+                }
             }
 
             if (!String.IsNullOrEmpty(this.HiddenConstraints))
@@ -352,7 +362,7 @@ namespace SearchQueryTool.Model
             // XXX: BDW: do I need code here?
 
             if (!String.IsNullOrEmpty(this.Refiners))
-                searchRequestBuilder.AppendFormat(", 'Refiners':'{0}'", this.Refiners.Replace(" ",""));
+                searchRequestBuilder.AppendFormat(", 'Refiners':'{0}'", this.Refiners.Replace(" ", ""));
 
             if (!String.IsNullOrEmpty(this.RefinementFilters))
             {
@@ -413,11 +423,11 @@ namespace SearchQueryTool.Model
                 }
                 else
                 {
-                    searchRequestBuilder.AppendFormat(", 'SourceId':'{0}'", this.SourceId);    
+                    searchRequestBuilder.AppendFormat(", 'SourceId':'{0}'", this.SourceId);
                 }
             }
 
-      
+
             if (this.EnableMultiGeoSearch == true)
             {
                 customPropertyParts.Add(GetPropertiesJSON("EnableMultiGeoSearch:true"));
@@ -432,6 +442,13 @@ namespace SearchQueryTool.Model
                 customPropertyParts.Add(GetPropertiesJSON("EnableMultiGeoSearch:false"));
             }
 
+            if (!string.IsNullOrWhiteSpace(this.AppendedQueryProperties))
+            {
+                foreach (var item in this.AppendedQueryProperties.Split(','))
+                {
+                    customPropertyParts.Add(GetPropertiesJSON(item.Trim()));
+                }
+            }
 
             if (!String.IsNullOrEmpty(this.HiddenConstraints))
                 searchRequestBuilder.AppendFormat(", 'HiddenConstraints':'{0}'", this.HiddenConstraints);
@@ -455,7 +472,7 @@ namespace SearchQueryTool.Model
             {
                 searchRequestBuilder.Append(
                     ", 'QueryTemplatePropertiesUrl':'spfile://webroot/queryparametertemplate.xml'");
-            }            
+            }
 
             if (customPropertyParts.Count > 0)
             {
