@@ -43,6 +43,12 @@ namespace SearchQueryTool
             Suggest
         }
 
+        private enum PropertyType
+        {
+            Managed,
+            Crawled
+        }
+
         private const string DefaultSharePointSiteUrl = "http://localhost";
         private const string ConnectionPropsXmlFileName = "connection-props.xml";
         private const string AuthorityUri = "https://login.windows.net/common/oauth2/authorize";
@@ -1814,7 +1820,7 @@ namespace SearchQueryTool
             {
                 IsReadOnly = true,
                 IsReadOnlyCaretVisible = false,
-                Text = String.Format("{0}", "View all properties..."),
+                Text = "Managed properties ",
                 BorderBrush = null,
                 BorderThickness = new Thickness(0),
                 Foreground = Brushes.DodgerBlue,
@@ -1824,22 +1830,35 @@ namespace SearchQueryTool
                 Cursor = Cursors.Hand,
             };
 
-            tb.PreviewMouseLeftButtonUp += (sender, e) => OpenPreviewAllProperties(sender, e, resultItem);
+            tb.PreviewMouseLeftButtonUp += (sender, e) => OpenPreviewAllProperties(sender, e, resultItem, PropertyType.Managed);
+            propdp.Children.Add(tb);
 
-            propdp.Children.Add
-                (
-                    tb
-                );
+            var tb2 = new TextBox
+            {
+                IsReadOnly = true,
+                IsReadOnlyCaretVisible = false,
+                Text = "Crawled property names",
+                BorderBrush = null,
+                BorderThickness = new Thickness(0),
+                Foreground = Brushes.DodgerBlue,
+                FontSize = 14,
+                FontWeight = FontWeights.Bold,
+                TextDecorations = TextDecorations.Underline,
+                Cursor = Cursors.Hand,
+            };
+
+            tb2.PreviewMouseLeftButtonUp += (sender, e) => OpenPreviewAllProperties(sender, e, resultItem, PropertyType.Crawled);
+            propdp.Children.Add(tb2);
 
             spEntry.Children.Add(propdp);
         }
 
-        private void OpenPreviewAllProperties(object sender, MouseButtonEventArgs e, ResultItem resultItem)
+        private void OpenPreviewAllProperties(object sender, MouseButtonEventArgs e, ResultItem resultItem, PropertyType propertyType)
         {
             //Todo this method neeeds some refactor love
             MarkRequestOperation(false, "Running");
 
-            //Query a new search with refiner: "ManagedProperties(filter=600/0/*) and the path of the selected item
+            //Query a new search with refiner: "ManagedProperties(filter=5000/0/*) and the path of the selected item
             SearchQueryRequest sqr = new SearchQueryRequest();
             sqr.AcceptType = _searchQueryRequest.AcceptType;
             sqr.AuthenticationType = _searchQueryRequest.AuthenticationType;
@@ -1878,8 +1897,15 @@ namespace SearchQueryTool
             sqr.Password = _searchQueryRequest.Password;
             sqr.SecurePassword = _searchQueryRequest.SecurePassword;
 
-            //this is the magic ingredient to get all the properties back
-            sqr.Refiners = "ManagedProperties(filter=600/0/*)";
+            if (propertyType == PropertyType.Managed)
+            {
+                //this is the magic ingredient to get all the properties back
+                sqr.Refiners = "ManagedProperties(filter=5000/0/*)";
+            }
+            else
+            {
+                sqr.Refiners = "CrawledProperties(filter=5000/0/*)";
+            }
 
             try
             {
@@ -1889,8 +1915,8 @@ namespace SearchQueryTool
                     TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent, scheduler).ContinueWith(
                         task =>
                         {
-                            var result = task.Result;
-                            var resultItem2 = GetResultItem(result);
+                            HttpRequestResponsePair result = task.Result;
+                            SearchQueryResult resultItem2 = GetResultItem(result);
 
                             //Extract all Properties from refiner result
                             if (resultItem2.PrimaryQueryResult == null ||
@@ -1901,37 +1927,79 @@ namespace SearchQueryTool
                                     "ManagedProperties is empty", MessageBoxButton.OK);
                                 return;
                             }
-                            var refiners = resultItem2.PrimaryQueryResult.RefinerResults[0];
-
-                            //Query again with the select properties set
-                            sqr.Refiners = "";
-                            sqr.SelectProperties = String.Join(",", refiners.Select(x => x.Name).ToArray());
-                            sqr.SelectProperties = sqr.SelectProperties
-                                .Replace(",ClassificationLastScan", "") // this mp messes up the call
-                                .Replace(",ClassificationConfidence", "") // this mp messes up the call
-                                .Replace(",ClassificationCount", ""); // this mp messes up the call
-                            sqr.HttpMethodType = HttpMethodType.Post;
-
-                            Task.Factory.StartNew(() => HttpRequestRunner.RunWebRequest(sqr), ct,
-                                TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent, scheduler)
-                                .ContinueWith(
-                                    innerTask =>
+                            if (propertyType == PropertyType.Crawled)
+                            {
+                                RefinerResult crawledPropertyNames = resultItem2.PrimaryQueryResult.RefinerResults[0];
+                                ResultItem cpResult = new ResultItem();
+                                var cpGroupMapper = new Dictionary<string, string>
                                     {
-                                        var innerResult = innerTask.Result;
-                                        var innerResult2 = GetResultItem(innerResult);
+                                        { "00020329-0000-0000-C000-000000000046", "SharePoint" },
+                                        { "00130329-0000-0130-c000-000000131346", "SharePoint" },
+                                        { "00140329-0000-0140-c000-000000141446", "SharePoint" },
+                                        { "0b63e343-9ccc-11d0-bcdb-00805fccce04", "Basic" },
+                                        { "158d7563-aeff-4dbf-bf16-4a1445f0366c","SharePoint" },
+                                        { "49691c90-7e17-101a-a91c-08002b2ecda9", "Basic" },
+                                        { "B725F130-47EF-101A-A5F1-02608C9EEBAC","Basic" },
+                                        { "012357bd-1113-171d-1f25-292bb0b0b0b0", "Internal" },
+                                        { "ED280121-B677-4E2A-8FBC-0D9E2325B0A2", "SharePoint" },
+                                        { "F29F85E0-4FF9-1068-AB91-08002B27B3D9","Office" },
+                                        { "64ae120f-487d-445a-8d5a-5258f99cb970","Document Parser" },
+                                        { "e835446c-937b-4492-95f3-d89988b01039","MetadataExtractor" }
+                                    };
 
-                                        //Open the new window and show the properties there
-                                        ResultItem relevantResult = innerResult2.PrimaryQueryResult.RelevantResults[0];
-
-                                        PropertiesDetail pd = new PropertiesDetail(relevantResult, sqr.QueryText);
-                                        pd.Show();
-                                    }).ContinueWith(innerTask =>
+                                foreach (var item in crawledPropertyNames)
+                                {
+                                    foreach (var map in cpGroupMapper)
                                     {
-                                        if (innerTask.Exception != null)
+                                        if (Regex.IsMatch(item.Name, map.Key + ":", RegexOptions.IgnoreCase))
                                         {
-                                            ShowError(task.Exception);
+                                            item.Name = Regex.Replace(item.Name, map.Key + ":", "", RegexOptions.IgnoreCase);
+                                            while (cpResult.ContainsKey(item.Name))
+                                            {
+                                                item.Name += " ";
+                                            }
+                                            cpResult.Add(item.Name, map.Value);
                                         }
-                                    }, scheduler);
+                                    }
+                                }
+
+                                PropertiesDetail pd = new PropertiesDetail(cpResult, sqr.QueryText);
+                                pd.Show();
+                            }
+                            else
+                            {
+                                var refiners = resultItem2.PrimaryQueryResult.RefinerResults[0];
+
+                                //Query again with the select properties set
+                                sqr.Refiners = "";
+                                sqr.SelectProperties = String.Join(",", refiners.Select(x => x.Name).ToArray());
+                                sqr.SelectProperties = sqr.SelectProperties
+                                    .Replace(",ClassificationLastScan", "") // this mp messes up the call
+                                    .Replace(",ClassificationConfidence", "") // this mp messes up the call
+                                    .Replace(",ClassificationCount", ""); // this mp messes up the call
+                                sqr.HttpMethodType = HttpMethodType.Post;
+
+                                Task.Factory.StartNew(() => HttpRequestRunner.RunWebRequest(sqr), ct,
+                                    TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent, scheduler)
+                                    .ContinueWith(
+                                        innerTask =>
+                                        {
+                                            HttpRequestResponsePair innerResult = innerTask.Result;
+                                            SearchQueryResult innerResult2 = GetResultItem(innerResult);
+
+                                            //Open the new window and show the properties there
+                                            ResultItem relevantResult = innerResult2.PrimaryQueryResult.RelevantResults[0];
+
+                                            PropertiesDetail pd = new PropertiesDetail(relevantResult, sqr.QueryText);
+                                            pd.Show();
+                                        }).ContinueWith(innerTask =>
+                                        {
+                                            if (innerTask.Exception != null)
+                                            {
+                                                ShowError(task.Exception);
+                                            }
+                                        }, scheduler);
+                            }
                         }, scheduler).ContinueWith(task =>
                         {
                             if (task.Exception != null)

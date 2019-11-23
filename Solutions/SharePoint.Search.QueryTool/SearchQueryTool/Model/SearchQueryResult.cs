@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -10,7 +11,7 @@ using System.Xml.XPath;
 
 namespace SearchQueryTool.Model
 {
-    public class ResultItem : Dictionary<string, string>
+    public class ResultItem : SortedDictionary<string, string>
     {
 
         /// <summary>
