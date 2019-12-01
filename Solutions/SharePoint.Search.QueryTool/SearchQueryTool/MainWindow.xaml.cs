@@ -1812,17 +1812,17 @@ namespace SearchQueryTool
             if (string.IsNullOrWhiteSpace(userFormat)) return customizedTitle;
 
             customizedTitle = userFormat;
-            var properties = _searchQueryRequest.SelectProperties.Split(',').ToList();
-            foreach (var property in properties)
+            foreach (KeyValuePair<string, string> item in resultItem)
             {
-                var oldValue = "{" + $"{property}" + "}";
+                var oldValue = "{" + $"{item.Key}" + "}";
                 var newValue = "";
-                if (resultItem.ContainsKey(property))
+                if (resultItem.ContainsKey(item.Key))
                 {
-                    newValue = resultItem[property];
+                    newValue = resultItem[item.Key];
                 }
 
                 customizedTitle = customizedTitle.Replace(oldValue, newValue);
+
             }
 
             customizedTitle = customizedTitle.Replace("{counter}", $"{counter}");
