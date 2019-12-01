@@ -145,6 +145,7 @@
     <Compile Include="Model\SearchPreset.cs" />
     <Compile Include="Model\SearchPresetList.cs" />
     <Compile Include="Model\SearchQueryDebug.cs" />
+    <Compile Include="Model\SearchResultPresentationSettings.cs" />
     <Compile Include="PropertiesDetail.xaml.cs">
       <DependentUpon>PropertiesDetail.xaml</DependentUpon>
     </Compile>
@@ -153,6 +154,9 @@
     </Compile>
     <Compile Include="RankDetail.xaml.cs">
       <DependentUpon>RankDetail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SearchPresentationSettings.xaml.cs">
+      <DependentUpon>SearchPresentationSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="SPAuthenticationClient\AuthenticationClient.cs" />
     <Page Include="MainWindow.xaml">
@@ -187,6 +191,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="RankDetail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SearchPresentationSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

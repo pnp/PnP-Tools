@@ -57,6 +57,7 @@ namespace SearchQueryTool
         private SearchQueryRequest _searchQueryRequest;
         private readonly SearchSuggestionsRequest _searchSuggestionsRequest;
         private SearchConnection _searchConnection;
+        public SearchResultPresentationSettings SearchPresentationSettings;
         private string _presetAnnotation;
         private SearchResult _searchResults;
         private bool _enableExperimentalFeatures;
@@ -1561,6 +1562,9 @@ namespace SearchQueryTool
 
                     resultTitle = counter + ". " + resultTitle;
 
+                    var userFormat = SearchPresentationSettings.PrimaryResultsTitleFormat;
+                    resultTitle = CustomizeTitle(userFormat, resultItem, resultTitle, counter);
+                    
                     string path = resultItem.Path;
 
 
@@ -1800,6 +1804,29 @@ namespace SearchQueryTool
             }
 
             PrimaryResultsTabItem.Content = sv;
+        }
+
+        private string CustomizeTitle(string userFormat, ResultItem resultItem, string defaultTitle, int counter)
+        {
+            var customizedTitle = defaultTitle;
+            if (string.IsNullOrWhiteSpace(userFormat)) return customizedTitle;
+
+            customizedTitle = userFormat;
+            var properties = _searchQueryRequest.SelectProperties.Split(',').ToList();
+            foreach (var property in properties)
+            {
+                var oldValue = "{" + $"{property}" + "}";
+                var newValue = "";
+                if (resultItem.ContainsKey(property))
+                {
+                    newValue = resultItem[property];
+                }
+
+                customizedTitle = customizedTitle.Replace(oldValue, newValue);
+            }
+
+            customizedTitle = customizedTitle.Replace("{counter}", $"{counter}");
+            return customizedTitle;
         }
 
         /// <summary>
@@ -2899,6 +2926,12 @@ namespace SearchQueryTool
             fb.Show();
         }
 
+        private void Options_Click(object sender, RoutedEventArgs e)
+        {
+            var options = new SearchPresentationSettings();
+            options.Show();
+        }
+
         /// <summary>
         /// Get a SearchConnection object based on the current alues of the relevant input boxes in the user interface.
         /// </summary>
@@ -3007,6 +3040,7 @@ namespace SearchQueryTool
                 {
                     Request = GetSearchQueryRequestFromUi(),
                     Connection = GetSearchConnectionFromUi(),
+                    PresentationSettings = SearchPresentationSettings,
                     Annotation = newAnnotation,
                     Path = selected.Path,
                     Name = Path.GetFileNameWithoutExtension(selected.Path)
@@ -3034,8 +3068,9 @@ namespace SearchQueryTool
                     {
                         _searchQueryRequest = searchPreset.Request;
                         _searchConnection = searchPreset.Connection;
+                        SearchPresentationSettings = searchPreset.PresentationSettings ?? new SearchResultPresentationSettings();
                         _presetAnnotation = searchPreset.Annotation;
-
+                        
                         InitializeControls();
                         StateBarTextBlock.Text = String.Format("Successfully read XML preset from {0}", path);
                     }
@@ -3183,6 +3218,11 @@ namespace SearchQueryTool
 
         private void PresetComboBox_OnDropDownOpened(object sender, EventArgs e)
         {
+            RefreshPresetList();
+        }
+
+        public void RefreshPresetList()
+        {
             try
             {
                 var filter = PresetFilterTextBox.Text;
@@ -3194,6 +3234,7 @@ namespace SearchQueryTool
                 ShowMsgBox("Failed to read search presets. Error:" + ex.Message);
             }
         }
+
 
         private void BackButton_OnClick(object sender, RoutedEventArgs e)
         {
@@ -3208,6 +3249,21 @@ namespace SearchQueryTool
         private void AnnotatePreset_OnClick(object sender, RoutedEventArgs e)
         {
             AnnotatePresetTextBox.Visibility = AnnotatePresetTextBox.IsVisible ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void PresetFilterTextBox_OnLostFocus(object sender, RoutedEventArgs e)
+        {
+            RefreshPresetList();
+            PresetComboBox.IsDropDownOpen = true;
+        }
+
+        private void PresetFilterTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                RefreshPresetList();
+                PresetComboBox.IsDropDownOpen = true;
+            }
         }
 
         private void ClearHistory_Click(object sender, RoutedEventArgs e)

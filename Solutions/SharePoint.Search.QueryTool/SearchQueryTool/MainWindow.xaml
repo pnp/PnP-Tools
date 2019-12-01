@@ -79,7 +79,8 @@
                 <MenuItem Header="Exit" Click="MenuFileExit_Click" />
             </MenuItem>
             <MenuItem Header="Tools">
-                <MenuItem Header="Freshness Boost Generator" Click="FreshnessBoost_Click" />
+                <MenuItem Header="Options..." Click="Options_Click" />
+                <MenuItem Header="Freshness Boost Generator..." Click="FreshnessBoost_Click" />
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About" Click="MenuAbout_Click" />
@@ -104,7 +105,7 @@
                 <Image Source="Images/forward_icon.png" DockPanel.Dock="Right"/>
             </Button>
 
-            
+            <Separator Width="10" />
             <TextBox x:Name="RequestUriStringTextBox" TextWrapping="Wrap" IsReadOnly="True" IsReadOnlyCaretVisible="True" Margin="10,0,10,0" Padding="8" Foreground="#FF0009C3" />
         </DockPanel>
 
@@ -419,7 +420,7 @@
 
                                         <StackPanel Margin="5,5,5,0">
                                             <Label Content="Show presets containing:" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                                            <TextBox x:Name="PresetFilterTextBox" Margin="5,0,5,0" Height="26"/>
+                                            <TextBox x:Name="PresetFilterTextBox" Margin="5,0,5,0" Height="26" LostFocus="PresetFilterTextBox_OnLostFocus" KeyDown="PresetFilterTextBox_KeyDown" />
 
                                             <ComboBox Name="PresetComboBox" Margin="5" SelectionChanged="PresetComboBox_OnSelectionChanged" DropDownOpened="PresetComboBox_OnDropDownOpened" >
                                                 <ComboBox.ItemTemplate>
