@@ -688,6 +688,14 @@ div#s4-bodyContainer {
 
 /* Smartphones */
 
+@media screen and (max-width: 639px), screen and (max-width: 820px) and (orientation: landscape) {
+    body {
+        overflow-y: auto;
+    }
+    #s4-workspace {
+        height: auto!important;
+    }
+}
 @media screen and (max-width: 639px) {
     #suiteBarTop .o365cs-nav-brandingText {
         font-size: 17px;
