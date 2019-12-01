@@ -177,6 +177,9 @@
     <Compile Include="..\searchquerytool\model\SearchSuggestionsResult.cs">
       <Link>Model\SearchSuggestionsResult.cs</Link>
     </Compile>
+	    <Compile Include="..\searchquerytool\model\SearchResultPresentationSettings.cs">
+      <Link>Model\SearchResultPresentationSettings.cs</Link>
+    </Compile>
     <Compile Include="..\SearchQueryTool\SPAuthenticationClient\AuthenticationClient.cs">
       <Link>SPAuthenticationClient\AuthenticationClient.cs</Link>
     </Compile>
@@ -279,7 +282,6 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>rem %25SystemRoot%25\system32\WindowsPowerShell\v1.0\powershell.exe -File "$(SolutionDir)PSSQT\Scripts\Update-AssemblyFileVersion.ps1"  -assemblyInfoFilePath "$(SolutionDir)PSSQT\Properties\AssemblyInfo.cs"</PreBuildEvent>
