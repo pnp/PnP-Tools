@@ -197,3 +197,4 @@ FakesAssemblies/
 /Solutions/Tenant Information Portal/src/TIP.Azure.ResourceGroup/Templates/WebSite.parameters.json
 /Solutions/Tenant Information Portal/src/TIP.Azure.ResourceGroup/Templates/WebSite.parameters.local.json
 /Solutions/SharePoint.Modernization/SharePoint.Modernization.Framework.Tests/App.config
+*.zip
