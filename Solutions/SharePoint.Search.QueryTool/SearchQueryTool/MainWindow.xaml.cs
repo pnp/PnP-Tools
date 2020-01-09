@@ -2000,10 +2000,10 @@ namespace SearchQueryTool
                                 //Query again with the select properties set
                                 sqr.Refiners = "";
                                 sqr.SelectProperties = String.Join(",", refiners.Select(x => x.Name).ToArray());
-                                sqr.SelectProperties = sqr.SelectProperties
-                                    .Replace(",ClassificationLastScan", "") // this mp messes up the call
-                                    .Replace(",ClassificationConfidence", "") // this mp messes up the call
-                                    .Replace(",ClassificationCount", ""); // this mp messes up the call
+                                sqr.SelectProperties = string.Join(",",
+                                    sqr.SelectProperties.Split(',').Except(new[]
+                                        {"ClassificationLastScan", "ClassificationConfidence", "ClassificationCount"}));
+
                                 sqr.HttpMethodType = HttpMethodType.Post;
 
                                 Task.Factory.StartNew(() => HttpRequestRunner.RunWebRequest(sqr), ct,
