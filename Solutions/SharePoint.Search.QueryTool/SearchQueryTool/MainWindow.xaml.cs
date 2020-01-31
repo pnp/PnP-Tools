@@ -1039,6 +1039,7 @@ namespace SearchQueryTool
                                     if (response.StatusCode.Equals(HttpStatusCode.OK))
                                     {
                                         RequestSuccessful();
+                                        status = "Done";
                                     }
                                     else
                                     {
@@ -1061,7 +1062,6 @@ namespace SearchQueryTool
                             SetSecondaryQueryResultItems(searchResults);
                         }
 
-                        MarkRequestOperation(false, status);
                     }, TaskScheduler.FromCurrentSynchronizationContext()).ContinueWith(task =>
                     {
                         if (task.Exception != null)
@@ -1073,8 +1073,11 @@ namespace SearchQueryTool
             catch (Exception ex)
             {
                 RequestFailed();
-                MarkRequestOperation(false, status);
                 ShowError(ex);
+            }
+            finally
+            {
+                MarkRequestOperation(false, status);
             }
         }
 
@@ -1256,7 +1259,6 @@ namespace SearchQueryTool
                 using (var reader = new StreamReader(response.GetResponseStream()))
                 {
                     var content = reader.ReadToEnd();
-
                     NameValueCollection requestHeaders = new NameValueCollection();
                     foreach (var header in request.Headers.AllKeys)
                     {
@@ -1380,14 +1382,16 @@ namespace SearchQueryTool
                             }
                         }
 
-                        MarkRequestOperation(false, "Ready");
                     }, TaskScheduler.FromCurrentSynchronizationContext());
             }
             catch (Exception ex)
             {
                 // log
-                MarkRequestOperation(false, "Ready");
                 ShowError(ex);
+            }
+            finally
+            {
+                MarkRequestOperation(false, "Done");
             }
         }
 
@@ -1551,22 +1555,24 @@ namespace SearchQueryTool
                     StackPanel spEntry = new StackPanel { Margin = new Thickness(25) };
 
                     string resultTitle;
-                    if (!string.IsNullOrEmpty(resultItem.Title))
+                    if (!string.IsNullOrWhiteSpace(resultItem.Title))
                         resultTitle = resultItem.Title;
                     else if (resultItem.ContainsKey("PreferredName"))
-                        resultTitle = resultItem["PreferredName"];
+                        resultTitle = resultItem["PreferredName"] + "";
                     else if (resultItem.ContainsKey("DocId"))
-                        resultTitle = String.Format("DocId: {0}", resultItem["DocId"]);
+                        resultTitle = String.Format("DocId: {0}", resultItem["DocId"] + "");
                     else
                         resultTitle = "";
 
                     resultTitle = counter + ". " + resultTitle;
 
                     var userFormat = SearchPresentationSettings.PrimaryResultsTitleFormat;
-                    resultTitle = CustomizeTitle(userFormat, resultItem, resultTitle, counter);
-                    
-                    string path = resultItem.Path;
+                    if (!string.IsNullOrWhiteSpace(userFormat))
+                    {
+                        resultTitle = CustomizeTitle(userFormat, resultItem, counter);
+                    }
 
+                    string path = resultItem.Path;
 
                     Hyperlink titleLink = new Hyperlink();
                     if (!string.IsNullOrWhiteSpace(resultItem.Path))
@@ -1806,19 +1812,16 @@ namespace SearchQueryTool
             PrimaryResultsTabItem.Content = sv;
         }
 
-        private string CustomizeTitle(string userFormat, ResultItem resultItem, string defaultTitle, int counter)
+        private string CustomizeTitle(string userFormat, ResultItem resultItem, int counter)
         {
-            var customizedTitle = defaultTitle;
-            if (string.IsNullOrWhiteSpace(userFormat)) return customizedTitle;
-
-            customizedTitle = userFormat;
+            var customizedTitle = userFormat;
             foreach (KeyValuePair<string, string> item in resultItem)
             {
                 var oldValue = "{" + $"{item.Key}" + "}";
                 var newValue = "";
                 if (resultItem.ContainsKey(item.Key))
                 {
-                    newValue = resultItem[item.Key];
+                    newValue = resultItem[item.Key] + "";
                 }
 
                 customizedTitle = customizedTitle.Replace(oldValue, newValue);
@@ -2002,7 +2005,7 @@ namespace SearchQueryTool
                                 sqr.SelectProperties = String.Join(",", refiners.Select(x => x.Name).ToArray());
                                 sqr.SelectProperties = string.Join(",",
                                     sqr.SelectProperties.Split(',').Except(new[]
-                                        {"ClassificationLastScan", "ClassificationConfidence", "ClassificationCount"}));
+                                        {"ClassificationLastScan", "ClassificationConfidence", "ClassificationCount", "ClassificationContext"}));
 
                                 sqr.HttpMethodType = HttpMethodType.Post;
 
@@ -2014,11 +2017,18 @@ namespace SearchQueryTool
                                             HttpRequestResponsePair innerResult = innerTask.Result;
                                             SearchQueryResult innerResult2 = GetResultItem(innerResult);
 
-                                            //Open the new window and show the properties there
-                                            ResultItem relevantResult = innerResult2.PrimaryQueryResult.RelevantResults[0];
+                                            if (innerResult2.PrimaryQueryResult == null)
+                                            {
+                                                MessageBox.Show("Could not load properties for the item");
+                                            }
+                                            else
+                                            {
+                                                //Open the new window and show the properties there
+                                                ResultItem relevantResult = innerResult2.PrimaryQueryResult.RelevantResults[0];
+                                                PropertiesDetail pd = new PropertiesDetail(relevantResult, sqr.QueryText);
+                                                pd.Show();
+                                            }
 
-                                            PropertiesDetail pd = new PropertiesDetail(relevantResult, sqr.QueryText);
-                                            pd.Show();
                                         }).ContinueWith(innerTask =>
                                         {
                                             if (innerTask.Exception != null)
@@ -2039,9 +2049,11 @@ namespace SearchQueryTool
             {
                 ShowError(ex);
             }
+            finally
+            {
+                MarkRequestOperation(false, "Done");
 
-
-            MarkRequestOperation(false, "Done");
+            }
         }
 
         private void rankDetail_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -2120,7 +2132,10 @@ namespace SearchQueryTool
                 {
                     ShowError(ex);
                 }
-                MarkRequestOperation(false, "Done");
+                finally
+                {
+                    MarkRequestOperation(false, "Done");
+                }
             }
             else
             {
@@ -3070,7 +3085,7 @@ namespace SearchQueryTool
                         _searchConnection = searchPreset.Connection;
                         SearchPresentationSettings = searchPreset.PresentationSettings ?? new SearchResultPresentationSettings();
                         _presetAnnotation = searchPreset.Annotation;
-                        
+
                         InitializeControls();
                         StateBarTextBlock.Text = String.Format("Successfully read XML preset from {0}", path);
                     }
