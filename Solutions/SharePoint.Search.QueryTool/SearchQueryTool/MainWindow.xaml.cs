@@ -1003,7 +1003,6 @@ namespace SearchQueryTool
                 QueryTextBox.Focus();
                 return;
             }
-
             try
             {
                 _searchQueryRequest.QueryText = queryText;
@@ -1068,16 +1067,14 @@ namespace SearchQueryTool
                         {
                             ShowError(task.Exception);
                         }
+                        MarkRequestOperation(false, status);
                     });
             }
             catch (Exception ex)
             {
+                MarkRequestOperation(false, status);
                 RequestFailed();
                 ShowError(ex);
-            }
-            finally
-            {
-                MarkRequestOperation(false, status);
             }
         }
 
@@ -1332,6 +1329,7 @@ namespace SearchQueryTool
                     TaskCreationOptions.LongRunning)
                     .ContinueWith(task =>
                     {
+                        MarkRequestOperation(false, "Done");
                         if (task.Exception != null)
                         {
                             ShowError(task.Exception);
@@ -1556,13 +1554,13 @@ namespace SearchQueryTool
 
                     string resultTitle;
                     if (!string.IsNullOrWhiteSpace(resultItem.Title))
-                        resultTitle = resultItem.Title;
+                        resultTitle = resultItem.Title + "";
                     else if (resultItem.ContainsKey("PreferredName"))
                         resultTitle = resultItem["PreferredName"] + "";
                     else if (resultItem.ContainsKey("DocId"))
                         resultTitle = String.Format("DocId: {0}", resultItem["DocId"] + "");
                     else
-                        resultTitle = "";
+                        resultTitle = "<No title to display>";
 
                     resultTitle = counter + ". " + resultTitle;
 
@@ -1940,7 +1938,8 @@ namespace SearchQueryTool
             try
             {
                 var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-                CancellationToken ct = new CancellationToken();
+                var tokenSource = new CancellationTokenSource();
+                CancellationToken ct = tokenSource.Token;
                 Task.Factory.StartNew(() => HttpRequestRunner.RunWebRequest(sqr), ct,
                     TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent, scheduler).ContinueWith(
                         task =>
@@ -2043,6 +2042,7 @@ namespace SearchQueryTool
                             {
                                 ShowError(task.Exception);
                             }
+                            MarkRequestOperation(false, "Done");
                         }, scheduler);
             }
             catch (Exception ex)
@@ -2052,7 +2052,6 @@ namespace SearchQueryTool
             finally
             {
                 MarkRequestOperation(false, "Done");
-
             }
         }
 
@@ -2126,6 +2125,7 @@ namespace SearchQueryTool
                                 {
                                     ShowError(task.Exception);
                                 }
+                                MarkRequestOperation(false, "Done");
                             }, scheduler);
                 }
                 catch (Exception ex)
@@ -2556,30 +2556,33 @@ namespace SearchQueryTool
         /// <param name="status">The status.</param>
         private void MarkRequestOperation(bool starting, string status)
         {
-            RunButton.IsEnabled = !starting;
-
-            if (starting)
+            this.Dispatcher.Invoke(() =>
             {
-                ClearResultTabs();
-                QueryGroupBox.IsEnabled = false;
-                ConnectionExpanderBox.IsEnabled = false;
-            }
-            else
-            {
-                QueryGroupBox.IsEnabled = true;
-                ConnectionExpanderBox.IsEnabled = true;
-            }
+                RunButton.IsEnabled = !starting;
 
-            ProgressBar.Visibility = starting ? Visibility.Visible : Visibility.Hidden;
-            Duration duration = new Duration(TimeSpan.FromSeconds(30));
-            DoubleAnimation doubleanimation = new DoubleAnimation(100.0, duration);
+                if (starting)
+                {
+                    ClearResultTabs();
+                    QueryGroupBox.IsEnabled = false;
+                    ConnectionExpanderBox.IsEnabled = false;
+                }
+                else
+                {
+                    QueryGroupBox.IsEnabled = true;
+                    ConnectionExpanderBox.IsEnabled = true;
+                }
 
-            if (starting)
-                ProgressBar.BeginAnimation(RangeBase.ValueProperty, doubleanimation);
-            else
-                ProgressBar.BeginAnimation(RangeBase.ValueProperty, null);
+                ProgressBar.Visibility = starting ? Visibility.Visible : Visibility.Hidden;
+                Duration duration = new Duration(TimeSpan.FromSeconds(30));
+                DoubleAnimation doubleanimation = new DoubleAnimation(100.0, duration);
 
-            StateBarTextBlock.Text = status;
+                if (starting)
+                    ProgressBar.BeginAnimation(RangeBase.ValueProperty, doubleanimation);
+                else
+                    ProgressBar.BeginAnimation(RangeBase.ValueProperty, null);
+
+                StateBarTextBlock.Text = status;
+            });
         }
 
         /// <summary>
