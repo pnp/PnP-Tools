@@ -1080,51 +1080,63 @@ namespace SearchQueryTool
 
         private void SetHitStatus(SearchQueryResult searchResults)
         {
-            if (null != searchResults)
+            this.Dispatcher.Invoke(() =>
             {
-                var totalRows = 0;
-                var queryElapsedTime = "0";
-                if (null != searchResults.QueryElapsedTime)
+                if (null != searchResults)
                 {
-                    queryElapsedTime = searchResults.QueryElapsedTime;
-                }
+                    var totalRows = 0;
+                    var queryElapsedTime = "0";
+                    if (null != searchResults.QueryElapsedTime)
+                    {
+                        queryElapsedTime = searchResults.QueryElapsedTime;
+                    }
 
-                if (null != searchResults.PrimaryQueryResult)
-                {
-                    totalRows = searchResults.PrimaryQueryResult.TotalRows;
+                    if (null != searchResults.PrimaryQueryResult)
+                    {
+                        totalRows = searchResults.PrimaryQueryResult.TotalRows;
+                    }
+                    HitStatusTextBlock.Text = String.Format("{0} hits in {1} ms", totalRows, queryElapsedTime);
                 }
-                HitStatusTextBlock.Text = String.Format("{0} hits in {1} ms", totalRows, queryElapsedTime);
-            }
+            });
         }
 
         private void RequestStarted()
         {
-            ConnectionExpanderBox.Foreground = Brushes.Purple;
-            HitStatusTextBlock.Text = "...";
+            this.Dispatcher.Invoke(() =>
+            {
+                ConnectionExpanderBox.Foreground = Brushes.Purple;
+                HitStatusTextBlock.Text = "...";
+            });
         }
 
         private void RequestSuccessful()
         {
-            ConnectionExpanderBox.IsExpanded = false;
-            ConnectionExpanderBox.Foreground = Brushes.Green;
-            RequestUriLengthTextBox.Foreground = Brushes.Gray;
-            HitStatusTextBlock.Foreground = Brushes.Black;
+            this.Dispatcher.Invoke(() =>
+            {
+                ConnectionExpanderBox.IsExpanded = false;
+                ConnectionExpanderBox.Foreground = Brushes.Green;
+                RequestUriLengthTextBox.Foreground = Brushes.Gray;
+                HitStatusTextBlock.Foreground = Brushes.Black;
 
-            // Save this successful item to our history
-            History.SaveHistoryItem();
+                // Save this successful item to our history
+                History.SaveHistoryItem();
 
-            // Reload entire history list and reset the current point to the latest entry
-            SearchHistory = new SearchHistory(HistoryFolderPath);
-            History.RefreshHistoryButtonState();
+                // Reload entire history list and reset the current point to the latest entry
+                SearchHistory = new SearchHistory(HistoryFolderPath);
+                History.RefreshHistoryButtonState();
 
-            RefreshBreadCrumbs();
+                RefreshBreadCrumbs();
+            });
         }
 
         private void RequestFailed()
         {
-            ConnectionExpanderBox.Foreground = Brushes.Red;
-            HitStatusTextBlock.Foreground = Brushes.Red;
-            RequestUriLengthTextBox.Foreground = Brushes.Red;
+            this.Dispatcher.Invoke(() =>
+            {
+                ConnectionExpanderBox.Foreground = Brushes.Red;
+                HitStatusTextBlock.Foreground = Brushes.Red;
+                RequestUriLengthTextBox.Foreground = Brushes.Red;
+            });
         }
 
         private Button GetHiddenConstraintsButton(string text)
@@ -1186,37 +1198,40 @@ namespace SearchQueryTool
 
         private void RefreshBreadCrumbs()
         {
-            // Clear old hidden constraints
-            HiddenConstraintWrapPanel.Children.Clear();
-
-            // ParseHiddenConstraints hidden constraints and populate panel with new breadcrumb buttons
-            var hiddenConstraints = HiddenConstraintsTextBox.Text;
-
-            if (string.IsNullOrWhiteSpace(hiddenConstraints))
+            this.Dispatcher.Invoke(() =>
             {
-                // Initialize state when we have no hidden constraints
-                ExpanderHiddenConstraints.Header = String.Format("Hidden Constraints");
-                BreadCrumbDockPanel.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                // Extract patterns like with quotes and space, e.g.: ContentSource:"Local SharePoint"
-                var list = ParseHiddenConstraints(hiddenConstraints);
-                if (list.Any())
+                // Clear old hidden constraints
+                HiddenConstraintWrapPanel.Children.Clear();
+
+                // ParseHiddenConstraints hidden constraints and populate panel with new breadcrumb buttons
+                var hiddenConstraints = HiddenConstraintsTextBox.Text;
+
+                if (string.IsNullOrWhiteSpace(hiddenConstraints))
                 {
-                    ExpanderHiddenConstraints.Header = String.Format("Hidden Constraints ({0})", list.Count());
-                    foreach (var button in list.Select(GetHiddenConstraintsButton))
-                    {
-                        HiddenConstraintWrapPanel.Children.Add(button);
-                    }
-                    BreadCrumbDockPanel.Visibility = Visibility.Visible;
+                    // Initialize state when we have no hidden constraints
+                    ExpanderHiddenConstraints.Header = String.Format("Hidden Constraints");
+                    BreadCrumbDockPanel.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    // Hide breadcrumbs when there are no matches
-                    BreadCrumbDockPanel.Visibility = Visibility.Collapsed;
+                    // Extract patterns like with quotes and space, e.g.: ContentSource:"Local SharePoint"
+                    var list = ParseHiddenConstraints(hiddenConstraints);
+                    if (list.Any())
+                    {
+                        ExpanderHiddenConstraints.Header = String.Format("Hidden Constraints ({0})", list.Count());
+                        foreach (var button in list.Select(GetHiddenConstraintsButton))
+                        {
+                            HiddenConstraintWrapPanel.Children.Add(button);
+                        }
+                        BreadCrumbDockPanel.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        // Hide breadcrumbs when there are no matches
+                        BreadCrumbDockPanel.Visibility = Visibility.Collapsed;
+                    }
                 }
-            }
+            });
         }
 
         private void HiddenConstraintsRemoveButton_OnClick(object sender, RoutedEventArgs e)
@@ -2590,12 +2605,15 @@ namespace SearchQueryTool
         /// </summary>
         private void ClearResultTabs()
         {
-            StatsResultTabItem.Content = null;
-            RawResultTabItem.Content = null;
-            PrimaryResultsTabItem.Content = null;
-            RefinementResultsTabItem.Content = null;
-            SecondaryResultsTabItem.Content = null;
-            SuggestionResultsTabItem.Content = null;
+            this.Dispatcher.Invoke(() =>
+            {
+                StatsResultTabItem.Content = null;
+                RawResultTabItem.Content = null;
+                PrimaryResultsTabItem.Content = null;
+                RefinementResultsTabItem.Content = null;
+                SecondaryResultsTabItem.Content = null;
+                SuggestionResultsTabItem.Content = null;
+            });
         }
 
         /// <summary>
