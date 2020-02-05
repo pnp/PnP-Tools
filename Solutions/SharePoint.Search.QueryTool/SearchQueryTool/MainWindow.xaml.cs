@@ -1579,10 +1579,13 @@ namespace SearchQueryTool
 
                     resultTitle = counter + ". " + resultTitle;
 
-                    var userFormat = SearchPresentationSettings.PrimaryResultsTitleFormat;
-                    if (!string.IsNullOrWhiteSpace(userFormat))
+                    if (SearchPresentationSettings != null && SearchPresentationSettings.PrimaryResultsTitleFormat != null)
                     {
-                        resultTitle = CustomizeTitle(userFormat, resultItem, counter);
+                        var userFormat = SearchPresentationSettings.PrimaryResultsTitleFormat;
+                        if (!string.IsNullOrWhiteSpace(userFormat))
+                        {
+                            resultTitle = CustomizeTitle(userFormat, resultItem, counter);
+                        }
                     }
 
                     string path = resultItem.Path;
