@@ -405,6 +405,7 @@ namespace SearchQueryTool
                 return;
             }
 
+            LoginInfo.Visibility = Visibility.Hidden;
             string dc = (AuthenticationMethodComboBox.SelectedItem as ComboBoxItem).DataContext as string;
             if (AuthenticationTypeComboBox.SelectedIndex == 2) dc = "Anonymous";
             if (dc == "WinAuth")
@@ -423,6 +424,7 @@ namespace SearchQueryTool
                 UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Hidden;
                 LoginButtonContainer.Visibility = Visibility.Visible;
                 LoggedinLabel.Visibility = Visibility.Hidden;
+                LoginInfo.Visibility = Visibility.Visible;
             }
             else if (dc == "SPOAuth2")
             {
@@ -432,6 +434,7 @@ namespace SearchQueryTool
                 UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Hidden;
                 LoginButtonContainer.Visibility = Visibility.Visible;
                 LoggedinLabel.Visibility = Visibility.Hidden;
+                LoginInfo.Visibility = Visibility.Visible;
             }
             else if (dc == "FormsAuth")
             {

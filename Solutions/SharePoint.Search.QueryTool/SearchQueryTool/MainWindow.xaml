@@ -1190,7 +1190,7 @@
 										SelectionChanged="AuthenticationMethodComboBox_SelectionChanged"
 										x:Name="AuthenticationMethodComboBox">
                                             <ComboBoxItem DataContext="WinAuth" Content="Windows" IsSelected="True" />
-                                            <ComboBoxItem DataContext="SPOAuth2" Content="SharePoint Online (App Id)" />
+                                            <ComboBoxItem DataContext="SPOAuth2" Content="SharePoint Online (ADAL)" />
                                             <ComboBoxItem DataContext="SPOAuth" Content="SharePoint Online (Web login)" />
                                             <ComboBoxItem DataContext="FormsAuth" Content="Forms-based" />
                                             <ComboBoxItem DataContext="ForefrontAuth" Content="Forefront Gateway (TMG/UAG)" />
@@ -1216,6 +1216,7 @@
                                                 </StackPanel>
                                             </StackPanel>
                                             <StackPanel x:Name="LoginButtonContainer" Margin="0,5,0,0" Visibility="Hidden">
+                                                <Label x:Name="LoginInfo" Foreground="#0009C3" Content="ADAL is the preferred option for SPO!&#x0a;Web login works best for domain joined&#x0a;PC's and one domain." />
                                                 <Button x:Name="LoginButton" Content="Sign-in" Padding="5" Click="LoginButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 <Label x:Name="LoggedinLabel" Padding="5" Visibility="Hidden" Content="Successfully signed-in" FontWeight="Bold" Foreground="#FF275706"/>
                                             </StackPanel>
