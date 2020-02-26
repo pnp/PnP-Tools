@@ -230,6 +230,7 @@ namespace SearchQueryTool
             //RankingModelIdTextBox.Text = _searchQueryRequest.RankingModelId;
             SourceIdTextBox.Text = searchQueryRequest.SourceId;
             CollapseSpecTextBox.Text = searchQueryRequest.CollapseSpecification;
+            AppendedQueryPropertiesTextBox.Text = searchQueryRequest.AppendedQueryProperties;
         }
 
         private SearchMethodType CurrentSearchMethodType

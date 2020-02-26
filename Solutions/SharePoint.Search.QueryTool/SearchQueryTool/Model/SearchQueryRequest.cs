@@ -485,9 +485,22 @@ namespace SearchQueryTool.Model
 
         private string GetPropertiesJSON(string value)
         {
-            const string template = "{{'Name' : '{0}','Value' :{{'StrVal' : '{1}','QueryPropertyValueTypeIndex' : 1}}}}";
-            int splitIdx = value.IndexOf(':');
-            return string.Format(template, value.Substring(0, splitIdx), value.Substring(splitIdx + 1));
+
+            string[] pair = value.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+
+            bool isBool = bool.TryParse(pair[1].Trim(), out bool dummyBool);
+            bool isInt = int.TryParse(pair[1].Trim(), out int dummyInt);
+            string template = "{{'Name' : '{0}','Value' :{{'StrVal' : '{1}','QueryPropertyValueTypeIndex' : 1}}}}";
+            if (isBool)
+            {
+                template = "{{'Name' : '{0}','Value' :{{'BoolVal' : {1},'QueryPropertyValueTypeIndex' : 3}}}}";
+            }
+            else if (isInt)
+            {
+                template = "{{'Name' : '{0}','Value' :{{'IntVal' : {1},'QueryPropertyValueTypeIndex' : 2}}}}";
+            }
+
+            return string.Format(template, pair[0].Trim(), pair[1].Trim());
         }
     }
 }
