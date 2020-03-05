@@ -1838,14 +1838,8 @@ namespace SearchQueryTool
             foreach (KeyValuePair<string, string> item in resultItem)
             {
                 var oldValue = "{" + $"{item.Key}" + "}";
-                var newValue = "";
-                if (resultItem.ContainsKey(item.Key))
-                {
-                    newValue = resultItem[item.Key] + "";
-                }
-
-                customizedTitle = customizedTitle.Replace(oldValue, newValue);
-
+                var newValue = resultItem[item.Key] + "";
+                customizedTitle = Regex.Replace(customizedTitle, oldValue, newValue, RegexOptions.IgnoreCase);
             }
 
             customizedTitle = customizedTitle.Replace("{counter}", $"{counter}");
