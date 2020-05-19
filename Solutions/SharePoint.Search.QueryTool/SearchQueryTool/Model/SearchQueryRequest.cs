@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml.Serialization;
 
 namespace SearchQueryTool.Model
 {
@@ -366,7 +365,7 @@ namespace SearchQueryTool.Model
 
             if (!String.IsNullOrEmpty(this.RefinementFilters))
             {
-                searchRequestBuilder.AppendFormat(", 'RefinementFilters':{{'results':['{0}']}}", this.RefinementFilters);
+                searchRequestBuilder.AppendFormat(", 'RefinementFilters':{{'results':['{0}']}}", this.RefinementFilters.Replace("|", "','"));
             }
 
             if (!String.IsNullOrEmpty(this.SortList))
