@@ -32,7 +32,7 @@ Version  | Date | Comments
 
 ----------
 
-# For detailed description of scenarios and steps, please refer to following documentation in TechNet.#
+# For detailed description of scenarios and steps, please refer to following documentation in TechNet.
 
 - [Install Microsoft Identity Manager for User Profiles in SharePoint Server 2016](https://docs.microsoft.com/SharePoint/administration/install-microsoft-identity-manager-for-user-profiles-in-sharepoint-server-2016)
 - [Deploy a new Microsoft Identity Management (MIM) server for User Profile Sync in SharePoint 2016](https://docs.microsoft.com/SharePoint/administration/use-a-sample-mim-solution-in-sharepoint-server-2016)
