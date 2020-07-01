@@ -2003,7 +2003,7 @@ namespace SearchQueryTool
                                             {
                                                 item.Name += " ";
                                             }
-                                            cpResult.Add(item.Name, map.Value);
+                                            cpResult.Add(item.Name, map.Value + ":" + map.Key);
                                         }
                                     }
                                 }
