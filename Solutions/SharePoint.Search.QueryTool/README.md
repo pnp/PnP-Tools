@@ -8,7 +8,7 @@ Learn how to build an HTTP GET/POST query, and how the different parameters shou
 After running the query, you can view all types of result sets returned; Primary Results, Refinement Results, Query Rules Results, Query Suggestions, in addition to the actual raw response received from the Search service.
 
 * More about the Search REST API in SharePoint 2013 on [Nadeem's blog: http://blogs.msdn.com/b/nadeemis/](http://blogs.msdn.com/b/nadeemis/)
-* Debugging managed properties on [Mikael's blog: https://techmikaels.com](http://www.techmikael.com/2014/03/debugging-managed-properties-using.html)
+* Debugging managed properties on [Mikael's blog: https://www.techmikael.com](http://www.techmikael.com/2014/03/debugging-managed-properties-using.html)
 * [Reading the rank details page](https://powersearching.wordpress.com/2013/01/25/explain-rank-in-sharepoint-2013-search/)
 * [Freshness boost generator under Tools](http://www.techmikael.com/2013/10/adding-freshness-boost-to-sharepoint.html)
 
