@@ -56,7 +56,7 @@
                     return;
 
                 case 1:
-                    this._Name = "Content";
+                    this._Name = "Contents";
                     return;
 
                 case 2:
