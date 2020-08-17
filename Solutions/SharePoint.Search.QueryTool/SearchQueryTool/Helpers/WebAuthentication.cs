@@ -182,7 +182,7 @@ namespace SearchQueryTool.Helpers
             return cookies;
         }
 
-        #region Privatee Methods
+        #region Private Methods
 
         private void GetClaimParams(string targetUrl, out string loginUrl, out Uri navigationEndUrl)
         {
@@ -257,6 +257,12 @@ namespace SearchQueryTool.Helpers
         {
             //Console.WriteLine("Navigated to " + e.Url);
             WriteLine("Navigated to " + e.Url);             // overridden in PSWebAuthetication to avoid printout to console
+
+            var url = e.Url.AbsoluteUri;
+            if(url.StartsWith("https://login.") && url.Contains("authorize") && !url.Contains("login_hint"))
+            {
+                this.webBrowser.Navigate(e.Url.AbsoluteUri + "&login_hint=@" + new Uri(this.fldLoginPageUrl).Host);
+            }
 
             // check whether the url is same as the navigationEndUrl.
             if (fldNavigationEndUrl != null && fldNavigationEndUrl.Equals(e.Url))
