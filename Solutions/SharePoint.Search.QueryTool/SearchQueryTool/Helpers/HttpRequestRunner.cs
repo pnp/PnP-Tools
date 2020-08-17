@@ -151,7 +151,7 @@ namespace SearchQueryTool.Helpers
             return digestValue;
         }
 
-        private static HttpWebRequest CreateWebRequest(Uri uri, AcceptType acceptType, 
+        private static HttpWebRequest CreateWebRequest(string uri, AcceptType acceptType, 
                                                        int timeout = SearchRequest.DefaultTimeout,
                                                        AuthenticationType authType = AuthenticationType.CurrentUser, 
                                                        string sharePointSiteUrl = null,

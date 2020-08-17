@@ -16,7 +16,7 @@ namespace SearchQueryTool.Model
         public bool? CapitalizeFirstLetters { get; set; }
         public int? Culture { get; set; }
 
-        public override Uri GenerateHttpGetUri()
+        public override string GenerateHttpGetUri()
         {
             string restUri = this.SharePointSiteUrl;
 
@@ -61,10 +61,10 @@ namespace SearchQueryTool.Model
             if (this.Culture.HasValue)
                 uriBuilder.AppendFormat("&culture={0}", this.Culture.Value);
 
-            return new Uri(uriBuilder.ToString());
+            return uriBuilder.ToString();
         }
 
-        public override Uri GenerateHttpPostUri()
+        public override string GenerateHttpPostUri()
         {
             throw new NotImplementedException();
         }

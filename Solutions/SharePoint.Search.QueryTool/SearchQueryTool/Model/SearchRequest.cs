@@ -52,8 +52,8 @@ namespace SearchQueryTool.Model
 
         public string Token { get; set; }
 
-        public abstract Uri GenerateHttpGetUri();
-        public abstract Uri GenerateHttpPostUri();
+        public abstract string GenerateHttpGetUri();
+        public abstract string GenerateHttpPostUri();
         public abstract string GenerateHttpPostBodyPayload();
         
         public override string ToString()

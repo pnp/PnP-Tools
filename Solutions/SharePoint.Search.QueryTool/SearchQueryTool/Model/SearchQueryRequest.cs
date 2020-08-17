@@ -53,7 +53,7 @@ namespace SearchQueryTool.Model
             return (SearchQueryRequest)this.MemberwiseClone();
         }
 
-        public override Uri GenerateHttpGetUri()
+        public override string GenerateHttpGetUri()
         {
             string sharepointSiteUrl = this.SharePointSiteUrl;
 
@@ -67,7 +67,7 @@ namespace SearchQueryTool.Model
                     uriBuilder.Append("/");
             }
 
-            uriBuilder.AppendFormat("_api/search/query?querytext='{0}'", UrlEncode(this.QueryText));
+            uriBuilder.AppendFormat("_api/search/query?querytext='{0}'", UrlEncode(this.QueryText?.Replace("'","''")));
 
             if (this.EnableStemming == true)
                 uriBuilder.Append("&enablestemming=true");
@@ -228,7 +228,7 @@ namespace SearchQueryTool.Model
             {
                 uriBuilder.AppendFormat("&properties='{0}'", string.Join(",", customPropertyParts));
             }
-            return new Uri(uriBuilder.ToString());
+            return uriBuilder.ToString();
         }
 
         private void SetRankDetailProperties()
@@ -265,7 +265,7 @@ namespace SearchQueryTool.Model
             }
         }
 
-        public override Uri GenerateHttpPostUri()
+        public override string GenerateHttpPostUri()
         {
             string restUri = this.SharePointSiteUrl;
 
@@ -280,15 +280,15 @@ namespace SearchQueryTool.Model
             }
 
             uriBuilder.Append("_api/search/postquery");
-            return new Uri(uriBuilder.ToString());
+            return uriBuilder.ToString();
         }
 
         public override string GenerateHttpPostBodyPayload()
         {
             StringBuilder searchRequestBuilder = new StringBuilder();
-            List<string> customPropertyParts = new List<string>();
+            List<string> customPropertyParts = new List<string>();           
 
-            searchRequestBuilder.AppendFormat("{{'request': {{ 'Querytext':'{0}'", this.QueryText);
+            searchRequestBuilder.AppendFormat("{{'request': {{ 'Querytext':'{0}'", this.QueryText?.Replace("'","\\'"));
 
             if (this.EnableStemming == true)
                 searchRequestBuilder.Append(", 'EnableStemming':true");
