@@ -261,7 +261,10 @@ namespace SearchQueryTool.Helpers
             var url = e.Url.AbsoluteUri;
             if(url.StartsWith("https://login.") && url.Contains("authorize") && !url.Contains("login_hint"))
             {
-                this.webBrowser.Navigate(e.Url.AbsoluteUri + "&login_hint=@" + new Uri(this.fldLoginPageUrl).Host);
+                int index = url.IndexOf("?");
+                if (index == -1) index = url.Length;
+                url = url.Insert(index + 1, "login_hint=@" + new Uri(this.fldLoginPageUrl).Host + "&");
+                this.webBrowser.Navigate(url);
             }
 
             // check whether the url is same as the navigationEndUrl.
