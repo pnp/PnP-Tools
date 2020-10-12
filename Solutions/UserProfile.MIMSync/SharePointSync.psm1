@@ -86,6 +86,10 @@ function Install-SharePointSyncConfiguration
 		(
 		$MimPowerShellModuleAssembly.VersionInfo.ProductMinorPart -eq 4 -and 
 		$MimPowerShellModuleAssembly.VersionInfo.ProductBuildPart -ge 1237
+		) -or
+		(
+		$MimPowerShellModuleAssembly.VersionInfo.ProductMinorPart -eq 6 -and 
+		$MimPowerShellModuleAssembly.VersionInfo.ProductBuildPart -ge 263    
 		)
 	 )
 	)
