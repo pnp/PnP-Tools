@@ -1930,10 +1930,20 @@ namespace SearchQueryTool
                 return;
             }
 
+            if (resultItem.ContainsKey("Path"))
+            {
+                string connectedHost = new Uri(_searchQueryRequest.SharePointSiteUrl).Host;
+                string itemHost = new Uri(resultItem["Path"]).Host;
+                if (connectedHost != itemHost)
+                {
+                    MessageBox.Show($"Cannot show managed properties for an item residing on a different host.\n\nPlease connect to https://{itemHost} and try again.", "Wrong host", MessageBoxButton.OK);
+                    return;
+                }
+            }
+
             sqr.QueryText = string.Format("WorkId:\"{0}\"", resultItem[workIdKey]);
 
             sqr.ResultsUrl = _searchQueryRequest.ResultsUrl;
-
             sqr.SharePointSiteUrl = _searchQueryRequest.SharePointSiteUrl;
             sqr.Cookies = _searchQueryRequest.Cookies;
             sqr.Token = _searchQueryRequest.Token;
