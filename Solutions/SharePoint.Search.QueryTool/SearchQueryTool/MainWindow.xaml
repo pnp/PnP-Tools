@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Classic" x:Class="SearchQueryTool.MainWindow"
         Icon="Images/sp_site.png"
-        Title="SharePoint Search Query Tool v2.8.6" Height="820" Width="1100" MinWidth="800" MinHeight="600">
+        Title="SharePoint Search Query Tool v2.8.7" Height="820" Width="1100" MinWidth="800" MinHeight="600">
     <Window.Resources>
         <DrawingImage x:Key="Overlay">
             <DrawingImage.Drawing>
