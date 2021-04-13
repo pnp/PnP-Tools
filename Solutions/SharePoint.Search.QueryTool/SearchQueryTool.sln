@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchQueryTool", "SearchQueryTool\SearchQueryTool.csproj", "{DE9E8C75-7585-4351-BA62-E32ED11C4169}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSSQT", "PSSQT\PSSQT.csproj", "{9D6FEDA5-B9E2-4149-B414-466FC56CFAB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +15,11 @@ Global
 		{DE9E8C75-7585-4351-BA62-E32ED11C4169}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE9E8C75-7585-4351-BA62-E32ED11C4169}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE9E8C75-7585-4351-BA62-E32ED11C4169}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9D6FEDA5-B9E2-4149-B414-466FC56CFAB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D6FEDA5-B9E2-4149-B414-466FC56CFAB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D6FEDA5-B9E2-4149-B414-466FC56CFAB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D6FEDA5-B9E2-4149-B414-466FC56CFAB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6925BD3B-D289-4B91-8E67-B586383983EC}
 	EndGlobalSection
 EndGlobal

@@ -192,7 +192,7 @@ namespace SearchQueryTool.Helpers
 
                 request.ApplyFormsCredentials(sharePointSiteUrl, username, password);
             }
-            else if (authType == AuthenticationType.SPO || authType == AuthenticationType.Forefront)
+            else if (authType == AuthenticationType.SPO)
             {
                 request.ApplyCookieCredentials(authCookies);
             }

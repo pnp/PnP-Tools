@@ -144,9 +144,6 @@
     <Compile Include="..\SearchQueryTool\Helpers\RankDetail\StaticRank.cs">
       <Link>Helpers\RankDetail\StaticRank.cs</Link>
     </Compile>
-    <Compile Include="..\SearchQueryTool\Helpers\WebAuthentication.cs">
-      <Link>Helpers\WebAuthentication.cs</Link>
-    </Compile>
     <Compile Include="..\searchquerytool\helpers\XmlHelper.cs">
       <Link>Helpers\XmlHelper.cs</Link>
     </Compile>
@@ -177,7 +174,7 @@
     <Compile Include="..\searchquerytool\model\SearchSuggestionsResult.cs">
       <Link>Model\SearchSuggestionsResult.cs</Link>
     </Compile>
-	    <Compile Include="..\searchquerytool\model\SearchResultPresentationSettings.cs">
+    <Compile Include="..\searchquerytool\model\SearchResultPresentationSettings.cs">
       <Link>Model\SearchResultPresentationSettings.cs</Link>
     </Compile>
     <Compile Include="..\SearchQueryTool\SPAuthenticationClient\AuthenticationClient.cs">

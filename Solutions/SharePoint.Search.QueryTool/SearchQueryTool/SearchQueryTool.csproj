@@ -136,7 +136,6 @@
     <Compile Include="Helpers\RankDetail\ResultItem.cs" />
     <Compile Include="Helpers\RankDetail\ScoreDetail.cs" />
     <Compile Include="Helpers\SafeObservable.cs" />
-    <Compile Include="Helpers\WebAuthentication.cs" />
     <Compile Include="Helpers\RankDetail\StaticRank.cs" />
     <Compile Include="Helpers\XmlHelper.cs" />
     <Compile Include="Helpers\History.cs" />

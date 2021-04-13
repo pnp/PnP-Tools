@@ -21,8 +21,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
-using MaxMelcher.QueryLogger.Utils;
-using Microsoft.AspNet.SignalR.Client;
 using mshtml;
 using SearchQueryTool.Helpers;
 using SearchQueryTool.Model;
@@ -73,9 +71,6 @@ namespace SearchQueryTool
         public SafeObservable<SearchQueryDebug> ObservableQueryCollection { get; set; }
 
         private readonly object _locker = new object();
-
-        private IHubProxy _hub;
-        private HubConnection _hubConnection;
 
         public MainWindow()
         {
@@ -445,15 +440,6 @@ namespace SearchQueryTool
                 UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Visible;
                 LoginButtonContainer.Visibility = Visibility.Hidden;
             }
-            else if (dc == "ForefrontAuth")
-            {
-                _searchQueryRequest.AuthenticationType = AuthenticationType.Forefront;
-                _searchSuggestionsRequest.AuthenticationType = _searchQueryRequest.AuthenticationType;
-
-                UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Hidden;
-                LoginButtonContainer.Visibility = Visibility.Visible;
-                LoggedinLabel.Visibility = Visibility.Hidden;
-            }
             else if (dc == "Anonymous")
             {
                 _searchQueryRequest.AuthenticationType = AuthenticationType.Anonymous;
@@ -507,20 +493,21 @@ namespace SearchQueryTool
                 }
                 else
                 {
-                    AuthContext = null;
-                    CookieCollection cc = WebAuthentication.GetAuthenticatedCookies(_searchQueryRequest.SharePointSiteUrl, _searchQueryRequest.AuthenticationType);
+                    //TODO: web auth - mikael
+                    //AuthContext = null;
+                    //CookieCollection cc = WebAuthentication.GetAuthenticatedCookies(_searchQueryRequest.SharePointSiteUrl, _searchQueryRequest.AuthenticationType);
 
-                    if (cc == null)
-                    {
-                        ShowMsgBox(
-                            $"Authentication failed. Please try again.\n\n{_searchQueryRequest.SharePointSiteUrl}");
-                    }
-                    else
-                    {
-                        LoggedinLabel.Visibility = Visibility.Visible;
-                    }
-                    _searchQueryRequest.Cookies = cc;
-                    _searchSuggestionsRequest.Cookies = cc;
+                    //if (cc == null)
+                    //{
+                    //    ShowMsgBox(
+                    //        $"Authentication failed. Please try again.\n\n{_searchQueryRequest.SharePointSiteUrl}");
+                    //}
+                    //else
+                    //{
+                    //    LoggedinLabel.Visibility = Visibility.Visible;
+                    //}
+                    //_searchQueryRequest.Cookies = cc;
+                    //_searchSuggestionsRequest.Cookies = cc;
                 }
             }
             catch (Exception ex)
@@ -2742,65 +2729,6 @@ namespace SearchQueryTool
         }
         #endregion
 
-        private void ConnectToSignalR_OnClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (_hubConnection != null)
-                {
-                    _hubConnection.Dispose();
-                }
-                _hubConnection = new HubConnection(SignalRHubUrlTextBox.Text);
-
-
-                _hub = _hubConnection.CreateHubProxy("UlsHub");
-
-                _hubConnection.StateChanged += change =>
-                {
-                    if (change.NewState == ConnectionState.Disconnected)
-                    {
-                        Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            SignalRUrlImage.ToolTip = "Disconnected";
-                            SignalRUrlImage.Source = new BitmapImage(new Uri("Images/alert_icon.png", UriKind.Relative));
-                            SignalRUrlImage.Visibility = Visibility.Visible;
-                            DebugTabItem.IsEnabled = false;
-                        }));
-                    }
-                    else if (change.NewState == ConnectionState.Connected)
-                    {
-                        Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            SignalRUrlImage.ToolTip = "Connected";
-                            SignalRUrlImage.Source =
-                                new BitmapImage(new Uri("Images/connected_icon.png", UriKind.Relative));
-                            SignalRUrlImage.Visibility = Visibility.Visible;
-                            DebugTabItem.IsEnabled = true;
-                        }));
-                    }
-                    else if (change.NewState == ConnectionState.Reconnecting)
-                    {
-                        Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            SignalRUrlImage.ToolTip = "Reconnecting";
-                            SignalRUrlImage.Source =
-                                new BitmapImage(new Uri("Images/reconnect_icon.png", UriKind.Relative));
-                            SignalRUrlImage.Visibility = Visibility.Visible;
-                            DebugTabItem.IsEnabled = false;
-                        }));
-                    }
-                };
-
-                _hub.On<LogEntry>("addSearchQuery", ProcessQueryLogEntry);
-
-                _hubConnection.Start().Wait();
-            }
-            catch (Exception ex)
-            {
-                ShowMsgBox("Could not connect to signalr hub: " + ex.Message);
-            }
-        }
-
         public void LogMessageToFile(string msg)
         {
             StreamWriter sw = File.AppendText(
@@ -2814,151 +2742,6 @@ namespace SearchQueryTool
             finally
             {
                 sw.Close();
-            }
-        }
-
-
-        private void ProcessQueryLogEntry(LogEntry logEntry)
-        {
-            try
-            {
-                Regex firstQuery =
-                    new Regex(
-                        "^Microsoft.Office.Server.Search.Query.Ims.ImsQueryInternal : New request: Query text '(.*)', Query template '(.*)'; HiddenConstraints:(.*); SiteSubscriptionId: (.*)");
-                Regex personalResults =
-                    new Regex(
-                        "^Microsoft.Office.Server.Search.Query.Pipeline.Processing.QueryRouterEvaluator : QueryRouterEvaluator: Received (.*) PersonalFavoriteResults.*");
-                Regex relevantResults =
-                    new Regex(
-                        "^Microsoft.Office.Server.Search.Query.Pipeline.Processing.QueryRouterEvaluator : QueryRouterEvaluator: Received (.*) RelevantResults results.*");
-                Regex refinementResults =
-                    new Regex(
-                        "^Microsoft.Office.Server.Search.Query.Pipeline.Processing.QueryRouterEvaluator : QueryRouterEvaluator: Received (.*) RefinementResults.*");
-                Regex boundVariables = new Regex("^QueryClassifierEvaluator : (.*)$");
-
-                //TODO simplify this logic
-                //if (logEntry.Message.Contains("SharePoint"))
-                //    LogMessageToFile(logEntry.Message);
-
-                if (firstQuery.IsMatch(logEntry.Message))
-                {
-                    var query = firstQuery.Match(logEntry.Message).Groups[1].Value;
-                    var queryTemplate = firstQuery.Match(logEntry.Message).Groups[2].Value;
-                    var hiddenConstraints = firstQuery.Match(logEntry.Message).Groups[3].Value;
-                    var siteSubscriptionId = firstQuery.Match(logEntry.Message).Groups[4].Value;
-                    if (!string.IsNullOrEmpty(query))
-                    {
-                        SearchQueryDebug debug = new SearchQueryDebug(logEntry.Correlation, Dispatcher);
-                        debug.Query = string.Format("{0}", query);
-
-                        if (!string.IsNullOrEmpty(queryTemplate))
-                        {
-                            debug.Template = string.Format("{0}", queryTemplate);
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(hiddenConstraints))
-                        {
-                            debug.HiddenConstraint = string.Format("{0}", hiddenConstraints);
-                        }
-
-                        if (!string.IsNullOrEmpty(siteSubscriptionId))
-                        {
-                            debug.SiteSubscriptionId = string.Format("{0}", siteSubscriptionId);
-                        }
-
-                        ObservableQueryCollection.Add(debug);
-                    }
-                }
-                else
-                {
-                    //locking? 
-                    SearchQueryDebug debug =
-                        ObservableQueryCollection.FirstOrDefault(d => d.Correlation == logEntry.Correlation);
-                    if (debug != null)
-                    {
-                        if (logEntry.Message.StartsWith("QueryTemplateHelper: "))
-                        {
-                            try
-                            {
-                                Monitor.Enter(_locker);
-                                string queryTemplateHelper = logEntry.Message.Replace("QueryTemplateHelper: ", "");
-                                debug.QueryTemplateHelper.Add(queryTemplateHelper);
-                            }
-                            finally
-                            {
-                                Monitor.Exit(_locker);
-                            }
-                        }
-                        else if (logEntry.Category == "Linguistic Processing")
-                        {
-                            try
-                            {
-                                Monitor.Enter(_locker);
-                                if (
-                                    logEntry.Message.StartsWith(
-                                        "Microsoft.Ceres.ContentEngine.NlpEvaluators.QuerySuggestionEvaluator"))
-                                {
-                                    debug.QuerySuggestion =
-                                        logEntry.Message.Replace(
-                                            "Microsoft.Ceres.ContentEngine.NlpEvaluators.QuerySuggestionEvaluator: ", "");
-                                }
-                                else if (string.IsNullOrEmpty(debug.QueryExpanded1))
-                                {
-                                    debug.QueryExpanded1 =
-                                        logEntry.Message.Replace(
-                                            "Microsoft.Ceres.ContentEngine.NlpEvaluators.Tokenizer.QueryWordBreakerProducer: ",
-                                            "");
-                                }
-                                else if (logEntry.Message.StartsWith("..."))
-                                {
-                                    debug.QueryExpanded3 += logEntry.Message.TrimStart(new[] { '.' });
-                                }
-                                else if (string.IsNullOrEmpty(debug.QueryExpanded2))
-                                {
-                                    debug.QueryExpanded2 =
-                                        logEntry.Message.Replace(
-                                            "Microsoft.Ceres.ContentEngine.NlpEvaluators.Tokenizer.QueryWordBreakerProducer: ",
-                                            "").TrimEnd(new[] { '.' });
-                                }
-                            }
-                            finally
-                            {
-                                Monitor.Exit(_locker);
-                            }
-                        }
-                        else if (boundVariables.IsMatch(logEntry.Message))
-                        {
-                            string value = boundVariables.Match(logEntry.Message).Groups[1].Value;
-                            debug.BoundVariables.Add(value);
-                        }
-                        else if (relevantResults.IsMatch(logEntry.Message))
-                        {
-                            debug.RelevantResults = relevantResults.Match(logEntry.Message).Groups[1].Value;
-                        }
-                        else if (refinementResults.IsMatch(logEntry.Message))
-                        {
-                            debug.RefinerResults = refinementResults.Match(logEntry.Message).Groups[1].Value;
-                        }
-                    }
-                    else if (ObservableQueryCollection.Any(q => logEntry.Message.Contains(q.Correlation)))
-                    //child correlation, this can be a very expensive query... 
-                    {
-                        if (
-                            logEntry.Message.StartsWith(
-                                "Microsoft.Office.Server.Search.Query.Pipeline.Processing.QueryRouterEvaluator : QueryRouterEvaluator: "))
-                        {
-                            debug =
-                                ObservableQueryCollection.FirstOrDefault(
-                                    q => logEntry.Message.Contains(q.Correlation));
-                            if (debug != null)
-                                debug.PersonalResults = personalResults.Match(logEntry.Message).Groups[1].Value;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
             }
         }
 

@@ -29,8 +29,7 @@ namespace SearchQueryTool.Model
         Forms,
         SPO,
         SPOManagement,
-        Anonymous,
-        Forefront        
+        Anonymous
     }
 
     public abstract class SearchRequest
