@@ -1,8 +1,13 @@
-﻿using System;
+﻿using mshtml;
+using PnP.Core.Auth;
+using SearchQueryTool.Helpers;
+using SearchQueryTool.Model;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -21,12 +26,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
-using mshtml;
-using SearchQueryTool.Helpers;
-using SearchQueryTool.Model;
 using Path = System.IO.Path;
 using ResultItem = SearchQueryTool.Model.ResultItem;
-using ADAL = Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace SearchQueryTool
 {
@@ -50,7 +51,6 @@ namespace SearchQueryTool
         private const string DefaultSharePointSiteUrl = "http://localhost";
         private const string ConnectionPropsXmlFileName = "connection-props.xml";
         private const string AuthorityUri = "https://login.windows.net/common/oauth2/authorize";
-        private ADAL.AuthenticationContext AuthContext = null;
 
         private SearchQueryRequest _searchQueryRequest;
         private readonly SearchSuggestionsRequest _searchSuggestionsRequest;
@@ -60,6 +60,7 @@ namespace SearchQueryTool
         private SearchResult _searchResults;
         private bool _enableExperimentalFeatures;
         private bool _firstInit = true;
+        private string _adalToken = null;
 
         public SearchPresetList SearchPresets { get; set; }
         private string PresetFolderPath { get; set; }
@@ -401,7 +402,6 @@ namespace SearchQueryTool
                 return;
             }
 
-            LoginInfo.Visibility = Visibility.Hidden;
             string dc = (AuthenticationMethodComboBox.SelectedItem as ComboBoxItem).DataContext as string;
             if (AuthenticationTypeComboBox.SelectedIndex == 2) dc = "Anonymous";
             if (dc == "WinAuth")
@@ -420,7 +420,6 @@ namespace SearchQueryTool
                 UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Hidden;
                 LoginButtonContainer.Visibility = Visibility.Visible;
                 LoggedinLabel.Visibility = Visibility.Hidden;
-                LoginInfo.Visibility = Visibility.Visible;
             }
             else if (dc == "SPOAuth2")
             {
@@ -430,7 +429,6 @@ namespace SearchQueryTool
                 UsernameAndPasswordTextBoxContainer.Visibility = Visibility.Hidden;
                 LoginButtonContainer.Visibility = Visibility.Visible;
                 LoggedinLabel.Visibility = Visibility.Hidden;
-                LoginInfo.Visibility = Visibility.Visible;
             }
             else if (dc == "FormsAuth")
             {
@@ -491,24 +489,6 @@ namespace SearchQueryTool
                             $"Authentication failed. Please try again.\n\n{_searchQueryRequest.SharePointSiteUrl}\n\n{exception.Message}");
                     }
                 }
-                else
-                {
-                    //TODO: web auth - mikael
-                    //AuthContext = null;
-                    //CookieCollection cc = WebAuthentication.GetAuthenticatedCookies(_searchQueryRequest.SharePointSiteUrl, _searchQueryRequest.AuthenticationType);
-
-                    //if (cc == null)
-                    //{
-                    //    ShowMsgBox(
-                    //        $"Authentication failed. Please try again.\n\n{_searchQueryRequest.SharePointSiteUrl}");
-                    //}
-                    //else
-                    //{
-                    //    LoggedinLabel.Visibility = Visibility.Visible;
-                    //}
-                    //_searchQueryRequest.Cookies = cc;
-                    //_searchSuggestionsRequest.Cookies = cc;
-                }
             }
             catch (Exception ex)
             {
@@ -522,32 +502,31 @@ namespace SearchQueryTool
         {
             var spUri = new Uri(_searchQueryRequest.SharePointSiteUrl);
 
-            string resourceUri = spUri.Scheme + "://" + spUri.Authority;
+            var resourceUri = new Uri(spUri.Scheme + "://" + spUri.Authority);
             const string clientId = "9bc3ab49-b65d-410a-85ad-de819febfddc";
             const string redirectUri = "https://oauth.spops.microsoft.com/";
 
-            Window ownerWindow = Application.Current.MainWindow.Owner;
-
-            ADAL.AuthenticationResult authenticationResult;
-
-            if (AuthContext == null || forcePrompt)
+            if (forcePrompt || IsExpired(_adalToken, spUri.Host))
             {
-                ADAL.TokenCache cache = new ADAL.TokenCache();
-                AuthContext = new ADAL.AuthenticationContext(AuthorityUri, cache);
-            }
-            try
-            {
-                if (forcePrompt) throw new ADAL.AdalSilentTokenAcquisitionException();
-                authenticationResult = await AuthContext.AcquireTokenSilentAsync(resourceUri, clientId);
-            }
-            catch (ADAL.AdalSilentTokenAcquisitionException)
-            {
-                var authParam = new ADAL.PlatformParameters(ADAL.PromptBehavior.Always, ownerWindow);
-                authenticationResult = await AuthContext.AcquireTokenAsync(resourceUri, clientId, new Uri(redirectUri), authParam);
-            }
+                string tenant = spUri.Host.Replace("sharepoint", "onmicrosoft")
+                    .Replace("-df", "")
+                    .Replace("-admin", "");
 
-            _searchQueryRequest.Token = authenticationResult.CreateAuthorizationHeader();
-            _searchSuggestionsRequest.Token = authenticationResult.CreateAuthorizationHeader();
+                InteractiveAuthenticationProvider interactiveProvider = new InteractiveAuthenticationProvider(clientId, tenant, new Uri(redirectUri));
+                _adalToken = await interactiveProvider.GetAccessTokenAsync(resourceUri);
+            }
+            _searchQueryRequest.Token = _searchSuggestionsRequest.Token = "Bearer " + _adalToken;
+        }
+
+        static bool IsExpired(string token, string host)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return true;
+            }
+            var jwtToken = new JwtSecurityToken(token);
+            if (jwtToken.Audiences.First().Contains(host) == false) return true;
+            return jwtToken.ValidTo < DateTime.UtcNow;
         }
 
         #endregion
@@ -1962,7 +1941,7 @@ namespace SearchQueryTool
 
                             //Extract all Properties from refiner result
                             if (resultItem2.PrimaryQueryResult == null ||
-                                resultItem2.PrimaryQueryResult.RefinerResults == null)
+                            resultItem2.PrimaryQueryResult.RefinerResults == null)
                             {
                                 MessageBox.Show(
                                     "The ManagedProperties property does not contain values. See https://github.com/wobba/SPO-Trigger-Reindex for more information on how to enable this feature.",
@@ -2985,8 +2964,6 @@ namespace SearchQueryTool
                     _searchQueryRequest.UserName = connection.Username;
                     _searchSuggestionsRequest.UserName = connection.Username;
                 }
-
-                ExperimentalFeaturesCheckBox.IsChecked = connection.EnableExperimentalFeatures;
             }
             catch (Exception ex)
             {
