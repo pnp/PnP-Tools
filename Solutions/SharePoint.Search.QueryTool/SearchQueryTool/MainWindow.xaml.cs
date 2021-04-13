@@ -48,7 +48,7 @@ namespace SearchQueryTool
             Crawled
         }
 
-        private const string DefaultSharePointSiteUrl = "http://localhost";
+        private const string DefaultSharePointSiteUrl = "http://contoso.sharepoint.com";
         private const string ConnectionPropsXmlFileName = "connection-props.xml";
         private const string AuthorityUri = "https://login.windows.net/common/oauth2/authorize";
 
@@ -60,7 +60,7 @@ namespace SearchQueryTool
         private SearchResult _searchResults;
         private bool _enableExperimentalFeatures;
         private bool _firstInit = true;
-        private string _adalToken = null;
+        private static string _adalToken = null;
 
         public SearchPresetList SearchPresets { get; set; }
         private string PresetFolderPath { get; set; }
