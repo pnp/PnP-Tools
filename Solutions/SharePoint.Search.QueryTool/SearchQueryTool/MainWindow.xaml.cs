@@ -271,7 +271,7 @@ namespace SearchQueryTool
             string dc = (AuthenticationMethodComboBox.SelectedItem as ComboBoxItem).DataContext as string;
             if (AuthenticationTypeComboBox.SelectedIndex == 1 && dc == "SPOAuth2")
             {
-                await AdalLogin(false);
+                await AdalLogin();
             }
 
             SearchMethodType currentSelectedSearchMethodType = CurrentSearchMethodType;
@@ -480,7 +480,7 @@ namespace SearchQueryTool
                 {
                     try
                     {
-                        await AdalLogin(true);
+                        await AdalLogin();
                         if (string.IsNullOrWhiteSpace(_searchQueryRequest.Token)) throw new ApplicationException("No token");
                         LoggedinLabel.Visibility = Visibility.Visible;
                     }
@@ -499,7 +499,7 @@ namespace SearchQueryTool
             }
         }
 
-        async Task AdalLogin(bool forcePrompt)
+        async Task AdalLogin()
         {
             var spUri = new Uri(_searchQueryRequest.SharePointSiteUrl);
 
