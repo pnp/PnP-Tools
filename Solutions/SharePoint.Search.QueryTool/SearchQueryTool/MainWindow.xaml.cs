@@ -61,6 +61,7 @@ namespace SearchQueryTool
         private bool _enableExperimentalFeatures;
         private bool _firstInit = true;
         private static string _adalToken = null;
+        private static InteractiveAuthenticationProvider _interactiveProvider;
 
         public SearchPresetList SearchPresets { get; set; }
         private string PresetFolderPath { get; set; }
@@ -506,28 +507,35 @@ namespace SearchQueryTool
             const string clientId = "9bc3ab49-b65d-410a-85ad-de819febfddc";
             const string redirectUri = "https://oauth.spops.microsoft.com/";
 
-            if (forcePrompt || IsExpired(_adalToken, spUri.Host))
-            {
-                string tenant = spUri.Host.Replace("sharepoint", "onmicrosoft")
+            string tenant = spUri.Host.Replace("sharepoint", "onmicrosoft")
                     .Replace("-df", "")
                     .Replace("-admin", "");
 
-                InteractiveAuthenticationProvider interactiveProvider = new InteractiveAuthenticationProvider(clientId, tenant, new Uri(redirectUri));
-                _adalToken = await interactiveProvider.GetAccessTokenAsync(resourceUri);
+            if(!string.IsNullOrWhiteSpace(TenantIdTextBox.Text))
+            {
+                tenant = TenantIdTextBox.Text.Trim();
             }
+
+            if (_interactiveProvider == null || _interactiveProvider.TenantId != tenant)
+            {
+                _interactiveProvider = new InteractiveAuthenticationProvider(clientId, tenant, new Uri(redirectUri));
+            }
+
+            _adalToken = await _interactiveProvider.GetAccessTokenAsync(resourceUri);
+
             _searchQueryRequest.Token = _searchSuggestionsRequest.Token = "Bearer " + _adalToken;
         }
 
-        static bool IsExpired(string token, string host)
-        {
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                return true;
-            }
-            var jwtToken = new JwtSecurityToken(token);
-            if (jwtToken.Audiences.First().Contains(host) == false) return true;
-            return jwtToken.ValidTo < DateTime.UtcNow;
-        }
+        //static bool IsExpired(string token, string host)
+        //{
+        //    if (string.IsNullOrWhiteSpace(token))
+        //    {
+        //        return true;
+        //    }
+        //    var jwtToken = new JwtSecurityToken(token);
+        //    if (jwtToken.Audiences.First().Contains(host) == false) return true;
+        //    return jwtToken.ValidTo < DateTime.UtcNow;
+        //}
 
         #endregion
 

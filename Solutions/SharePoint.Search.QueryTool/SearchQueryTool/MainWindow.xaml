@@ -1123,6 +1123,7 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                     <RowDefinition/>
+                                    <RowDefinition/>
                                 </Grid.RowDefinitions>
 
                                 <DockPanel HorizontalAlignment="Stretch">
@@ -1135,26 +1136,40 @@
 									LostFocus="SharePointSiteUrlTextBox_LostFocus"
 									TextAlignment="Left" />
                                 </DockPanel>
+
                                 <StackPanel Grid.Row="1" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                    <Label Content="Tenant Id (optional):"/>
+                                    <TextBox x:Name="TenantIdTextBox" Height="26"
+									Margin="5,0,5,1" 
+									Text="" 
+									Padding="4"
+									TextAlignment="Left" Width="230">
+                                        <TextBox.ToolTip>
+                                            <TextBlock><Run Text="Needed for non sharepoint.com domains (contoso.com or guid)."/></TextBlock>
+                                        </TextBox.ToolTip>
+                                    </TextBox>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="3" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">
                                     <Label Content="Timeout (sec):"/>
                                     <TextBox x:Name="WebRequestTimeoutTextBox" Height="26" 
 									Margin="5,0,5,1" 
 									Text="30" 
 									Padding="4"
-									TextAlignment="Left" Width="50" RenderTransformOrigin="1.847,0.53"/>
+									TextAlignment="Left" Width="50"/>
                                 </StackPanel>
-                                <StackPanel Grid.Row="2" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                <StackPanel Grid.Row="4" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">
                                     <Label Content="Accept:"/>
                                     <RadioButton x:Name="AcceptJsonRadioButton" Content="json" IsChecked="True" VerticalAlignment="Center" GroupName="AcceptFormat" />
                                     <Rectangle Width="10"/>
                                     <RadioButton x:Name="AcceptXmlRadioButton" Content="xml" VerticalAlignment="Center" GroupName="AcceptFormat" />
                                 </StackPanel>
-                                <DockPanel Grid.Row="3" Margin="0,10,0,0">
+                                <DockPanel Grid.Row="5" Margin="0,10,0,0">
                                     <Label Content="Method:" />
                                     <RadioButton VerticalContentAlignment="Center" IsChecked="True" Checked="HttpMethodModeRadioButton_Checked" x:Name="HttpGetMethodRadioButton" GroupName="HttpMethodMode" Content="HTTP GET"/>
                                     <RadioButton Margin="5,0,0,0" VerticalContentAlignment="Center" Checked="HttpMethodModeRadioButton_Checked" x:Name="HttpPostMethodRadioButton" GroupName="HttpMethodMode" Content="HTTP POST"/>
                                 </DockPanel>
-                                <StackPanel Grid.Row="4" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                <StackPanel Grid.Row="6" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
@@ -1220,15 +1235,9 @@
                                                 <Label x:Name="LoggedinLabel" Padding="5" Visibility="Hidden" Content="Successfully signed-in" FontWeight="Bold" Foreground="#FF275706"/>
                                             </StackPanel>
                                         </Grid>
-
-
-
                                     </Grid>
-
-
-
                                 </StackPanel>
-                                <StackPanel Grid.Row="5" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal"/>
+                                <StackPanel Grid.Row="7" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal"/>
                             </Grid>
                         </Expander.Content>
                     </Expander>
