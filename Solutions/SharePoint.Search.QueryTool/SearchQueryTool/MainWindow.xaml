@@ -1134,7 +1134,7 @@
 									Padding="4"
 									Text="http://localhost"
 									LostFocus="SharePointSiteUrlTextBox_LostFocus"
-									TextAlignment="Left" />
+									TextAlignment="Left" Width="220" />
                                 </DockPanel>
 
                                 <StackPanel Grid.Row="1" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">
@@ -1143,11 +1143,14 @@
 									Margin="5,0,5,1" 
 									Text="" 
 									Padding="4"
-									TextAlignment="Left" Width="230">
+									TextAlignment="Left" Width="225">
                                         <TextBox.ToolTip>
-                                            <TextBlock><Run Text="Needed for non sharepoint.com domains (contoso.com or guid)."/></TextBlock>
+                                            <TextBlock><Run Text="Needed for non sharepoint.com domains (primary domain/guid)."/><LineBreak/><LineBreak/><Run Text="Click the icon to the right to locate your tenant information." /></TextBlock>
                                         </TextBox.ToolTip>
                                     </TextBox>
+                                    <Button Padding="0" DataContext="SelectProperties" Click="TenantIdButton_Click" ToolTip="Get tenant id" Cursor="Hand" Height="16" Margin="10,0,0,0" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                                        <Image Source="Images/paste_icon.png" Width="14" Height="14" DockPanel.Dock="Right"/>
+                                    </Button>
                                 </StackPanel>
 
                                 <StackPanel Grid.Row="3" Margin="0,10,0,0" HorizontalAlignment="Stretch" Orientation="Horizontal">

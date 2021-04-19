@@ -3089,5 +3089,15 @@ namespace SearchQueryTool
             _searchQueryRequest = new SearchQueryRequest();
             InitializeControls();
         }
+
+        private void TenantIdButton_Click(object sender, RoutedEventArgs e)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "https://aad.portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/Overview",
+                UseShellExecute = true
+            };
+            Process.Start(psi);
+        }
     }
 }
