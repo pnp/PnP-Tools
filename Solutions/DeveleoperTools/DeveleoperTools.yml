@@ -1,0 +1,13 @@
+page_type: sample
+products:
+  - office-sp
+languages:
+  - csharp
+extensions:
+  contentType: tools
+  technologies:
+    - Add-ins
+    - SharePoint Framerwork
+  createdDate: '1/1/2016 12:00:00 AM'
+title: DeveloperTools for SharePointPnP (DeveloperTools)
+description: Solution implements set of extensions for Visual Studio and MSBuild that simplify development with SharePoint PnP Core library.
