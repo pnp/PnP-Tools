@@ -62,6 +62,7 @@ namespace SearchQueryTool
         private bool _firstInit = true;
         private static string _adalToken = null;
         private static InteractiveAuthenticationProvider _interactiveProvider;
+        private static Regex _reSiteUrl = new Regex("https://.*?/(sites|teams)/.*?(/|$)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public SearchPresetList SearchPresets { get; set; }
         private string PresetFolderPath { get; set; }
@@ -271,7 +272,7 @@ namespace SearchQueryTool
             string dc = (AuthenticationMethodComboBox.SelectedItem as ComboBoxItem).DataContext as string;
             if (AuthenticationTypeComboBox.SelectedIndex == 1 && dc == "SPOAuth2")
             {
-                await AdalLogin();
+                _searchQueryRequest.Token = _searchSuggestionsRequest.Token = await AdalLogin(_searchQueryRequest.SharePointSiteUrl);
             }
 
             SearchMethodType currentSelectedSearchMethodType = CurrentSearchMethodType;
@@ -480,7 +481,7 @@ namespace SearchQueryTool
                 {
                     try
                     {
-                        await AdalLogin();
+                        _searchQueryRequest.Token = _searchSuggestionsRequest.Token = await AdalLogin(_searchQueryRequest.SharePointSiteUrl);
                         if (string.IsNullOrWhiteSpace(_searchQueryRequest.Token)) throw new ApplicationException("No token");
                         LoggedinLabel.Visibility = Visibility.Visible;
                     }
@@ -499,9 +500,9 @@ namespace SearchQueryTool
             }
         }
 
-        async Task AdalLogin()
+        async Task<string> AdalLogin(string url)
         {
-            var spUri = new Uri(_searchQueryRequest.SharePointSiteUrl);
+            var spUri = new Uri(url);
 
             var resourceUri = new Uri(spUri.Scheme + "://" + spUri.Authority);
             const string clientId = "9bc3ab49-b65d-410a-85ad-de819febfddc";
@@ -511,7 +512,7 @@ namespace SearchQueryTool
                     .Replace("-df", "")
                     .Replace("-admin", "");
 
-            if(!string.IsNullOrWhiteSpace(TenantIdTextBox.Text))
+            if (!string.IsNullOrWhiteSpace(TenantIdTextBox.Text))
             {
                 tenant = TenantIdTextBox.Text.Trim();
             }
@@ -522,21 +523,8 @@ namespace SearchQueryTool
             }
 
             _adalToken = await _interactiveProvider.GetAccessTokenAsync(resourceUri);
-
-            _searchQueryRequest.Token = _searchSuggestionsRequest.Token = "Bearer " + _adalToken;
+            return "Bearer " + _adalToken;
         }
-
-        //static bool IsExpired(string token, string host)
-        //{
-        //    if (string.IsNullOrWhiteSpace(token))
-        //    {
-        //        return true;
-        //    }
-        //    var jwtToken = new JwtSecurityToken(token);
-        //    if (jwtToken.Audiences.First().Contains(host) == false) return true;
-        //    return jwtToken.ValidTo < DateTime.UtcNow;
-        //}
-
         #endregion
 
         #region Event Handlers for Controls on the Search Query Tab
@@ -1871,7 +1859,7 @@ namespace SearchQueryTool
             spEntry.Children.Add(propdp);
         }
 
-        private void OpenPreviewAllProperties(object sender, MouseButtonEventArgs e, ResultItem resultItem, PropertyType propertyType)
+        private async void OpenPreviewAllProperties(object sender, MouseButtonEventArgs e, ResultItem resultItem, PropertyType propertyType)
         {
             //Todo this method neeeds some refactor love
             MarkRequestOperation(false, "Running");
@@ -1904,23 +1892,29 @@ namespace SearchQueryTool
                 return;
             }
 
+            var token = _searchQueryRequest.Token;
+            var connectUrl = _searchQueryRequest.SharePointSiteUrl;
             if (resultItem.ContainsKey("Path"))
             {
                 string connectedHost = new Uri(_searchQueryRequest.SharePointSiteUrl).Host;
-                string itemHost = new Uri(resultItem["Path"]).Host;
-                if (connectedHost != itemHost && (sqr.AuthenticationType == AuthenticationType.SPO || sqr.AuthenticationType == AuthenticationType.SPOManagement))
+                Uri itemHost = new Uri(resultItem["Path"]);
+                if (connectedHost != itemHost.Host && (sqr.AuthenticationType == AuthenticationType.SPO || sqr.AuthenticationType == AuthenticationType.SPOManagement))
                 {
-                    MessageBox.Show($"Cannot show managed properties for an item residing on a different host.\n\nPlease connect to https://{itemHost} and try again.", "Wrong host", MessageBoxButton.OK);
-                    return;
+                    // fetch new token due to different domain
+                    string siteUrl = _reSiteUrl.Match(itemHost.AbsoluteUri).Value.TrimEnd('/');
+                    token = await AdalLogin(siteUrl);
+                    connectUrl = siteUrl;
                 }
             }
 
-            sqr.QueryText = string.Format("WorkId:\"{0}\"", resultItem[workIdKey]);
-
+            sqr.QueryText = _searchQueryRequest.QueryText;
+            sqr.HiddenConstraints = string.Format("WorkId:\"{0}\"", resultItem[workIdKey]);
+            sqr.QueryTemplate = _searchQueryRequest.QueryTemplate;
+            sqr.SourceId = _searchQueryRequest.SourceId;
             sqr.ResultsUrl = _searchQueryRequest.ResultsUrl;
-            sqr.SharePointSiteUrl = _searchQueryRequest.SharePointSiteUrl;
+            sqr.SharePointSiteUrl = connectUrl;
             sqr.Cookies = _searchQueryRequest.Cookies;
-            sqr.Token = _searchQueryRequest.Token;
+            sqr.Token = token;
             sqr.UserName = _searchQueryRequest.UserName;
             sqr.Password = _searchQueryRequest.Password;
             sqr.SecurePassword = _searchQueryRequest.SecurePassword;
