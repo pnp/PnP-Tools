@@ -1908,7 +1908,7 @@ namespace SearchQueryTool
             {
                 string connectedHost = new Uri(_searchQueryRequest.SharePointSiteUrl).Host;
                 string itemHost = new Uri(resultItem["Path"]).Host;
-                if (connectedHost != itemHost)
+                if (connectedHost != itemHost && (sqr.AuthenticationType == AuthenticationType.SPO || sqr.AuthenticationType == AuthenticationType.SPOManagement))
                 {
                     MessageBox.Show($"Cannot show managed properties for an item residing on a different host.\n\nPlease connect to https://{itemHost} and try again.", "Wrong host", MessageBoxButton.OK);
                     return;
