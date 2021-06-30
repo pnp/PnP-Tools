@@ -1513,13 +1513,15 @@ namespace SearchQueryTool
 
             Button copyToClipboardBtn = new Button
             {
-                Content = "Copy content JSON/XML to clipboard",
+                Content = "Copy JSON/XML to clipboard",
                 Width = Double.NaN,
                 Height = Double.NaN,
-                HorizontalAlignment = HorizontalAlignment.Left
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(5, 10, 10, 5),
+                Padding = new Thickness(10, 10, 10, 10),
             };
             copyToClipboardBtn.Click += CopyToClipboard_Click;
-                
+
             StackPanel panel = new StackPanel();
             panel.Children.Add(copyToClipboardBtn);
             panel.Children.Add(tb);
