@@ -1,0 +1,13 @@
+page_type: sample
+products:
+  - office-sp
+  - office-visio
+languages:
+  - csharp
+extensions:
+  contentType: tools
+  technologies:
+    - Add-ins
+  createdDate: '1/1/2016 12:00:00 AM'
+title: Visual Studio extension for PnP provisioning engine (Provisioning.VSTools)
+description: This sample demonstrates using the PnP provisioning engine within a Visual Studio extension package to assist with common deployment tasks for SharePoint assets. The VSTools extension package maintains the PnP provisioning engine XML file automatically as files are added or removed from the project instead of the developer having to fill out the file manually which usually results in missing items, misspelled items, etc. In addition to the XML file, the extension package also provides some useful developer shortcuts such as right-click to quickly deploy a file (rather than all items in the XML file) and right-click to quickly deploy the entire provisioning template. The PnP provisioning engine XML file is fully supported (i.e. content types, site columns, etc.) and deployable, however the extension package only maintains file references within this XML file at this time.
