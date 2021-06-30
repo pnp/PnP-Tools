@@ -63,6 +63,7 @@ namespace SearchQueryTool
         private static string _adalToken = null;
         private static InteractiveAuthenticationProvider _interactiveProvider;
         private static Regex _reSiteUrl = new Regex("https://.*?/(sites|teams)/.*?(/|$)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private string _lastContent;
 
         public SearchPresetList SearchPresets { get; set; }
         private string PresetFolderPath { get; set; }
@@ -1507,8 +1508,29 @@ namespace SearchQueryTool
 
             tb.AppendText("\n\t" + searchResult.ResponseContent + "\n");
 
-            sv.Content = tb;
+            _lastContent = searchResult.ResponseContent;
+
+
+            Button copyToClipboardBtn = new Button
+            {
+                Content = "Copy content JSON/XML to clipboard",
+                Width = Double.NaN,
+                Height = Double.NaN,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            copyToClipboardBtn.Click += CopyToClipboard_Click;
+                
+            StackPanel panel = new StackPanel();
+            panel.Children.Add(copyToClipboardBtn);
+            panel.Children.Add(tb);
+            sv.Content = panel;
             RawResultTabItem.Content = sv;
+        }
+
+        private void CopyToClipboard_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(_lastContent);
+            MessageBox.Show("Content copied to clipboard.");
         }
 
         /// <summary>
