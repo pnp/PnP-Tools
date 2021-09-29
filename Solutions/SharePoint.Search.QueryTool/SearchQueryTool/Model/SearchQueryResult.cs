@@ -52,6 +52,16 @@ namespace SearchQueryTool.Model
         public string Value { get; set; }
     }
 
+    public class PromotedItem
+    {
+        public string Title { get; set; }
+        public string Url { get; set; }
+        public string Description { get; set; }
+        public string isVisualBestBet { get; set; }
+        public string PiSearchResultId { get; set; }
+        public string renderTemplateId { get; set; }
+    }
+
     public class QueryResult
     {
         public string QueryId { get; set; }
@@ -61,6 +71,8 @@ namespace SearchQueryTool.Model
         public int TotalRowsIncludingDuplicates { get; set; }
         public List<ResultItem> RelevantResults { get; set; }
         public List<RefinerResult> RefinerResults { get; set; }
+        public List<PromotedItem> PromotedResults { get; set; }
+
         public string ResultTitle { get; internal set; }
         public string ResultTitleUrl { get; internal set; }
     }
@@ -83,6 +95,8 @@ namespace SearchQueryTool.Model
 
         public bool IsPartial { get; internal set; }
         public string MultiGeoSearchStatus { get; internal set; }
+        public bool BestBetsTriggered { get; internal set; }
+        public int BestBetsCount { get; internal set; }
 
         /// <summary>
         /// Fireoff processing of the search result content.
@@ -548,6 +562,21 @@ namespace SearchQueryTool.Model
                             if (resultItem.Element("QueryId") != null)
                             {
                                 secondaryQueryResult.QueryId = (string)resultItem.Element("QueryId");
+                                
+                                // Checking for Best Bet (a.k.a Promoted type of SecondaryQueryResults
+                                if (String.Compare(secondaryQueryResult.QueryId, "BestBet Query") == 0)
+                                {
+                                    if (resultItem.Element("SpecialTermResults") != null)
+                                    {
+                                        this.BestBetsTriggered = true;
+                                        var specialTermResults = resultItem.Element("SpecialTermResults").Element("Results").Element("results");
+                                        this.BestBetsCount = specialTermResults.Elements("item").Count();
+                                   }
+                                    else
+                                    {
+                                        this.BestBetsTriggered = false;
+                                    }
+                                }
                             }
 
                             if (resultItem.Element("QueryRuleId") != null)
@@ -615,11 +644,30 @@ namespace SearchQueryTool.Model
                                 }
                             }
 
+                            if(this.BestBetsCount > 0)
+                            {
+                                List<PromotedItem> promotedRows = new List<PromotedItem>();
+
+                                var specialTermResults = resultItem.Element("SpecialTermResults").Element("Results").Element("results");
+                                var specialTermItems = specialTermResults.Elements("item");
+                                
+                                foreach(var item in specialTermItems)
+                                {
+                                    PromotedItem promotedRow = new PromotedItem();
+                                    promotedRow.Title = (string)item.Element("Title");
+                                    promotedRow.Url = (string)item.Element("Url");
+                                    promotedRow.Description = (string)item.Element("Description");
+                                    promotedRow.isVisualBestBet = (string)item.Element("IsVisualBestBet");
+                                    promotedRow.PiSearchResultId = (string)item.Element("PiSearchResultId");
+                                    promotedRow.renderTemplateId = (string)item.Element("RenderTemplateId");
+                                    promotedRows.Add(promotedRow);
+                                }
+                                secondaryQueryResult.PromotedResults = promotedRows;
+                            }
                             this.SecondaryQueryResults.Add(secondaryQueryResult);
                         }
                     }
                 }
-
                 #endregion
             }
         }
