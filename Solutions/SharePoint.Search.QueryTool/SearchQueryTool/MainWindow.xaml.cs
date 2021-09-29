@@ -1026,6 +1026,7 @@ namespace SearchQueryTool
                             SetPrimaryQueryResultItems(searchResults);
                             SetRefinementResultItems(searchResults);
                             SetSecondaryQueryResultItems(searchResults);
+                            SetPromotedResultItems(searchResults);
                         }
 
                     }, TaskScheduler.FromCurrentSynchronizationContext()).ContinueWith(task =>
@@ -1445,6 +1446,7 @@ namespace SearchQueryTool
                         tb.AppendText(String.Format("\t\tTotal Rows: {0}\n", sqr.TotalRows));
                         tb.AppendText(String.Format("\t\tTotal Rows Including Duplicates: {0}\n",
                             sqr.TotalRowsIncludingDuplicates));
+                        tb.AppendText(String.Format("\t\tTotal Promoted Results: {0}\n", searchQueryResult.BestBetsCount));
                         tb.AppendText(String.Format("\t\tQuery Id: {0}\n", sqr.QueryId));
                         tb.AppendText(String.Format("\t\tQuery Rule Id: {0}\n", sqr.QueryRuleId));
                         tb.AppendText(String.Format("\t\tQuery Modification: {0}\n", sqr.QueryModification));
@@ -1599,7 +1601,6 @@ namespace SearchQueryTool
                     //Dont expand entries
                     Expander propsExpander = new Expander { IsExpanded = false, Header = "View" };
                     StackPanel spProps = new StackPanel();
-
                     var keys = resultItem.Keys.ToList();
                     keys.Sort();
                     if (_searchQueryRequest.IncludeRankDetail.HasValue &&
@@ -2446,6 +2447,91 @@ namespace SearchQueryTool
         }
 
         /// <summary>
+        ///     Creates and populates the the Promoted results tab from data from the passed in <paramref name="searchResult" />.
+        ///     This method is used for only promoted (a.k.a best bets) search query results.
+        /// </summary>
+        /// <param name="searchResult">The search result.</param>
+        private void SetPromotedResultItems(SearchQueryResult searchResult)
+        {
+            ScrollViewer sv = new ScrollViewer();
+            sv.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            sv.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+
+            var srq = searchResult.SecondaryQueryResults;
+
+            if (srq[0].PromotedResults.Count > 0)
+            {
+                StackPanel spTop = new StackPanel { Orientation = Orientation.Vertical };
+
+                int counter = 1;
+
+                foreach (var psr in srq[0].PromotedResults)
+                {
+                    
+                    StackPanel spEntry = new StackPanel { Margin = new Thickness(25) };
+                    string resultTitle;
+                    resultTitle = String.Format("Title: {0}", psr.Title);
+                    TextBox titleTB = new TextBox
+                    {
+                        IsReadOnly = true,
+                        IsReadOnlyCaretVisible = false,
+                        Text = String.Format("{0}. {1}", counter, resultTitle),
+                        BorderBrush = null,
+                        BorderThickness = new Thickness(0),
+                        Foreground = Brushes.DarkBlue,
+                        FontSize = 14
+                    };
+                    spEntry.Children.Add(titleTB);
+
+                    Expander propsExpander = new Expander
+                    {
+                        IsExpanded = srq[0].PromotedResults.Count == 1,
+                        Header = "View"
+                    };
+                    StackPanel spProps = new StackPanel();
+                    
+                    DockPanel propdp = new DockPanel();
+                    propdp.Children.Add(
+                        new TextBox
+                        {
+                            IsReadOnly = true,
+                            IsReadOnlyCaretVisible = false,
+                            Text = String.Format("{0}: \n{1}: \n{2}: \n{3}: \n{4}: \n{5}:", "Title", "Url", "Description", "isVisualBestBet", "renderTemplateId", "PiSearchResultId"),
+                            BorderBrush = null,
+                            BorderThickness = new Thickness(0),
+                            Foreground = Brushes.DarkGreen,
+                            FontWeight = FontWeights.Bold,
+                            FontSize = 14
+                        }
+                        );
+                    propdp.Children.Add(
+                        new TextBox
+                        {
+                            IsReadOnly = true,
+                            IsReadOnlyCaretVisible = true,
+                            Text = String.Format("{0}\n{1}\n{2}\n{3}\n{4}\n{5}", psr.Title, psr.Url, psr.Description, psr.isVisualBestBet, psr.renderTemplateId, psr.PiSearchResultId),
+                            BorderBrush = null,
+                            BorderThickness = new Thickness(0),
+                            Foreground = Brushes.Green,
+                            FontSize = 14
+                        }
+                       );
+                    spProps.Children.Add(propdp);
+
+                    propsExpander.Content = spProps;
+                    spEntry.Children.Add(propsExpander);
+                    spTop.Children.Add(spEntry);
+                    counter++;
+
+
+
+                }
+                sv.Content = spTop;
+            }
+            PromotedResultsTabItem.Content = sv;
+        }
+
+        /// <summary>
         ///     Creates and populates the the Suggestion results tab from data from the passed in <paramref name="searchResult" />.
         ///     This method is used for only suggestion results.
         /// </summary>
@@ -2615,6 +2701,7 @@ namespace SearchQueryTool
                 PrimaryResultsTabItem.Content = null;
                 RefinementResultsTabItem.Content = null;
                 SecondaryResultsTabItem.Content = null;
+                PromotedResultsTabItem.Content = null;
                 SuggestionResultsTabItem.Content = null;
             });
         }

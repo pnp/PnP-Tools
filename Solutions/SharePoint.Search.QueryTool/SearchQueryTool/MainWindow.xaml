@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Classic" x:Class="SearchQueryTool.MainWindow"
         Icon="Images/sp_site.png"
-        Title="SharePoint Search Query Tool v2.9.0" Height="820" Width="1100" MinWidth="800" MinHeight="600">
+        Title="SharePoint Search Query Tool v2.9.0" Height="820" Width="1120" MinWidth="800" MinHeight="600">
     <Window.Resources>
         <DrawingImage x:Key="Overlay">
             <DrawingImage.Drawing>
@@ -1265,6 +1265,8 @@
                     <TabItem Header="Refinement Res..." ToolTip="Refinement Results" x:Name="RefinementResultsTabItem"  
 						ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                     <TabItem Header="Secondary Res..." ToolTip="Secondary Results" x:Name="SecondaryResultsTabItem" 
+						ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                    <TabItem Header="Promoted Res..." ToolTip="Promoted (a.k.a Best Bet) Results" x:Name="PromotedResultsTabItem" 
 						ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                     <TabItem Header="Suggestion Res..." ToolTip="Suggestion Results" x:Name="SuggestionResultsTabItem" 
 						ScrollViewer.VerticalScrollBarVisibility="Auto"/>
