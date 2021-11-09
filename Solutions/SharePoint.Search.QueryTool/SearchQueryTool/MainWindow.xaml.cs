@@ -2459,7 +2459,7 @@ namespace SearchQueryTool
 
             var srq = searchResult.SecondaryQueryResults;
 
-            if (srq[0].PromotedResults.Count > 0)
+            if (srq != null && srq[0].PromotedResults.Count > 0)
             {
                 StackPanel spTop = new StackPanel { Orientation = Orientation.Vertical };
 
