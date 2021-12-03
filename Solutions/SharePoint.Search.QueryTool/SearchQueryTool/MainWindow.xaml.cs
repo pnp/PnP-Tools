@@ -985,8 +985,12 @@ namespace SearchQueryTool
                     : AcceptType.Xml;
 
                 //todo this should be split to several methods so we can reuse them
-                Task.Factory.StartNew(() => HttpRequestRunner.RunWebRequest(_searchQueryRequest),
-                    TaskCreationOptions.LongRunning)
+                var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+                var tokenSource = new CancellationTokenSource();
+                CancellationToken ct = tokenSource.Token;
+
+                Task.Factory.StartNew(() => HttpRequestRunner.RunWebRequest(_searchQueryRequest), ct,
+                    TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent, scheduler)
                     .ContinueWith(task =>
                     {
                         if (task.Exception != null)
@@ -1029,14 +1033,14 @@ namespace SearchQueryTool
                             SetPromotedResultItems(searchResults);
                         }
 
-                    }, TaskScheduler.FromCurrentSynchronizationContext()).ContinueWith(task =>
+                    }, scheduler).ContinueWith(task =>
                     {
                         if (task.Exception != null)
                         {
                             ShowError(task.Exception);
                         }
                         MarkRequestOperation(false, status);
-                    });
+                    }, scheduler);
             }
             catch (Exception ex)
             {
@@ -1959,7 +1963,7 @@ namespace SearchQueryTool
                 var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
                 var tokenSource = new CancellationTokenSource();
                 CancellationToken ct = tokenSource.Token;
-                Task.Factory.StartNew(() => HttpRequestRunner.RunWebRequest(sqr), ct,
+                await Task.Factory.StartNew(() => HttpRequestRunner.RunWebRequest(sqr), ct,
                     TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent, scheduler).ContinueWith(
                         task =>
                         {
@@ -2459,7 +2463,7 @@ namespace SearchQueryTool
 
             var srq = searchResult.SecondaryQueryResults;
 
-            if (srq != null && srq[0].PromotedResults.Count > 0)
+            if (srq != null && srq[0].PromotedResults != null && srq[0].PromotedResults.Count > 0)
             {
                 StackPanel spTop = new StackPanel { Orientation = Orientation.Vertical };
 
@@ -2467,7 +2471,7 @@ namespace SearchQueryTool
 
                 foreach (var psr in srq[0].PromotedResults)
                 {
-                    
+
                     StackPanel spEntry = new StackPanel { Margin = new Thickness(25) };
                     string resultTitle;
                     resultTitle = String.Format("Title: {0}", psr.Title);
@@ -2489,7 +2493,7 @@ namespace SearchQueryTool
                         Header = "View"
                     };
                     StackPanel spProps = new StackPanel();
-                    
+
                     DockPanel propdp = new DockPanel();
                     propdp.Children.Add(
                         new TextBox
