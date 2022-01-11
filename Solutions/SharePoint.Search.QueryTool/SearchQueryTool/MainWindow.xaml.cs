@@ -1938,6 +1938,8 @@ namespace SearchQueryTool
 
             sqr.QueryText = _searchQueryRequest.QueryText;
             sqr.HiddenConstraints = string.Format("WorkId:\"{0}\"", resultItem[workIdKey]);
+            sqr.SortList = "[docid]:ascending";
+            sqr.RowLimit = 1;
             sqr.QueryTemplate = _searchQueryRequest.QueryTemplate;
             sqr.SourceId = _searchQueryRequest.SourceId;
             sqr.ResultsUrl = _searchQueryRequest.ResultsUrl;
@@ -1951,7 +1953,7 @@ namespace SearchQueryTool
             if (propertyType == PropertyType.Managed)
             {
                 //this is the magic ingredient to get all the properties back
-                sqr.Refiners = "ManagedProperties(filter=5000/0/*)";
+                sqr.Refiners = "ManagedProperties(filter=5000/0/*)";                
             }
             else
             {
