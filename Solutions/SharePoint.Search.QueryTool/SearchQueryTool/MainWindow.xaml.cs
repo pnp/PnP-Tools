@@ -62,7 +62,7 @@ namespace SearchQueryTool
         private bool _firstInit = true;
         private static string _adalToken = null;
         private static InteractiveAuthenticationProvider _interactiveProvider;
-        private static Regex _reSiteUrl = new Regex("https://.*?/(sites|teams)/.*?(/|$)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static Regex _reSiteUrl = new Regex("https://.*?/(sites|teams|personal)/.*?(/|$)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private string _lastContent;
 
         public SearchPresetList SearchPresets { get; set; }
@@ -1923,7 +1923,7 @@ namespace SearchQueryTool
 
             var token = _searchQueryRequest.Token;
             var connectUrl = _searchQueryRequest.SharePointSiteUrl;
-            if (resultItem.ContainsKey("Path"))
+            if (resultItem.ContainsKey("Path") && !string.IsNullOrWhiteSpace(resultItem["Path"]))
             {
                 string connectedHost = new Uri(_searchQueryRequest.SharePointSiteUrl).Host;
                 Uri itemHost = new Uri(resultItem["Path"]);
@@ -1931,8 +1931,18 @@ namespace SearchQueryTool
                 {
                     // fetch new token due to different domain
                     string siteUrl = _reSiteUrl.Match(itemHost.AbsoluteUri).Value.TrimEnd('/');
-                    token = await AdalLogin(siteUrl);
-                    connectUrl = siteUrl;
+                    if(!string.IsNullOrWhiteSpace(siteUrl))
+                    {
+                        try
+                        {
+                            token = await AdalLogin(siteUrl);
+                            connectUrl = siteUrl;
+                        }
+                        catch (Exception)
+                        {
+                            //swallow
+                        }
+                    }
                 }
             }
 
@@ -1953,7 +1963,7 @@ namespace SearchQueryTool
             if (propertyType == PropertyType.Managed)
             {
                 //this is the magic ingredient to get all the properties back
-                sqr.Refiners = "ManagedProperties(filter=5000/0/*)";                
+                sqr.Refiners = "ManagedProperties(filter=5000/0/*)";
             }
             else
             {
