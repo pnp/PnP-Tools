@@ -521,12 +521,12 @@ namespace SearchQueryTool.Model
                                         foreach (var entry in entries)
                                         {
                                             refinerResult.Add(new RefinementItem
-                                                              {
-                                                                  Count = (long)entry.Element("RefinementCount"),
-                                                                  Name = (string)entry.Element("RefinementName"),
-                                                                  Token = (string)entry.Element("RefinementToken"),
-                                                                  Value = (string)entry.Element("RefinementValue"),
-                                                              });
+                                            {
+                                                Count = (long)entry.Element("RefinementCount"),
+                                                Name = (string)entry.Element("RefinementName"),
+                                                Token = (string)entry.Element("RefinementToken"),
+                                                Value = (string)entry.Element("RefinementValue"),
+                                            });
                                         }
                                     }
 
@@ -562,7 +562,7 @@ namespace SearchQueryTool.Model
                             if (resultItem.Element("QueryId") != null)
                             {
                                 secondaryQueryResult.QueryId = (string)resultItem.Element("QueryId");
-                                
+
                                 // Checking for Best Bet (a.k.a Promoted type of SecondaryQueryResults
                                 if (String.Compare(secondaryQueryResult.QueryId, "BestBet Query") == 0)
                                 {
@@ -571,7 +571,7 @@ namespace SearchQueryTool.Model
                                         this.BestBetsTriggered = true;
                                         var specialTermResults = resultItem.Element("SpecialTermResults").Element("Results").Element("results");
                                         this.BestBetsCount = specialTermResults.Elements("item").Count();
-                                   }
+                                    }
                                     else
                                     {
                                         this.BestBetsTriggered = false;
@@ -644,25 +644,28 @@ namespace SearchQueryTool.Model
                                 }
                             }
 
-                            if(this.BestBetsCount > 0)
+                            if (this.BestBetsCount > 0)
                             {
                                 List<PromotedItem> promotedRows = new List<PromotedItem>();
 
-                                var specialTermResults = resultItem.Element("SpecialTermResults").Element("Results").Element("results");
-                                var specialTermItems = specialTermResults.Elements("item");
-                                
-                                foreach(var item in specialTermItems)
+                                var specialTermResults = resultItem?.Element("SpecialTermResults")?.Element("Results")?.Element("results");
+                                if (specialTermResults != null)
                                 {
-                                    PromotedItem promotedRow = new PromotedItem();
-                                    promotedRow.Title = (string)item.Element("Title");
-                                    promotedRow.Url = (string)item.Element("Url");
-                                    promotedRow.Description = (string)item.Element("Description");
-                                    promotedRow.isVisualBestBet = (string)item.Element("IsVisualBestBet");
-                                    promotedRow.PiSearchResultId = (string)item.Element("PiSearchResultId");
-                                    promotedRow.renderTemplateId = (string)item.Element("RenderTemplateId");
-                                    promotedRows.Add(promotedRow);
+                                    var specialTermItems = specialTermResults.Elements("item");
+
+                                    foreach (var item in specialTermItems)
+                                    {
+                                        PromotedItem promotedRow = new PromotedItem();
+                                        promotedRow.Title = (string)item.Element("Title");
+                                        promotedRow.Url = (string)item.Element("Url");
+                                        promotedRow.Description = (string)item.Element("Description");
+                                        promotedRow.isVisualBestBet = (string)item.Element("IsVisualBestBet");
+                                        promotedRow.PiSearchResultId = (string)item.Element("PiSearchResultId");
+                                        promotedRow.renderTemplateId = (string)item.Element("RenderTemplateId");
+                                        promotedRows.Add(promotedRow);
+                                    }
+                                    secondaryQueryResult.PromotedResults = promotedRows;
                                 }
-                                secondaryQueryResult.PromotedResults = promotedRows;
                             }
                             this.SecondaryQueryResults.Add(secondaryQueryResult);
                         }
