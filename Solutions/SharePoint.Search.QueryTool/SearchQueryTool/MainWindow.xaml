@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Classic" x:Class="SearchQueryTool.MainWindow"
         Icon="Images/sp_site.png"
-        Title="SharePoint Search Query Tool v2.9.1" Height="820" Width="1120" MinWidth="800" MinHeight="600">
+        Title="SharePoint Search Query Tool v2.10.0" Height="820" Width="1120" MinWidth="800" MinHeight="600">
     <Window.Resources>
         <DrawingImage x:Key="Overlay">
             <DrawingImage.Drawing>
@@ -255,6 +255,23 @@
 														Unchecked="SearchQueryCheckBox_CheckChanged"
 														Checked="SearchQueryCheckBox_CheckChanged"
 														ToolTip="Enable Query Rules" Content="Enable Query Rules"/>
+                                                </Grid>
+
+                                                <Rectangle Height="5" />
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2.2*"/>
+                                                        <ColumnDefinition Width="1*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox x:Name="EnableInterleavingCheckBox" 
+														DataContext="EnableInterleaving"
+														IsChecked="{x:Null}"
+														Unchecked="SearchQueryCheckBox_CheckChanged"
+														Checked="SearchQueryCheckBox_CheckChanged" Content="Enable Interleaving">
+                                                        <CheckBox.ToolTip>
+                                                            <TextBlock><Run Text="Specifies whether query rule result blocks can be interleaved or not in the response"/></TextBlock>
+                                                        </CheckBox.ToolTip>
+                                                    </CheckBox>
                                                 </Grid>
 
                                                 <Rectangle Height="5" />

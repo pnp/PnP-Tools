@@ -668,6 +668,9 @@ namespace SearchQueryTool
                     case "enablenicknames":
                         _searchQueryRequest.EnableNicknames = cb.IsChecked;
                         break;
+                    case "enableinterleaving":
+                        _searchQueryRequest.EnableInterleaving = cb.IsChecked;
+                        break;
                     case "processbestbets":
                         _searchQueryRequest.ProcessBestBets = cb.IsChecked;
                         break;
@@ -721,6 +724,9 @@ namespace SearchQueryTool
 
             _searchQueryRequest.EnableQueryRules = null;
             EnableQueryRulesCheckBox.IsChecked = null;
+
+            _searchQueryRequest.EnableInterleaving = null;
+            EnableInterleavingCheckBox.IsChecked = null;
 
             _searchQueryRequest.EnableNicknames = null;
             EnableNicknamesCheckBox.IsChecked = null;

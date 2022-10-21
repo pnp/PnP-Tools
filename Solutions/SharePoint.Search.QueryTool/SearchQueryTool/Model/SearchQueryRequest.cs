@@ -18,6 +18,7 @@ namespace SearchQueryTool.Model
         public bool? TrimDuplicates { get; set; }
         public bool? EnableFql { get; set; }
         public bool? EnableQueryRules { get; set; }
+        public bool? EnableInterleaving { get; set; }
         public bool? ProcessBestBets { get; set; }
         public bool? ByPassResultTypes { get; set; }
         public bool? ProcessPersonalFavorites { get; set; }
@@ -67,7 +68,7 @@ namespace SearchQueryTool.Model
                     uriBuilder.Append("/");
             }
 
-            uriBuilder.AppendFormat("_api/search/query?querytext='{0}'", UrlEncode(this.QueryText?.Replace("'","''")));
+            uriBuilder.AppendFormat("_api/search/query?querytext='{0}'", UrlEncode(this.QueryText?.Replace("'", "''")));
 
             if (this.EnableStemming == true)
                 uriBuilder.Append("&enablestemming=true");
@@ -98,6 +99,11 @@ namespace SearchQueryTool.Model
                 uriBuilder.Append("&enablequeryrules=true");
             else if (this.EnableQueryRules == false)
                 uriBuilder.Append("&enablequeryrules=false");
+
+            if (this.EnableInterleaving == true)
+                uriBuilder.Append("&enableinterleaving=true");
+            else if (this.EnableInterleaving == false || (this.EnableInterleaving == null && (this.EnableQueryRules == null || this.EnableQueryRules == true)))
+                uriBuilder.Append("&enableinterleaving=false");
 
             if (this.ProcessBestBets == true)
                 uriBuilder.Append("&processbestbets=true");
@@ -286,9 +292,9 @@ namespace SearchQueryTool.Model
         public override string GenerateHttpPostBodyPayload()
         {
             StringBuilder searchRequestBuilder = new StringBuilder();
-            List<string> customPropertyParts = new List<string>();           
+            List<string> customPropertyParts = new List<string>();
 
-            searchRequestBuilder.AppendFormat("{{'request': {{ 'Querytext':'{0}'", this.QueryText?.Replace("'","\\'"));
+            searchRequestBuilder.AppendFormat("{{'request': {{ 'Querytext':'{0}'", this.QueryText?.Replace("'", "\\'"));
 
             if (this.EnableStemming == true)
                 searchRequestBuilder.Append(", 'EnableStemming':true");
@@ -329,6 +335,11 @@ namespace SearchQueryTool.Model
                 searchRequestBuilder.Append(", 'EnableQueryRules':true");
             else if (this.EnableQueryRules == false)
                 searchRequestBuilder.Append(", 'EnableQueryRules':false");
+
+            if (this.EnableInterleaving == true)
+                searchRequestBuilder.Append(", 'EnableInterleaving':true");
+            else if (this.EnableInterleaving == false || (this.EnableInterleaving == null && (this.EnableQueryRules == null || this.EnableQueryRules == true)))
+                searchRequestBuilder.Append(", 'EnableInterleaving':false");
 
             if (this.ProcessPersonalFavorites == true)
                 searchRequestBuilder.Append(", 'ProcessPersonalFavorites':true");
