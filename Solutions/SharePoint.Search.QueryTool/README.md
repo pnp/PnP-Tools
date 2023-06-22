@@ -32,6 +32,8 @@ Version  | Date | Comments
 2.8.4 | Jun 11th 2019 | UI fixes with a fluid layout, query history
 2.8.5 | Dec 1st 2019 | Added clear history button, added field for custom Properties parameters
 2.8.6 | Feb 2nd 2020 | UI hang bug fixes
+2.9.0 | Jan 19th 2022 | Added support to add tenant id hint for multi-geo tenants, improved authentication for Online, copy to clipboard button for response, fixed promoted results parsing
+2.10.0 | Oct 24th 2022 | Add interleaving support, fix an null ref check, fix for people results
 
 ### Disclaimer ###
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
