@@ -1954,7 +1954,8 @@ namespace SearchQueryTool
 
             sqr.QueryText = _searchQueryRequest.QueryText;
             sqr.HiddenConstraints = string.Format("WorkId:\"{0}\"", resultItem[workIdKey]);
-            sqr.SortList = "[docid]:ascending";
+            // SPO no longer accepts sorting on [docid] (returns "We didn't understand your search terms").
+            // Not needed anyway, as the WorkId constraint returns a single item.
             sqr.RowLimit = 1;
             sqr.QueryTemplate = _searchQueryRequest.QueryTemplate;
             sqr.SourceId = _searchQueryRequest.SourceId;
@@ -1987,6 +1988,15 @@ namespace SearchQueryTool
                         {
                             HttpRequestResponsePair result = task.Result;
                             SearchQueryResult resultItem2 = GetResultItem(result);
+
+                            if (resultItem2.StatusCode != HttpStatusCode.OK)
+                            {
+                                MessageBox.Show(
+                                    string.Format("SharePoint returned {0} ({1}):\n\n{2}", (int)resultItem2.StatusCode,
+                                        resultItem2.StatusDescription, resultItem2.ResponseContent),
+                                    "Could not load properties", MessageBoxButton.OK);
+                                return;
+                            }
 
                             //Extract all Properties from refiner result
                             if (resultItem2.PrimaryQueryResult == null ||
